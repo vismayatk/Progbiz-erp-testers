@@ -29,9 +29,9 @@ let enquiryUrl = '';
 
 // ── Credentials ─────────────────────────────────────────────────────────────
 const CREDS = {
-  company:  process.env.COMPANY_CODE || 'skiolo_test',
-  username: process.env.USERNAME     || 'admin',
-  password: process.env.PASSWORD     || '123',
+  company:  process.env.COMPANY_CODE  || 'skiolo_test',
+  username: process.env.CRM_USERNAME  || 'admin',
+  password: process.env.PASSWORD      || '123',
 };
 
 // ══════════════════════════════════════════════════════════════════════════════

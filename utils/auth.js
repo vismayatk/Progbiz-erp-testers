@@ -12,7 +12,8 @@
  */
 async function login(page, creds = {}) {
   const company  = creds.company  || process.env.COMPANY_CODE || 'skiolo_test';
-  const username = creds.username || process.env.USERNAME      || 'admin';
+  const username = creds.username || process.env.CRM_USERNAME   || 'admin';
+
   const password = creds.password || process.env.PASSWORD      || '123';
   const baseUrl  = process.env.BASE_URL || 'https://erptest.progbiz.in';
 

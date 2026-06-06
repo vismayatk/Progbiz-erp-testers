@@ -22,7 +22,7 @@ class LoginPage {
     await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded' });
   }
 
-  async login(company, username, password) {
+  async login(company = 'skiolo_test', username = 'admin', password = '123') {
     console.log(`\n  🔐 LoginPage: filling credentials for "${username}" @ "${company}"`);
     await this.companyInput.fill(company);
     await this.usernameInput.fill(username);

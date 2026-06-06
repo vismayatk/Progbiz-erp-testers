@@ -1,0 +1,26 @@
+{
+  "name": "erp-tests",
+  "version": "2.0.0",
+  "description": "Playwright automation for CRM — Enquiry flow (POM)",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:enquiry": "playwright test tests/enquiry_flow.spec.js",
+    "test:enquiry:headed": "playwright test tests/enquiry_flow.spec.js --headed",
+    "report": "playwright show-report reports/html",
+    "install:browsers": "playwright install chromium"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1",
+    "dotenv": "^16.6.1",
+    "playwright": "^1.60.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

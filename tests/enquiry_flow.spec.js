@@ -80,20 +80,27 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     // Fill and submit
     await enquiryPage.fillAndCreate(testData.enquiry);
 
-    // Capture URL of created enquiry for later tests
+    // Wait for navigation / redirect after save
     await page.waitForLoadState('domcontentloaded');
-    enquiryUrl = page.url();
-    console.log(`  📌 Created enquiry URL: ${enquiryUrl}`);
+    await page.waitForTimeout(1500);
 
-    // Verify success message
+    // Verify success message (check before URL capture so toast is still visible)
     const msg = await enquiryPage.getSuccessMessage();
+
+    // Capture URL of created enquiry for later tests
+    enquiryUrl = page.url();
+    console.log(`  📌 Enquiry URL after save: ${enquiryUrl}`);
     await screenshot(page, 'tc02_enquiry_created');
 
-    // Assertion: either URL changed (not a create/new form) or success msg exists
-    const urlChanged = !page.url().includes('/create') && !page.url().includes('/new');
+    // Log page title for debugging
+    const title = await page.title();
+    console.log(`  📄 Page title: "${title}"`);
+
+    // Assertion: either URL left the create form OR a success alert appeared
+    const urlChanged = !enquiryUrl.includes('/create') && !enquiryUrl.includes('/new') && !enquiryUrl.includes('/add');
     const hasSuccess = msg !== null;
-    expect(urlChanged || hasSuccess, `Expected success after enquiry creation. URL: ${page.url()}, Alert: "${msg}"`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Enquiry created — ${hasSuccess ? `alert="${msg}"` : `URL changed to ${page.url()}`}`);
+    expect(urlChanged || hasSuccess, `Expected success after enquiry creation. URL: ${enquiryUrl}, Alert: "${msg}"`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Enquiry created — ${hasSuccess ? `alert="${msg}"` : `URL=${enquiryUrl}`}`);
   });
 
   // --------------------------------------------------------------------------

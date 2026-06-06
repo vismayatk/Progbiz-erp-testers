@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAlertText, screenshot, selectOption } = require('../utils/helpers');
+const { getAlertText } = require('../utils/helpers');
 
 class EnquiryPage {
   /**
@@ -10,16 +10,16 @@ class EnquiryPage {
     this.page    = page;
     this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
 
-    // ── List page ──────────────────────────────────────────────────────────
-    this.addNewBtn = page.getByRole('link', { name: /add new|new enquiry|\+ new/i }).or(
-                     page.getByRole('button', { name: /add new|new enquiry|\+ new/i })).first();
+    // ── List page — Add New button ─────────────────────────────────────────
+    this.addNewBtn = page.getByRole('link',   { name: /add new|new enquiry|\+\s*new/i }).or(
+                     page.getByRole('button', { name: /add new|new enquiry|\+\s*new/i })).first();
 
     // ── Form fields ────────────────────────────────────────────────────────
     this.customerNameInput = page.locator(
-      'input[name*="customer" i], input[id*="customer" i], input[placeholder*="customer" i]'
+      'input[name*="customer" i], input[id*="customer" i], input[placeholder*="customer" i], input[name*="name" i]'
     ).first();
     this.mobileInput = page.locator(
-      'input[name*="mobile" i], input[name*="phone" i], input[id*="mobile" i]'
+      'input[name*="mobile" i], input[name*="phone" i], input[id*="mobile" i], input[placeholder*="mobile" i]'
     ).first();
     this.emailInput = page.locator(
       'input[type="email"], input[name*="email" i], input[id*="email" i]'
@@ -31,7 +31,7 @@ class EnquiryPage {
       'input[name*="product" i], input[id*="product" i], input[placeholder*="product" i]'
     ).first();
     this.descriptionInput = page.locator(
-      'textarea[name*="desc" i], textarea[id*="desc" i], textarea[name*="remark" i], textarea[name*="note" i]'
+      'textarea[name*="desc" i], textarea[id*="desc" i], textarea[name*="remark" i], textarea[name*="note" i], textarea'
     ).first();
     this.quantityInput = page.locator(
       'input[name*="qty" i], input[name*="quantity" i], input[id*="qty" i]'
@@ -40,11 +40,13 @@ class EnquiryPage {
       'input[name*="price" i], input[name*="amount" i], input[id*="price" i]'
     ).first();
 
-    this.saveBtn = page.getByRole('button', { name: /save|submit|create/i }).first();
+    this.saveBtn = page.getByRole('button', { name: /^(save|submit|create|add)$/i }).or(
+                   page.getByRole('button', { name: /save|submit/i })).first();
 
     // ── Detail / action buttons ────────────────────────────────────────────
-    this.convertToQuotationBtn = page.getByRole('button', { name: /convert.*quot|to quotation/i }).or(
-                                  page.getByRole('link',   { name: /convert.*quot|to quotation/i })).first();
+    this.convertToQuotationBtn =
+      page.getByRole('button', { name: /convert|quotation/i }).or(
+      page.getByRole('link',   { name: /convert|quotation/i })).first();
 
     this.statusDropdown = page.locator(
       'select[name*="status" i], select[id*="status" i]'
@@ -52,17 +54,57 @@ class EnquiryPage {
     this.statusSaveBtn = page.getByRole('button', { name: /save|update/i }).first();
   }
 
-  /** Navigate to the enquiry listing page. */
+  // ── Navigation ────────────────────────────────────────────────────────────
+
+  /**
+   * Navigate to the enquiry listing by clicking CRM → Enquiry in the sidebar.
+   * Falls back to direct URL probing if the sidebar link is not found.
+   */
   async gotoList() {
-    const paths = ['/enquiry', '/enquiries', '/crm/enquiry', '/crm/enquiries', '/sales/enquiry'];
+    const page = this.page;
+
+    // Step 1: ensure we are on the app (not login)
+    if (page.url().includes('/login') || page.url() === 'about:blank') {
+      await page.goto(this.baseUrl, { waitUntil: 'domcontentloaded' });
+    }
+
+    // Step 2: try clicking CRM sidebar item to expand sub-menu
+    try {
+      const crmMenu = page.getByRole('link', { name: /^crm$/i }).or(
+                      page.locator('a', { hasText: /^crm$/i })).first();
+      await crmMenu.waitFor({ state: 'visible', timeout: 5000 });
+      await crmMenu.click();
+      console.log('  📂 Clicked CRM sidebar menu');
+      await page.waitForTimeout(600);
+    } catch {
+      console.log('  ⚠️  CRM sidebar item not found — trying direct URLs');
+    }
+
+    // Step 3: click "Enquiry" sub-menu item if visible
+    try {
+      const enquiryLink = page.getByRole('link', { name: /^enquir/i }).first();
+      await enquiryLink.waitFor({ state: 'visible', timeout: 5000 });
+      await enquiryLink.click();
+      await page.waitForLoadState('domcontentloaded');
+      console.log(`  📋 Enquiry list loaded via sidebar: ${page.url()}`);
+      return;
+    } catch {
+      // fall through to direct URL probe
+    }
+
+    // Step 4: direct URL fallback
+    const paths = [
+      '/crm/enquiry', '/crm/enquiries', '/enquiry',
+      '/enquiries',   '/sales/enquiry', '/crm',
+    ];
     for (const p of paths) {
-      await this.page.goto(`${this.baseUrl}${p}`, { waitUntil: 'domcontentloaded' });
-      if (!this.page.url().includes('/login')) {
-        console.log(`  📋 Enquiry list loaded: ${this.page.url()}`);
+      await page.goto(`${this.baseUrl}${p}`, { waitUntil: 'domcontentloaded' });
+      if (!page.url().includes('/login')) {
+        console.log(`  📋 Enquiry list loaded via URL: ${page.url()}`);
         return;
       }
     }
-    throw new Error('Could not reach enquiry listing page — check BASE_URL / route');
+    throw new Error('Could not reach enquiry listing page — update gotoList() paths');
   }
 
   /** Click "Add New" to open the creation form. */
@@ -101,35 +143,69 @@ class EnquiryPage {
   }
 
   /**
-   * Open the most-recently-created enquiry from the list.
-   * Strategy: click the first row link / view button.
+   * Open the most recently created enquiry from the listing.
+   * Uses JS evaluation to find any clickable link/button in the first data row.
    */
   async openFirstEnquiry() {
     await this.gotoList();
-    const rowLink = this.page.locator(
-      'table tbody tr:first-child a, table tbody tr:first-child button, .list-row:first-child a'
-    ).first();
-    await rowLink.waitFor({ state: 'visible', timeout: 10000 });
-    await rowLink.click();
     await this.page.waitForLoadState('domcontentloaded');
-    console.log(`  🔗 Opened first enquiry — URL: ${this.page.url()}`);
+    await this.page.waitForTimeout(1000);
+
+    // Try multiple selector strategies in order of specificity
+    const candidates = [
+      'table tbody tr:first-child td a',
+      'table tbody tr:first-child a',
+      'table tbody tr:first-child button',
+      'tbody tr:first-child td:first-child a',
+      '.table tbody tr:first-child a',
+      'tr:nth-child(1) a',
+      '[class*="list"] a:first-of-type',
+      '[class*="row"]:first-child a',
+      // icon-based view/eye buttons
+      'table tbody tr:first-child [title*="view" i]',
+      'table tbody tr:first-child [class*="eye" i]',
+      'table tbody tr:first-child [class*="view" i]',
+    ];
+
+    for (const sel of candidates) {
+      const el = this.page.locator(sel).first();
+      const count = await el.count();
+      if (count > 0) {
+        await el.waitFor({ state: 'visible', timeout: 5000 });
+        await el.click();
+        await this.page.waitForLoadState('domcontentloaded');
+        console.log(`  🔗 Opened first enquiry via "${sel}" — URL: ${this.page.url()}`);
+        return;
+      }
+    }
+
+    // Last resort: JS click on first anchor inside a table row
+    const clicked = await this.page.evaluate(() => {
+      const a = document.querySelector('table tbody tr a, tbody tr a, tr td a');
+      if (a) { a.click(); return true; }
+      return false;
+    });
+
+    if (!clicked) throw new Error('openFirstEnquiry: no clickable row found in enquiry listing');
+    await this.page.waitForLoadState('domcontentloaded');
+    console.log(`  🔗 Opened first enquiry via JS click — URL: ${this.page.url()}`);
   }
 
-  /** Click "Convert to Quotation" and wait for navigation or alert. */
+  /** Click "Convert to Quotation" and handle any confirmation dialog. */
   async convertToQuotation() {
     await this.convertToQuotationBtn.waitFor({ state: 'visible', timeout: 10000 });
     await this.convertToQuotationBtn.click();
     console.log('  🔄 Clicked "Convert to Quotation"');
 
-    // Some CRMs show a confirm dialog
-    const dlg = this.page.locator('.modal, [role="dialog"]').first();
+    // Handle optional confirm modal
     try {
+      const dlg = this.page.locator('.modal, [role="dialog"]').first();
       await dlg.waitFor({ state: 'visible', timeout: 4000 });
       const confirmBtn = dlg.getByRole('button', { name: /ok|yes|confirm/i }).first();
       await confirmBtn.click();
       console.log('  ✔️  Confirmed conversion dialog');
     } catch {
-      // no modal, continue
+      // no modal
     }
     await this.page.waitForLoadState('domcontentloaded');
   }
@@ -147,15 +223,15 @@ class EnquiryPage {
     console.log(`  ✅ Status updated to "${status}"`);
   }
 
-  /** Read the current value shown for Status on the enquiry detail. */
+  /** Read the current status value shown on the detail page. */
   async getCurrentStatus() {
-    const statusEl = this.page.locator(
-      '[data-field="status"], .status-badge, span.status, td.status'
-    ).first();
     try {
+      const statusEl = this.page.locator(
+        '[data-field="status"], .status-badge, span.status, td.status, .badge'
+      ).first();
       return (await statusEl.textContent()).trim();
     } catch {
-      return await this.statusDropdown.inputValue();
+      try { return await this.statusDropdown.inputValue(); } catch { return ''; }
     }
   }
 
@@ -166,7 +242,7 @@ class EnquiryPage {
       await locator.waitFor({ state: 'visible', timeout: 5000 });
       await locator.fill(value);
     } catch {
-      // field not present for this CRM build — skip silently
+      console.log(`  ⚠️  Field not found for value "${value}" — skipping`);
     }
   }
 
@@ -175,7 +251,7 @@ class EnquiryPage {
       await locator.waitFor({ state: 'visible', timeout: 5000 });
       await locator.selectOption({ label: value });
     } catch {
-      // dropdown not present or value not available — skip
+      // dropdown not present or value unavailable
     }
   }
 }

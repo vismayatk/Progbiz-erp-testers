@@ -1,0 +1,3047 @@
+{
+  "base": "https://erptest.progbiz.in",
+  "company": "lesol_test",
+  "capturedAt": "run-time",
+  "pages": [
+    {
+      "name": "CRM Dashboard",
+      "requested": "https://erptest.progbiz.in/crm-dashboard",
+      "url": "https://erptest.progbiz.in/crm-dashboard",
+      "title": "Progbiz ERP",
+      "heading": "CRM",
+      "breadcrumb": [
+        "Dashboards",
+        "CRM"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "",
+          "id": "btn-toggle-filter"
+        },
+        {
+          "tag": "button",
+          "text": "",
+          "id": "btn-close-filter-x"
+        },
+        {
+          "tag": "button",
+          "text": "Clear",
+          "id": "btn-clear-filter"
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filter",
+          "id": "btn-apply-filter"
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "summarizedToggle",
+          "name": "",
+          "placeholder": "",
+          "label": "Sales View",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "Default select example",
+          "required": false,
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "status-id",
+          "name": "",
+          "placeholder": "",
+          "label": "Status",
+          "required": false,
+          "options": [
+            "All",
+            "New"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadsoure",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Source",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadquality",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Quality",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "addded-by",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Search items",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "itemCategory",
+          "name": "",
+          "placeholder": "",
+          "label": "Item Category",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place-filter",
+          "name": "",
+          "placeholder": "Enter place",
+          "label": "Place",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead stage filter",
+          "required": false,
+          "options": [
+            "All",
+            "New",
+            "Won",
+            "Lost",
+            "Cold",
+            "Warm",
+            "Hot"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead stage filter",
+          "required": false,
+          "options": [
+            "All",
+            "New",
+            "Won",
+            "Lost",
+            "Cold",
+            "Warm",
+            "Hot"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead stage filter",
+          "required": false,
+          "options": [
+            "All",
+            "New",
+            "Won",
+            "Lost",
+            "Cold",
+            "Warm",
+            "Hot"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "Default select example",
+          "required": false,
+          "options": [
+            "All",
+            "Not Defined"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "Default select example",
+          "required": false,
+          "options": [
+            "All",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        }
+      ],
+      "tables": [],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        }
+      ],
+      "screenshot": "crm_audit_shots/crm_dashboard.png"
+    },
+    {
+      "name": "Leads",
+      "requested": "https://erptest.progbiz.in/leads",
+      "url": "https://erptest.progbiz.in/leads",
+      "title": "Progbiz ERP",
+      "heading": "Leads",
+      "breadcrumb": [
+        "CRM",
+        "Leads"
+      ],
+      "buttons": [
+        {
+          "tag": "button",
+          "text": "Export Data",
+          "id": "export-excel"
+        },
+        {
+          "tag": "a",
+          "text": "",
+          "id": "btn-toggle-filter"
+        },
+        {
+          "tag": "button",
+          "text": "",
+          "id": "btn-close-filter-x"
+        },
+        {
+          "tag": "button",
+          "text": "Clear",
+          "id": "btn-clear-filter"
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filter",
+          "id": "btn-apply-filter"
+        },
+        {
+          "tag": "button",
+          "text": "New 0",
+          "id": "tab-lead-new"
+        },
+        {
+          "tag": "button",
+          "text": "In Follow Up 0",
+          "id": "tab-lead-infollowup"
+        },
+        {
+          "tag": "button",
+          "text": "Won 0",
+          "id": "tab-lead-won"
+        },
+        {
+          "tag": "button",
+          "text": "Lost 0",
+          "id": "tab-lead-lost"
+        },
+        {
+          "tag": "a",
+          "text": "Add New",
+          "id": "btn-add-new-dropdown"
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "filter-name",
+          "name": "",
+          "placeholder": "Search here",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Name",
+            "Phone",
+            "Email Address"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Contains",
+            "StartWith",
+            "EqualTo"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Enter customer name and search",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "status-id",
+          "name": "",
+          "placeholder": "",
+          "label": "Status",
+          "required": false,
+          "options": [
+            "All",
+            "New"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadsoure",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Source",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadquality",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Quality",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Search items",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "itemCategory",
+          "name": "",
+          "placeholder": "",
+          "label": "Item Category",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "addded-by",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputStateLastFollowUp",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place-filter",
+          "name": "",
+          "placeholder": "Enter place",
+          "label": "Place",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        }
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Number",
+            "Customer Name",
+            "Phone",
+            "Business Value",
+            "Lead Source",
+            "Date Added",
+            "Assignee"
+          ],
+          "rowCount": 1,
+          "sampleRow": ""
+        }
+      ],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "tab-lead-new",
+          "text": "New 0"
+        },
+        {
+          "id": "tab-lead-infollowup",
+          "text": "In Follow Up 0"
+        },
+        {
+          "id": "tab-lead-won",
+          "text": "Won 0"
+        },
+        {
+          "id": "tab-lead-lost",
+          "text": "Lost 0"
+        },
+        {
+          "id": "btn-add-new-dropdown",
+          "text": "Add New"
+        }
+      ],
+      "screenshot": "crm_audit_shots/leads.png"
+    },
+    {
+      "name": "FollowUps",
+      "requested": "https://erptest.progbiz.in/followups",
+      "url": "https://erptest.progbiz.in/followups",
+      "title": "Progbiz ERP",
+      "heading": "Followups",
+      "breadcrumb": [
+        "CRM",
+        "Followups"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "",
+          "id": "btn-toggle-filter"
+        },
+        {
+          "tag": "button",
+          "text": "",
+          "id": "btn-close-filter-x"
+        },
+        {
+          "tag": "button",
+          "text": "Clear",
+          "id": "btn-clear-filter"
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filter",
+          "id": "btn-apply-filter"
+        },
+        {
+          "tag": "button",
+          "text": "Today's 0",
+          "id": "tab-followup-today"
+        },
+        {
+          "tag": "button",
+          "text": "Delayed 0",
+          "id": "tab-followup-overdue"
+        },
+        {
+          "tag": "button",
+          "text": "Upcoming 0",
+          "id": "tab-followup-upcoming"
+        },
+        {
+          "tag": "button",
+          "text": "Non Followup 0",
+          "id": "tab-followup-nonfollowup"
+        },
+        {
+          "tag": "a",
+          "text": "Add New",
+          "id": "btn-add-new-dropdown"
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "filter-name",
+          "name": "",
+          "placeholder": "Search here",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Name",
+            "Phone"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Contains",
+            "StartWith",
+            "EqualTo"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Enter customer name",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadQuality",
+          "name": "",
+          "placeholder": "",
+          "label": "Nature",
+          "required": false,
+          "options": [
+            "All",
+            "New",
+            "InFollowup"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "status-id",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "New"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadquality",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Quality",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "assignedToBranch",
+          "name": "",
+          "placeholder": "",
+          "label": "Branch",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "assignedTo",
+          "name": "",
+          "placeholder": "",
+          "label": "Status",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Missed",
+            "Today",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "lastFollowupInputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Today",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadsoure",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Source",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Search items",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "datetime-local",
+          "id": "followup-date",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "max": "2026-06-13T15:09:26",
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "followup-status",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "number",
+          "id": "business-value",
+          "name": "",
+          "placeholder": "",
+          "label": "Business Value :",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "id": "followup-description",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        }
+      ],
+      "tables": [
+        {
+          "headers": [
+            "S.No",
+            "Next Followup Date",
+            "Action",
+            "Number",
+            "Customer Name",
+            "Phone",
+            "Lead Quality",
+            "Status",
+            "Assignee",
+            "Last Followup Date",
+            "Followup By"
+          ],
+          "rowCount": 1,
+          "sampleRow": ""
+        }
+      ],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "nav-reports",
+          "text": "Reports"
+        },
+        {
+          "id": "tab-followup-today",
+          "text": "Today's 0"
+        },
+        {
+          "id": "tab-followup-overdue",
+          "text": "Delayed 0"
+        },
+        {
+          "id": "tab-followup-upcoming",
+          "text": "Upcoming 0"
+        },
+        {
+          "id": "tab-followup-nonfollowup",
+          "text": "Non Followup 0"
+        },
+        {
+          "id": "btn-add-new-dropdown",
+          "text": "Add New"
+        }
+      ],
+      "screenshot": "crm_audit_shots/followups.png"
+    },
+    {
+      "name": "Create Enquiry",
+      "requested": "https://erptest.progbiz.in/redirect/enquiry",
+      "url": "https://erptest.progbiz.in/enquiry",
+      "title": "Progbiz ERP",
+      "heading": "Enquiry",
+      "breadcrumb": [
+        "CRM",
+        "Leads",
+        "Enquiry"
+      ],
+      "buttons": [
+        {
+          "tag": "button",
+          "text": "Save",
+          "id": "btn-save-enquiry"
+        },
+        {
+          "tag": "button",
+          "text": "Cancel",
+          "id": "btn-cancel-enquiry"
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "searchtype",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose",
+            "Phone",
+            "Name",
+            "Email"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "method",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose",
+            "Contains",
+            "Start With",
+            "Equal"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "txtSearchBox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-individual",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Individual",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-business",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Business",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-level",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Level",
+            "Customer",
+            "Prospect",
+            "Suspect"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-name",
+          "name": "",
+          "placeholder": "please enter name",
+          "label": "Customer Name*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-phone-input",
+          "name": "",
+          "placeholder": "please enter phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place",
+          "name": "",
+          "placeholder": "please enter place",
+          "label": "Place",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-sec-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-sec-phone-input",
+          "name": "",
+          "placeholder": "please enter secondary phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "emailAddress",
+          "name": "",
+          "placeholder": "please enter email address",
+          "label": "Email Address",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Currency"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "textbox",
+          "name": "",
+          "placeholder": "",
+          "label": "New option*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "lead-source-name",
+          "name": "",
+          "placeholder": "Enter lead source name",
+          "label": "",
+          "required": false,
+          "maxLength": 30,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-individual",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Individual",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-business",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Business",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-level",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Level",
+            "Customer",
+            "Prospect",
+            "Suspect"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-name-field",
+          "name": "",
+          "placeholder": "please enter name",
+          "label": "Customer Name*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-phone-input",
+          "name": "",
+          "placeholder": "please enter phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place",
+          "name": "",
+          "placeholder": "please enter place",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-sec-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-sec-phone-input",
+          "name": "",
+          "placeholder": "please enter secondary phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "emailAddress",
+          "name": "",
+          "placeholder": "please enter email address",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Currency"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "textbox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        }
+      ],
+      "tables": [],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        }
+      ],
+      "screenshot": "crm_audit_shots/redirect_enquiry.png",
+      "validationProbe": {
+        "messages": [],
+        "html5Invalid": []
+      }
+    },
+    {
+      "name": "Create Quotation",
+      "requested": "https://erptest.progbiz.in/redirect/quotation",
+      "url": "https://erptest.progbiz.in/quotation",
+      "title": "Progbiz ERP",
+      "heading": "Quotation",
+      "breadcrumb": [
+        "CRM",
+        "Leads",
+        "Create Quotation"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-individual",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Individual",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-business",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Business",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-level",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Level",
+            "Customer",
+            "Prospect",
+            "Suspect"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customername",
+          "name": "",
+          "placeholder": "please enter name",
+          "label": "Customer Name*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-phone-input",
+          "name": "",
+          "placeholder": "please enter phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place",
+          "name": "",
+          "placeholder": "please enter place",
+          "label": "Place",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-sec-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-sec-phone-input",
+          "name": "",
+          "placeholder": "please enter secondary phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "emailAddress",
+          "name": "",
+          "placeholder": "please enter email address",
+          "label": "Email Address",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Currency"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "textbox",
+          "name": "",
+          "placeholder": "",
+          "label": "New option*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "company-name",
+          "name": "",
+          "placeholder": "please enter company name",
+          "label": "Company Name*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "please enter phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "emailAddress",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "id": "address",
+          "name": "",
+          "placeholder": "",
+          "label": "Address*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "country",
+          "name": "",
+          "placeholder": "",
+          "label": "Country",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "state",
+          "name": "",
+          "placeholder": "",
+          "label": "State",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "contact-person",
+          "name": "",
+          "placeholder": "please enter contact person name",
+          "label": "Contact Person*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "contact-no",
+          "name": "",
+          "placeholder": "please enter contact no",
+          "label": "Contact No*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "contact-email",
+          "name": "",
+          "placeholder": "please enter contact email",
+          "label": "Contact Email*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "has-tax",
+          "name": "",
+          "placeholder": "",
+          "label": "Tax Reg Status :",
+          "required": false,
+          "options": [
+            "Not Registered",
+            "Registered"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Currency"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "address-type",
+          "name": "",
+          "placeholder": "",
+          "label": "Address Type*",
+          "required": true,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "id": "popup-party-address",
+          "name": "",
+          "placeholder": "",
+          "label": "Address*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "state",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "searchtype",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose",
+            "Phone",
+            "Name",
+            "Email"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "method",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose",
+            "Contains",
+            "Start With",
+            "Equal"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "txtSearchBox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-individual",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Individual",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "radio-business",
+          "name": "example-radios",
+          "placeholder": "",
+          "label": "Business",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-level",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Level",
+            "Customer",
+            "Prospect",
+            "Suspect"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-name",
+          "name": "",
+          "placeholder": "please enter name",
+          "label": "Customer Name*",
+          "required": true,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-phone-input",
+          "name": "",
+          "placeholder": "please enter phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place",
+          "name": "",
+          "placeholder": "please enter place",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "customer-sec-phone-country",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "customer-sec-phone-input",
+          "name": "",
+          "placeholder": "please enter secondary phone number",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "emailAddress",
+          "name": "",
+          "placeholder": "please enter email address",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose Currency"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "textbox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "lead-source-name",
+          "name": "",
+          "placeholder": "Enter lead source name",
+          "label": "",
+          "required": false,
+          "maxLength": 30,
+          "visible": false
+        }
+      ],
+      "tables": [],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        }
+      ],
+      "screenshot": "crm_audit_shots/redirect_quotation.png"
+    },
+    {
+      "name": "Lead Task Assignment",
+      "requested": "https://erptest.progbiz.in/add-multiple-lead-tasks",
+      "url": "https://erptest.progbiz.in/add-multiple-lead-tasks",
+      "title": "Progbiz ERP",
+      "heading": "Bulk Lead Task Assignment",
+      "breadcrumb": [
+        "CRM",
+        "Bulk Lead Task Assignment"
+      ],
+      "buttons": [
+        {
+          "tag": "button",
+          "text": "Clear Filters",
+          "id": ""
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filters",
+          "id": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Name",
+            "Phone",
+            "Email Address"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Contains",
+            "StartWith",
+            "EqualTo"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Enter customer name",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "New"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "New",
+            "Warm",
+            "Hot",
+            "Won",
+            "Lost"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "taskType",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Normal",
+            "Medium",
+            "High"
+          ],
+          "visible": false
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "id": "",
+          "name": "",
+          "placeholder": "Write task details or instructions...",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "min": "2026-06-13",
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "time",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        }
+      ],
+      "tables": [],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        }
+      ],
+      "screenshot": "crm_audit_shots/add_multiple_lead_tasks.png"
+    },
+    {
+      "name": "Dealers",
+      "requested": "https://erptest.progbiz.in/dealers",
+      "url": "https://erptest.progbiz.in/dealers",
+      "title": "Progbiz ERP",
+      "heading": "Dealers",
+      "breadcrumb": [
+        "CRM",
+        "Dealers"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "New Dealer",
+          "id": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "task",
+          "name": "",
+          "placeholder": "Search dealer here",
+          "label": "",
+          "required": false,
+          "visible": true
+        }
+      ],
+      "tables": [
+        {
+          "headers": [
+            "S.No",
+            "Dealer Name",
+            "Contact No",
+            "Action"
+          ],
+          "rowCount": 0,
+          "sampleRow": ""
+        }
+      ],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "nav-reports",
+          "text": "Reports"
+        }
+      ],
+      "screenshot": "crm_audit_shots/dealers.png"
+    },
+    {
+      "name": "Solar Order Forms",
+      "requested": "https://erptest.progbiz.in/solar-orders",
+      "url": "https://erptest.progbiz.in/solar-orders",
+      "title": "Progbiz ERP",
+      "heading": "Solar Orders",
+      "breadcrumb": [
+        "CRM",
+        "Solar Orders"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "New Order",
+          "id": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [],
+      "tables": [
+        {
+          "headers": [
+            "S.No",
+            "Branch",
+            "Beneficiary Name",
+            "Address",
+            "Phone",
+            "KSEB Consumer No",
+            "KSEB Consumer Name",
+            "Electrical Section",
+            "Plant Capacity",
+            "Total Amount",
+            "Action"
+          ],
+          "rowCount": 0,
+          "sampleRow": ""
+        }
+      ],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "nav-reports",
+          "text": "Reports"
+        }
+      ],
+      "screenshot": "crm_audit_shots/solar_orders.png"
+    },
+    {
+      "name": "Lead Transfer",
+      "requested": "https://erptest.progbiz.in/bulk-lead-transfer",
+      "url": "https://erptest.progbiz.in/bulk-lead-transfer",
+      "title": "Progbiz ERP",
+      "heading": "Bulk Lead Transfer",
+      "breadcrumb": [
+        "CRM",
+        "Bulk Lead Transfer"
+      ],
+      "buttons": [
+        {
+          "tag": "button",
+          "text": "Clear Filters",
+          "id": ""
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filters",
+          "id": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Name",
+            "Phone",
+            "Email Address"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Contains",
+            "StartWith",
+            "EqualTo"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Enter customer name",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Custom"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "New"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "itemCategory",
+          "name": "",
+          "placeholder": "",
+          "label": "Item Category",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Search items",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "All",
+            "New",
+            "Warm",
+            "Hot",
+            "Won",
+            "Lost"
+          ],
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "visible": false
+        }
+      ],
+      "tables": [],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "nav-reports",
+          "text": "Reports"
+        }
+      ],
+      "screenshot": "crm_audit_shots/bulk_lead_transfer.png"
+    },
+    {
+      "name": "Lead Status",
+      "requested": "https://erptest.progbiz.in/lead-status",
+      "url": "https://erptest.progbiz.in/lead-status",
+      "title": "Progbiz ERP",
+      "heading": "Followup Status",
+      "breadcrumb": [
+        "CRM",
+        "Settings",
+        "Lead Followup Status"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "New Followup Status",
+          "id": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "filter-name",
+          "name": "",
+          "placeholder": "Search by name",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Enter followup status name",
+          "label": "",
+          "required": false,
+          "visible": false
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "required": false,
+          "options": [
+            "Choose",
+            "In Followup",
+            "Won",
+            "Lost"
+          ],
+          "visible": false
+        }
+      ],
+      "tables": [
+        {
+          "headers": [
+            "S.No",
+            "Status Name",
+            "Nature",
+            "Action"
+          ],
+          "rowCount": 0,
+          "sampleRow": ""
+        }
+      ],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "nav-reports",
+          "text": "Reports"
+        }
+      ],
+      "screenshot": "crm_audit_shots/lead_status.png"
+    },
+    {
+      "name": "Lead Sources",
+      "requested": "https://erptest.progbiz.in/lead-sources",
+      "url": "https://erptest.progbiz.in/lead-sources",
+      "title": "Progbiz ERP",
+      "heading": "Lead Sources",
+      "breadcrumb": [
+        "CRM",
+        "Settings",
+        "Lead Sources"
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "New Lead Source",
+          "id": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "filter-name",
+          "name": "",
+          "placeholder": "Search by name",
+          "label": "",
+          "required": false,
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "lead-source-name",
+          "name": "",
+          "placeholder": "Enter lead source name",
+          "label": "",
+          "required": false,
+          "maxLength": 30,
+          "visible": false
+        }
+      ],
+      "tables": [
+        {
+          "headers": [
+            "S.No",
+            "Lead Source Name",
+            "Action"
+          ],
+          "rowCount": 18,
+          "sampleRow": "1 ABC EMPORIO"
+        }
+      ],
+      "tabs": [
+        {
+          "id": "nav-home",
+          "text": "Home"
+        },
+        {
+          "id": "nav-dashboards",
+          "text": "Dashboards"
+        },
+        {
+          "id": "nav-task-management",
+          "text": "Task Management"
+        },
+        {
+          "id": "nav-crm",
+          "text": "CRM"
+        },
+        {
+          "id": "nav-project",
+          "text": "Project"
+        },
+        {
+          "id": "nav-whatsapp",
+          "text": "Whatsapp"
+        },
+        {
+          "id": "nav-inventory",
+          "text": "Inventory"
+        },
+        {
+          "id": "nav-accounts",
+          "text": "Accounts"
+        },
+        {
+          "id": "nav-master",
+          "text": "Master"
+        },
+        {
+          "id": "nav-excel-upload",
+          "text": "Excel Upload"
+        },
+        {
+          "id": "nav-reports",
+          "text": "Reports"
+        }
+      ],
+      "screenshot": "crm_audit_shots/lead_sources.png"
+    }
+  ],
+  "dialogs": []
+}

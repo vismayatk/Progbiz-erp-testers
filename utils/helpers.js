@@ -25,27 +25,28 @@ async function screenshot(page, name) {
  * Wait for a toast / success alert to appear and return its text.
  * Tries common selectors used by Bootstrap / custom CRM themes.
  */
-async function getAlertText(page, timeoutMs = 10000) {
-  const selectors = [
-    '.alert-success',
+async function getAlertText(page, timeoutMs = 6000) {
+  // Single combined locator so the TOTAL wait is `timeoutMs` (not per-selector).
+  // The CRM may redirect on success without a lingering toast, so this returns
+  // null quickly rather than blocking the whole test on each selector.
+  const combined = [
+    '.toast-message',          // toastr (used by this CRM)
     '.toast-success',
-    '.swal2-success',
-    '[class*="success"]',
+    '.alert-success',
+    '.swal2-html-container',
+    '.swal2-title',
     '.alert',
     '[role="alert"]',
     '.notification',
     '.flash-message',
-  ];
-  for (const sel of selectors) {
-    try {
-      const loc = page.locator(sel).first();
-      await loc.waitFor({ state: 'visible', timeout: timeoutMs });
-      return (await loc.textContent()).trim();
-    } catch {
-      // try next selector
-    }
+  ].join(', ');
+  try {
+    const loc = page.locator(combined).first();
+    await loc.waitFor({ state: 'visible', timeout: timeoutMs });
+    return (await loc.textContent()).trim();
+  } catch {
+    return null;
   }
-  return null;
 }
 
 /**
@@ -72,4 +73,18 @@ async function selectOption(page, locator, value) {
   }
 }
 
-module.exports = { screenshot, getAlertText, clickByText, selectOption };
+/**
+ * The /enquiry-overview/{id} page loads its content via AJAX behind skeleton
+ * placeholders. Wait for the network to settle and the action buttons to render
+ * before interacting, otherwise clicks/counts hit the skeleton.
+ */
+async function waitOverviewReady(page, timeoutMs = 25000) {
+  await page.waitForLoadState('domcontentloaded').catch(() => {});
+  // networkidle can stall if the app polls; cap it short and rely on the button.
+  await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+  // The "Followup" button only appears once the enquiry detail has rendered.
+  await page.locator('#btn-add-followup').waitFor({ state: 'visible', timeout: timeoutMs }).catch(() => {});
+  await page.waitForTimeout(600);
+}
+
+module.exports = { screenshot, getAlertText, clickByText, selectOption, waitOverviewReady };

@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAlertText } = require('../utils/helpers');
+const { getAlertText, waitOverviewReady } = require('../utils/helpers');
 
 class EnquiryPage {
   /**
@@ -10,38 +10,26 @@ class EnquiryPage {
     this.page    = page;
     this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
 
-    // ── List page — Add New button ─────────────────────────────────────────
-    this.addNewBtn = page.getByRole('link',   { name: /add new|new enquiry|\+\s*new/i }).or(
-                     page.getByRole('button', { name: /add new|new enquiry|\+\s*new/i })).first();
+    // ── Listing (Leads) — "Add New" dropdown ───────────────────────────────
+    // The Leads page (/leads) is the listing; "Add New" opens New Enquiry / New
+    // Quotation / Upload Enquiries. The Enquiry form itself lives at /enquiry.
+    this.addNewBtn = page.locator('#btn-add-new-dropdown');
 
-    // ── Form fields ────────────────────────────────────────────────────────
-    this.customerNameInput = page.locator(
-      'input[name*="customer" i], input[id*="customer" i], input[placeholder*="customer" i], input[name*="name" i]'
-    ).first();
-    this.mobileInput = page.locator(
-      'input[name*="mobile" i], input[name*="phone" i], input[id*="mobile" i], input[placeholder*="mobile" i]'
-    ).first();
-    this.emailInput = page.locator(
-      'input[type="email"], input[name*="email" i], input[id*="email" i]'
-    ).first();
-    this.sourceSelect = page.locator(
-      'select[name*="source" i], select[id*="source" i]'
-    ).first();
-    this.productInput = page.locator(
-      'input[name*="product" i], input[id*="product" i], input[placeholder*="product" i]'
-    ).first();
-    this.descriptionInput = page.locator(
-      'textarea[name*="desc" i], textarea[id*="desc" i], textarea[name*="remark" i], textarea[name*="note" i], textarea'
-    ).first();
-    this.quantityInput = page.locator(
-      'input[name*="qty" i], input[name*="quantity" i], input[id*="qty" i]'
-    ).first();
-    this.unitPriceInput = page.locator(
-      'input[name*="price" i], input[name*="amount" i], input[id*="price" i]'
-    ).first();
+    // ── Enquiry form fields (verified live on lesol_test) ───────────────────
+    this.branchSelect      = page.locator('#branch');               // required
+    this.customerNameInput = page.locator('#TxtCustomer');          // required
+    this.mobileInput       = page.locator('#customer-phone');
+    this.assignToSelect    = page.locator('#assignto');             // required
+    this.sourceSelect      = page.locator('#leadsource');
+    this.followupSelect    = page.locator('#followup');
+    this.businessValueInput= page.locator('#business-value');
+    this.noFollowupChk     = page.locator('#no-next-followup-enquiry');
+    this.descriptionInput  = page.locator('#enquiry-description');
+    this.itemSearchInput   = page.locator('#item-search-input');
+    this.quantityInput     = page.locator('#new-item-quantity');
 
-    this.saveBtn = page.getByRole('button', { name: /^(save|submit|create|add)$/i }).or(
-                   page.getByRole('button', { name: /save|submit/i })).first();
+    this.saveBtn   = page.locator('#btn-save-enquiry');
+    this.cancelBtn = page.locator('#btn-cancel-enquiry');
 
     // ── Detail / action buttons ────────────────────────────────────────────
     this.convertToQuotationBtn =
@@ -57,62 +45,27 @@ class EnquiryPage {
   // ── Navigation ────────────────────────────────────────────────────────────
 
   /**
-   * Navigate to the enquiry listing by clicking CRM → Enquiry in the sidebar.
-   * Falls back to direct URL probing if the sidebar link is not found.
+   * Navigate to the Leads listing (/leads) — the CRM lead master.
    */
   async gotoList() {
     const page = this.page;
-
-    // Step 1: ensure we are on the app (not login)
-    if (page.url().includes('/login') || page.url() === 'about:blank') {
-      await page.goto(this.baseUrl, { waitUntil: 'domcontentloaded' });
-    }
-
-    // Step 2: try clicking CRM sidebar item to expand sub-menu
-    try {
-      const crmMenu = page.getByRole('link', { name: /^crm$/i }).or(
-                      page.locator('a', { hasText: /^crm$/i })).first();
-      await crmMenu.waitFor({ state: 'visible', timeout: 5000 });
-      await crmMenu.click();
-      console.log('  📂 Clicked CRM sidebar menu');
-      await page.waitForTimeout(600);
-    } catch {
-      console.log('  ⚠️  CRM sidebar item not found — trying direct URLs');
-    }
-
-    // Step 3: click "Enquiry" sub-menu item if visible
-    try {
-      const enquiryLink = page.getByRole('link', { name: /^enquir/i }).first();
-      await enquiryLink.waitFor({ state: 'visible', timeout: 5000 });
-      await enquiryLink.click();
-      await page.waitForLoadState('domcontentloaded');
-      console.log(`  📋 Enquiry list loaded via sidebar: ${page.url()}`);
-      return;
-    } catch {
-      // fall through to direct URL probe
-    }
-
-    // Step 4: direct URL fallback
-    const paths = [
-      '/crm/enquiry', '/crm/enquiries', '/enquiry',
-      '/enquiries',   '/sales/enquiry', '/crm',
-    ];
-    for (const p of paths) {
-      await page.goto(`${this.baseUrl}${p}`, { waitUntil: 'domcontentloaded' });
-      if (!page.url().includes('/login')) {
-        console.log(`  📋 Enquiry list loaded via URL: ${page.url()}`);
-        return;
-      }
-    }
-    throw new Error('Could not reach enquiry listing page — update gotoList() paths');
+    await page.goto(`${this.baseUrl}/leads`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
+    // The listing table is AJAX-loaded — wait for a row to appear
+    await page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
+    console.log(`  📋 Leads listing loaded: ${page.url()}`);
   }
 
-  /** Click "Add New" to open the creation form. */
+  /**
+   * Open the Add-Enquiry form. Goes directly to /enquiry (the create form,
+   * reachable via CRM → Create Enquiry / Leads → Add New → New Enquiry) and
+   * waits for the AJAX-rendered form to be ready.
+   */
   async clickAddNew() {
-    await this.addNewBtn.waitFor({ state: 'visible', timeout: 10000 });
-    await this.addNewBtn.click();
-    await this.page.waitForLoadState('domcontentloaded');
-    console.log('  ➕ Opened "Add New Enquiry" form');
+    await this.page.goto(`${this.baseUrl}/enquiry`, { waitUntil: 'domcontentloaded' });
+    await this.saveBtn.waitFor({ state: 'visible', timeout: 20000 });
+    await this.customerNameInput.waitFor({ state: 'visible', timeout: 20000 });
+    console.log('  ➕ "Add Enquiry" form ready (/enquiry)');
   }
 
   /**
@@ -122,17 +75,155 @@ class EnquiryPage {
   async fillAndCreate(data) {
     console.log(`  ✍️  Filling enquiry form for customer: "${data.customerName}"`);
 
-    await this._safeFill(this.customerNameInput, data.customerName);
-    await this._safeFill(this.mobileInput,       data.mobile);
-    await this._safeFill(this.emailInput,         data.email);
-    await this._safeSelect(this.sourceSelect,     data.source);
-    await this._safeFill(this.productInput,       data.product);
+    // Branch is required (defaults to "Kannur" but ensure a real value)
+    await this._selectFirstReal(this.branchSelect, 'Branch');
+
+    // Entering the phone triggers an async customer lookup. Because this is a
+    // new number, the "New Customer" modal pops up — fill & save it to create
+    // the customer, which then populates the enquiry's customer fields.
+    await this._safeFill(this.mobileInput, data.mobile);
+    await this.handleNewCustomerModal(data.customerName, data.email);
+
+    // If no modal appeared (existing customer), set the name directly.
+    if (await this.customerNameInput.inputValue().catch(() => '') === '') {
+      await this._safeFill(this.customerNameInput, data.customerName);
+    }
+
+    // Assign To is required
+    await this._selectFirstReal(this.assignToSelect, 'Assign To');
+
+    await this._safeFill(this.businessValueInput, data.unitPrice);
     await this._safeFill(this.descriptionInput,   data.description);
-    await this._safeFill(this.quantityInput,      data.quantity);
-    await this._safeFill(this.unitPriceInput,     data.unitPrice);
+    await this._selectFirstReal(this.sourceSelect, 'Lead Source');
+
+    // At least one item is REQUIRED ("Please choose at least one item")
+    await this.addItem(data.product || 'Inverter', data.quantity || '1');
+
+    // Avoid the "next follow-up date" requirement by marking it Not Required
+    try {
+      if (await this.noFollowupChk.count() > 0 && !(await this.noFollowupChk.isChecked())) {
+        await this.noFollowupChk.check();
+        console.log('  ☑️  Marked follow-up "Not Required"');
+      }
+    } catch { /* checkbox optional */ }
 
     await this.saveBtn.click();
     console.log('  💾 Save button clicked');
+  }
+
+  /**
+   * Handle the "New Customer" modal (#enquiry-new-customer-modal) that opens
+   * after entering an unknown phone number. Fills the required Level + Customer
+   * Name (+ email), saves it, and waits for it to close.
+   */
+  async handleNewCustomerModal(customerName, email) {
+    const page = this.page;
+    const modal = page.locator('#enquiry-new-customer-modal');
+
+    // The async phone lookup opens this modal unpredictably; open it
+    // deterministically via the "+" (ri-add-fill) icon next to the phone field.
+    if (!(await modal.isVisible().catch(() => false))) {
+      const grp = page.locator('#customer-phone')
+        .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
+      await grp.locator('i.ri-add-fill').first().click({ timeout: 8000 }).catch(() => {});
+    }
+    try {
+      await modal.waitFor({ state: 'visible', timeout: 10000 });
+    } catch {
+      console.log('  ℹ️  New Customer modal did not appear — existing customer or inline form');
+      return;
+    }
+    console.log('  👤 New Customer modal opened — creating customer');
+
+    // Individual/Business variants share duplicate IDs, so target the VISIBLE
+    // controls by placeholder. Level defaults to a valid value ("Suspect"),
+    // phone is pre-filled, so only Customer Name is required.
+    await this._safeFill(
+      modal.locator('input[placeholder="please enter name"]:visible').first(),
+      customerName
+    );
+    if (email) {
+      await this._safeFill(
+        modal.locator('input[placeholder="please enter email address"]:visible').first(),
+        email
+      );
+    }
+
+    // Save the customer (real button id: #btn-customer-save; duplicated across
+    // Individual/Business variants, so click the visible one)
+    await page.locator('#btn-customer-save:visible').first().click();
+    await modal.waitFor({ state: 'hidden', timeout: 12000 }).catch(() => {});
+    await page.waitForTimeout(1000);
+    console.log('  ✅ Customer created');
+  }
+
+  /**
+   * Add a line item to the enquiry via the "Search Results" modal.
+   * Opens #searchItemModal, searches by name, clicks the first result row,
+   * then sets the quantity. The item is required for the enquiry to save.
+   */
+  async addItem(itemName, quantity) {
+    const page = this.page;
+    console.log(`  📦 Adding item "${itemName}" x${quantity}`);
+    try {
+      // Open the item-search modal via the magnifier (ri-search-line) INSIDE
+      // the item search input-group. (The "+"/ri-add-fill opens a different
+      // "add CRM item" modal; the magnifier opens #searchItemModal to pick an
+      // existing inventory item.)
+      await page.locator('#item-search-input').scrollIntoViewIfNeeded();
+      const itemGrp = page.locator('#item-search-input')
+        .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
+      await itemGrp.locator('i.ri-search-line').first().click({ timeout: 8000 });
+
+      const modal = page.locator('#searchItemModal');
+      await modal.waitFor({ state: 'visible', timeout: 10000 });
+
+      await page.locator('#item-search-modal-input').fill(itemName);
+      // Trigger the modal search (search icon inside the modal)
+      await modal.locator('i.ri-search-line').first().click().catch(() => {});
+
+      // Wait for a result row; if the term matched nothing, fall back to
+      // listing all items (empty search) and take the first.
+      const firstRow = modal.locator('table tbody tr').first();
+      try {
+        await firstRow.waitFor({ state: 'visible', timeout: 6000 });
+      } catch {
+        console.log(`  ↩️  "${itemName}" matched no item — listing all`);
+        await page.locator('#item-search-modal-input').fill('');
+        await modal.locator('i.ri-search-line').first().click().catch(() => {});
+        await firstRow.waitFor({ state: 'visible', timeout: 8000 });
+      }
+      const rowBtn = firstRow.locator('button, a, i.ri-add-fill, [class*="add"]').first();
+      if (await rowBtn.count() > 0) { await rowBtn.click(); }
+      else { await firstRow.click(); }
+
+      // Close the modal if it is still open
+      if (await modal.isVisible().catch(() => false)) {
+        await modal.locator('.btn-close').first().click().catch(() => {});
+      }
+      await page.waitForTimeout(800);
+
+      // Set quantity on the added line
+      const qty = this.quantityInput;
+      if (await qty.count() > 0) { await qty.fill(String(quantity)); }
+      console.log('  ✅ Item added');
+    } catch (e) {
+      console.log(`  ⚠️  addItem failed: ${e.message}`);
+    }
+  }
+
+  /** Select the first non-placeholder option of a <select>. */
+  async _selectFirstReal(locator, label) {
+    try {
+      await locator.waitFor({ state: 'visible', timeout: 5000 });
+      const value = await locator.evaluate(sel => {
+        const opt = [...sel.options].find(o => o.value && !/^(choose|select|you)?$/i.test(o.text.trim()) && o.value !== '0');
+        return opt ? opt.value : (sel.options[1] ? sel.options[1].value : '');
+      });
+      if (value) { await locator.selectOption(value); console.log(`  🔽 ${label} = selected`); }
+    } catch {
+      console.log(`  ⚠️  ${label} select not found — skipping`);
+    }
   }
 
   /** Wait for and return the success/alert message text after save. */
@@ -191,47 +282,100 @@ class EnquiryPage {
     console.log(`  🔗 Opened first enquiry via JS click — URL: ${this.page.url()}`);
   }
 
-  /** Click "Convert to Quotation" and handle any confirmation dialog. */
+  /**
+   * Convert the open enquiry to a quotation. On the overview page this is the
+   * "Create Quotation" header button, which navigates to /quotation/0/{id}
+   * (prefilled) where it is saved via #btn-save-quotation.
+   */
   async convertToQuotation() {
-    await this.convertToQuotationBtn.waitFor({ state: 'visible', timeout: 10000 });
-    await this.convertToQuotationBtn.click();
-    console.log('  🔄 Clicked "Convert to Quotation"');
+    console.log('  🔄 Clicking "Create Quotation"');
+    await waitOverviewReady(this.page);
+    await this.page.locator('#btn-create-quotation').waitFor({ state: 'visible', timeout: 15000 });
+    await this.page.locator('#btn-create-quotation').click();
+    await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
+    await this.page.waitForTimeout(1500);
 
-    // Handle optional confirm modal
+    const saveQ = this.page.locator('#btn-save-quotation');
     try {
-      const dlg = this.page.locator('.modal, [role="dialog"]').first();
-      await dlg.waitFor({ state: 'visible', timeout: 4000 });
-      const confirmBtn = dlg.getByRole('button', { name: /ok|yes|confirm/i }).first();
-      await confirmBtn.click();
-      console.log('  ✔️  Confirmed conversion dialog');
+      await saveQ.waitFor({ state: 'visible', timeout: 12000 });
+      await saveQ.click();
+      console.log('  💾 Quotation Save clicked');
     } catch {
-      // no modal
+      console.log('  ⚠️  #btn-save-quotation not found — left on quotation form');
     }
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForTimeout(2500);
+    console.log(`  ➡️  URL after convert: ${this.page.url()}`);
   }
 
   /**
-   * Change the enquiry status via the status dropdown.
-   * @param {string} status - "In Follow-up" | "Won" | "Lost"
+   * Follow-up Status names mapped from the conceptual lifecycle states the test
+   * suite uses. Won/Lost are driven by the Followup Status "Nature", not a
+   * separate dropdown. ("In Follow-up" → an ongoing status.)
    */
-  async updateStatus(status) {
-    console.log(`  🔃 Changing status to "${status}" ...`);
-    await this.statusDropdown.waitFor({ state: 'visible', timeout: 10000 });
-    await this.statusDropdown.selectOption({ label: status });
-    await this.statusSaveBtn.click();
-    await this.page.waitForLoadState('domcontentloaded');
-    console.log(`  ✅ Status updated to "${status}"`);
+  statusLabelFor(status) {
+    const map = {
+      'in follow-up': 'Interested',
+      'in followup':  'Interested',
+      'won':          'Got the business',
+      'lost':         'Not interested',
+    };
+    return map[String(status).toLowerCase()] || status;
   }
 
-  /** Read the current status value shown on the detail page. */
+  /**
+   * Drive a lifecycle transition by recording a follow-up with the mapped
+   * Followup Status (this is how the CRM moves a lead to Won/Lost/In-Follow-Up).
+   */
+  async updateStatus(status) {
+    const label = this.statusLabelFor(status);
+    console.log(`  🔃 Status "${status}" → recording follow-up "${label}"`);
+
+    await waitOverviewReady(this.page);
+    await this.page.locator('#btn-add-followup').waitFor({ state: 'visible', timeout: 15000 });
+    await this.page.locator('#btn-add-followup').click();
+    const modal = this.page.locator('#followupModal');
+    await modal.waitFor({ state: 'visible', timeout: 10000 });
+
+    await this.page.locator('#followup-status').selectOption({ label }).catch(async () => {
+      await this.page.locator('#followup-status').selectOption({ index: 1 }).catch(() => {});
+    });
+    await this.page.waitForTimeout(900);
+
+    // Lead Quality (revealed; required) — pick first real value
+    try {
+      const lq = this.page.locator('#lead-quality');
+      await lq.waitFor({ state: 'visible', timeout: 4000 });
+      const v = await lq.evaluate(s => {
+        const o = [...s.options].find(o => o.value && !/^choose$/i.test(o.text.trim()) && o.value !== '0');
+        return o ? o.value : '';
+      });
+      if (v) await lq.selectOption(v);
+    } catch { /* not required for this status */ }
+
+    try {
+      const c = this.page.locator('#no-next-followup');
+      if (await c.count() && !(await c.isChecked())) await c.check();
+    } catch { /* optional */ }
+
+    await this.page.locator('#followup-description').fill(`Status → ${status}`).catch(() => {});
+    await this.page.locator('#btn-save-followup').click();
+    await modal.waitFor({ state: 'hidden', timeout: 12000 }).catch(() => {});
+    await this.page.waitForTimeout(1200);
+    console.log(`  ✅ Follow-up recorded for "${status}"`);
+  }
+
+  /** Read the "Status :" value shown in the Enquiry Details panel. */
   async getCurrentStatus() {
     try {
-      const statusEl = this.page.locator(
-        '[data-field="status"], .status-badge, span.status, td.status, .badge'
-      ).first();
-      return (await statusEl.textContent()).trim();
+      const t = await this.page.evaluate(() => {
+        const hit = [...document.querySelectorAll('*')]
+          .map(e => (e.childElementCount === 0 ? (e.textContent || '').trim() : ''))
+          .find(x => /^status\s*:/i.test(x));
+        return hit || '';
+      });
+      return t.replace(/^status\s*:/i, '').trim();
     } catch {
-      try { return await this.statusDropdown.inputValue(); } catch { return ''; }
+      return '';
     }
   }
 

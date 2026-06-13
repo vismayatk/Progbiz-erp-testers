@@ -21,17 +21,14 @@ class QuotationPage {
     ).first();
   }
 
-  /** Navigate to the quotation listing page. */
+  /**
+   * Quotations are listed in the Leads master (Type = Quotation). `/quotation`
+   * is the *create* form, not a listing — so the listing is `/leads`.
+   */
   async gotoList() {
-    const paths = ['/quotation', '/quotations', '/crm/quotation', '/sales/quotation'];
-    for (const p of paths) {
-      await this.page.goto(`${this.baseUrl}${p}`, { waitUntil: 'domcontentloaded' });
-      if (!this.page.url().includes('/login')) {
-        console.log(`  📋 Quotation list loaded: ${this.page.url()}`);
-        return;
-      }
-    }
-    throw new Error('Could not reach quotation listing page');
+    await this.page.goto(`${this.baseUrl}/leads`, { waitUntil: 'domcontentloaded' });
+    await this.page.waitForTimeout(1500);
+    console.log(`  📋 Leads/Quotation listing loaded: ${this.page.url()}`);
   }
 
   /** Return the success/alert text shown after conversion. */

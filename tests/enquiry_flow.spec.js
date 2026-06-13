@@ -339,11 +339,20 @@ async function _runStatusTransition(page, status, screenshotName) {
   await loginPage.goto();
   await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
 
-  if (enquiryUrl && !enquiryUrl.includes('/login')) {
-    await page.goto(enquiryUrl, { waitUntil: 'domcontentloaded' });
-  } else {
-    await enquiryPage.openFirstEnquiry();
-  }
+  // Create a FRESH enquiry for this transition. The shared enquiry from TC-02
+  // gets converted to a quotation in TC-06, after which its "Followup" button
+  // disappears — so status transitions need their own un-converted enquiry.
+  const uniq = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  const enquiryData = {
+    ...testData.enquiry,
+    customerName: `Status ${status} ${uniq}`,
+    mobile:       '9' + uniq.slice(-9),
+    email:        `cust${uniq}@example.com`,   // unique — modal rejects duplicate phone AND email
+  };
+  await enquiryPage.clickAddNew();
+  await enquiryPage.fillAndCreate(enquiryData);
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(1500);
 
   await enquiryPage.updateStatus(status);
 
@@ -351,11 +360,13 @@ async function _runStatusTransition(page, status, screenshotName) {
   const currentStatus  = await enquiryPage.getCurrentStatus();
   await screenshot(page, screenshotName);
 
-  const savedCorrectly = currentStatus.toLowerCase().includes(status.toLowerCase());
+  // Won/Lost/In-Follow-Up map to Followup Status labels (see EnquiryPage.statusLabelFor)
+  const expectedLabel  = enquiryPage.statusLabelFor(status);
+  const savedCorrectly = currentStatus.toLowerCase().includes(expectedLabel.toLowerCase());
   const hasSuccess     = msg !== null;
 
   expect(hasSuccess || savedCorrectly,
-    `Expected status "${status}" to be saved. Alert: "${msg}", Current status field: "${currentStatus}"`
+    `Expected status "${status}" (→ "${expectedLabel}") to be saved. Alert: "${msg}", Current status: "${currentStatus}"`
   ).toBeTruthy();
 
   console.log(`  ✅ ASSERT: Status "${status}" saved — alert="${msg}", statusField="${currentStatus}"`);

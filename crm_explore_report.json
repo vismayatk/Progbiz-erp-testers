@@ -1,0 +1,1563 @@
+{
+  "base": "https://erptest.progbiz.in",
+  "company": "lesol_test",
+  "pages": [
+    {
+      "url": "https://erptest.progbiz.in/crm-dashboard",
+      "heading": "CRM",
+      "breadcrumb": [
+        "Dashboards",
+        "Dashboards",
+        "CRM"
+      ],
+      "cards": [
+        "Executive-wise Leads",
+        "Item Summary All New Won Lost Cold Warm Hot",
+        "Item Category All New Won Lost Cold Warm Hot",
+        "Statuswise All New Won Lost Cold Warm Hot All Not Defined",
+        "Lead Source Detailed",
+        "Leads Reports All This Week This Month This Year Previous Month Previous Year Custom",
+        "Lead Source Summary"
+      ],
+      "tables": [],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "summarizedToggle",
+          "name": "",
+          "placeholder": "",
+          "label": "Sales View"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "status-id",
+          "name": "",
+          "placeholder": "",
+          "label": "Status",
+          "options": [
+            "All",
+            "New"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadsoure",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Source",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadquality",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Quality",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "addded-by",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Search items",
+          "label": ""
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "itemCategory",
+          "name": "",
+          "placeholder": "",
+          "label": "Item Category",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place-filter",
+          "name": "",
+          "placeholder": "Enter place",
+          "label": "Place"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "New",
+            "Won",
+            "Lost",
+            "Cold",
+            "Warm",
+            "Hot"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "New",
+            "Won",
+            "Lost",
+            "Cold",
+            "Warm",
+            "Hot"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "New",
+            "Won",
+            "Lost",
+            "Cold",
+            "Warm",
+            "Hot"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Not Defined"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ]
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-light-theme",
+          "name": "theme-style",
+          "placeholder": "",
+          "label": "Light"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-dark-theme",
+          "name": "theme-style",
+          "placeholder": "",
+          "label": "Dark"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-ltr",
+          "name": "direction",
+          "placeholder": "",
+          "label": "LTR"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-rtl",
+          "name": "direction",
+          "placeholder": "",
+          "label": "RTL"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-vertical",
+          "name": "navigation-style",
+          "placeholder": "",
+          "label": "Vertical"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-horizontal",
+          "name": "navigation-style",
+          "placeholder": "",
+          "label": "Horizontal"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-click",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Menu Click"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-hover",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Menu Hover"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-click",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Icon Click"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-hover",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Icon Hover"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-default-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Default Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-closed-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Closed Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icontext-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Icon Text"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-overlay",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Icon Overlay"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-detached",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Detached"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-double-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Double Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-regular",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Regular"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-classic",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Classic"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-modern",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Modern"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-full-width",
+          "name": "layout-width",
+          "placeholder": "",
+          "label": "Full Width"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-boxed",
+          "name": "layout-width",
+          "placeholder": "",
+          "label": "Boxed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-fixed",
+          "name": "menu-positions",
+          "placeholder": "",
+          "label": "Fixed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-scroll",
+          "name": "menu-positions",
+          "placeholder": "",
+          "label": "Scrollable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-header-fixed",
+          "name": "header-positions",
+          "placeholder": "",
+          "label": "Fixed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-header-scroll",
+          "name": "header-positions",
+          "placeholder": "",
+          "label": "Scrollable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-loader-enable",
+          "name": "page-loader",
+          "placeholder": "",
+          "label": "Enable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-loader-disable",
+          "name": "page-loader",
+          "placeholder": "",
+          "label": "Disable"
+        }
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "",
+          "id": "messageDropdown",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Biju ummer",
+          "id": "mainHeaderProfile",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Home",
+          "id": "nav-home",
+          "href": "home"
+        },
+        {
+          "tag": "a",
+          "text": "Dashboards",
+          "id": "nav-dashboards",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Task Management",
+          "id": "nav-task-management",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "CRM",
+          "id": "nav-crm",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Project",
+          "id": "nav-project",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Whatsapp",
+          "id": "nav-whatsapp",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Inventory",
+          "id": "nav-inventory",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Accounts",
+          "id": "nav-accounts",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Master",
+          "id": "nav-master",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Excel Upload",
+          "id": "nav-excel-upload",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Dashboards",
+          "id": "",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "button",
+          "text": "",
+          "id": "btn-close-filter-x",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Clear",
+          "id": "btn-clear-filter",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filter",
+          "id": "btn-apply-filter",
+          "href": ""
+        },
+        {
+          "tag": "a",
+          "text": "Progbiz",
+          "id": "",
+          "href": "https://www.progbiz.io"
+        },
+        {
+          "tag": "button",
+          "text": "Theme Styles",
+          "id": "switcher-home-tab",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Theme Colors",
+          "id": "switcher-profile-tab",
+          "href": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all",
+          "href": "javascript:void(0);"
+        }
+      ],
+      "screenshot": "crm_shots/page_crm_dashboard.png",
+      "requested": "https://erptest.progbiz.in/crm-dashboard"
+    },
+    {
+      "url": "https://erptest.progbiz.in/crm",
+      "heading": "Sorry, there's nothing at this address. const dateLabel = document.getElementById('dateLabel'); let currentDate = new Da",
+      "breadcrumb": [],
+      "cards": [],
+      "tables": [],
+      "fields": [],
+      "buttons": [],
+      "screenshot": "crm_shots/page_crm.png",
+      "requested": "https://erptest.progbiz.in/crm"
+    },
+    {
+      "url": "https://erptest.progbiz.in/leads",
+      "heading": "Leads",
+      "breadcrumb": [
+        "CRM",
+        "CRM",
+        "Leads"
+      ],
+      "cards": [
+        "New 0 In Follow Up 0 Won 0 Lost 0 Add New New Enquiry New Quotation Upload Enquiries SlNo Number Cus"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Number",
+            "Customer Name",
+            "Phone",
+            "Business Value",
+            "Lead Source",
+            "Date Added",
+            "Assignee"
+          ],
+          "rowCount": 1
+        }
+      ],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "filter-name",
+          "name": "",
+          "placeholder": "Search here",
+          "label": ""
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "Name",
+            "Phone",
+            "Email Address"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "Contains",
+            "StartWith",
+            "EqualTo"
+          ]
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Enter customer name and search",
+          "label": ""
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputState",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Enquiry",
+            "Quotation"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "status-id",
+          "name": "",
+          "placeholder": "",
+          "label": "Status",
+          "options": [
+            "All",
+            "New"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadsoure",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Source",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "leadquality",
+          "name": "",
+          "placeholder": "",
+          "label": "Lead Quality",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "",
+          "name": "",
+          "placeholder": "Search items",
+          "label": ""
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "itemCategory",
+          "name": "",
+          "placeholder": "",
+          "label": "Item Category",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "addded-by",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All"
+          ]
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "inputStateLastFollowUp",
+          "name": "",
+          "placeholder": "",
+          "label": "",
+          "options": [
+            "All",
+            "Today",
+            "Yesterday",
+            "This Week",
+            "This Month",
+            "This Year",
+            "Previous Month",
+            "Previous Year",
+            "Custom"
+          ]
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "place-filter",
+          "name": "",
+          "placeholder": "Enter place",
+          "label": "Place"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-light-theme",
+          "name": "theme-style",
+          "placeholder": "",
+          "label": "Light"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-dark-theme",
+          "name": "theme-style",
+          "placeholder": "",
+          "label": "Dark"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-ltr",
+          "name": "direction",
+          "placeholder": "",
+          "label": "LTR"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-rtl",
+          "name": "direction",
+          "placeholder": "",
+          "label": "RTL"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-vertical",
+          "name": "navigation-style",
+          "placeholder": "",
+          "label": "Vertical"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-horizontal",
+          "name": "navigation-style",
+          "placeholder": "",
+          "label": "Horizontal"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-click",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Menu Click"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-hover",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Menu Hover"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-click",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Icon Click"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-hover",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Icon Hover"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-default-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Default Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-closed-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Closed Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icontext-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Icon Text"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-overlay",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Icon Overlay"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-detached",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Detached"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-double-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Double Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-regular",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Regular"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-classic",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Classic"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-modern",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Modern"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-full-width",
+          "name": "layout-width",
+          "placeholder": "",
+          "label": "Full Width"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-boxed",
+          "name": "layout-width",
+          "placeholder": "",
+          "label": "Boxed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-fixed",
+          "name": "menu-positions",
+          "placeholder": "",
+          "label": "Fixed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-scroll",
+          "name": "menu-positions",
+          "placeholder": "",
+          "label": "Scrollable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-header-fixed",
+          "name": "header-positions",
+          "placeholder": "",
+          "label": "Fixed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-header-scroll",
+          "name": "header-positions",
+          "placeholder": "",
+          "label": "Scrollable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-loader-enable",
+          "name": "page-loader",
+          "placeholder": "",
+          "label": "Enable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-loader-disable",
+          "name": "page-loader",
+          "placeholder": "",
+          "label": "Disable"
+        }
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "",
+          "id": "messageDropdown",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Biju ummer",
+          "id": "mainHeaderProfile",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Home",
+          "id": "nav-home",
+          "href": "home"
+        },
+        {
+          "tag": "a",
+          "text": "Dashboards",
+          "id": "nav-dashboards",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Task Management",
+          "id": "nav-task-management",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "CRM",
+          "id": "nav-crm",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Project",
+          "id": "nav-project",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Whatsapp",
+          "id": "nav-whatsapp",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Inventory",
+          "id": "nav-inventory",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Accounts",
+          "id": "nav-accounts",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Master",
+          "id": "nav-master",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Excel Upload",
+          "id": "nav-excel-upload",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "CRM",
+          "id": "",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "button",
+          "text": "Export Data",
+          "id": "export-excel",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "",
+          "id": "btn-close-filter-x",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Clear",
+          "id": "btn-clear-filter",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Apply Filter",
+          "id": "btn-apply-filter",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "New 0",
+          "id": "tab-lead-new",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "In Follow Up 0",
+          "id": "tab-lead-infollowup",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Won 0",
+          "id": "tab-lead-won",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Lost 0",
+          "id": "tab-lead-lost",
+          "href": ""
+        },
+        {
+          "tag": "a",
+          "text": "Add New",
+          "id": "btn-add-new-dropdown",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Progbiz",
+          "id": "",
+          "href": "https://www.progbiz.io"
+        },
+        {
+          "tag": "button",
+          "text": "Theme Styles",
+          "id": "switcher-home-tab",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Theme Colors",
+          "id": "switcher-profile-tab",
+          "href": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all",
+          "href": "javascript:void(0);"
+        }
+      ],
+      "screenshot": "crm_shots/page_leads.png",
+      "requested": "https://erptest.progbiz.in/leads"
+    },
+    {
+      "url": "https://erptest.progbiz.in/enquiry",
+      "heading": "Enquiry",
+      "breadcrumb": [
+        "CRM",
+        "CRM",
+        "Leads",
+        "Leads",
+        "Enquiry"
+      ],
+      "cards": [
+        "Add Enquiry Save Cancel"
+      ],
+      "tables": [],
+      "fields": [
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-light-theme",
+          "name": "theme-style",
+          "placeholder": "",
+          "label": "Light"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-dark-theme",
+          "name": "theme-style",
+          "placeholder": "",
+          "label": "Dark"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-ltr",
+          "name": "direction",
+          "placeholder": "",
+          "label": "LTR"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-rtl",
+          "name": "direction",
+          "placeholder": "",
+          "label": "RTL"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-vertical",
+          "name": "navigation-style",
+          "placeholder": "",
+          "label": "Vertical"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-horizontal",
+          "name": "navigation-style",
+          "placeholder": "",
+          "label": "Horizontal"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-click",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Menu Click"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-hover",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Menu Hover"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-click",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Icon Click"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-hover",
+          "name": "navigation-menu-styles",
+          "placeholder": "",
+          "label": "Icon Hover"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-default-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Default Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-closed-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Closed Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icontext-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Icon Text"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-icon-overlay",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Icon Overlay"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-detached",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Detached"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-double-menu",
+          "name": "sidemenu-layout-styles",
+          "placeholder": "",
+          "label": "Double Menu"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-regular",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Regular"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-classic",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Classic"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-modern",
+          "name": "page-styles",
+          "placeholder": "",
+          "label": "Modern"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-full-width",
+          "name": "layout-width",
+          "placeholder": "",
+          "label": "Full Width"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-boxed",
+          "name": "layout-width",
+          "placeholder": "",
+          "label": "Boxed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-fixed",
+          "name": "menu-positions",
+          "placeholder": "",
+          "label": "Fixed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-menu-scroll",
+          "name": "menu-positions",
+          "placeholder": "",
+          "label": "Scrollable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-header-fixed",
+          "name": "header-positions",
+          "placeholder": "",
+          "label": "Fixed"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-header-scroll",
+          "name": "header-positions",
+          "placeholder": "",
+          "label": "Scrollable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-loader-enable",
+          "name": "page-loader",
+          "placeholder": "",
+          "label": "Enable"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "id": "switcher-loader-disable",
+          "name": "page-loader",
+          "placeholder": "",
+          "label": "Disable"
+        }
+      ],
+      "buttons": [
+        {
+          "tag": "a",
+          "text": "",
+          "id": "messageDropdown",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Biju ummer",
+          "id": "mainHeaderProfile",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Home",
+          "id": "nav-home",
+          "href": "home"
+        },
+        {
+          "tag": "a",
+          "text": "Dashboards",
+          "id": "nav-dashboards",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Task Management",
+          "id": "nav-task-management",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "CRM",
+          "id": "nav-crm",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Project",
+          "id": "nav-project",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Whatsapp",
+          "id": "nav-whatsapp",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Inventory",
+          "id": "nav-inventory",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Accounts",
+          "id": "nav-accounts",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Master",
+          "id": "nav-master",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Excel Upload",
+          "id": "nav-excel-upload",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "CRM",
+          "id": "",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "a",
+          "text": "Leads",
+          "id": "",
+          "href": "javascript:void(0);"
+        },
+        {
+          "tag": "button",
+          "text": "Save",
+          "id": "btn-save-enquiry",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Cancel",
+          "id": "btn-cancel-enquiry",
+          "href": ""
+        },
+        {
+          "tag": "a",
+          "text": "Progbiz",
+          "id": "",
+          "href": "https://www.progbiz.io"
+        },
+        {
+          "tag": "button",
+          "text": "Theme Styles",
+          "id": "switcher-home-tab",
+          "href": ""
+        },
+        {
+          "tag": "button",
+          "text": "Theme Colors",
+          "id": "switcher-profile-tab",
+          "href": ""
+        },
+        {
+          "tag": "a",
+          "text": "Reset",
+          "id": "reset-all",
+          "href": "javascript:void(0);"
+        }
+      ],
+      "screenshot": "crm_shots/page_enquiry.png",
+      "requested": "https://erptest.progbiz.in/enquiry"
+    }
+  ],
+  "sidebar": [
+    {
+      "text": "Home",
+      "href": "home"
+    },
+    {
+      "text": "Dashboards",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Task Management",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "CRM",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Project",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Whatsapp",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Inventory",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Accounts",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Master",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Excel Upload",
+      "href": "javascript:void(0);"
+    },
+    {
+      "text": "Reports",
+      "href": "reports"
+    }
+  ],
+  "crmSubmenu": []
+}

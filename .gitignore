@@ -4,3 +4,6 @@ reports/
 screenshots/
 *.png
 *.csv
+
+# Local secrets
+.env

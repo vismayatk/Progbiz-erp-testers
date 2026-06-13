@@ -1,0 +1,768 @@
+[
+  {
+    "url": "https://erptest.progbiz.in/followups",
+    "heading": "Followups",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Followups"
+    ],
+    "tables": [
+      {
+        "headers": [
+          "S.No",
+          "Next Followup Date",
+          "Action",
+          "Number",
+          "Customer Name",
+          "Phone",
+          "Lead Quality",
+          "Status",
+          "Assignee",
+          "Last Followup Date",
+          "Followup By"
+        ],
+        "rowCount": 1
+      }
+    ],
+    "fieldCount": 14,
+    "fields": [
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "filter-name",
+        "placeholder": "Search here",
+        "label": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "inputState",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Name",
+          "Phone"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "inputState",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Contains",
+          "StartWith",
+          "EqualTo"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "inputState",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "Enquiry",
+          "Quotation"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "",
+        "placeholder": "Enter customer name",
+        "label": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "leadQuality",
+        "placeholder": "",
+        "label": "Nature",
+        "options": [
+          "All",
+          "New",
+          "InFollowup"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "status-id",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "New"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "leadquality",
+        "placeholder": "",
+        "label": "Lead Quality",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "assignedToBranch",
+        "placeholder": "",
+        "label": "Branch",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "assignedTo",
+        "placeholder": "",
+        "label": "Status",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "inputState",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "Missed",
+          "Today",
+          "This Week",
+          "This Month",
+          "This Year",
+          "Previous Month",
+          "Previous Year",
+          "Custom"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "lastFollowupInputState",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "Today",
+          "This Week",
+          "This Month",
+          "This Year",
+          "Previous Month",
+          "Previous Year",
+          "Custom"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "leadsoure",
+        "placeholder": "",
+        "label": "Lead Source",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "",
+        "placeholder": "Search items",
+        "label": ""
+      }
+    ],
+    "actions": [
+      "Clear",
+      "Apply Filter",
+      "Today's 0",
+      "Delayed 0",
+      "Upcoming 0",
+      "Non Followup 0",
+      "Add New"
+    ],
+    "tabs": [
+      "Today's 0",
+      "Delayed 0",
+      "Upcoming 0",
+      "Non Followup 0",
+      "Add New",
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "followups"
+  },
+  {
+    "url": "https://erptest.progbiz.in/quotation",
+    "heading": "Quotation",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Leads",
+      "Leads",
+      "Create Quotation"
+    ],
+    "tables": [],
+    "fieldCount": 0,
+    "fields": [],
+    "actions": [],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "redirect/quotation"
+  },
+  {
+    "url": "https://erptest.progbiz.in/add-multiple-lead-tasks",
+    "heading": "Bulk Lead Task Assignment",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Bulk Lead Task Assignment"
+    ],
+    "tables": [],
+    "fieldCount": 11,
+    "fields": [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Name",
+          "Phone",
+          "Email Address"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Contains",
+          "StartWith",
+          "EqualTo"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "",
+        "placeholder": "Enter customer name",
+        "label": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "selectbox",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Choose"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "selectbox",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "This Week",
+          "This Month",
+          "This Year",
+          "Custom"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "Enquiry",
+          "Quotation"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "New"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "New",
+          "Warm",
+          "Hot",
+          "Won",
+          "Lost"
+        ]
+      }
+    ],
+    "actions": [
+      "Clear Filters",
+      "Apply Filters"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "add-multiple-lead-tasks"
+  },
+  {
+    "url": "https://erptest.progbiz.in/dealers",
+    "heading": "Dealers",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Dealers"
+    ],
+    "tables": [
+      {
+        "headers": [
+          "S.No",
+          "Dealer Name",
+          "Contact No",
+          "Action"
+        ],
+        "rowCount": 2
+      }
+    ],
+    "fieldCount": 1,
+    "fields": [
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "task",
+        "placeholder": "Search dealer here",
+        "label": ""
+      }
+    ],
+    "actions": [
+      "New Dealer"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "dealers"
+  },
+  {
+    "url": "https://erptest.progbiz.in/solar-orders",
+    "heading": "Solar Orders",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Solar Orders"
+    ],
+    "tables": [
+      {
+        "headers": [
+          "S.No",
+          "Branch",
+          "Beneficiary Name",
+          "Address",
+          "Phone",
+          "KSEB Consumer No",
+          "KSEB Consumer Name",
+          "Electrical Section",
+          "Plant Capacity",
+          "Total Amount",
+          "Action"
+        ],
+        "rowCount": 0
+      }
+    ],
+    "fieldCount": 0,
+    "fields": [],
+    "actions": [
+      "New Order"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "solar-orders"
+  },
+  {
+    "url": "https://erptest.progbiz.in/bulk-lead-transfer",
+    "heading": "Bulk Lead Transfer",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Bulk Lead Transfer"
+    ],
+    "tables": [],
+    "fieldCount": 13,
+    "fields": [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Name",
+          "Phone",
+          "Email Address"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Contains",
+          "StartWith",
+          "EqualTo"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "",
+        "placeholder": "Enter customer name",
+        "label": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "selectbox",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "Choose",
+          "Kannur",
+          "Kasargod"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "selectbox",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "This Week",
+          "This Month",
+          "This Year",
+          "Custom"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "Enquiry",
+          "Quotation"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "New",
+          "Awaiting",
+          "Call not attended",
+          "customer is busy",
+          "Interested",
+          "Got the business",
+          "Postponded",
+          "PRICE ISSUE",
+          "Not interested"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "ABC EMPORIO",
+          "Abdulla kappil",
+          "Abhi",
+          "Aboobacker",
+          "Ad enquiry",
+          "Add enq",
+          "Add enquiry",
+          "Ajeed",
+          "Ameer Nikshan"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "Cold",
+          "Warm",
+          "Hot",
+          "Not Connected",
+          "Not Reachable"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "itemCategory",
+        "placeholder": "",
+        "label": "Item Category",
+        "options": [
+          "All"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "",
+        "placeholder": "Search items",
+        "label": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "You",
+          "Biju",
+          "JASEEM",
+          "NABEEL",
+          "Shaju Ummar",
+          "SHAMAL",
+          "SIRAJ",
+          "VIGNESH"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "",
+        "placeholder": "",
+        "label": "",
+        "options": [
+          "All",
+          "New",
+          "Warm",
+          "Hot",
+          "Won",
+          "Lost"
+        ]
+      }
+    ],
+    "actions": [
+      "Clear Filters",
+      "Apply Filters"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "bulk-lead-transfer"
+  },
+  {
+    "url": "https://erptest.progbiz.in/lead-status",
+    "heading": "Followup Status",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Settings",
+      "Lead Followup Status"
+    ],
+    "tables": [
+      {
+        "headers": [
+          "S.No",
+          "Status Name",
+          "Nature",
+          "Action"
+        ],
+        "rowCount": 8
+      }
+    ],
+    "fieldCount": 1,
+    "fields": [
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "filter-name",
+        "placeholder": "Search by name",
+        "label": ""
+      }
+    ],
+    "actions": [
+      "New Followup Status"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "lead-status"
+  },
+  {
+    "url": "https://erptest.progbiz.in/lead-sources",
+    "heading": "Lead Sources",
+    "breadcrumb": [
+      "CRM",
+      "CRM",
+      "Settings",
+      "Lead Sources"
+    ],
+    "tables": [
+      {
+        "headers": [
+          "S.No",
+          "Lead Source Name",
+          "Action"
+        ],
+        "rowCount": 18
+      }
+    ],
+    "fieldCount": 1,
+    "fields": [
+      {
+        "tag": "input",
+        "type": "text",
+        "id": "filter-name",
+        "placeholder": "Search by name",
+        "label": ""
+      }
+    ],
+    "actions": [
+      "New Lead Source"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "lead-sources"
+  },
+  {
+    "url": "https://erptest.progbiz.in/enquiry-upload",
+    "heading": "Enquiry Upload",
+    "breadcrumb": [
+      "Excel Upload",
+      "Excel Upload",
+      "Enquiry Upload"
+    ],
+    "tables": [
+      {
+        "headers": [
+          "S.No",
+          "Uploaded On",
+          "Uploaded By",
+          "Uploaded File",
+          "Status",
+          "No of Errors"
+        ],
+        "rowCount": 1
+      }
+    ],
+    "fieldCount": 2,
+    "fields": [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "id": "branch",
+        "placeholder": "",
+        "label": "Branch",
+        "options": [
+          "Choose",
+          "Kannur",
+          "Kasargod"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "id": "",
+        "placeholder": "",
+        "label": ""
+      }
+    ],
+    "actions": [
+      "Upload"
+    ],
+    "tabs": [
+      "Theme Styles",
+      "Theme Colors"
+    ],
+    "requested": "enquiry-upload"
+  }
+]

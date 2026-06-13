@@ -1,0 +1,1243 @@
+{
+  "menus": {
+    "nav-home :: Home": [
+      {
+        "text": "Home",
+        "href": "home"
+      }
+    ],
+    "nav-dashboards :: Dashboards": [
+      {
+        "text": "CRM",
+        "href": "crm-dashboard"
+      },
+      {
+        "text": "Task",
+        "href": "task-dashboard"
+      },
+      {
+        "text": "Project Management",
+        "href": "project-management-dashboard"
+      },
+      {
+        "text": "Accounts",
+        "href": "accounts-dashboard"
+      }
+    ],
+    "nav-dashboards-crm :: CRM": [
+      {
+        "text": "CRM",
+        "href": "crm-dashboard"
+      }
+    ],
+    "nav-dashboards-task :: Task": [
+      {
+        "text": "Task",
+        "href": "task-dashboard"
+      }
+    ],
+    "nav-dashboards-accounts :: Accounts": [
+      {
+        "text": "Accounts",
+        "href": "accounts-dashboard"
+      }
+    ],
+    "nav-task-management :: Task Management": [
+      {
+        "text": "Task Timeline",
+        "href": "redirect/task-timeline"
+      },
+      {
+        "text": "Calendar",
+        "href": "calendar"
+      },
+      {
+        "text": "My Tasks",
+        "href": "my-tasks"
+      },
+      {
+        "text": "Delegated Tasks",
+        "href": "delegated-tasks"
+      },
+      {
+        "text": "To Do List",
+        "href": "todo-list"
+      },
+      {
+        "text": "Daily Activity Report",
+        "href": "daily-activity-report"
+      }
+    ],
+    "nav-task-management-timeline :: Task Timeline": [
+      {
+        "text": "Task Timeline",
+        "href": "redirect/task-timeline"
+      }
+    ],
+    "nav-task-management-calendar :: Calendar": [
+      {
+        "text": "Calendar",
+        "href": "calendar"
+      }
+    ],
+    "nav-task-management-my-tasks :: My Tasks": [
+      {
+        "text": "My Tasks",
+        "href": "my-tasks"
+      }
+    ],
+    "nav-task-management-created-tasks :: Delegated Tasks": [
+      {
+        "text": "Delegated Tasks",
+        "href": "delegated-tasks"
+      }
+    ],
+    "nav-task-management-todo-list :: To Do List": [
+      {
+        "text": "To Do List",
+        "href": "todo-list"
+      }
+    ],
+    "nav-task-management-report :: Daily Activity Repor": [
+      {
+        "text": "Daily Activity Report",
+        "href": "daily-activity-report"
+      }
+    ],
+    "nav-crm :: CRM": [
+      {
+        "text": "FollowUps",
+        "href": "followups"
+      },
+      {
+        "text": "Create Enquiry",
+        "href": "redirect/enquiry"
+      },
+      {
+        "text": "Create Quotation",
+        "href": "redirect/quotation"
+      },
+      {
+        "text": "Leads",
+        "href": "leads"
+      },
+      {
+        "text": "Lead Task Assignment",
+        "href": "add-multiple-lead-tasks"
+      },
+      {
+        "text": "Dealers",
+        "href": "dealers"
+      },
+      {
+        "text": "Solar Order Forms",
+        "href": "solar-orders"
+      },
+      {
+        "text": "Lead Transfer",
+        "href": "bulk-lead-transfer"
+      },
+      {
+        "text": "Lead Status",
+        "href": "lead-status"
+      },
+      {
+        "text": "Lead Sources",
+        "href": "lead-sources"
+      }
+    ],
+    "nav-crm-followups :: FollowUps": [
+      {
+        "text": "FollowUps",
+        "href": "followups"
+      }
+    ],
+    "nav-crm-create-enquiry :: Create Enquiry": [
+      {
+        "text": "Create Enquiry",
+        "href": "redirect/enquiry"
+      }
+    ],
+    "nav-crm-create-quotation :: Create Quotation": [
+      {
+        "text": "Create Quotation",
+        "href": "redirect/quotation"
+      }
+    ],
+    "nav-crm-leads :: Leads": [
+      {
+        "text": "Leads",
+        "href": "leads"
+      }
+    ],
+    "nav-task-management-lead-tasks :: Lead Task Assignment": [
+      {
+        "text": "Lead Task Assignment",
+        "href": "add-multiple-lead-tasks"
+      }
+    ],
+    "nav-crm-dealers :: Dealers": [
+      {
+        "text": "Dealers",
+        "href": "dealers"
+      }
+    ],
+    "nav-crm-solar-orders :: Solar Order Forms": [
+      {
+        "text": "Solar Order Forms",
+        "href": "solar-orders"
+      }
+    ],
+    "nav-crm-settings-lead-transfer :: Lead Transfer": [
+      {
+        "text": "Lead Transfer",
+        "href": "bulk-lead-transfer"
+      }
+    ],
+    "nav-crm-settings :: Settings": [
+      {
+        "text": "Lead Status",
+        "href": "lead-status"
+      },
+      {
+        "text": "Lead Sources",
+        "href": "lead-sources"
+      }
+    ],
+    "nav-crm-settings-lead-status :: Lead Status": [
+      {
+        "text": "Lead Status",
+        "href": "lead-status"
+      }
+    ],
+    "nav-crm-settings-lead-sources :: Lead Sources": [
+      {
+        "text": "Lead Sources",
+        "href": "lead-sources"
+      }
+    ],
+    "nav-project :: Project": [
+      {
+        "text": "Add New Project",
+        "href": "project"
+      },
+      {
+        "text": "Projects",
+        "href": "projects"
+      },
+      {
+        "text": "Notes",
+        "href": "project-notes"
+      },
+      {
+        "text": "Attachments",
+        "href": "project-attachments"
+      },
+      {
+        "text": "Complaints",
+        "href": "complaints"
+      },
+      {
+        "text": "Expenses",
+        "href": "project-expenses"
+      },
+      {
+        "text": "Collections",
+        "href": "project-incomes"
+      },
+      {
+        "text": "Maintenance Schedules",
+        "href": "maintenance-schedules"
+      },
+      {
+        "text": "Project Collection Pendings",
+        "href": "project-collection-pending"
+      },
+      {
+        "text": "Project Types",
+        "href": "project-types"
+      },
+      {
+        "text": "Cost Types",
+        "href": "cost-centers"
+      },
+      {
+        "text": "Project Stages",
+        "href": "project-stages"
+      },
+      {
+        "text": "EB Sections",
+        "href": "eb-sections"
+      }
+    ],
+    "nav-project-add :: Add New Project": [
+      {
+        "text": "Add New Project",
+        "href": "project"
+      }
+    ],
+    "nav-project-list :: Projects": [
+      {
+        "text": "Projects",
+        "href": "projects"
+      }
+    ],
+    "nav-project-notes :: Notes": [
+      {
+        "text": "Notes",
+        "href": "project-notes"
+      }
+    ],
+    "nav-project-attachments :: Attachments": [
+      {
+        "text": "Attachments",
+        "href": "project-attachments"
+      }
+    ],
+    "nav-project-complaints :: Complaints": [
+      {
+        "text": "Complaints",
+        "href": "complaints"
+      }
+    ],
+    "nav-project-expenses :: Expenses": [
+      {
+        "text": "Expenses",
+        "href": "project-expenses"
+      }
+    ],
+    "nav-project-collections :: Collections": [
+      {
+        "text": "Collections",
+        "href": "project-incomes"
+      }
+    ],
+    "nav-project-maintenance :: Maintenance Schedule": [
+      {
+        "text": "Maintenance Schedules",
+        "href": "maintenance-schedules"
+      }
+    ],
+    "nav-project-collection-pending :: Project Collection P": [
+      {
+        "text": "Project Collection Pendings",
+        "href": "project-collection-pending"
+      }
+    ],
+    "nav-project-master :: Master": [
+      {
+        "text": "Project Types",
+        "href": "project-types"
+      },
+      {
+        "text": "Cost Types",
+        "href": "cost-centers"
+      },
+      {
+        "text": "Project Stages",
+        "href": "project-stages"
+      },
+      {
+        "text": "EB Sections",
+        "href": "eb-sections"
+      }
+    ],
+    "nav-project-master-types :: Project Types": [
+      {
+        "text": "Project Types",
+        "href": "project-types"
+      }
+    ],
+    "nav-project-master-cost-types :: Cost Types": [
+      {
+        "text": "Cost Types",
+        "href": "cost-centers"
+      }
+    ],
+    "nav-project-master-stages :: Project Stages": [
+      {
+        "text": "Project Stages",
+        "href": "project-stages"
+      }
+    ],
+    "nav-project-master-eb-sections :: EB Sections": [
+      {
+        "text": "EB Sections",
+        "href": "eb-sections"
+      }
+    ],
+    "nav-whatsapp :: Whatsapp": [
+      {
+        "text": "Chat Bots",
+        "href": "chatbots"
+      },
+      {
+        "text": "Whatsapp Accounts",
+        "href": "whatsapp-accounts"
+      },
+      {
+        "text": "Templates",
+        "href": "whatsapp-templates"
+      },
+      {
+        "text": "Broadcasts",
+        "href": "broadcasts"
+      },
+      {
+        "text": "Customer Broadcast",
+        "href": "customer-broadcast"
+      },
+      {
+        "text": "Chat",
+        "href": "chat"
+      }
+    ],
+    "nav-whatsapp-chatbots :: Chat Bots": [
+      {
+        "text": "Chat Bots",
+        "href": "chatbots"
+      }
+    ],
+    "nav-whatsapp-accounts :: Whatsapp Accounts": [
+      {
+        "text": "Whatsapp Accounts",
+        "href": "whatsapp-accounts"
+      }
+    ],
+    "nav-whatsapp-templates :: Templates": [
+      {
+        "text": "Templates",
+        "href": "whatsapp-templates"
+      }
+    ],
+    "nav-whatsapp-broadcasts :: Broadcasts": [
+      {
+        "text": "Broadcasts",
+        "href": "broadcasts"
+      }
+    ],
+    "nav-whatsapp-customer-broadcast :: Customer Broadcast": [
+      {
+        "text": "Customer Broadcast",
+        "href": "customer-broadcast"
+      }
+    ],
+    "nav-whatsapp-chat :: Chat": [
+      {
+        "text": "Chat",
+        "href": "chat"
+      }
+    ],
+    "nav-inventory :: Inventory": [
+      {
+        "text": "New Invoice",
+        "href": "redirect/invoice"
+      },
+      {
+        "text": "Invoices",
+        "href": "invoices"
+      },
+      {
+        "text": "Items",
+        "href": "items"
+      },
+      {
+        "text": "Item Groups",
+        "href": "item-groups"
+      },
+      {
+        "text": "Item Categories",
+        "href": "item-categories"
+      },
+      {
+        "text": "Brands",
+        "href": "item-brands"
+      },
+      {
+        "text": "Item Colors",
+        "href": "item-colors"
+      },
+      {
+        "text": "Item Size",
+        "href": "item-size"
+      },
+      {
+        "text": "Item Packing Types",
+        "href": "item-packing-types"
+      },
+      {
+        "text": "Item Branch Stocks",
+        "href": "item-variant-branch-stocks"
+      },
+      {
+        "text": "Invoice Types",
+        "href": "invoice-types"
+      },
+      {
+        "text": "Suppliers",
+        "href": "suppliers"
+      }
+    ],
+    "nav-inventory-new-invoice :: New Invoice": [
+      {
+        "text": "New Invoice",
+        "href": "redirect/invoice"
+      }
+    ],
+    "nav-inventory-invoices :: Invoices": [
+      {
+        "text": "Invoices",
+        "href": "invoices"
+      }
+    ],
+    "nav-inventory-settings :: Settings": [
+      {
+        "text": "Items",
+        "href": "items"
+      },
+      {
+        "text": "Item Groups",
+        "href": "item-groups"
+      },
+      {
+        "text": "Item Categories",
+        "href": "item-categories"
+      },
+      {
+        "text": "Brands",
+        "href": "item-brands"
+      },
+      {
+        "text": "Item Colors",
+        "href": "item-colors"
+      },
+      {
+        "text": "Item Size",
+        "href": "item-size"
+      },
+      {
+        "text": "Item Packing Types",
+        "href": "item-packing-types"
+      },
+      {
+        "text": "Item Branch Stocks",
+        "href": "item-variant-branch-stocks"
+      },
+      {
+        "text": "Invoice Types",
+        "href": "invoice-types"
+      },
+      {
+        "text": "Suppliers",
+        "href": "suppliers"
+      }
+    ],
+    "nav-inventory-settings-items :: Items": [
+      {
+        "text": "Items",
+        "href": "items"
+      }
+    ],
+    "nav-inventory-settings-item-groups :: Item Groups": [
+      {
+        "text": "Item Groups",
+        "href": "item-groups"
+      }
+    ],
+    "nav-inventory-settings-item-categories :: Item Categories": [
+      {
+        "text": "Item Categories",
+        "href": "item-categories"
+      }
+    ],
+    "nav-inventory-settings-brands :: Brands": [
+      {
+        "text": "Brands",
+        "href": "item-brands"
+      }
+    ],
+    "nav-inventory-settings-item-colors :: Item Colors": [
+      {
+        "text": "Item Colors",
+        "href": "item-colors"
+      }
+    ],
+    "nav-inventory-settings-item-sizes :: Item Size": [
+      {
+        "text": "Item Size",
+        "href": "item-size"
+      }
+    ],
+    "nav-inventory-settings-item-packing-types :: Item Packing Types": [
+      {
+        "text": "Item Packing Types",
+        "href": "item-packing-types"
+      }
+    ],
+    "nav-inventory-settings-item-branch-stocks :: Item Branch Stocks": [
+      {
+        "text": "Item Branch Stocks",
+        "href": "item-variant-branch-stocks"
+      }
+    ],
+    "nav-inventory-settings-invoice-types :: Invoice Types": [
+      {
+        "text": "Invoice Types",
+        "href": "invoice-types"
+      }
+    ],
+    "nav-inventory-settings-suppliers :: Suppliers": [
+      {
+        "text": "Suppliers",
+        "href": "suppliers"
+      }
+    ],
+    "nav-accounts :: Accounts": [
+      {
+        "text": "Receipts",
+        "href": "receipts"
+      },
+      {
+        "text": "Payments",
+        "href": "payments"
+      },
+      {
+        "text": "Journals",
+        "href": "vouchers"
+      },
+      {
+        "text": "Contras",
+        "href": "contra-vouchers"
+      },
+      {
+        "text": "Balance Sheet",
+        "href": "balancesheet"
+      },
+      {
+        "text": "Bank Reconciliation",
+        "href": "bank-reconciliation"
+      },
+      {
+        "text": "Cheques Collected",
+        "href": "cheque-collections"
+      },
+      {
+        "text": "Ready for Deposit",
+        "href": "ready-for-deposit"
+      },
+      {
+        "text": "Deposited Cheques",
+        "href": "deposited-cheques"
+      },
+      {
+        "text": "Issued Cheques",
+        "href": "cheque-issues"
+      },
+      {
+        "text": "Uncleared Cheques",
+        "href": "uncleared-cheque-list"
+      },
+      {
+        "text": "Cheque Master",
+        "href": "cheque-master"
+      },
+      {
+        "text": "Ledgers",
+        "href": "ledgers"
+      },
+      {
+        "text": "Account Groups",
+        "href": "account-groups"
+      },
+      {
+        "text": "Voucher Types",
+        "href": "voucher-types"
+      },
+      {
+        "text": "Payment Terms",
+        "href": "payment-terms"
+      },
+      {
+        "text": "Currencies",
+        "href": "currencies"
+      }
+    ],
+    "nav-accounts-receipts :: Receipts": [
+      {
+        "text": "Receipts",
+        "href": "receipts"
+      }
+    ],
+    "nav-accounts-payments :: Payments": [
+      {
+        "text": "Payments",
+        "href": "payments"
+      }
+    ],
+    "nav-accounts-journals :: Journals": [
+      {
+        "text": "Journals",
+        "href": "vouchers"
+      }
+    ],
+    "nav-accounts-contras :: Contras": [
+      {
+        "text": "Contras",
+        "href": "contra-vouchers"
+      }
+    ],
+    "nav-accounts-balance-sheet :: Balance Sheet": [
+      {
+        "text": "Balance Sheet",
+        "href": "balancesheet"
+      }
+    ],
+    "nav-accounts-bank-reconciliation :: Bank Reconciliation": [
+      {
+        "text": "Bank Reconciliation",
+        "href": "bank-reconciliation"
+      }
+    ],
+    "nav-accounts-cheque-collection :: Cheque Collection": [
+      {
+        "text": "Cheques Collected",
+        "href": "cheque-collections"
+      },
+      {
+        "text": "Ready for Deposit",
+        "href": "ready-for-deposit"
+      },
+      {
+        "text": "Deposited Cheques",
+        "href": "deposited-cheques"
+      }
+    ],
+    "nav-accounts-cheque-collection-collected :: Cheques Collected": [
+      {
+        "text": "Cheques Collected",
+        "href": "cheque-collections"
+      }
+    ],
+    "nav-accounts-cheque-collection-ready :: Ready for Deposit": [
+      {
+        "text": "Ready for Deposit",
+        "href": "ready-for-deposit"
+      }
+    ],
+    "nav-accounts-cheque-collection-deposited :: Deposited Cheques": [
+      {
+        "text": "Deposited Cheques",
+        "href": "deposited-cheques"
+      }
+    ],
+    "nav-accounts-cheque-issue :: Cheque Issue": [
+      {
+        "text": "Issued Cheques",
+        "href": "cheque-issues"
+      },
+      {
+        "text": "Uncleared Cheques",
+        "href": "uncleared-cheque-list"
+      },
+      {
+        "text": "Cheque Master",
+        "href": "cheque-master"
+      }
+    ],
+    "nav-accounts-cheque-issue-issued :: Issued Cheques": [
+      {
+        "text": "Issued Cheques",
+        "href": "cheque-issues"
+      }
+    ],
+    "nav-accounts-cheque-issue-uncleared :: Uncleared Cheques": [
+      {
+        "text": "Uncleared Cheques",
+        "href": "uncleared-cheque-list"
+      }
+    ],
+    "nav-accounts-cheque-issue-master :: Cheque Master": [
+      {
+        "text": "Cheque Master",
+        "href": "cheque-master"
+      }
+    ],
+    "nav-accounts-master :: Master": [
+      {
+        "text": "Ledgers",
+        "href": "ledgers"
+      },
+      {
+        "text": "Account Groups",
+        "href": "account-groups"
+      },
+      {
+        "text": "Voucher Types",
+        "href": "voucher-types"
+      },
+      {
+        "text": "Payment Terms",
+        "href": "payment-terms"
+      },
+      {
+        "text": "Currencies",
+        "href": "currencies"
+      }
+    ],
+    "nav-accounts-master-ledgers :: Ledgers": [
+      {
+        "text": "Ledgers",
+        "href": "ledgers"
+      }
+    ],
+    "nav-accounts-master-groups :: Account Groups": [
+      {
+        "text": "Account Groups",
+        "href": "account-groups"
+      }
+    ],
+    "nav-accounts-master-voucher-types :: Voucher Types": [
+      {
+        "text": "Voucher Types",
+        "href": "voucher-types"
+      }
+    ],
+    "nav-accounts-master-payment-terms :: Payment Terms": [
+      {
+        "text": "Payment Terms",
+        "href": "payment-terms"
+      }
+    ],
+    "nav-accounts-master-currencies :: Currencies": [
+      {
+        "text": "Currencies",
+        "href": "currencies"
+      }
+    ],
+    "nav-master :: Master": [
+      {
+        "text": "Business Contacts",
+        "href": "business-contacts"
+      },
+      {
+        "text": "Users",
+        "href": "users"
+      },
+      {
+        "text": "Reset Password",
+        "href": "change-user-password"
+      },
+      {
+        "text": "Branch",
+        "href": "branches"
+      },
+      {
+        "text": "User Role Groups",
+        "href": "user-role-groups"
+      },
+      {
+        "text": "Teams",
+        "href": "teams"
+      },
+      {
+        "text": "Client Settings",
+        "href": "client-setting"
+      },
+      {
+        "text": "Custom Fields",
+        "href": "dynamic-fields"
+      },
+      {
+        "text": "Dynamic Reports",
+        "href": "dynamic-list"
+      },
+      {
+        "text": "Field Mapping",
+        "href": "field-map-tags"
+      },
+      {
+        "text": "Dynamic Dashboards",
+        "href": "dynamic-dashboards"
+      }
+    ],
+    "nav-master-business-contacts :: Business Contacts": [
+      {
+        "text": "Business Contacts",
+        "href": "business-contacts"
+      }
+    ],
+    "nav-master-users :: Users": [
+      {
+        "text": "Users",
+        "href": "users"
+      }
+    ],
+    "nav-master-reset-password :: Reset Password": [
+      {
+        "text": "Reset Password",
+        "href": "change-user-password"
+      }
+    ],
+    "nav-master-branch :: Branch": [
+      {
+        "text": "Branch",
+        "href": "branches"
+      }
+    ],
+    "nav-master-user-role-groups :: User Role Groups": [
+      {
+        "text": "User Role Groups",
+        "href": "user-role-groups"
+      }
+    ],
+    "nav-master-teams :: Teams": [
+      {
+        "text": "Teams",
+        "href": "teams"
+      }
+    ],
+    "nav-master-client-settings :: Client Settings": [
+      {
+        "text": "Client Settings",
+        "href": "client-setting"
+      }
+    ],
+    "nav-master-custom-fields :: Custom Fields": [
+      {
+        "text": "Custom Fields",
+        "href": "dynamic-fields"
+      }
+    ],
+    "nav-master-dynamic-reports :: Dynamic Reports": [
+      {
+        "text": "Dynamic Reports",
+        "href": "dynamic-list"
+      }
+    ],
+    "nav-master-field-map-tags :: Field Mapping": [
+      {
+        "text": "Field Mapping",
+        "href": "field-map-tags"
+      }
+    ],
+    "nav-master-dynamic-dashboards :: Dynamic Dashboards": [
+      {
+        "text": "Dynamic Dashboards",
+        "href": "dynamic-dashboards"
+      }
+    ],
+    "nav-excel-upload :: Excel Upload": [
+      {
+        "text": "Individual Customer",
+        "href": "individual-customer-upload"
+      },
+      {
+        "text": "Business Customer",
+        "href": "business-customer-upload"
+      },
+      {
+        "text": "Enquiry Upload",
+        "href": "enquiry-upload"
+      },
+      {
+        "text": "Project Upload",
+        "href": "projects-upload"
+      },
+      {
+        "text": "Solar Project Upload",
+        "href": "solar-project-upload"
+      }
+    ],
+    "nav-excel-upload-individual-customer :: Individual Customer": [
+      {
+        "text": "Individual Customer",
+        "href": "individual-customer-upload"
+      }
+    ],
+    "nav-excel-upload-business-customer :: Business Customer": [
+      {
+        "text": "Business Customer",
+        "href": "business-customer-upload"
+      }
+    ],
+    "nav-excel-upload-enquiry :: Enquiry Upload": [
+      {
+        "text": "Enquiry Upload",
+        "href": "enquiry-upload"
+      }
+    ],
+    "nav-excel-upload-project :: Project Upload": [
+      {
+        "text": "Project Upload",
+        "href": "projects-upload"
+      }
+    ],
+    "nav-excel-upload-solar-project :: Solar Project Upload": [
+      {
+        "text": "Solar Project Upload",
+        "href": "solar-project-upload"
+      }
+    ],
+    "nav-reports :: Reports": [
+      {
+        "text": "Reports",
+        "href": "reports"
+      }
+    ]
+  },
+  "enquiryFields": [
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "branch",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Branch",
+      "options": [
+        "Choose",
+        "Kannur",
+        "Kasargod"
+      ]
+    },
+    {
+      "tag": "input",
+      "type": "date",
+      "id": "enquiry-date",
+      "name": "",
+      "placeholder": "Enter Date",
+      "required": false,
+      "label": "Date :"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "enquiry-number",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "customer-country-code",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "options": [
+        "",
+        "AFG +93",
+        "ALA +358-18",
+        "ALB +355",
+        "DZA +213",
+        "ASM +1-684",
+        "AND +376",
+        "AGO +244",
+        "AIA +1-264",
+        "ATA",
+        "ATG +1-268",
+        "ARG +54"
+      ]
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "customer-phone",
+      "name": "",
+      "placeholder": "Enter phone number and search",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "TxtCustomer",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Customer Name:*"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "Place",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Place"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "assignto",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Assign To*",
+      "options": [
+        "Choose",
+        "You",
+        "Biju",
+        "JASEEM",
+        "NABEEL",
+        "Shaju Ummar",
+        "SHAMAL",
+        "SIRAJ",
+        "VIGNESH"
+      ]
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "no-next-followup-enquiry",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Not Required"
+    },
+    {
+      "tag": "input",
+      "type": "datetime-local",
+      "id": "next-followup-date",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Next Followup Date:"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "followup",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Followup Status",
+      "options": [
+        "New Enquiry",
+        "Awaiting",
+        "Call not attended",
+        "customer is busy",
+        "Interested",
+        "Got the business",
+        "Not interested",
+        "Postponded",
+        "PRICE ISSUE"
+      ]
+    },
+    {
+      "tag": "input",
+      "type": "number",
+      "id": "business-value",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Business Value :"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "leadsource",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Lead Source",
+      "options": [
+        "Choose",
+        "ABC EMPORIO",
+        "Abdulla kappil",
+        "Abhi",
+        "Aboobacker",
+        "Ad enquiry",
+        "Add enq",
+        "Add enquiry",
+        "Ajeed",
+        "Ameer Nikshan",
+        "Amith Chala Dealer",
+        "Anoop"
+      ]
+    },
+    {
+      "tag": "input",
+      "type": "date",
+      "id": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "item-search-input",
+      "name": "",
+      "placeholder": "Search Item Name",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "number",
+      "id": "new-item-quantity",
+      "name": "",
+      "placeholder": "Enter quantity",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea",
+      "id": "enquiry-description",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Remarks:"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "button",
+      "id": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "type": "button",
+      "id": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "label": ""
+    }
+  ]
+}

@@ -165,15 +165,21 @@ These apply across every CRM page and are useful for test automation:
 | **Buttons** | New Order; Reset. |
 | **Table Columns** | S.No · Branch · Beneficiary Name · Address · Phone · KSEB Consumer No · KSEB Consumer Name · Electrical Section · Plant Capacity · Total Amount · Action. |
 
-### 3.9 Lead Transfer (Bulk)
+### 3.9 Lead Transfer (Bulk)  ✅ *verified working*
 | Attribute | Detail |
 |-----------|--------|
 | **Page Name** | Bulk Lead Transfer |
 | **URL** | `/bulk-lead-transfer` |
 | **Breadcrumb** | CRM › Bulk Lead Transfer |
-| **Purpose** | Reassign multiple leads from one assignee to another in bulk. |
-| **Buttons** | Apply Filters, Clear Filters, Reset. |
-| **Filters** | Search by Name/Phone/Email + match mode; date range; Type; Status; Item Category; Lead Stage (`All/New/Warm/Hot/Won/Lost`). |
+| **Purpose** | Reassign one or many leads from their current executive to another, in bulk. |
+| **Filters (all)** | Search By (Name/Phone/Email) + match (Contains/StartWith/EqualTo) + Search Value; **Branch**; **Period** (date range); **Type** (All/Enquiry/Quotation); **Status**; **Lead Source**; **Lead Quality**; **Item Category**; **Items** (search); **Current Assignee** (All/You/Arshida/Biju/JASEEM/Shaju Ummar/SHAMAL/VIGNESH); **Lead Stage** (All/New/Warm/Hot/Won/Lost); **FB Ad Name**; **FB Page**; **FB Form**. |
+| **Buttons** | Clear Filters, **Apply Filters**, Reset. |
+| **Empty state** | "Please apply filters to view leads." — the list is hidden until **Apply Filters** is clicked. |
+| **Table Columns** | (checkbox) · SlNo · Number · Customer Name · Phone · Status · Stage · Date · Lead Source · **Current Assignee** · "Select All". |
+| **Transfer bar** | "Transfer Leads (N Selected)" → **Transfer To** `-- Select Executive --` (You/Arshida/Biju/JASEEM/Shaju Ummar/SHAMAL/VIGNESH) → **Transfer Selected (N)**. |
+| **Flow** | Apply Filters → tick lead checkbox(es) → choose executive in "Transfer To" → "Transfer Selected (N)" → confirm *"Are you sure you want to transfer N lead(s) to the selected executive?"* → **"Successfully transferred N lead(s)."** The lead's **Current Assignee** column then shows the new executive. |
+| **Verified** | Live test: lead **ENQ-378** reassigned **VIGNESH → SHAMAL**; re-searching the lead confirmed Current Assignee = SHAMAL. Covered by **TC-12** (`pages/LeadTransferPage.js`). |
+| **⚠️ Backend note** | "Apply Filters" intermittently returns the backend JSON error `ExpectedStartOfValueNotFound, Path: $` (see §5.0); the automation retries through it. The transfer action itself succeeds reliably. |
 | **Status Values** | New, Warm, Hot, Won, Lost. |
 
 ### 3.10 Lead Status  *(Settings)*

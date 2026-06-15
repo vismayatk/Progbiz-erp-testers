@@ -21,6 +21,7 @@ const { LoginPage }    = require('../pages/LoginPage');
 const { EnquiryPage }  = require('../pages/EnquiryPage');
 const { FollowUpPage } = require('../pages/FollowUpPage');
 const { QuotationPage }= require('../pages/QuotationPage');
+const { LeadTransferPage } = require('../pages/LeadTransferPage');
 const { screenshot }   = require('../utils/helpers');
 const { testData }     = require('../fixtures/testData');
 
@@ -363,6 +364,48 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     console.log(`  ✅ ASSERT: ${count} enquiry row(s) in listing`);
 
     await screenshot(page, 'tc11_enquiry_listing');
+  });
+
+  // --------------------------------------------------------------------------
+  // TC-12  Lead Transfer — transfer a lead to an executive & verify the assignee
+  // --------------------------------------------------------------------------
+  test('TC-12 | Lead Transfer — transfer a lead to an executive and verify the new assignee', async ({ page }) => {
+    test.setTimeout(240_000);   // page is slow + Apply-Filters retries through intermittent backend errors
+    console.log('\n═══════════════════════════════════════');
+    console.log('TC-12 | Lead Transfer (CRM → Lead Transfer)');
+    console.log('═══════════════════════════════════════');
+
+    const loginPage = new LoginPage(page);
+    const transfer  = new LeadTransferPage(page);
+
+    await loginPage.goto();
+    await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
+
+    await transfer.goto();
+    const rows = await transfer.applyFilters();
+    expect(rows, 'Lead Transfer list did not load (backend ExpectedStartOfValueNotFound?)').toBeGreaterThan(0);
+
+    // Pick the first lead and a target executive different from its current assignee
+    const lead = await transfer.getFirstLead();
+    console.log(`  🎯 Lead ${lead.number} (${lead.phone}) currently assigned to "${lead.assignee}"`);
+    const execs = ['VIGNESH', 'SHAMAL', 'JASEEM', 'Biju', 'Arshida', 'Shaju Ummar'];
+    const target = execs.find(e => e.toLowerCase() !== (lead.assignee || '').toLowerCase()) || 'VIGNESH';
+    console.log(`  ➡️  Transferring to "${target}"`);
+
+    const result = await transfer.transferFirstLeadTo(target);
+    await screenshot(page, 'tc12_transfer_result');
+    // A backend error on transfer is a real (backend) failure — surface it.
+    if (result && /oops|something went wrong|error code/i.test(result)) {
+      throw new Error(`Lead transfer failed (backend): "${result}"`);
+    }
+
+    // PRIMARY assertion: re-search the lead and confirm its Current Assignee changed.
+    const newAssignee = await transfer.assigneeOf(lead.phone);
+    console.log(`  🔎 After transfer, ${lead.number} assignee = "${newAssignee}" (toast: ${JSON.stringify(result)})`);
+    expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()),
+      `Expected assignee "${target}" but found "${newAssignee}". Transfer toast: "${result}"`
+    ).toBeTruthy();
+    console.log(`  ✅ ASSERT: ${lead.number} reassigned "${lead.assignee}" → "${newAssignee}"`);
   });
 });
 

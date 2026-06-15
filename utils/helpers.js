@@ -87,4 +87,24 @@ async function waitOverviewReady(page, timeoutMs = 25000) {
   await page.waitForTimeout(600);
 }
 
-module.exports = { screenshot, getAlertText, clickByText, selectOption, waitOverviewReady };
+/**
+ * Detect the backend's "Oops something went wrong / Error Code: …" SweetAlert
+ * that intermittently appears after save operations (customer create, enquiry
+ * save) following the recent backend changes. Dismisses it and throws a clear
+ * error so the failure is actionable instead of a confusing downstream timeout.
+ * Returns false (no error) on success.
+ */
+async function throwIfServerError(page, timeoutMs = 4000) {
+  const swal = page.locator('.swal2-popup');
+  const seen = await swal.waitFor({ state: 'visible', timeout: timeoutMs }).then(() => true).catch(() => false);
+  if (!seen) return false;
+  const text = (await page.locator('.swal2-title, .swal2-html-container').allTextContents().catch(() => [])).join(' ').trim();
+  await page.locator('.swal2-confirm').click().catch(() => {});
+  await swal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+  if (/oops|something went wrong|error code|failed/i.test(text)) {
+    throw new Error(`Backend server error on save: "${text}"`);
+  }
+  return false;
+}
+
+module.exports = { screenshot, getAlertText, clickByText, selectOption, waitOverviewReady, throwIfServerError };

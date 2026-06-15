@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAlertText, waitOverviewReady } = require('../utils/helpers');
+const { getAlertText, waitOverviewReady, throwIfServerError } = require('../utils/helpers');
 
 class EnquiryPage {
   /**
@@ -109,6 +109,7 @@ class EnquiryPage {
 
     await this.saveBtn.click();
     console.log('  💾 Save button clicked');
+    await throwIfServerError(this.page);   // surface intermittent backend errors
   }
 
   /**
@@ -152,6 +153,20 @@ class EnquiryPage {
     // Save the customer (real button id: #btn-customer-save; duplicated across
     // Individual/Business variants, so click the visible one)
     await page.locator('#btn-customer-save:visible').first().click();
+
+    // The backend may return a SweetAlert after saving the customer. A success
+    // alert is dismissed; an error (e.g. "Oops something went wrong / Error Code")
+    // is surfaced as a clear failure rather than hanging the rest of the flow.
+    const swal = page.locator('.swal2-popup');
+    const sawSwal = await swal.waitFor({ state: 'visible', timeout: 6000 }).then(() => true).catch(() => false);
+    if (sawSwal) {
+      const swalText = (await page.locator('.swal2-title, .swal2-html-container').allTextContents().catch(() => [])).join(' ').trim();
+      await page.locator('.swal2-confirm').click().catch(() => {});
+      await swal.waitFor({ state: 'hidden', timeout: 6000 }).catch(() => {});
+      if (/oops|something went wrong|error code|failed/i.test(swalText)) {
+        throw new Error(`New-customer save failed (backend): "${swalText}"`);
+      }
+    }
     await modal.waitFor({ state: 'hidden', timeout: 12000 }).catch(() => {});
     await page.waitForTimeout(1000);
     console.log('  ✅ Customer created');
@@ -210,6 +225,86 @@ class EnquiryPage {
     } catch (e) {
       console.log(`  ⚠️  addItem failed: ${e.message}`);
     }
+  }
+
+  /**
+   * Read an existing customer (name + phone) from the Leads listing, to use as
+   * the query for the "search existing customer" path.
+   * @returns {Promise<{name:string, phone:string}|null>}
+   */
+  async getExistingCustomerFromLeads() {
+    await this.page.goto(`${this.baseUrl}/leads`, { waitUntil: 'domcontentloaded' });
+    await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+    await this.page.waitForTimeout(1200);
+    return this.page.evaluate(() => {
+      // Leads columns: SlNo, Number, Customer Name, Phone, ...
+      const r = document.querySelector('table tbody tr');
+      if (!r) return null;
+      const c = [...r.querySelectorAll('td')].map(e => (e.textContent || '').trim());
+      return { name: c[2] || '', phone: (c[3] || '').replace(/\D/g, '').slice(-10) };
+    });
+  }
+
+  /**
+   * WAY 2 — pick an EXISTING customer via the "Search Results" modal
+   * (#searchModal): open it from the phone magnifier, search by phone/name in
+   * #txtSearchBox, and click the matching result row to populate the form.
+   * @param {string} query - phone number or name of an existing customer
+   */
+  async selectExistingCustomer(query) {
+    const page = this.page;
+    console.log(`  🔎 Selecting existing customer by "${query}"`);
+
+    // Open the customer-search modal via the phone-field magnifier. Leaving the
+    // phone empty forces the #searchModal (an exact phone would auto-fill).
+    await this.mobileInput.fill('').catch(() => {});
+    const grp = page.locator('#customer-phone')
+      .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
+    await grp.locator('i.ri-search-line').first().click();
+
+    const modal = page.locator('#searchModal');
+    await modal.waitFor({ state: 'visible', timeout: 10000 });
+
+    await page.locator('#txtSearchBox').fill(query);
+    await modal.locator('i.ri-search-line').first().click().catch(() => {});
+
+    const row = modal.locator('table tbody tr').first();
+    await row.waitFor({ state: 'visible', timeout: 10000 });
+    await row.click();
+    await modal.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
+
+    // Confirm the form's customer name populated
+    await page.waitForFunction(
+      () => { const e = document.querySelector('#TxtCustomer'); return e && e.value.trim().length > 0; },
+      { timeout: 8000 }
+    ).catch(() => {});
+    const name = await this.customerNameInput.inputValue().catch(() => '');
+    console.log(`  ✅ Existing customer selected: "${name}"`);
+  }
+
+  /**
+   * WAY 2 — create an enquiry for an EXISTING customer (search & choose), then
+   * fill the rest of the form and save. Mirrors fillAndCreate but skips the
+   * new-customer modal.
+   * @param {string} query - existing customer phone or name
+   * @param {object} data  - testData.enquiry (for value/description/item)
+   */
+  async fillAndCreateWithExisting(query, data) {
+    await this._selectFirstReal(this.branchSelect, 'Branch');
+    await this.selectExistingCustomer(query);
+    await this._selectFirstReal(this.assignToSelect, 'Assign To');
+    await this._safeFill(this.businessValueInput, data.unitPrice);
+    await this._safeFill(this.descriptionInput,   data.description);
+    await this._selectFirstReal(this.sourceSelect, 'Lead Source');
+    await this.addItem(data.product || 'Inverter', data.quantity || '1');
+    try {
+      if (await this.noFollowupChk.count() && !(await this.noFollowupChk.isChecked())) {
+        await this.noFollowupChk.check();
+      }
+    } catch { /* optional */ }
+    await this.saveBtn.click();
+    console.log('  💾 Save (existing-customer enquiry) clicked');
+    await throwIfServerError(this.page);   // surface intermittent backend errors
   }
 
   /** Select the first non-placeholder option of a <select>. */

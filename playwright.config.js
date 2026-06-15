@@ -6,8 +6,8 @@ const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
   // ── Global timeouts ───────────────────────────────────────────────────────
-  timeout:             90_000,   // per-test max
-  expect: { timeout:  15_000 }, // assertion timeout
+  timeout:            150_000,   // per-test max (site can be slow under load)
+  expect: { timeout:  20_000 }, // assertion timeout
 
   // ── Test discovery ────────────────────────────────────────────────────────
   testDir:  './tests',

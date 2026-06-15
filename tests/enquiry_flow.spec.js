@@ -104,6 +104,44 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
   });
 
   // --------------------------------------------------------------------------
+  // TC-02B  Create Enquiry for an EXISTING customer (search & choose)
+  // --------------------------------------------------------------------------
+  test('TC-02B | Create enquiry for an existing customer (search & choose)', async ({ page }) => {
+    console.log('\n═══════════════════════════════════════');
+    console.log('TC-02B | Create enquiry — existing customer');
+    console.log('═══════════════════════════════════════');
+
+    const loginPage   = new LoginPage(page);
+    const enquiryPage = new EnquiryPage(page);
+
+    await loginPage.goto();
+    await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
+
+    // Find a real existing customer to search for
+    const existing = await enquiryPage.getExistingCustomerFromLeads();
+    console.log(`  👥 Existing customer: name="${existing?.name}" phone="${existing?.phone}"`);
+    expect(existing && existing.phone, 'Need at least one existing customer in /leads').toBeTruthy();
+
+    // Open the form and create using the SEARCH + CHOOSE path
+    await enquiryPage.clickAddNew();
+    await enquiryPage.fillAndCreateWithExisting(existing.phone, testData.enquiry);
+
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(1500);
+
+    const msg = await enquiryPage.getSuccessMessage();
+    enquiryUrl = page.url();   // share with downstream tests (works even if TC-02 new-customer path is broken)
+    console.log(`  📌 Existing-customer enquiry URL: ${enquiryUrl}`);
+    await screenshot(page, 'tc02b_existing_enquiry');
+
+    const urlChanged = enquiryUrl.includes('enquiry-overview');
+    expect(urlChanged || msg !== null,
+      `Expected existing-customer enquiry to be created. URL: ${enquiryUrl}, Alert: "${msg}"`
+    ).toBeTruthy();
+    console.log(`  ✅ ASSERT: Existing-customer enquiry created — ${urlChanged ? enquiryUrl : `alert="${msg}"`}`);
+  });
+
+  // --------------------------------------------------------------------------
   // TC-03  Open Created Enquiry
   // --------------------------------------------------------------------------
   test('TC-03 | Open the created enquiry from the list', async ({ page }) => {
@@ -339,18 +377,15 @@ async function _runStatusTransition(page, status, screenshotName) {
   await loginPage.goto();
   await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
 
-  // Create a FRESH enquiry for this transition. The shared enquiry from TC-02
-  // gets converted to a quotation in TC-06, after which its "Followup" button
-  // disappears — so status transitions need their own un-converted enquiry.
-  const uniq = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
-  const enquiryData = {
-    ...testData.enquiry,
-    customerName: `Status ${status} ${uniq}`,
-    mobile:       '9' + uniq.slice(-9),
-    email:        `cust${uniq}@example.com`,   // unique — modal rejects duplicate phone AND email
-  };
+  // Create a FRESH enquiry for this transition (the shared TC-02/02B enquiry is
+  // converted to a quotation in TC-06, after which its "Followup" button
+  // disappears). Use the EXISTING-customer path because new-customer creation is
+  // currently broken server-side (see §5.0 in CRM_MODULE_DOCUMENTATION.md).
+  const existing = await enquiryPage.getExistingCustomerFromLeads();
+  expect(existing && existing.phone, 'Need an existing customer in /leads').toBeTruthy();
+
   await enquiryPage.clickAddNew();
-  await enquiryPage.fillAndCreate(enquiryData);
+  await enquiryPage.fillAndCreateWithExisting(existing.phone, testData.enquiry);
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(1500);
 

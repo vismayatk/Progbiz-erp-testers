@@ -236,7 +236,23 @@ These apply across every CRM page and are useful for test automation:
 
 ## 5. CRM Workflows
 
-### 5.1 Lead Creation
+### 5.0 ⚠️ Retest finding — intermittent backend errors on SAVE operations
+As of the latest retest against `lesol_test`, **save operations intermittently fail** with a
+server-side error:
+> *"Oops something went wrong — Error Code: \<random, e.g. 5C71SS / IDD1SY / ED7M9X / J2LYST\> — Please contact support center"*
+
+- Observed on **New Customer save** (`#btn-customer-save`) **and** on **Enquiry save** (`#btn-save-enquiry`).
+- **Intermittent**: the exact same existing-customer flow succeeded in one test (TC-02B) and failed in another (TC-08) minutes apart; error codes are randomly generated.
+- The site is also **noticeably slower** than before the change (full suite ~13 min vs ~7 min).
+
+**Conclusion:** the recent **backend code change introduced an unstable/regressed save path** — this is a backend bug to investigate, not a test issue. All operations worked reliably (11/11) earlier the same day. The automation now detects this SweetAlert and fails fast with `Backend server error on save: …` (see `utils/helpers.js → throwIfServerError`) so the regression is surfaced clearly rather than as a confusing timeout.
+
+### 5.1 Lead Creation — two ways
+**Way 1 — New customer** (`#customer-phone` → `+` (`i.ri-add-fill`) → `#enquiry-new-customer-modal` → fill name/email → `#btn-customer-save`). *Currently fails server-side — see 5.0.*
+
+**Way 2 — Existing customer (search & choose)** ✅: on the enquiry form click the phone **magnifier** (`i.ri-search-line`) → **`#searchModal`** ("Search Results") opens → type a phone/name in **`#txtSearchBox`** → click the search icon → click the matching result row (Sl.No / Name / Phone / Email) → the form's `#TxtCustomer`/phone auto-populate. (Entering an exact existing phone before the magnifier auto-fills directly without the modal.) Then set Assign To, add item, Save.
+
+### 5.1a Lead Creation (original new-customer steps)
 1. **CRM → Create Enquiry** (`/enquiry`) — or **Leads → Add New → New Enquiry**. Wait for the AJAX form (`#TxtCustomer` / `#btn-save-enquiry`).
 2. Set **Branch** (defaults Kannur) and enter **Customer Phone** (`#customer-phone`).
 3. **Customer step** — the phone is looked up; for a new number click the **`+`** (`i.ri-add-fill`) beside the phone to open the **New Customer modal** (`#enquiry-new-customer-modal`): pick Individual/Business, Level (defaults *Suspect*), fill **Customer Name** (visible `input[placeholder="please enter name"]`), optional email → **Save** (`#btn-customer-save`). The modal closes and populates `#TxtCustomer`.
@@ -291,11 +307,13 @@ The prepared Playwright code targets **incorrect URLs/selectors**. Corrected fac
 
 Status transitions (Won/Lost/In-Follow-Up) are driven by **Lead Status → Nature**, not a single status dropdown, so the test approach needs to record a follow-up with the right status rather than pick "Won" from a generic `<select>`.
 
-### Verified test status — ✅ all 11 passing
+### Verified test status (12 tests)
+> All pass **except TC-02 (new-customer create)**, which is blocked by the backend regression in §5.0. TC-02B (existing customer) covers the working creation path.
 | Test | Status | Notes |
 |------|--------|-------|
 | TC-01 Login | ✅ Pass | `LoginPage` against `lesol_test`. |
-| TC-02 Create Enquiry | ✅ Pass | Branch → phone → **New Customer modal** (`#enquiry-new-customer-modal` → `#btn-customer-save`) → Assign To → **item picker** (`#searchItemModal` via the magnifier) → `#btn-save-enquiry` → redirect to `/enquiry-overview/{id}`. |
+| TC-02 Create Enquiry (**new customer**) | ⚠️ Fails (backend) | Flow is correct, but the New Customer save now returns a server error (see §5.0). The test surfaces it: `New-customer save failed (backend): …`. |
+| TC-02B Create Enquiry (**existing customer, search & choose**) | ✅ Pass | Phone magnifier → `#searchModal` → search `#txtSearchBox` → pick result row → Assign To → item → `#btn-save-enquiry` → `/enquiry-overview/{id}`. |
 | TC-03 Open enquiry | ✅ Pass | Opens the saved `/enquiry-overview/{id}`. |
 | TC-04 Add Follow-up | ✅ Pass | `#btn-add-followup` → `#followupModal` → status + lead quality + save (`#btn-save-followup`). |
 | TC-05 Verify follow-up | ✅ Pass | Counts rows in **Followup History** (`#followups li.crm-recent-activity-content`). |

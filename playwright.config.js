@@ -26,8 +26,12 @@ module.exports = defineConfig({
 
   // ── Default browser options ───────────────────────────────────────────────
   use: {
-    headless:          false,
-    slowMo:            200,
+    // Headless by default (no browser windows pop up; faster). Run headed with
+    // `npm run test:headed` or HEADED=1 when you want to watch.
+    headless:          process.env.HEADED ? false : true,
+    slowMo:            process.env.HEADED ? 200 : 0,
+    // Use a real browser channel (e.g. installed Google Chrome) via CHANNEL=chrome.
+    channel:           process.env.CHANNEL || undefined,
     viewport:          { width: 1280, height: 800 },
     actionTimeout:     20_000,
     navigationTimeout: 30_000,

@@ -25,6 +25,7 @@ const { LeadTransferPage } = require('../pages/LeadTransferPage');
 const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
 const { LeadStatusPage }   = require('../pages/LeadStatusPage');
 const { ItemCategoryPage } = require('../pages/ItemCategoryPage');
+const { ItemPage }         = require('../pages/ItemPage');
 const { screenshot }   = require('../utils/helpers');
 const { testData }     = require('../fixtures/testData');
 
@@ -534,6 +535,40 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     await screenshot(page, 'tc15_item_category');
     expect(gone, `"${newName}" should be deleted`).toBeTruthy();
     console.log(`  ✅ ASSERT: Deleted "${newName}"`);
+  });
+
+  // --------------------------------------------------------------------------
+  // TC-16  Inventory → Items — create an item, verify duplicate rejected, delete
+  // --------------------------------------------------------------------------
+  test('TC-16 | Items — create a Product, verify duplicates are rejected, then delete', async ({ page }) => {
+    test.setTimeout(180_000);
+    console.log('\n═══════════════════════════════════════');
+    console.log('TC-16 | Inventory → Items (Product form)');
+    console.log('═══════════════════════════════════════');
+
+    const loginPage = new LoginPage(page);
+    const items     = new ItemPage(page);
+
+    await loginPage.goto();
+    await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
+
+    // 1) Create a uniquely-named item (Category "Solar") → succeeds (re-runnable)
+    const name = `AutoItem ${Date.now()}`.slice(0, 40);
+    const msg1 = await items.create(name, 'Solar');
+    expect(msg1, `First create should succeed, got: "${msg1}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Item "${name}" created`);
+
+    // 2) Duplicate must be REJECTED (item names are unique)
+    const msg2 = await items.create(name, 'Solar');
+    await screenshot(page, 'tc16_item');
+    expect(/exist|already|duplicate/i.test(msg2 || ''),
+      `Duplicate item should be rejected, but got: "${msg2}"`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Duplicate rejected — "${msg2}"`);
+
+    // 3) DELETE → clean up so the test is re-runnable
+    const gone = await items.delete(name);
+    expect(gone, `"${name}" should be deleted`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Deleted "${name}"`);
   });
 });
 

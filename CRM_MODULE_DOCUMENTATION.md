@@ -331,6 +331,7 @@ Status transitions (Won/Lost/In-Follow-Up) are driven by **Lead Status → Natur
 | TC-13 Lead Sources (Settings) | ✅ Pass | `/lead-sources` full CRUD: create (maxlength 30) → **duplicate rejected** ("already exist") → edit (rename) → delete. Re-runnable + self-cleaning (`pages/LeadSourcesPage.js`). |
 | TC-14 Lead Status (Settings) | ✅ Pass | `/lead-status` full CRUD: create + Nature → **duplicate rejected** → edit → delete (`pages/LeadStatusPage.js`). |
 | TC-15 Item Categories | ✅ Pass | `/item-categories` (inline form) full CRUD: create → **duplicate rejected** → edit → delete (`pages/ItemCategoryPage.js`). |
+| TC-16 Items (Product) | ✅ Pass | `/item` Product form: create (`#item-name` + Category, "Save Item") → **duplicate rejected** ("Item name already exist…") → delete via `/items` list (`pages/ItemPage.js`). |
 
 **Duplicate / unique constraint (verified):** Lead Source → "This Lead source name already exist"; Followup Status → "Followup status name already exist…"; Item Category → "Invalid submission This Item Category is already exist". Action column: Edit = `i.ri-pencil-line` (opens prefilled modal/inline form), Delete = `i.ri-delete-bin-5-fill` (+ confirm).
 

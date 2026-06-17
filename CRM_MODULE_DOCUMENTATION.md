@@ -327,5 +327,8 @@ Status transitions (Won/Lost/In-Follow-Up) are driven by **Lead Status → Natur
 | TC-07 Quotation listing | ✅ Pass | Listed in `/leads` (Type = Quotation). |
 | TC-08/09/10 Status (In-Follow-Up/Won/Lost) | ✅ Pass | Each creates its **own fresh enquiry**, then records a follow-up with the mapped Followup Status (In-Follow-Up→Interested, Won→Got the business, Lost→Not interested). |
 | TC-11 Enquiry listing | ✅ Pass | `/leads` listing (waits for AJAX rows). |
+| TC-12 Lead Transfer | ✅ Pass | Transfer a lead to an executive; verify Current Assignee changed (`pages/LeadTransferPage.js`). |
+| TC-13 Lead Sources (Settings) | ✅ Pass | `/lead-sources` → create source (`#lead-source` modal, maxlength 30) → verify it lists (`pages/LeadSourcesPage.js`). |
+| TC-14 Lead Status (Settings) | ✅ Pass | `/lead-status` → create followup status + Nature (`#followup-status` modal) → verify it lists (`pages/LeadStatusPage.js`). |
 
 **Key fixes applied:** correct URLs (`/leads`, `/enquiry`, `/enquiry-overview/{id}`, `/quotation/0/{id}`); real field IDs; AJAX form + overview-ready waits (`waitOverviewReady`); New-Customer-modal handling (`#btn-customer-save`); item-picker modal (`#searchItemModal`); follow-up modal (`#followupModal` → `#btn-save-followup`); **genuinely unique customer data per run — unique name, phone AND email** (the New Customer modal rejects duplicates of either); status transitions create their own un-converted enquiry (the Followup button disappears after conversion); `getAlertText` made non-blocking so a redirect-on-success no longer times the test out.

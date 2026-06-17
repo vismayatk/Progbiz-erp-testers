@@ -1,0 +1,67 @@
+[
+  {
+    "iter": 1,
+    "op": "LeadTransfer ApplyFilters",
+    "ok": true,
+    "rows": 10,
+    "error": null
+  },
+  {
+    "iter": 1,
+    "op": "NewCustomer Save",
+    "ok": true,
+    "error": null
+  },
+  {
+    "iter": 2,
+    "op": "LeadTransfer ApplyFilters",
+    "ok": true,
+    "rows": 10,
+    "error": null
+  },
+  {
+    "iter": 2,
+    "op": "NewCustomer Save",
+    "ok": true,
+    "error": null
+  },
+  {
+    "iter": 3,
+    "op": "LeadTransfer ApplyFilters",
+    "ok": true,
+    "rows": 10,
+    "error": null
+  },
+  {
+    "iter": 3,
+    "op": "NewCustomer Save",
+    "ok": true,
+    "error": null
+  },
+  {
+    "iter": 4,
+    "op": "LeadTransfer ApplyFilters",
+    "ok": true,
+    "rows": 10,
+    "error": null
+  },
+  {
+    "iter": 4,
+    "op": "NewCustomer Save",
+    "ok": true,
+    "error": null
+  },
+  {
+    "iter": 5,
+    "op": "LeadTransfer ApplyFilters",
+    "ok": true,
+    "rows": 10,
+    "error": null
+  },
+  {
+    "iter": 5,
+    "op": "NewCustomer Save",
+    "ok": true,
+    "error": null
+  }
+]

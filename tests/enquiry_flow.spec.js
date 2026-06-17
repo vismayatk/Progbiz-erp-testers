@@ -22,6 +22,8 @@ const { EnquiryPage }  = require('../pages/EnquiryPage');
 const { FollowUpPage } = require('../pages/FollowUpPage');
 const { QuotationPage }= require('../pages/QuotationPage');
 const { LeadTransferPage } = require('../pages/LeadTransferPage');
+const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
+const { LeadStatusPage }   = require('../pages/LeadStatusPage');
 const { screenshot }   = require('../utils/helpers');
 const { testData }     = require('../fixtures/testData');
 
@@ -406,6 +408,57 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       `Expected assignee "${target}" but found "${newAssignee}". Transfer toast: "${result}"`
     ).toBeTruthy();
     console.log(`  ✅ ASSERT: ${lead.number} reassigned "${lead.assignee}" → "${newAssignee}"`);
+  });
+
+  // --------------------------------------------------------------------------
+  // TC-13  CRM → Settings → Lead Sources — create & verify in list
+  // --------------------------------------------------------------------------
+  test('TC-13 | Lead Sources (Settings) — create a lead source and verify it lists', async ({ page }) => {
+    console.log('\n═══════════════════════════════════════');
+    console.log('TC-13 | CRM → Settings → Lead Sources');
+    console.log('═══════════════════════════════════════');
+
+    const loginPage = new LoginPage(page);
+    const sources   = new LeadSourcesPage(page);
+
+    await loginPage.goto();
+    await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
+    await sources.goto();
+
+    // Name field enforces maxlength 30
+    expect(await sources.nameMaxLength()).toBe(30);
+
+    const name = `AutoSrc ${Date.now()}`.slice(0, 30);
+    await sources.create(name);
+
+    const listed = await sources.existsInList(name);
+    await screenshot(page, 'tc13_lead_source');
+    expect(listed, `New lead source "${name}" not found in the list`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Lead source "${name}" created and visible in the list`);
+  });
+
+  // --------------------------------------------------------------------------
+  // TC-14  CRM → Settings → Lead Status — create a followup status (with Nature)
+  // --------------------------------------------------------------------------
+  test('TC-14 | Lead Status (Settings) — create a followup status with a Nature', async ({ page }) => {
+    console.log('\n═══════════════════════════════════════');
+    console.log('TC-14 | CRM → Settings → Lead Status');
+    console.log('═══════════════════════════════════════');
+
+    const loginPage = new LoginPage(page);
+    const statuses  = new LeadStatusPage(page);
+
+    await loginPage.goto();
+    await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
+    await statuses.goto();
+
+    const name = `AutoStat ${Date.now()}`.slice(0, 30);
+    await statuses.create(name, 'In Followup');
+
+    const listed = await statuses.existsInList(name);
+    await screenshot(page, 'tc14_lead_status');
+    expect(listed, `New followup status "${name}" not found in the list`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Followup status "${name}" created and visible in the list`);
   });
 });
 

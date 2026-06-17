@@ -1,0 +1,33 @@
+# CRM Test Cases — IDs & Run Commands
+
+> **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
+> Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
+> Last generated: 2026-06-17T09:31:06.469Z · 17 test cases in 1 spec file(s).
+
+Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
+
+| Test Case ID | Description | Headless command | Headed (browser) command |
+|---|---|---|---|
+| TC-01 | Login with valid credentials | `npx playwright test -g "TC-01 \|"` | `npx playwright test --headed -g "TC-01 \|"` |
+| TC-02 | Create a new enquiry with valid data | `npx playwright test -g "TC-02 \|"` | `npx playwright test --headed -g "TC-02 \|"` |
+| TC-02B | Create enquiry for an existing customer (search & choose) | `npx playwright test -g "TC-02B \|"` | `npx playwright test --headed -g "TC-02B \|"` |
+| TC-03 | Open the created enquiry from the list | `npx playwright test -g "TC-03 \|"` | `npx playwright test --headed -g "TC-03 \|"` |
+| TC-04 | Add a follow-up to the enquiry | `npx playwright test -g "TC-04 \|"` | `npx playwright test --headed -g "TC-04 \|"` |
+| TC-05 | Verify follow-up is visible in the follow-up listing | `npx playwright test -g "TC-05 \|"` | `npx playwright test --headed -g "TC-05 \|"` |
+| TC-06 | Convert enquiry to quotation | `npx playwright test -g "TC-06 \|"` | `npx playwright test --headed -g "TC-06 \|"` |
+| TC-07 | Verify quotation appears in quotation listing | `npx playwright test -g "TC-07 \|"` | `npx playwright test --headed -g "TC-07 \|"` |
+| TC-08 | Update enquiry status to "In Follow-up" | `npx playwright test -g "TC-08 \|"` | `npx playwright test --headed -g "TC-08 \|"` |
+| TC-09 | Update enquiry status to "Won" | `npx playwright test -g "TC-09 \|"` | `npx playwright test --headed -g "TC-09 \|"` |
+| TC-10 | Update enquiry status to "Lost" | `npx playwright test -g "TC-10 \|"` | `npx playwright test --headed -g "TC-10 \|"` |
+| TC-11 | Verify records are visible in enquiry listing | `npx playwright test -g "TC-11 \|"` | `npx playwright test --headed -g "TC-11 \|"` |
+| TC-12 | Lead Transfer — transfer a lead to an executive and verify the new assignee | `npx playwright test -g "TC-12 \|"` | `npx playwright test --headed -g "TC-12 \|"` |
+| TC-13 | Lead Sources (Settings) — create a lead source and verify it lists | `npx playwright test -g "TC-13 \|"` | `npx playwright test --headed -g "TC-13 \|"` |
+| TC-14 | Lead Status (Settings) — create a followup status with a Nature | `npx playwright test -g "TC-14 \|"` | `npx playwright test --headed -g "TC-14 \|"` |
+| TC-15 | Item Categories — create a category and verify duplicates are rejected | `npx playwright test -g "TC-15 \|"` | `npx playwright test --headed -g "TC-15 \|"` |
+| TC-16 | Items — create a Product, verify duplicates are rejected, then delete | `npx playwright test -g "TC-16 \|"` | `npx playwright test --headed -g "TC-16 \|"` |
+
+**Tips**
+- Run several at once: `npx playwright test -g "TC-13|TC-14|TC-15|TC-16"`.
+- Watch with slow-mo: prefix `HEADED=1` (PowerShell: `$env:HEADED=1; ...`).
+- Use installed Chrome: prefix `CHANNEL=chrome` (PowerShell: `$env:CHANNEL="chrome"; ...`).
+- Run from the project root (`erp-tests`), not `git_max`.

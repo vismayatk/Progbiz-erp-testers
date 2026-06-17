@@ -7,3 +7,7 @@ screenshots/
 
 # Local secrets
 .env
+
+# Local Claude artifacts
+.claude/settings.local.json
+git_max/

@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Playwright HTML Report",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["playwright", "show-report", "reports/html"],
+      "port": 9323
+    },
+    {
+      "name": "Playwright UI Mode",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["playwright", "test", "--ui"],
+      "port": 0
+    }
+  ]
+}

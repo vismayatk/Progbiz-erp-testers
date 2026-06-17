@@ -24,6 +24,7 @@ const { QuotationPage }= require('../pages/QuotationPage');
 const { LeadTransferPage } = require('../pages/LeadTransferPage');
 const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
 const { LeadStatusPage }   = require('../pages/LeadStatusPage');
+const { ItemCategoryPage } = require('../pages/ItemCategoryPage');
 const { screenshot }   = require('../utils/helpers');
 const { testData }     = require('../fixtures/testData');
 
@@ -428,13 +429,31 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     // Name field enforces maxlength 30
     expect(await sources.nameMaxLength()).toBe(30);
 
+    // Name field enforces maxlength 30 (already asserted above)
+    // 1) Create a uniquely-named source → succeeds (re-runnable: name is unique per run)
     const name = `AutoSrc ${Date.now()}`.slice(0, 30);
-    await sources.create(name);
+    const msg1 = await sources.create(name);
+    expect(msg1, `First create should succeed, got: "${msg1}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Lead source "${name}" created`);
 
-    const listed = await sources.existsInList(name);
+    // 2) Duplicate must be REJECTED — this also proves #1 actually persisted
+    const msg2 = await sources.create(name);
+    expect(/exist|already|duplicate/i.test(msg2 || ''),
+      `Duplicate lead source should be rejected, but got: "${msg2}"`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Duplicate rejected — "${msg2}"`);
+
+    // 3) EDIT (pencil) — rename via the prefilled modal
+    const newName = `${name} E`.slice(0, 30);
+    const em = await sources.edit(name, newName);
+    expect(em, `Edit should succeed, got: "${em}"`).toBeFalsy();
+    expect(await sources.existsInList(newName), `Renamed "${newName}" not found`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Edited "${name}" → "${newName}"`);
+
+    // 4) DELETE (trash) — confirm, then verify the row is gone
+    const gone = await sources.delete(newName);
     await screenshot(page, 'tc13_lead_source');
-    expect(listed, `New lead source "${name}" not found in the list`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Lead source "${name}" created and visible in the list`);
+    expect(gone, `"${newName}" should be deleted`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Deleted "${newName}"`);
   });
 
   // --------------------------------------------------------------------------
@@ -452,13 +471,69 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
     await statuses.goto();
 
+    // 1) Create uniquely-named status → succeeds (re-runnable)
     const name = `AutoStat ${Date.now()}`.slice(0, 30);
-    await statuses.create(name, 'In Followup');
+    const msg1 = await statuses.create(name, 'In Followup');
+    expect(msg1, `First create should succeed, got: "${msg1}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Followup status "${name}" created`);
 
-    const listed = await statuses.existsInList(name);
+    // 2) Duplicate must be REJECTED — proves #1 persisted
+    const msg2 = await statuses.create(name, 'In Followup');
+    expect(/exist|already|duplicate/i.test(msg2 || ''),
+      `Duplicate followup status should be rejected, but got: "${msg2}"`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Duplicate rejected — "${msg2}"`);
+
+    // 3) EDIT → rename
+    const newName = `${name} E`.slice(0, 30);
+    const em = await statuses.edit(name, newName);
+    expect(em, `Edit should succeed, got: "${em}"`).toBeFalsy();
+    expect(await statuses.existsInList(newName), `Renamed "${newName}" not found`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Edited "${name}" → "${newName}"`);
+
+    // 4) DELETE → verify gone
+    const gone = await statuses.delete(newName);
     await screenshot(page, 'tc14_lead_status');
-    expect(listed, `New followup status "${name}" not found in the list`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Followup status "${name}" created and visible in the list`);
+    expect(gone, `"${newName}" should be deleted`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Deleted "${newName}"`);
+  });
+
+  // --------------------------------------------------------------------------
+  // TC-15  Inventory → Settings → Item Categories — create + duplicate rejection
+  // --------------------------------------------------------------------------
+  test('TC-15 | Item Categories — create a category and verify duplicates are rejected', async ({ page }) => {
+    console.log('\n═══════════════════════════════════════');
+    console.log('TC-15 | Item Categories (unique constraint)');
+    console.log('═══════════════════════════════════════');
+
+    const loginPage = new LoginPage(page);
+    const cats      = new ItemCategoryPage(page);
+
+    await loginPage.goto();
+    await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
+    await cats.goto();
+
+    const name = `AutoCat ${Date.now()}`.slice(0, 30);
+    const msg1 = await cats.create(name);
+    expect(msg1, `First create should succeed, got: "${msg1}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Item category "${name}" created`);
+
+    const msg2 = await cats.create(name);
+    expect(/exist|already|duplicate/i.test(msg2 || ''),
+      `Duplicate item category should be rejected, but got: "${msg2}"`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Duplicate rejected — "${msg2}"`);
+
+    // 3) EDIT → rename
+    const newName = `${name} E`.slice(0, 30);
+    const em = await cats.edit(name, newName);
+    expect(em, `Edit should succeed, got: "${em}"`).toBeFalsy();
+    expect(await cats.existsInList(newName), `Renamed "${newName}" not found`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Edited "${name}" → "${newName}"`);
+
+    // 4) DELETE → verify gone
+    const gone = await cats.delete(newName);
+    await screenshot(page, 'tc15_item_category');
+    expect(gone, `"${newName}" should be deleted`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Deleted "${newName}"`);
   });
 });
 

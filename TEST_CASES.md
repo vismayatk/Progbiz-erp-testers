@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-19T12:23:31.579Z · 17 test cases in 2 spec file(s).
+> Last generated: 2026-06-19T12:24:04.999Z · 20 test cases in 2 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -25,6 +25,9 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TC-14 | Lead Status (Settings) — create a followup status with a Nature | `npx playwright test -g "TC-14 \|"` | `npx playwright test --headed -g "TC-14 \|"` |
 | TC-15 | Item Categories — create a category and verify duplicates are rejected | `npx playwright test -g "TC-15 \|"` | `npx playwright test --headed -g "TC-15 \|"` |
 | TC-16 | Items — create a Product, verify duplicates are rejected, then delete | `npx playwright test -g "TC-16 \|"` | `npx playwright test --headed -g "TC-16 \|"` |
+| TM-01 | My Tasks page loads with status tabs | `npx playwright test -g "TM-01 \|"` | `npx playwright test --headed -g "TM-01 \|"` |
+| TM-02 | Create a task and verify it is listed | `npx playwright test -g "TM-02 \|"` | `npx playwright test --headed -g "TM-02 \|"` |
+| TM-03 | All Task-Management pages are reachable | `npx playwright test -g "TM-03 \|"` | `npx playwright test --headed -g "TM-03 \|"` |
 
 **Tips**
 - Run several at once: `npx playwright test -g "TC-13|TC-14|TC-15|TC-16"`.

@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-17T09:31:06.469Z · 17 test cases in 1 spec file(s).
+> Last generated: 2026-06-19T12:23:31.579Z · 17 test cases in 2 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 

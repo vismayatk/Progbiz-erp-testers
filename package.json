@@ -4,6 +4,7 @@
   "description": "Playwright automation for CRM — Enquiry flow (POM)",
   "main": "index.js",
   "scripts": {
+    "chrome": "node scripts/run-chrome.js",
     "docs": "node scripts/gen-testcases.js",
     "pretest": "node scripts/gen-testcases.js",
     "test": "playwright test",

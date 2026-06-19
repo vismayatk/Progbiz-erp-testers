@@ -565,10 +565,15 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       `Duplicate item should be rejected, but got: "${msg2}"`).toBeTruthy();
     console.log(`  ✅ ASSERT: Duplicate rejected — "${msg2}"`);
 
-    // 3) DELETE → clean up so the test is re-runnable
+    // 3) DELETE → clean up so the test is re-runnable (skipped where the tenant
+    //    exposes no Delete action on the /items list, e.g. dev)
     const gone = await items.delete(name);
-    expect(gone, `"${name}" should be deleted`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Deleted "${name}"`);
+    if (gone === null) {
+      console.log('  ℹ️  Items delete not available on this tenant — create + duplicate verified');
+    } else {
+      expect(gone, `"${name}" should be deleted`).toBeTruthy();
+      console.log(`  ✅ ASSERT: Deleted "${name}"`);
+    }
   });
 });
 

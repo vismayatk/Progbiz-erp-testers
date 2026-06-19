@@ -60,12 +60,17 @@ class LeadSourcesPage {
   }
 
   /** Search the list for a name and report whether a row contains it. */
-  /** Search by name and return the matching row locator (and whether it exists). */
+  /** Search by name and return the matching row locator (and whether it exists). Retries the filter. */
   async findRow(name) {
-    await this.search.fill(name);
-    await this.search.press('Enter').catch(() => {});   // trigger server-side filter
     const row = this.page.locator('table tbody tr').filter({ hasText: name }).first();
-    await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await this.search.fill('');
+      await this.search.fill(name);
+      await this.search.press('Enter').catch(() => {});   // trigger server-side filter
+      await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+      if (await row.count() > 0) break;
+      await this.page.waitForTimeout(1500);
+    }
     return { row, exists: (await row.count()) > 0 };
   }
 

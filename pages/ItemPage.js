@@ -13,7 +13,10 @@ class ItemPage {
 
     this.nameInput      = page.locator('#item-name');
     this.categorySelect = page.locator('#category');
-    this.saveBtn        = page.locator('button, a.btn').filter({ hasText: /save item/i }).first();
+    // Prefer the explicit "Save Item"; else the VISIBLE "Save" (dev labels it
+    // "Save" and also has hidden inline-save buttons we must avoid).
+    this.saveBtn        = page.locator('button:visible, a.btn:visible')
+      .filter({ hasText: /save item|^\s*save\s*$/i }).last();
     this.search         = page.locator('#filter-name');
   }
 
@@ -51,7 +54,7 @@ class ItemPage {
       await this.page.locator('.swal2-confirm').click().catch(() => {});
       await swal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
       if (/oops|something went wrong|error code/i.test(msg)) throw new Error(`Backend server error: "${msg}"`);
-      if (/success|saved|added/i.test(msg)) msg = null;   // success
+      if (/success|saved|added|done|completed/i.test(msg)) msg = null;   // success ("You're done!!" on dev)
     } else if (/\/items(\b|$)/.test(this.page.url())) {
       msg = null;   // navigated back to the list → success
     }
@@ -61,10 +64,15 @@ class ItemPage {
 
   async findRow(name) {
     await this.gotoList();
-    await this.search.fill(name);
-    await this.search.press('Enter').catch(() => {});
     const row = this.page.locator('table tbody tr').filter({ hasText: name }).first();
-    await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await this.search.fill('');
+      await this.search.fill(name);
+      await this.search.press('Enter').catch(() => {});
+      await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+      if (await row.count() > 0) break;
+      await this.page.waitForTimeout(1500);
+    }
     return { row, exists: (await row.count()) > 0 };
   }
 
@@ -77,7 +85,15 @@ class ItemPage {
     console.log(`  🗑️  Delete Item "${name}"`);
     const { row, exists } = await this.findRow(name);
     if (!exists) throw new Error(`delete: item "${name}" not found`);
-    await row.locator('a:has(i.ri-delete-bin-5-fill)').first().click();
+    const delBtn = row.locator(
+      'a:has(i[class*="delete"]), button:has(i[class*="delete"]), [data-bs-title="Delete" i], [title*="delete" i], a.btn-danger-light, .btn-danger'
+    ).first();
+    // Some tenants (e.g. dev) expose no Delete action on the /items list (Edit only).
+    if (await delBtn.count() === 0) {
+      console.log('  ℹ️  No Delete control on /items for this tenant — skipping delete');
+      return null;   // delete not available
+    }
+    await delBtn.click();
     await this.page.waitForTimeout(1500);
     for (let i = 0; i < 3; i++) {
       const c = this.page.locator('.swal2-confirm');

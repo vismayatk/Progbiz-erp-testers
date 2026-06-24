@@ -590,13 +590,24 @@ async function _runStatusTransition(page, status, screenshotName) {
 
   // Create a FRESH enquiry for this transition (the shared TC-02/02B enquiry is
   // converted to a quotation in TC-06, after which its "Followup" button
-  // disappears). Use the EXISTING-customer path because new-customer creation is
-  // currently broken server-side (see §5.0 in CRM_MODULE_DOCUMENTATION.md).
+  // disappears). Prefer the EXISTING-customer path; if the tenant has no leads
+  // yet (e.g. running this test standalone on a fresh tenant), SELF-SEED by
+  // creating a new customer so the test is self-contained.
   const existing = await enquiryPage.getExistingCustomerFromLeads();
-  expect(existing && existing.phone, 'Need an existing customer in /leads').toBeTruthy();
-
   await enquiryPage.clickAddNew();
-  await enquiryPage.fillAndCreateWithExisting(existing.phone, testData.enquiry);
+  if (existing && existing.phone) {
+    console.log(`  👥 Using existing customer (${existing.phone})`);
+    await enquiryPage.fillAndCreateWithExisting(existing.phone, testData.enquiry);
+  } else {
+    const uniq = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+    console.log('  🌱 No existing customer — seeding a new one');
+    await enquiryPage.fillAndCreate({
+      ...testData.enquiry,
+      customerName: `Status ${status} ${uniq}`,
+      mobile:       '9' + uniq.slice(-9),
+      email:        `cust${uniq}@example.com`,
+    });
+  }
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(1500);
 

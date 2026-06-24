@@ -19,20 +19,36 @@ class LoginPage {
   }
 
   async goto() {
-    await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded' });
+    // best-effort; login() re-navigates with retries
+    await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 }).catch(() => {});
   }
 
-  async login(company = 'skiolo_test', username = 'admin', password = '123') {
+  /**
+   * Robust login: retries the whole flow up to 3× because the SPA login form
+   * (rendered after ~58 scripts + a backend call) intermittently loads slowly
+   * on the test/dev tenants.
+   */
+  async login(company = 'lesol_test', username = 'admin', password = '123') {
     console.log(`\n  🔐 LoginPage: filling credentials for "${username}" @ "${company}"`);
-    await this.companyInput.fill(company);
-    await this.usernameInput.fill(username);
-    await this.passwordInput.fill(password);
-    await this.submitBtn.click();
-    await this.page.waitForFunction(
-      () => !window.location.href.includes('/login'),
-      { timeout: 20000 }
-    );
-    console.log(`  ✅ Logged in — URL: ${this.page.url()}`);
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+        await this.companyInput.waitFor({ state: 'visible', timeout: 45000 });
+        await this.companyInput.fill(company);
+        await this.usernameInput.fill(username);
+        await this.passwordInput.fill(password);
+        await this.submitBtn.click();
+        await this.page.waitForFunction(() => !window.location.href.includes('/login'), { timeout: 30000 });
+        console.log(`  ✅ Logged in — URL: ${this.page.url()}`);
+        return;
+      } catch (e) {
+        lastErr = e;
+        console.log(`  ⏳ Login attempt ${attempt} failed (${e.message.split('\n')[0].slice(0, 50)}) — retrying`);
+        await this.page.waitForTimeout(3000);
+      }
+    }
+    throw lastErr;
   }
 }
 

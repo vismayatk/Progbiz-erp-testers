@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-19T12:24:04.999Z · 20 test cases in 2 spec file(s).
+> Last generated: 2026-06-24T09:07:32.182Z · 25 test cases in 2 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -28,6 +28,11 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TM-01 | My Tasks page loads with status tabs | `npx playwright test -g "TM-01 \|"` | `npx playwright test --headed -g "TM-01 \|"` |
 | TM-02 | Create a task and verify it is listed | `npx playwright test -g "TM-02 \|"` | `npx playwright test --headed -g "TM-02 \|"` |
 | TM-03 | All Task-Management pages are reachable | `npx playwright test -g "TM-03 \|"` | `npx playwright test --headed -g "TM-03 \|"` |
+| TM-04 | Create a scheduled task (Task for Later) | `npx playwright test -g "TM-04 \|"` | `npx playwright test --headed -g "TM-04 \|"` |
+| TM-05 | Creating a task without Task Type is rejected | `npx playwright test -g "TM-05 \|"` | `npx playwright test --headed -g "TM-05 \|"` |
+| TM-06 | Create task (Online Meeting, High priority) | `npx playwright test -g "TM-06 \|"` | `npx playwright test --headed -g "TM-06 \|"` |
+| TM-07 | My Tasks status tabs are navigable | `npx playwright test -g "TM-07 \|"` | `npx playwright test --headed -g "TM-07 \|"` |
+| TM-08 | Daily Activity Report loads with data | `npx playwright test -g "TM-08 \|"` | `npx playwright test --headed -g "TM-08 \|"` |
 
 **Tips**
 - Run several at once: `npx playwright test -g "TC-13|TC-14|TC-15|TC-16"`.

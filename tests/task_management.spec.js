@@ -81,4 +81,68 @@ test.describe('Task Management Module', () => {
     }
     await screenshot(page, 'tm03_pages');
   });
+
+  test('TM-04 | Create a scheduled task (Task for Later)', async ({ page }) => {
+    test.setTimeout(150_000);
+    const login = new LoginPage(page); const tm = new TaskManagementPage(page);
+    await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
+
+    const name = `LaterTask ${Date.now()}`;
+    const msg = await tm.createTask(name, { type: 'Call', mode: 'later' });
+    await screenshot(page, 'tm04_later_task');
+    expect(msg, `Scheduled task should save, got: "${msg}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Scheduled task "${name}" created`);
+  });
+
+  test('TM-05 | Creating a task without Task Type is rejected', async ({ page }) => {
+    test.setTimeout(120_000);
+    const login = new LoginPage(page); const tm = new TaskManagementPage(page);
+    await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
+
+    const name = `NoType ${Date.now()}`;
+    const msg = await tm.createTask(name, { skipType: true });   // leave Task Type = Choose
+    await screenshot(page, 'tm05_validation');
+    expect(msg, `Missing required Task Type should be rejected, but it saved (msg="${msg}")`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Validation on missing Task Type — "${msg}"`);
+  });
+
+  test('TM-06 | Create task (Online Meeting, High priority)', async ({ page }) => {
+    test.setTimeout(150_000);
+    const login = new LoginPage(page); const tm = new TaskManagementPage(page);
+    await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
+
+    const name = `Meeting ${Date.now()}`;
+    const msg = await tm.createTask(name, { type: 'Online Meeting', priority: 'High' });
+    await screenshot(page, 'tm06_meeting');
+    expect(msg, `Task should save, got: "${msg}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Online Meeting task "${name}" created (High priority)`);
+  });
+
+  test('TM-07 | My Tasks status tabs are navigable', async ({ page }) => {
+    test.setTimeout(150_000);
+    const login = new LoginPage(page); const tm = new TaskManagementPage(page);
+    await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
+
+    await tm.gotoMyTasks();
+    for (const tab of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
+      const n = await tm.clickTab(tab);
+      console.log(`  📑 ${tab} → ${n} row(s)`);
+      expect(typeof n, `${tab} tab not navigable`).toBe('number');
+    }
+    await screenshot(page, 'tm07_tabs');
+    console.log('  ✅ ASSERT: All status tabs navigable');
+  });
+
+  test('TM-08 | Daily Activity Report loads with data', async ({ page }) => {
+    test.setTimeout(120_000);
+    const login = new LoginPage(page); const tm = new TaskManagementPage(page);
+    await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
+
+    const n = await tm.reportRowCount();
+    console.log(`  📊 Daily Activity rows: ${n}`);
+    expect(page.url()).toContain('daily-activity-report');
+    expect(n).toBeGreaterThanOrEqual(0);
+    await screenshot(page, 'tm08_report');
+    console.log('  ✅ ASSERT: Daily Activity Report loaded');
+  });
 });

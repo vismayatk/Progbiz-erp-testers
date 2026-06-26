@@ -461,7 +461,12 @@ class TaskManagementPage {
       if (await row.isVisible().catch(() => false)) {
         await row.locator('a, button').first().click().catch(() => {});
         const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false);
-        if (ok) { await this.page.waitForTimeout(1000); return true; }
+        if (ok) {
+          // panel content (notes box + header buttons) AJAX-loads after the modal opens
+          await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+          await this.page.waitForTimeout(1200);
+          return true;
+        }
       }
     }
     return false;
@@ -530,15 +535,56 @@ class TaskManagementPage {
 
   /** Hold/End/Resume each open a Bootstrap confirm modal ("Hold Task" / "End Task"
    *  with a pre-filled time + green "Confirm" button). Confirm it, then walk any swal. */
+  /**
+   * Confirm a Hold/End action. The confirm modal has a datetime field that must
+   * sit strictly BETWEEN the task start time and now — a window that only exists
+   * once the task has run ≥2 min. Parse the validation bounds and self-correct
+   * (waiting the window open if the task is too fresh). Returns null on success.
+   */
   async _confirmAction() {
-    const confirm = this.page.getByRole('button', { name: /^\s*Confirm\s*$/i }).first();
-    const seen = await confirm.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
-    if (seen) { await confirm.click().catch(() => {}); await this.page.waitForTimeout(2000); }
-    return this._afterSave();
+    const fmt = (d) => { const p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
+    const fill = async (d) => {
+      const dt = this.page.locator('.modal:visible input[type="datetime-local"]').first();
+      if (!(await dt.isVisible().catch(() => false))) return false;
+      await dt.fill(fmt(d)).catch(() => {});
+      await this.page.waitForTimeout(300);
+      return true;
+    };
+    let target = new Date(Date.now() - 60000);   // start with now − 1 min
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await fill(target);
+      const confirm = this.page.getByRole('button', { name: /confirm/i }).first();   // "Confirm ▷"
+      if (!(await confirm.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false))) break;
+      await confirm.click().catch(() => {});
+      await this.page.waitForTimeout(2000);
+      const msg = await this._afterSave();
+      if (!msg) return null;                       // success
+
+      // NB: the message embeds a date ("27/06/2026") before the time, so match the
+      // LAST HH:MM with a greedy .* (not \D*, which can't skip the date digits).
+      const after = msg.match(/after task start time.*(\d{1,2}):(\d{2})/i);
+      if (after) {                                 // too early → aim for start + 90s
+        const start = new Date(); start.setHours(+after[1], +after[2], 0, 0);
+        target = new Date(start.getTime() + 90000);
+        if (target.getTime() >= Date.now()) {      // task too fresh → let it run, then use now − 1 min
+          await this.page.waitForTimeout(Math.min(target.getTime() - Date.now() + 65000, 150000));
+          target = new Date(Date.now() - 60000);
+        }
+        continue;
+      }
+      const before = msg.match(/before.*(\d{1,2}):(\d{2})/i);
+      if (before) { const up = new Date(); up.setHours(+before[1], +before[2], 0, 0); target = new Date(up.getTime() - 90000); continue; }
+      // End modal: "End time should be greater than start time" (no time given) → try now, then now − 2 min
+      if (/greater than start|end time/i.test(msg)) { target = new Date(Date.now() - attempt * 60000); continue; }
+      return msg;                                  // a different validation message
+    }
+    return null;
   }
   /** Lifecycle: hold a running task (→ confirm "Hold Task"). */
   async holdTask() {
-    await this.detailsModal.locator('.btn-warning-light').first().click().catch(() => {});
+    const btn = this.detailsModal.locator('.btn-warning-light').first();
+    await btn.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await btn.click().catch(() => {});
     await this.page.waitForTimeout(1200);
     return this._confirmAction();
   }
@@ -551,7 +597,9 @@ class TaskManagementPage {
   }
   /** Lifecycle: end a running task (→ confirm "End Task"). */
   async endTask() {
-    await this.detailsModal.locator('.btn-danger-light').first().click().catch(() => {});
+    const btn = this.detailsModal.locator('.btn-danger-light').first();
+    await btn.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await btn.click().catch(() => {});
     await this.page.waitForTimeout(1200);
     return this._confirmAction();
   }

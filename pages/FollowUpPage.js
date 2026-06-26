@@ -77,6 +77,42 @@ class FollowUpPage {
     console.log('  💾 Follow-up saved');
   }
 
+  /** #followup-status option labels. */
+  statusOptions() { return this.statusSelect.locator('option').allTextContents(); }
+
+  /** Select a follow-up status by label and let the conditional fields settle. */
+  async selectStatus(label) {
+    await this.statusSelect.selectOption({ label }).catch(() => {});
+    await this.page.waitForTimeout(900);
+  }
+
+  /** Whether Lead Quality is visible (appears only for In-Followup/Interested). */
+  leadQualityVisible() { return this.leadQualitySelect.isVisible().catch(() => false); }
+  /** Whether the Description field is visible. */
+  descriptionVisible() { return this.notesInput.isVisible().catch(() => false); }
+  /** The follow-up date/time field value (auto-filled to now). */
+  dateValue() { return this.page.locator('#followup-date').inputValue().catch(() => ''); }
+
+  /** Close the modal via its Close/Cancel control. */
+  async cancel() {
+    const close = this.modal.getByRole('button', { name: /close|cancel/i }).first()
+      .or(this.modal.locator('.btn-close, [data-bs-dismiss="modal"]').first());
+    await close.click().catch(() => {});
+    await this.modal.waitFor({ state: 'hidden', timeout: 6000 }).catch(() => {});
+  }
+
+  /** Edit/delete controls present on the latest follow-up history row. */
+  async latestRowControls() {
+    await this.getFollowUpCount();   // opens history tab + waits
+    return this.page.evaluate(() => {
+      const rows = [...document.querySelectorAll('#followups li.crm-recent-activity-content, #followups li, #followups tbody tr')];
+      if (!rows.length) return { rows: 0, edit: false, del: false };
+      const r = rows[0];
+      const has = (re) => [...r.querySelectorAll('a,button,i')].some(e => re.test((e.getAttribute('class') || '') + (e.getAttribute('title') || '') + (e.textContent || '')));
+      return { rows: rows.length, edit: has(/edit|pencil/i), del: has(/delete|trash|bin/i) };
+    });
+  }
+
   /** Return the success message after saving. */
   async getSuccessMessage() {
     const msg = await getAlertText(this.page, 12000);

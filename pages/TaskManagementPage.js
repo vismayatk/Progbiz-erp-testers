@@ -213,6 +213,42 @@ class TaskManagementPage {
     return this._afterSave();
   }
 
+  /**
+   * Select a user in a Host/Participant multiselect by display name.
+   * Each section (HOSTS / PARTICIPANTS) opens an inline list: Search… box,
+   * per-user toggles, and a blue "Done" button.
+   * @param {string} triggerSel  '.add-host-btn' (Host) | '.ri-user-add-line' (Participant)
+   * @param {string} name        display name (e.g. "HAFNEETHA")
+   * @returns {boolean} whether a matching user toggle was found
+   */
+  async _pickUser(triggerSel, name) {
+    const trig = this.modal.locator(triggerSel).first();
+    if (await trig.isVisible().catch(() => false)) { await trig.click().catch(() => {}); await this.page.waitForTimeout(900); }
+
+    const search = this.modal.locator('input[placeholder="Search..."]:visible').first();
+    if (await search.isVisible().catch(() => false)) { await search.fill(name).catch(() => {}); await this.page.waitForTimeout(900); }
+
+    const safe = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const row = this.modal.locator('.form-check, li, label').filter({ hasText: new RegExp(safe, 'i') }).first();
+    const ok = await row.isVisible().catch(() => false);
+    if (ok) {
+      const tog = row.locator('input, [role="switch"]').first();
+      if (await tog.count().catch(() => 0)) await tog.click({ force: true }).catch(() => {});
+      else await row.click().catch(() => {});
+      await this.page.waitForTimeout(400);
+    }
+    await this.modal.getByRole('button', { name: /^Done$/i }).first().click().catch(async () => {
+      await this.modal.getByText(/^\s*Done\s*$/i).first().click().catch(() => {});
+    });
+    await this.page.waitForTimeout(500);
+    return ok;
+  }
+
+  /** Assign a Host by display name (Task-for-Later / Repeat). */
+  addHostByName(name)        { return this._pickUser('.add-host-btn', name); }
+  /** Add a Participant by display name (any mode). */
+  addParticipantByName(name) { return this._pickUser('.ri-user-add-line', name); }
+
   /** Add the first available participant via the toggle list (best-effort, TC_TASK_015..017). */
   async addFirstParticipant() {
     await this.modal.locator('.ri-user-add-line').first().click().catch(() => {});
@@ -365,6 +401,19 @@ class TaskManagementPage {
       [...document.querySelectorAll('table tbody tr')]
         .some(r => (r.textContent || '').toLowerCase().includes(n.toLowerCase())),
       name);
+  }
+
+  /** Search My Tasks across every status tab; returns the tab label where found, else null. */
+  async findAcrossTabs(name) {
+    await this.gotoMyTasks();
+    const hasName = (n) => this.page.evaluate((x) =>
+      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x.toLowerCase())), n);
+    if (await hasName(name)) return 'default';
+    for (const tab of ['Today', 'Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
+      await this.clickTab(tab);
+      if (await hasName(name)) return tab;
+    }
+    return null;
   }
 
   /** Daily Activity Report: wait for rows and return the count. */

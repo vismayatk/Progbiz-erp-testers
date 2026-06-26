@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T16:15:36.726Z · 40 test cases in 3 spec file(s).
+> Last generated: 2026-06-26T16:21:34.741Z · 43 test cases in 4 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -48,6 +48,9 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TM-21 | Daily Activity Report (TC_069-072, Scenario 12) | `npx playwright test -g "TM-21 \|"` | `npx playwright test --headed -g "TM-21 \|"` |
 | TM-22 | Calendar & Timeline reachable (Scenario 6 — single user) | `npx playwright test -g "TM-22 \|"` | `npx playwright test --headed -g "TM-22 \|"` |
 | TM-23 | Multi-user participant/admin visibility (TC_018-024, Scenarios 5 & 6) | `npx playwright test -g "TM-23 \|"` | `npx playwright test --headed -g "TM-23 \|"` |
+| MU-01 | Host-assigned Task-for-Later is visible to the assignee (Scenario 10) | `npx playwright test -g "MU-01 \|"` | `npx playwright test --headed -g "MU-01 \|"` |
+| MU-02 | Participant on an Instant task sees it (Scenario 5) | `npx playwright test -g "MU-02 \|"` | `npx playwright test --headed -g "MU-02 \|"` |
+| MU-03 | Admin sees the assigned task in Calendar & Timeline (Scenario 6) | `npx playwright test -g "MU-03 \|"` | `npx playwright test --headed -g "MU-03 \|"` |
 
 **Tips**
 - Run several at once: `npx playwright test -g "TC-13|TC-14|TC-15|TC-16"`.

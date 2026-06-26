@@ -19,7 +19,7 @@ for (const spec of specs) {
   const src = fs.readFileSync(path.join(TESTS_DIR, spec), 'utf8');
   // test('TC-.. | ...') / test('TM-.. | ...') — lazy match to the matching closing
   // quote + comma, so titles with embedded quotes (e.g. "In Follow-up") are captured.
-  const re = /test(?:\.\w+)?\(\s*(['"`])((?:TC|TM)-[\s\S]*?)\1\s*,/g;
+  const re = /test(?:\.\w+)?\(\s*(['"`])((?:TC|TM|MU)-[\s\S]*?)\1\s*,/g;
   let m;
   while ((m = re.exec(src)) !== null) {
     const title = m[2].trim();

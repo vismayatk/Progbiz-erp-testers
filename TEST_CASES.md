@@ -2,12 +2,20 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T18:48:36.629Z · 48 test cases in 5 spec file(s).
+> Last generated: 2026-06-26T20:16:28.726Z · 56 test cases in 6 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
 | Test Case ID | Description | Headless command | Headed (browser) command |
 |---|---|---|---|
+| Login_01 | Login page loads successfully | `npx playwright test -g "Login_01 \|"` | `npx playwright test --headed -g "Login_01 \|"` |
+| Login_02 | Login with valid Company Code, Username and Password | `npx playwright test -g "Login_02 \|"` | `npx playwright test --headed -g "Login_02 \|"` |
+| Login_03 | Login when Company Code is valid and mapped to user | `npx playwright test -g "Login_03 \|"` | `npx playwright test --headed -g "Login_03 \|"` |
+| Login_04 | Login using keyboard Enter key | `npx playwright test -g "Login_04 \|"` | `npx playwright test --headed -g "Login_04 \|"` |
+| Login_05 | Password visibility (eye) icon | `npx playwright test -g "Login_05 \|"` | `npx playwright test --headed -g "Login_05 \|"` |
+| Login_06 | Remember Password option | `npx playwright test -g "Login_06 \|"` | `npx playwright test --headed -g "Login_06 \|"` |
+| Login_07 | Forgot Password link is present/navigable | `npx playwright test -g "Login_07 \|"` | `npx playwright test --headed -g "Login_07 \|"` |
+| Login_08 | Successful login redirects to dashboard/home | `npx playwright test -g "Login_08 \|"` | `npx playwright test --headed -g "Login_08 \|"` |
 | TC-01 | Login with valid credentials | `npx playwright test -g "TC-01 \|"` | `npx playwright test --headed -g "TC-01 \|"` |
 | TC-02 | Create a new enquiry with valid data | `npx playwright test -g "TC-02 \|"` | `npx playwright test --headed -g "TC-02 \|"` |
 | TC-02B | Create enquiry for an existing customer (search & choose) | `npx playwright test -g "TC-02B \|"` | `npx playwright test --headed -g "TC-02B \|"` |

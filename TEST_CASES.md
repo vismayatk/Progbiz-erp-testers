@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-24T09:07:32.182Z · 25 test cases in 2 spec file(s).
+> Last generated: 2026-06-26T16:15:36.726Z · 40 test cases in 3 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -33,6 +33,21 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TM-06 | Create task (Online Meeting, High priority) | `npx playwright test -g "TM-06 \|"` | `npx playwright test --headed -g "TM-06 \|"` |
 | TM-07 | My Tasks status tabs are navigable | `npx playwright test -g "TM-07 \|"` | `npx playwright test --headed -g "TM-07 \|"` |
 | TM-08 | Daily Activity Report loads with data | `npx playwright test -g "TM-08 \|"` | `npx playwright test --headed -g "TM-08 \|"` |
+| TM-09 | Create New menu + Add Task modal structure | `npx playwright test -g "TM-09 \|"` | `npx playwright test --headed -g "TM-09 \|"` |
+| TM-10 | Create an Instant Task via the modal (Scenario 1) | `npx playwright test -g "TM-10 \|"` | `npx playwright test --headed -g "TM-10 \|"` |
+| TM-11 | Create a Task for Later — Hosts + scheduling (Scenario 2) | `npx playwright test -g "TM-11 \|"` | `npx playwright test --headed -g "TM-11 \|"` |
+| TM-12 | Repeat mode exposes recurring schedule fields | `npx playwright test -g "TM-12 \|"` | `npx playwright test --headed -g "TM-12 \|"` |
+| TM-13 | Negative — Save without Task Type is rejected | `npx playwright test -g "TM-13 \|"` | `npx playwright test --headed -g "TM-13 \|"` |
+| TM-14 | Negative — Save without Task title is rejected | `npx playwright test -g "TM-14 \|"` | `npx playwright test --headed -g "TM-14 \|"` |
+| TM-15 | My Task page columns (TC_054-055) | `npx playwright test -g "TM-15 \|"` | `npx playwright test --headed -g "TM-15 \|"` |
+| TM-16 | Created Task page loads with actions (TC_048-053) | `npx playwright test -g "TM-16 \|"` | `npx playwright test --headed -g "TM-16 \|"` |
+| TM-17 | Delegated Tasks shows Assignees column | `npx playwright test -g "TM-17 \|"` | `npx playwright test --headed -g "TM-17 \|"` |
+| TM-18 | Unscheduled Task page + row actions (TC_062-068, Scenario 11) | `npx playwright test -g "TM-18 \|"` | `npx playwright test --headed -g "TM-18 \|"` |
+| TM-19 | Status tabs Pending/Overdue/Completed navigable (TC_057-059) | `npx playwright test -g "TM-19 \|"` | `npx playwright test --headed -g "TM-19 \|"` |
+| TM-20 | Task lifecycle controls on dashboard (Scenario 4) | `npx playwright test -g "TM-20 \|"` | `npx playwright test --headed -g "TM-20 \|"` |
+| TM-21 | Daily Activity Report (TC_069-072, Scenario 12) | `npx playwright test -g "TM-21 \|"` | `npx playwright test --headed -g "TM-21 \|"` |
+| TM-22 | Calendar & Timeline reachable (Scenario 6 — single user) | `npx playwright test -g "TM-22 \|"` | `npx playwright test --headed -g "TM-22 \|"` |
+| TM-23 | Multi-user participant/admin visibility (TC_018-024, Scenarios 5 & 6) | `npx playwright test -g "TM-23 \|"` | `npx playwright test --headed -g "TM-23 \|"` |
 
 **Tips**
 - Run several at once: `npx playwright test -g "TC-13|TC-14|TC-15|TC-16"`.

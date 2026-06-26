@@ -59,7 +59,7 @@ Run everything: `npx playwright test tests/task_management.spec.js tests/task_ma
 | TC_054–058 | My Task page + columns | **TM-15** | documented columns asserted |
 | TC_062–068 | Unscheduled page + Edit/Schedule/Start/Delete | **TM-18** | page + row actions |
 | TC_069–072 | Daily Activity Report | **TM-21** | loads with rows |
-| TC_018–024 | Participant/Admin cross-user visibility | **TM-23** (skipped) | needs 2nd user login — manual |
+| TC_018–024 | Participant/Admin cross-user visibility | **MU-01/02/03** ✅ | now automated with 2nd login (HAFNEETHA) |
 
 ## Scenarios → Automation
 
@@ -69,8 +69,8 @@ Run everything: `npx playwright test tests/task_management.spec.js tests/task_ma
 | 2 — Create Scheduled Task (Task for Later) | **TM-11** |
 | 3 — Create Unscheduled Task | **TM-18** + TM-11 (deadline) |
 | 4 — Lifecycle Start/Hold/Resume/End | **TM-20** (controls present, non-destructive) |
-| 5 — Visibility & Participant Access | **TM-23** (skipped — multi-user) |
-| 6 — Admin Calendar & Timeline | **TM-22** (single-user part) |
+| 5 — Visibility & Participant Access | **MU-02** ✅ (HAFNEETHA sees participant task) |
+| 6 — Admin Calendar & Timeline | **TM-22** + **MU-03** ✅ |
 | 7 — Notes & Document Upload | manual / best-effort |
 | 8 — Created Task Page | **TM-16** |
 | 9 — My Task Page | **TM-15** |
@@ -83,14 +83,29 @@ Run everything: `npx playwright test tests/task_management.spec.js tests/task_ma
 
 ---
 
-## Negatives (added beyond the doc)
+## Beyond the doc (new feature + negatives)
 
 | Test | Checks |
 |---|---|
+| **TM-12** | **Repeat (recurring) task** — a newer feature *not in the doc*: recurrence Daily/Weekly/Monthly + Start/End Time + From/To Date; **actually creates** a Daily recurring task |
 | **TM-13** | Save without **Task Type** → rejected (inline "Please choose valid task type") |
-| **TM-14** | Save without **Task title** → rejected |
+| **TM-14** | Save without **Task title** → rejected (inline "Please add task") |
 
-## Not automatable with current access
+## Multi-user (now enabled — [tests/task_management_multiuser.spec.js](tests/task_management_multiuser.spec.js))
 
-- **Multi-user** cases (TC_018–024, Scenarios 5 & 6 cross-login) need a **second non-admin user**; only `admin` is configured. Marked **skipped** (TM-23) with reason so reports stay honest.
-- **Notes/Documents** (TC_060–064) and **full Edit/Reschedule round-trips** (Scenarios 13/14) and **Add-Lead-via-task** (Scenario 15) are left as manual/best-effort because they depend on per-task overview state and a three-dots menu not present in this dev build.
+Uses a 2nd login (`SECOND_USERNAME=hafneetha` / `SECOND_NAME=HAFNEETHA` in `.env`).
+
+| Test | Checks | Result |
+|---|---|---|
+| **MU-01** | Admin assigns a **current-date Task-for-Later** with Host = HAFNEETHA → she sees it in her My Tasks (TC_018/019/023, Scenario 10) | ✅ |
+| **MU-02** | Admin adds HAFNEETHA as **Participant** on an Instant task → she sees it under *Today* (TC_018/023/024, Scenario 5) | ✅ |
+| **MU-03** | Admin can view tasks in **Calendar & Timeline** (TC_021/022, Scenario 6) | ✅ |
+
+> **Behaviour learned:** a host-assigned task only surfaces in the assignee's My Tasks
+> for the **current date** — far-future host tasks appear on the scheduled day, not earlier.
+
+## Still manual / best-effort
+
+- **Notes/Documents** (TC_060–064), **full Edit/Reschedule round-trips** (Scenarios 13/14),
+  and **Add-Lead-via-task** (Scenario 15) depend on per-task overview state and a
+  three-dots menu not present in this dev build.

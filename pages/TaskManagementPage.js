@@ -249,6 +249,43 @@ class TaskManagementPage {
   /** Add a Participant by display name (any mode). */
   addParticipantByName(name) { return this._pickUser('.ri-user-add-line', name); }
 
+  /**
+   * Create a recurring (Repeat) task — a newer feature not in the doc.
+   * Repeat mode exposes recurrence (Daily/Weekly/Monthly) + Start Time / End Time
+   * + From Date / To Date. Returns validation message or null on success.
+   * @param {string} name
+   * @param {object} opts {type='Call', recurrence='Daily', priority}
+   */
+  async createRepeatTask(name, opts = {}) {
+    const { type = 'Call', recurrence = 'Daily', priority } = opts;
+    console.log(`  🔁 [modal] Repeat task "${name}" (type=${type}, every=${recurrence})`);
+    await this.openTaskModal();
+    await this.selectMode('repeat');
+
+    await this.branchSelect.evaluate(s => { if (s.selectedIndex < 0 || !s.value) s.selectedIndex = 0; }).catch(() => {});
+    await this.taskTypeSelect.selectOption({ label: type }).catch(async () => { await this.taskTypeSelect.selectOption({ index: 1 }).catch(() => {}); });
+    if (priority) await this.prioritySelect.selectOption({ label: priority }).catch(() => {});
+    await this.taskInput.fill(name);
+
+    // pick the recurrence (Daily avoids weekday selection)
+    await this.modal.getByText(new RegExp(`^\\s*${recurrence}\\s*$`, 'i')).first().click().catch(() => {});
+    await this.page.waitForTimeout(600);
+
+    // Start/End time (order: Start, End) and From/To date (order: From, To)
+    const times = this.modal.locator('input[type="time"]:visible');
+    await times.nth(0).fill('10:00').catch(() => {});
+    await times.nth(1).fill('11:00').catch(() => {});
+    const dates = this.modal.locator('input[type="date"]:visible');
+    const from = new Date(Date.now() + 1 * 86400000).toISOString().slice(0, 10);
+    const to   = new Date(Date.now() + 8 * 86400000).toISOString().slice(0, 10);
+    await dates.nth(0).fill(from).catch(() => {});
+    await dates.nth(1).fill(to).catch(() => {});
+
+    await this.saveBtn.click();
+    await this.page.waitForTimeout(2500);
+    return this._afterSave();
+  }
+
   /** Add the first available participant via the toggle list (best-effort, TC_TASK_015..017). */
   async addFirstParticipant() {
     await this.modal.locator('.ri-user-add-line').first().click().catch(() => {});
@@ -403,15 +440,26 @@ class TaskManagementPage {
       name);
   }
 
-  /** Search My Tasks across every status tab; returns the tab label where found, else null. */
+  /** Search My Tasks across every status tab; returns the tab label where found, else null.
+   *  Each tab loads its table via AJAX, so scan with a networkidle wait + retries. */
   async findAcrossTabs(name) {
     await this.gotoMyTasks();
-    const hasName = (n) => this.page.evaluate((x) =>
-      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x.toLowerCase())), n);
-    if (await hasName(name)) return 'default';
+    const needle = name.toLowerCase();
+    const scan = async () => {
+      for (let i = 0; i < 4; i++) {
+        const hit = await this.page.evaluate((x) =>
+          [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x)), needle);
+        if (hit) return true;
+        await this.page.waitForTimeout(1000);
+      }
+      return false;
+    };
+    await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+    if (await scan()) return 'default';
     for (const tab of ['Today', 'Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
       await this.clickTab(tab);
-      if (await hasName(name)) return tab;
+      await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+      if (await scan()) return tab;
     }
     return null;
   }

@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T16:21:34.741Z · 43 test cases in 4 spec file(s).
+> Last generated: 2026-06-26T17:08:12.421Z · 43 test cases in 4 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -36,7 +36,7 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TM-09 | Create New menu + Add Task modal structure | `npx playwright test -g "TM-09 \|"` | `npx playwright test --headed -g "TM-09 \|"` |
 | TM-10 | Create an Instant Task via the modal (Scenario 1) | `npx playwright test -g "TM-10 \|"` | `npx playwright test --headed -g "TM-10 \|"` |
 | TM-11 | Create a Task for Later — Hosts + scheduling (Scenario 2) | `npx playwright test -g "TM-11 \|"` | `npx playwright test --headed -g "TM-11 \|"` |
-| TM-12 | Repeat mode exposes recurring schedule fields | `npx playwright test -g "TM-12 \|"` | `npx playwright test --headed -g "TM-12 \|"` |
+| TM-12 | Repeat mode — recurring schedule fields + create (NEW feature, not in doc) | `npx playwright test -g "TM-12 \|"` | `npx playwright test --headed -g "TM-12 \|"` |
 | TM-13 | Negative — Save without Task Type is rejected | `npx playwright test -g "TM-13 \|"` | `npx playwright test --headed -g "TM-13 \|"` |
 | TM-14 | Negative — Save without Task title is rejected | `npx playwright test -g "TM-14 \|"` | `npx playwright test --headed -g "TM-14 \|"` |
 | TM-15 | My Task page columns (TC_054-055) | `npx playwright test -g "TM-15 \|"` | `npx playwright test --headed -g "TM-15 \|"` |

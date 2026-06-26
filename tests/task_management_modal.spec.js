@@ -142,22 +142,32 @@ test.describe('Task Management — Documented Cases', () => {
     console.log(`  ✅ ASSERT: Scheduled "Task for Later" "${name}" created`);
   });
 
-  test('TM-12 | Repeat mode exposes recurring schedule fields', async ({ page }) => {
+  test('TM-12 | Repeat mode — recurring schedule fields + create (NEW feature, not in doc)', async ({ page }) => {
     const tm = await arrive(page);
     await tm.openTaskModal();
     await tm.selectMode('repeat');
-    const labels = await page.evaluate(() => {
+
+    // Structure: recurrence + Start/End Time + From/To Date
+    const ui = await page.evaluate(() => {
       const m = document.querySelector('#home-create-task-modal');
-      return [...m.querySelectorAll('label, .form-label')].map(l => l.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+      const labels = [...m.querySelectorAll('label, .form-label')].map(l => l.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+      const recur = [...m.querySelectorAll('label,button,span,.day')].map(e => e.textContent.replace(/\s+/g, ' ').trim()).filter(t => /^(Daily|Weekly|Monthly)$/i.test(t));
+      return { labels: labels.join(' | '), recur: [...new Set(recur)] };
     });
-    console.log('  🔁 Repeat labels:', JSON.stringify(labels));
-    const joined = labels.join(' | ');
-    expect(joined).toMatch(/Start Time/i);
-    expect(joined).toMatch(/End Time/i);
-    expect(joined).toMatch(/From Date/i);
-    expect(joined).toMatch(/To Date/i);
-    await screenshot(page, 'tm12_repeat');
-    console.log('  ✅ ASSERT: Repeat mode shows Start/End Time + From/To Date');
+    console.log('  🔁 Repeat labels:', ui.labels, '| recurrence:', JSON.stringify(ui.recur));
+    expect(ui.labels).toMatch(/Start Time/i);
+    expect(ui.labels).toMatch(/End Time/i);
+    expect(ui.labels).toMatch(/From Date/i);
+    expect(ui.labels).toMatch(/To Date/i);
+    expect(ui.recur, 'recurrence options Daily/Weekly/Monthly').toEqual(expect.arrayContaining(['Daily', 'Weekly', 'Monthly']));
+    await screenshot(page, 'tm12_repeat_fields');
+
+    // Actually create a recurring task (Daily)
+    const name = `Repeat ${Date.now()}`;
+    const msg = await tm.createRepeatTask(name, { type: 'Call', recurrence: 'Daily' });
+    await screenshot(page, 'tm12_repeat_created');
+    expect(msg, `Repeat task should save, got: "${msg}"`).toBeFalsy();
+    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created`);
   });
 
   test('TM-13 | Negative — Save without Task Type is rejected', async ({ page }) => {
@@ -272,6 +282,6 @@ test.describe('Task Management — Documented Cases', () => {
   });
 
   test('TM-23 | Multi-user participant/admin visibility (TC_018-024, Scenarios 5 & 6)', async () => {
-    test.skip(true, 'Requires a second non-admin user login to verify cross-user visibility (homepage/timeline/calendar). Not automatable with the single admin credential configured in .env — documented as a manual case.');
+    test.skip(true, 'Now automated in tests/task_management_multiuser.spec.js (MU-01..03) using the second login (SECOND_USERNAME/PASSWORD/NAME in .env). This placeholder is kept for traceability.');
   });
 });

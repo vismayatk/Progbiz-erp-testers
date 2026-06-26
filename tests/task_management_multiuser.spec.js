@@ -67,9 +67,11 @@ test.describe('Task Management — Multi-user visibility', () => {
       expect(picked, `Host "${SECOND.name}" not found in the user list`).toBeTruthy();
       const tgl = a.tm.deadlineToggle;
       if (await tgl.isVisible().catch(() => false)) { await tgl.click({ force: true }).catch(() => {}); await a.page.waitForTimeout(700); }
-      const d = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
+      // Schedule for the CURRENT date (TC_018: current-date task surfaces in the
+      // assignee's list; far-future host tasks only show on the scheduled day).
+      const d = new Date().toISOString().slice(0, 10);
       await a.tm.modal.locator('input[type="date"]:visible').first().fill(d).catch(() => {});
-      await a.tm.modal.locator('input[type="time"]:visible').first().fill('11:00').catch(() => {});
+      await a.tm.modal.locator('input[type="time"]:visible').first().fill('23:30').catch(() => {});
       await a.tm.saveBtn.click();
       await a.page.waitForTimeout(2500);
       const msg = await a.tm._afterSave();

@@ -68,6 +68,46 @@ class EnquiryPage {
     console.log('  ➕ "Add Enquiry" form ready (/enquiry)');
   }
 
+  /** Open the Add Enquiry form, retrying the (slow, AJAX) form load up to 3×. */
+  async openAddForm() {
+    for (let i = 0; i < 3; i++) {
+      try { await this.clickAddNew(); return; }
+      catch { await this.page.waitForTimeout(2500); }
+    }
+    await this.clickAddNew();   // final attempt surfaces the error
+  }
+
+  /** Option labels of the Followup Status (#followup) dropdown. */
+  followupStatusOptions() { return this.followupSelect.locator('option').allTextContents(); }
+
+  /** Select a Followup Status by label and let the conditional fields settle. */
+  async selectFollowup(label) {
+    await this.followupSelect.selectOption({ label }).catch(() => {});
+    await this.page.waitForTimeout(900);
+  }
+
+  /** Whether the Lead Quality (Cold/Warm/Hot) field is visible (appears only for In-Followup). */
+  leadQualityVisible() {
+    return this.page.locator('#lead-quality, [id*="quality" i]').first().isVisible().catch(() => false);
+  }
+
+  /** Lead Quality option labels (when visible). */
+  async leadQualityOptions() {
+    const lq = this.page.locator('#lead-quality').first();
+    return (await lq.count()) ? lq.locator('option').allTextContents() : [];
+  }
+
+  descriptionVisible() { return this.descriptionInput.isVisible().catch(() => false); }
+
+  /** Branch dropdown option labels. */
+  branchOptions() { return this.branchSelect.locator('option').allTextContents(); }
+  /** Lead Source dropdown option labels. */
+  leadSourceOptions() { return this.sourceSelect.locator('option').allTextContents(); }
+  /** Auto-generated enquiry number value. */
+  enquiryNumber() { return this.page.locator('#enquiry-number').inputValue().catch(() => ''); }
+  /** Enquiry date field value. */
+  enquiryDate() { return this.page.locator('#enquiry-date').inputValue().catch(() => ''); }
+
   /**
    * Fill and submit the enquiry creation form.
    * @param {object} data - from testData.enquiry

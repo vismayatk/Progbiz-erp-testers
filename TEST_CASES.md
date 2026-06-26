@@ -2,12 +2,30 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T20:51:16.374Z · 68 test cases in 7 spec file(s).
+> Last generated: 2026-06-26T21:43:34.596Z · 86 test cases in 9 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
 | Test Case ID | Description | Headless command | Headed (browser) command |
 |---|---|---|---|
+| ENQ-01 | Access Enquiry from Create New | `npx playwright test -g "ENQ-01 \|"` | `npx playwright test --headed -g "ENQ-01 \|"` |
+| ENQ-02 | Add Enquiry form fields — Branch/Date/Number/Source (ENQ-02,03,04,15) | `npx playwright test -g "ENQ-02 \|"` | `npx playwright test --headed -g "ENQ-02 \|"` |
+| ENQ-08 | Followup Status dropdown options | `npx playwright test -g "ENQ-08 \|"` | `npx playwright test --headed -g "ENQ-08 \|"` |
+| ENQ-09 | Lead Quality appears for In-Followup, hidden for New (ENQ-09,12) | `npx playwright test -g "ENQ-09 \|"` | `npx playwright test --headed -g "ENQ-09 \|"` |
+| ENQ-10 | Description visible for Won and Lost (ENQ-10,11) | `npx playwright test -g "ENQ-10 \|"` | `npx playwright test --headed -g "ENQ-10 \|"` |
+| ENQ-13 | Next Followup Date selection | `npx playwright test -g "ENQ-13 \|"` | `npx playwright test --headed -g "ENQ-13 \|"` |
+| ENQ-16 | Item selection + multiple items (ENQ-16,18) | `npx playwright test -g "ENQ-16 \|"` | `npx playwright test --headed -g "ENQ-16 \|"` |
+| ENQ-05 | Customer search picker (ENQ-05) | `npx playwright test -g "ENQ-05 \|"` | `npx playwright test --headed -g "ENQ-05 \|"` |
+| ENQ-19 | Save enquiry → success + Overview redirect (ENQ-19,21) | `npx playwright test -g "ENQ-19 \|"` | `npx playwright test --headed -g "ENQ-19 \|"` |
+| ENQ-20 | Cancel returns to listing | `npx playwright test -g "ENQ-20 \|"` | `npx playwright test --headed -g "ENQ-20 \|"` |
+| ENQ-22 | Enquiry Overview shows details (ENQ-22,23,24) | `npx playwright test -g "ENQ-22 \|"` | `npx playwright test --headed -g "ENQ-22 \|"` |
+| ENQ-28 | Create Quotation from enquiry | `npx playwright test -g "ENQ-28 \|"` | `npx playwright test --headed -g "ENQ-28 \|"` |
+| ENQ-25 | Open enquiry → Overview with actions (View/Edit/Followup) (ENQ-25,26,27) | `npx playwright test -g "ENQ-25 \|"` | `npx playwright test --headed -g "ENQ-25 \|"` |
+| ENQ-29 | Followup popup + date + status options + conditional fields (ENQ-29..35) | `npx playwright test -g "ENQ-29 \|"` | `npx playwright test --headed -g "ENQ-29 \|"` |
+| ENQ-36 | Save follow-up → success + appears in history (ENQ-36,38) | `npx playwright test -g "ENQ-36 \|"` | `npx playwright test --headed -g "ENQ-36 \|"` |
+| ENQ-37 | Cancel closes the follow-up popup without saving | `npx playwright test -g "ENQ-37 \|"` | `npx playwright test --headed -g "ENQ-37 \|"` |
+| ENQ-39 | Latest follow-up is editable/deletable (ENQ-39..42) | `npx playwright test -g "ENQ-39 \|"` | `npx playwright test --headed -g "ENQ-39 \|"` |
+| QT-019 | Quotation follow-up uses the same modal (QT-019..028) | `npx playwright test -g "QT-019 \|"` | `npx playwright test --headed -g "QT-019 \|"` |
 | Item_01 | Create item with valid mandatory fields | `npx playwright test -g "Item_01 \|"` | `npx playwright test --headed -g "Item_01 \|"` |
 | Item_02 | Create item with all fields | `npx playwright test -g "Item_02 \|"` | `npx playwright test --headed -g "Item_02 \|"` |
 | Item_03 | Access Add Item without login redirects to Login | `npx playwright test -g "Item_03 \|"` | `npx playwright test --headed -g "Item_03 \|"` |

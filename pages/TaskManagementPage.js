@@ -440,6 +440,146 @@ class TaskManagementPage {
       name);
   }
 
+  // ════════════════════════ Task Details panel (#task-overview-modal) ════════════════════════
+  // Opened from a My Tasks row via the ".ri-send-plane-2-line" action button. Holds:
+  //   notes (#txtChat + .btn-send), document upload (.fe-paperclip → #file-input-document),
+  //   lifecycle (Hold .btn-warning-light / End Task .btn-danger-light / Resume),
+  //   and a ⋮ menu (.fe-more-vertical) → Edit Task / Reschedule Task / Add Lead.
+
+  get detailsModal() { return this.page.locator('#task-overview-modal'); }
+
+  /** Open the Task Details panel for the task whose My Tasks row contains `name`. */
+  async openTaskDetails(name) {
+    await this.gotoMyTasks();
+    for (const tab of ['default', 'Today', 'Upcoming', 'Delayed', 'Unscheduled', 'Completed']) {
+      if (tab !== 'default') {
+        await this.clickTab(tab);
+        await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+        await this.page.waitForTimeout(800);
+      }
+      const row = this.page.locator('table tbody tr').filter({ hasText: name }).first();
+      if (await row.isVisible().catch(() => false)) {
+        await row.locator('a, button').first().click().catch(() => {});
+        const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false);
+        if (ok) { await this.page.waitForTimeout(1000); return true; }
+      }
+    }
+    return false;
+  }
+
+  /** Add a note (TC_060-062). Returns true if the note text appears in the activity log. */
+  async addNote(text) {
+    await this.page.locator('#txtChat').fill(text);
+    await this.detailsModal.locator('.btn-send').first().click().catch(() => {});
+    await this.page.waitForTimeout(2500);
+    const body = (await this.detailsModal.textContent().catch(() => '')) || '';
+    return body.includes(text);
+  }
+
+  /** Upload a document (TC_063-064). Returns the save result (null on success). */
+  async uploadDocument(filePath) {
+    await this.detailsModal.locator('.fe-paperclip').first().click().catch(() => {});
+    await this.page.waitForTimeout(700);
+    await this.page.locator('#file-input-document').setInputFiles(filePath).catch(() => {});
+    await this.page.waitForTimeout(3000);
+    return this._afterSave();
+  }
+
+  /** Open the Task Details ⋮ menu and click an item: 'Edit Task' | 'Reschedule Task' | 'Add Lead'. */
+  async detailsMenu(item) {
+    await this.detailsModal.locator('.fe-more-vertical').first().click().catch(() => {});
+    await this.page.waitForTimeout(900);
+    await this.page.getByText(new RegExp(`^\\s*${item}\\s*$`, 'i')).first().click().catch(() => {});
+    await this.page.waitForTimeout(2800);
+  }
+
+  get editModal() { return this.page.locator('#task-edit-modal'); }
+
+  /** Edit an existing task's title via ⋮ → Edit Task (#task-edit-modal). Returns save result. */
+  async editTaskTitle(newTitle) {
+    await this.detailsMenu('Edit Task');
+    await this.editModal.locator('#taskName').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    await this.editModal.locator('#taskName').fill(newTitle);
+    await this.editModal.locator('#saveBtn').first().click().catch(() => {});
+    await this.page.waitForTimeout(2500);
+    return this._afterSave();
+  }
+
+  /** Reschedule a task via ⋮ → Reschedule Task. Returns save result. */
+  async reschedule(dateStr, timeStr = '10:30') {
+    await this.detailsMenu('Reschedule Task');
+    const dlg = this.page.locator('.modal:visible, [role="dialog"]:visible').last();
+    await dlg.locator('input[type="date"]:visible').first().fill(dateStr).catch(() => {});
+    await dlg.locator('input[type="time"]:visible').first().fill(timeStr).catch(() => {});
+    await dlg.getByRole('button', { name: /save|reschedule|update|confirm|ok/i }).first().click().catch(() => {});
+    await this.page.waitForTimeout(2500);
+    return this._afterSave();
+  }
+
+  /** Add a Lead from a task via ⋮ → Add Lead. Returns {url, customerPrefilled}. */
+  async addLeadFromTask() {
+    await this.detailsMenu('Add Lead');
+    await this.page.waitForTimeout(1500);
+    const url = this.page.url();
+    const customerPrefilled = await this.page.evaluate(() => {
+      const c = document.querySelector('#TxtCustomer, #customer-phone, input[id*="customer" i]');
+      return c ? (c.value || '').length > 0 : false;
+    });
+    return { url, customerPrefilled };
+  }
+
+  /** Hold/End/Resume each open a Bootstrap confirm modal ("Hold Task" / "End Task"
+   *  with a pre-filled time + green "Confirm" button). Confirm it, then walk any swal. */
+  async _confirmAction() {
+    const confirm = this.page.getByRole('button', { name: /^\s*Confirm\s*$/i }).first();
+    const seen = await confirm.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+    if (seen) { await confirm.click().catch(() => {}); await this.page.waitForTimeout(2000); }
+    return this._afterSave();
+  }
+  /** Lifecycle: hold a running task (→ confirm "Hold Task"). */
+  async holdTask() {
+    await this.detailsModal.locator('.btn-warning-light').first().click().catch(() => {});
+    await this.page.waitForTimeout(1200);
+    return this._confirmAction();
+  }
+  /** Lifecycle: resume a held task (play/start control → confirm). */
+  async resumeTask() {
+    await this.detailsModal.locator('.btn-success-light, .btn-success, .btn-warning-light').filter({ hasText: /resume|start|play/i }).first().click()
+      .catch(async () => { await this.detailsModal.locator('.ri-play-fill, .bi-play-circle-fill').first().click().catch(() => {}); });
+    await this.page.waitForTimeout(1200);
+    return this._confirmAction();
+  }
+  /** Lifecycle: end a running task (→ confirm "End Task"). */
+  async endTask() {
+    await this.detailsModal.locator('.btn-danger-light').first().click().catch(() => {});
+    await this.page.waitForTimeout(1200);
+    return this._confirmAction();
+  }
+
+  /** Status badge for a task row in My Tasks (searched across tabs). null if not found. */
+  async rowStatus(name) {
+    await this.gotoMyTasks();
+    for (const tab of ['default', 'Today', 'Delayed', 'Upcoming', 'Completed', 'Unscheduled']) {
+      if (tab !== 'default') { await this.clickTab(tab); await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {}); await this.page.waitForTimeout(600); }
+      const st = await this.page.evaluate((n) => {
+        const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
+        if (!r) return null;
+        const m = (r.textContent || '').match(/\b(Running|Hold|Scheduled|Completed|Pending|Unscheduled|Not Started)\b/i);
+        return m ? m[1] : 'row-found';
+      }, name);
+      if (st) return st;
+    }
+    return null;
+  }
+  /** Read the status badges currently shown in the Task Details participant row. */
+  async detailsStatuses() {
+    return this.page.evaluate(() => {
+      const m = document.querySelector('#task-overview-modal');
+      if (!m) return [];
+      return [...m.querySelectorAll('.badge, .bg-success, .bg-warning, span')].map(e => (e.textContent || '').trim()).filter(t => /running|hold|not started|completed|paused|ended/i.test(t)).slice(0, 6);
+    });
+  }
+
   /** Search My Tasks across every status tab; returns the tab label where found, else null.
    *  Each tab loads its table via AJAX, so scan with a networkidle wait + retries. */
   async findAcrossTabs(name) {

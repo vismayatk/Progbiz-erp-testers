@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T17:08:12.421Z · 43 test cases in 4 spec file(s).
+> Last generated: 2026-06-26T18:48:36.629Z · 48 test cases in 5 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -33,6 +33,11 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TM-06 | Create task (Online Meeting, High priority) | `npx playwright test -g "TM-06 \|"` | `npx playwright test --headed -g "TM-06 \|"` |
 | TM-07 | My Tasks status tabs are navigable | `npx playwright test -g "TM-07 \|"` | `npx playwright test --headed -g "TM-07 \|"` |
 | TM-08 | Daily Activity Report loads with data | `npx playwright test -g "TM-08 \|"` | `npx playwright test --headed -g "TM-08 \|"` |
+| TM-24 | Add a note and upload a document (Scenario 7) | `npx playwright test -g "TM-24 \|"` | `npx playwright test --headed -g "TM-24 \|"` |
+| TM-25 | Edit an existing task title (Scenario 13) | `npx playwright test -g "TM-25 \|"` | `npx playwright test --headed -g "TM-25 \|"` |
+| TM-26 | Reschedule a task (Scenario 14) | `npx playwright test -g "TM-26 \|"` | `npx playwright test --headed -g "TM-26 \|"` |
+| TM-27 | Add a Lead from a task (Scenario 15) | `npx playwright test -g "TM-27 \|"` | `npx playwright test --headed -g "TM-27 \|"` |
+| TM-28 | Task lifecycle — Hold → Resume → End (Scenario 4) | `npx playwright test -g "TM-28 \|"` | `npx playwright test --headed -g "TM-28 \|"` |
 | TM-09 | Create New menu + Add Task modal structure | `npx playwright test -g "TM-09 \|"` | `npx playwright test --headed -g "TM-09 \|"` |
 | TM-10 | Create an Instant Task via the modal (Scenario 1) | `npx playwright test -g "TM-10 \|"` | `npx playwright test --headed -g "TM-10 \|"` |
 | TM-11 | Create a Task for Later — Hosts + scheduling (Scenario 2) | `npx playwright test -g "TM-11 \|"` | `npx playwright test --headed -g "TM-11 \|"` |

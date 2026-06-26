@@ -52,9 +52,9 @@ Run everything: `npx playwright test tests/task_management.spec.js tests/task_ma
 | TC_043 | Scheduled task saves | **TM-11** | save asserted |
 | TC_035–038 | Calendar sync of scheduled task | TM-22 (partial) | calendar reachable; cross-day match = manual |
 | TC_039–042 | Unscheduled / Finish-Before | **TM-18** (page), TM-11 (deadline toggle) | unscheduled page + actions |
-| TC_044–056 | Lifecycle: start/hold/resume/end + timers | **TM-20** | controls + sections present (non-destructive) |
+| TC_044–056 | Lifecycle: start/hold/resume/end + timers | **TM-20** + **TM-28** | TM-20 controls/sections; TM-28 drives Hold→Resume→End (Hold verified via row status) |
 | TC_057/058/059 | Pending / Overdue / Completed lists | **TM-19** | status tabs navigable |
-| TC_060–064 | Notes / Documents | — | best-effort/manual (overview page) |
+| TC_060–064 | Notes / Documents | **TM-24** ✅ | note added to activity log + document uploaded |
 | TC_048–053 | Created Task page + columns + View/Delete | **TM-16** | page + row actions |
 | TC_054–058 | My Task page + columns | **TM-15** | documented columns asserted |
 | TC_062–068 | Unscheduled page + Edit/Schedule/Start/Delete | **TM-18** | page + row actions |
@@ -71,15 +71,15 @@ Run everything: `npx playwright test tests/task_management.spec.js tests/task_ma
 | 4 — Lifecycle Start/Hold/Resume/End | **TM-20** (controls present, non-destructive) |
 | 5 — Visibility & Participant Access | **MU-02** ✅ (HAFNEETHA sees participant task) |
 | 6 — Admin Calendar & Timeline | **TM-22** + **MU-03** ✅ |
-| 7 — Notes & Document Upload | manual / best-effort |
+| 7 — Notes & Document Upload | **TM-24** ✅ |
 | 8 — Created Task Page | **TM-16** |
 | 9 — My Task Page | **TM-15** |
 | 10 — Created vs My Task segregation | TM-15 + TM-16 |
 | 11 — Unscheduled Task Page actions | **TM-18** |
 | 12 — Daily Activity Report | **TM-21** |
-| 13 — Edit an Existing Task | covered by row-action presence (TM-16/18); full edit = manual |
-| 14 — Reschedule a Task | TM-11 (schedule) + manual verify |
-| 15 — Add a Lead through a Task | manual (three-dots not present in this dev build) |
+| 13 — Edit an Existing Task | **TM-25** ✅ (⋮ → Edit Task; updated title persisted) |
+| 14 — Reschedule a Task | **TM-26** ✅ (⋮ → Reschedule Task) |
+| 15 — Add a Lead through a Task | **TM-27** ✅ (⋮ → Add Lead → opens /enquiry lead form) |
 
 ---
 
@@ -104,8 +104,27 @@ Uses a 2nd login (`SECOND_USERNAME=hafneetha` / `SECOND_NAME=HAFNEETHA` in `.env
 > **Behaviour learned:** a host-assigned task only surfaces in the assignee's My Tasks
 > for the **current date** — far-future host tasks appear on the scheduled day, not earlier.
 
-## Still manual / best-effort
+## Task Details panel (now automated — [tests/task_management_details.spec.js](tests/task_management_details.spec.js))
 
-- **Notes/Documents** (TC_060–064), **full Edit/Reschedule round-trips** (Scenarios 13/14),
-  and **Add-Lead-via-task** (Scenario 15) depend on per-task overview state and a
-  three-dots menu not present in this dev build.
+Opened from a My Tasks row (`.ri-send-plane-2-line`) → `#task-overview-modal`. Holds notes
+(`#txtChat` + `.btn-send`), document upload (`.fe-paperclip` → `#file-input-document`),
+lifecycle (Hold `.btn-warning-light` / End `.btn-danger-light` → a **"Hold/End Task" confirm
+modal** with a pre-filled time + **Confirm** button), and a ⋮ menu (`.fe-more-vertical`) →
+**Edit Task / Reschedule Task / Add Lead**.
+
+| Test | Scenario | Result |
+|---|---|---|
+| **TM-24** | Notes & Documents (7, TC_060-064) | ✅ |
+| **TM-25** | Edit an Existing Task (13) | ✅ |
+| **TM-26** | Reschedule a Task (14) | ✅ |
+| **TM-27** | Add a Lead through a Task (15) — opens `/enquiry/0/{id}` | ✅ |
+| **TM-28** | Lifecycle Hold→Resume→End (4, TC_044-056) | drives via the confirm modal; Hold verified via row status |
+
+> **Add Lead correction:** the three-dots IS present — not in the create modal header,
+> but inside **Task Details** (⋮ → Add Lead), exactly as Scenario 15 describes.
+
+## Fully manual (environment-limited)
+
+- None outstanding from the doc. (Cross-user *detail consistency* across calendar/timeline,
+  TC_024/035-038, is partially covered — exact cross-day calendar-cell matching remains a
+  manual visual check.)

@@ -2,12 +2,24 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T20:16:28.726Z · 56 test cases in 6 spec file(s).
+> Last generated: 2026-06-26T20:51:16.374Z · 68 test cases in 7 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
 | Test Case ID | Description | Headless command | Headed (browser) command |
 |---|---|---|---|
+| Item_01 | Create item with valid mandatory fields | `npx playwright test -g "Item_01 \|"` | `npx playwright test --headed -g "Item_01 \|"` |
+| Item_02 | Create item with all fields | `npx playwright test -g "Item_02 \|"` | `npx playwright test --headed -g "Item_02 \|"` |
+| Item_03 | Access Add Item without login redirects to Login | `npx playwright test -g "Item_03 \|"` | `npx playwright test --headed -g "Item_03 \|"` |
+| Item_04 | Session timeout while creating item | `npx playwright test -g "Item_04 \|"` | `npx playwright test --headed -g "Item_04 \|"` |
+| Item_05 | Create without Item Name is rejected | `npx playwright test -g "Item_05 \|"` | `npx playwright test --headed -g "Item_05 \|"` |
+| Item_06 | Create with whitespace-only Item Name is rejected | `npx playwright test -g "Item_06 \|"` | `npx playwright test --headed -g "Item_06 \|"` |
+| Item_10 | Duplicate Item Name is rejected | `npx playwright test -g "Item_10 \|"` | `npx playwright test --headed -g "Item_10 \|"` |
+| Item_11 | Save creates and lists the item | `npx playwright test -g "Item_11 \|"` | `npx playwright test --headed -g "Item_11 \|"` |
+| Item_12 | Search Item functionality | `npx playwright test -g "Item_12 \|"` | `npx playwright test --headed -g "Item_12 \|"` |
+| Item_13 | Edit Item | `npx playwright test -g "Item_13 \|"` | `npx playwright test --headed -g "Item_13 \|"` |
+| Item_14 | Delete Item | `npx playwright test -g "Item_14 \|"` | `npx playwright test --headed -g "Item_14 \|"` |
+| Item_15 | Cancel while adding item returns to list | `npx playwright test -g "Item_15 \|"` | `npx playwright test --headed -g "Item_15 \|"` |
 | Login_01 | Login page loads successfully | `npx playwright test -g "Login_01 \|"` | `npx playwright test --headed -g "Login_01 \|"` |
 | Login_02 | Login with valid Company Code, Username and Password | `npx playwright test -g "Login_02 \|"` | `npx playwright test --headed -g "Login_02 \|"` |
 | Login_03 | Login when Company Code is valid and mapped to user | `npx playwright test -g "Login_03 \|"` | `npx playwright test --headed -g "Login_03 \|"` |

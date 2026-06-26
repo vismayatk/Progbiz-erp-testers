@@ -46,6 +46,78 @@ class ItemPage {
     return this._afterSave();
   }
 
+  /**
+   * Create with an explicit field set (any field may be omitted/blank to test
+   * validation). Returns the validation message, or null on success.
+   * Fields: {name, variant, category, brand, description}.
+   */
+  async createWith(fields = {}) {
+    const { name, variant, category, brand, description } = fields;
+    await this.gotoForm();
+    if (name !== undefined) await this.nameInput.fill(name);
+    if (variant !== undefined) await this.page.locator('#variant-name').fill(variant).catch(() => {});
+    if (category === '*') {
+      // pick the first REAL category (skip the "Choose.." placeholder)
+      await this.categorySelect.evaluate(s => {
+        const opt = [...s.options].find(o => o.value && !/choose|select|^\s*$/i.test(o.textContent));
+        if (opt) { s.value = opt.value; s.dispatchEvent(new Event('change', { bubbles: true })); }
+      }).catch(() => {});
+    } else if (category) await this.categorySelect.selectOption({ label: category }).catch(() => {});
+    if (brand) await this.page.locator('#brand').selectOption({ label: brand }).catch(() => {});
+    if (description) await this.page.locator('#description').fill(description).catch(() => {});
+    await this.saveBtn.click();
+    await this.page.waitForTimeout(2000);
+    return this._afterSaveOrValidation();
+  }
+
+  /** _afterSave, plus inline (jQuery-validate) message detection when the form stays put. */
+  async _afterSaveOrValidation() {
+    const swalMsg = await this._afterSave();
+    if (swalMsg) return swalMsg;
+    if (/\/item(\b|$)/.test(this.page.url()) && !/\/items/.test(this.page.url())) {
+      const re = /please (provide|enter|choose|select)|required|cannot be (empty|blank)|invalid|not valid|valid (name|item)|already exist/i;
+      for (let i = 0; i < 3; i++) {
+        const inline = await this.page.evaluate((src) => {
+          const r = new RegExp(src, 'i');
+          for (const e of document.querySelectorAll('*')) {
+            if (e.children.length > 0) continue;            // leaf nodes only
+            if (e.getClientRects().length === 0) continue;  // visible only
+            const t = (e.textContent || '').replace(/\s+/g, ' ').trim();
+            if (t && t.length < 90 && r.test(t)) return t;
+          }
+          return null;
+        }, re.source);
+        if (inline) return inline;
+        await this.page.waitForTimeout(700);
+      }
+    }
+    return null;
+  }
+
+  /** Edit an item's name via the /items Action column. Returns null on success. */
+  async editItem(name, newName) {
+    console.log(`  ✏️  Edit Item "${name}" → "${newName}"`);
+    const { row, exists } = await this.findRow(name);
+    if (!exists) throw new Error(`edit: item "${name}" not found`);
+    const editBtn = row.locator('a:has(i[class*="pencil"]), a:has(i[class*="edit"]), [title*="edit" i], a.btn-primary-light, [data-bs-title="Edit" i]').first();
+    await editBtn.click().catch(() => {});
+    await this.nameInput.waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
+    await this.page.waitForTimeout(800);
+    await this.nameInput.fill(newName);
+    await this.saveBtn.click();
+    await this.page.waitForTimeout(2000);
+    return this._afterSaveOrValidation();
+  }
+
+  /** Click Cancel on the create form and confirm we leave without saving. */
+  async cancelCreate(name) {
+    await this.gotoForm();
+    await this.nameInput.fill(name);
+    await this.page.locator('button:visible, a:visible').filter({ hasText: /^\s*cancel\s*$/i }).first().click().catch(() => {});
+    await this.page.waitForTimeout(1500);
+    return this.page.url();
+  }
+
   async _afterSave() {
     const swal = this.page.locator('.swal2-popup');
     let msg = null;

@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-26T21:51:07.294Z · 86 test cases in 9 spec file(s).
+> Last generated: 2026-06-27T04:20:32.310Z · 90 test cases in 10 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -46,6 +46,10 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | Login_06 | Remember Password option | `npx playwright test -g "Login_06 \|"` | `npx playwright test --headed -g "Login_06 \|"` |
 | Login_07 | Forgot Password link is present/navigable | `npx playwright test -g "Login_07 \|"` | `npx playwright test --headed -g "Login_07 \|"` |
 | Login_08 | Successful login redirects to dashboard/home | `npx playwright test -g "Login_08 \|"` | `npx playwright test --headed -g "Login_08 \|"` |
+| QT-010 | Auto-fill from enquiry + items + totals + editable (QT-003,004,006,010,011) | `npx playwright test -g "QT-010 \|"` | `npx playwright test --headed -g "QT-010 \|"` |
+| QT-007 | Terms and Conditions editable | `npx playwright test -g "QT-007 \|"` | `npx playwright test --headed -g "QT-007 \|"` |
+| QT-012 | Save quotation from enquiry → Overview + actions (QT-008,012,013,014,015,016,017,018) | `npx playwright test -g "QT-012 \|"` | `npx playwright test --headed -g "QT-012 \|"` |
+| QT-001 | Create New → Quotation page (QT-001,002,009) | `npx playwright test -g "QT-001 \|"` | `npx playwright test --headed -g "QT-001 \|"` |
 | TC-01 | Login with valid credentials | `npx playwright test -g "TC-01 \|"` | `npx playwright test --headed -g "TC-01 \|"` |
 | TC-02 | Create a new enquiry with valid data | `npx playwright test -g "TC-02 \|"` | `npx playwright test --headed -g "TC-02 \|"` |
 | TC-02B | Create enquiry for an existing customer (search & choose) | `npx playwright test -g "TC-02B \|"` | `npx playwright test --headed -g "TC-02B \|"` |

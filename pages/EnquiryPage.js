@@ -422,6 +422,18 @@ class EnquiryPage {
    * "Create Quotation" header button, which navigates to /quotation/0/{id}
    * (prefilled) where it is saved via #btn-save-quotation.
    */
+  /** Click "Create Quotation" and land on the prefilled /quotation/0/{id} form
+   *  WITHOUT saving (so the form can be inspected/edited first). */
+  async openQuotationForm() {
+    console.log('  🔄 Opening Quotation form from enquiry');
+    await waitOverviewReady(this.page);
+    await this.page.locator('#btn-create-quotation').waitFor({ state: 'visible', timeout: 15000 });
+    await this.page.locator('#btn-create-quotation').click();
+    await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
+    await this.page.locator('#btn-save-quotation').waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
+    await this.page.waitForTimeout(1500);
+  }
+
   async convertToQuotation() {
     console.log('  🔄 Clicking "Create Quotation"');
     await waitOverviewReady(this.page);

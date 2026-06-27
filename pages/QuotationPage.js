@@ -19,6 +19,51 @@ class QuotationPage {
     this.quotationNumberEl = page.locator(
       '[data-field="quotation_no"], .quotation-number, span.quot-no, h4.quot-no, td.quot-no'
     ).first();
+
+    // ── Create-Quotation form (/quotation/0/{id}, reached via enquiry convert) ──
+    this.qBranch    = page.locator('#branch');
+    this.qDate      = page.locator('#date');
+    this.qNumber    = page.locator('#quotation-no');         // QUO-### auto
+    this.qCustomer  = page.locator('#customerNameInput');
+    this.qAgent     = page.locator('#agent');                // Sales Executive*
+    this.qQuality   = page.locator('#quotation-quality');    // Lead Quality*
+    this.qCurrency  = page.locator('#currency');
+    this.qValidUpto = page.locator('#expdate');              // Quotation Valid Upto (the one NOT auto-filled)
+    this.qTerms     = page.locator('#terms-and-condition');
+    this.qGross     = page.locator('#gross-total');
+    this.qPayable   = page.locator('#payable-total');
+    this.qSave      = page.locator('#btn-save-quotation');
+    this.qItemRows  = page.locator('table tbody tr');
+  }
+
+  /** Whether we're on the create-quotation form. */
+  onForm() { return /\/quotation\//.test(this.page.url()); }
+
+  /** Snapshot of auto-fill state (QT-010): which fields are prefilled vs empty. */
+  async autoFillState() {
+    const val = async (loc) => (await loc.inputValue().catch(() => '')) || '';
+    return {
+      number:    await val(this.qNumber),
+      customer:  await val(this.qCustomer),
+      date:      await val(this.qDate),
+      validUpto: await val(this.qValidUpto),
+      itemRows:  await this.qItemRows.count().catch(() => 0),
+      gross:     await val(this.qGross),
+      payable:   await val(this.qPayable),
+    };
+  }
+
+  /** Set the Quotation Valid Upto date (the field left blank by auto-fill). */
+  async setValidUpto(dateStr) {
+    await this.qValidUpto.fill(dateStr).catch(() => {});
+    await this.page.waitForTimeout(300);
+  }
+
+  /** Save the quotation. Returns the alert/redirect outcome. */
+  async save() {
+    await this.qSave.click().catch(() => {});
+    await this.page.waitForTimeout(2500);
+    return this.getSuccessMessage();
   }
 
   /**

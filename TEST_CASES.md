@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-06-27T04:20:32.310Z · 90 test cases in 10 spec file(s).
+> Last generated: 2026-06-27T04:30:08.565Z · 100 test cases in 11 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -26,6 +26,16 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | ENQ-37 | Cancel closes the follow-up popup without saving | `npx playwright test -g "ENQ-37 \|"` | `npx playwright test --headed -g "ENQ-37 \|"` |
 | ENQ-39 | Latest follow-up is editable/deletable (ENQ-39..42) | `npx playwright test -g "ENQ-39 \|"` | `npx playwright test --headed -g "ENQ-39 \|"` |
 | QT-019 | Quotation follow-up uses the same modal (QT-019..028) | `npx playwright test -g "QT-019 \|"` | `npx playwright test --headed -g "QT-019 \|"` |
+| Home_01 | Homepage loads + welcome message + Create New (Home_01,02,24) | `npx playwright test -g "Home_01 \|"` | `npx playwright test --headed -g "Home_01 \|"` |
+| Home_03 | New Leads & lead status counts on Leads (Home_03,04) | `npx playwright test -g "Home_03 \|"` | `npx playwright test --headed -g "Home_03 \|"` |
+| Home_05 | Followups Today/Overdue counts + drill-down (Home_05,06,07,08) | `npx playwright test -g "Home_05 \|"` | `npx playwright test --headed -g "Home_05 \|"` |
+| Home_09 | Won/Completed leads listing (Home_09,10) | `npx playwright test -g "Home_09 \|"` | `npx playwright test --headed -g "Home_09 \|"` |
+| Home_11 | Today\'s Schedule section (Home_11,12) | `npx playwright test -g "Home_11 \|"` | `npx playwright test --headed -g "Home_11 \|"` |
+| Home_13 | Follow-up History (Home_13,14) | `npx playwright test -g "Home_13 \|"` | `npx playwright test --headed -g "Home_13 \|"` |
+| Home_15 | Summary lead classification on CRM Dashboard (Home_15,16) | `npx playwright test -g "Home_15 \|"` | `npx playwright test --headed -g "Home_15 \|"` |
+| Home_17 | Executive filter on CRM Dashboard (Home_17,18,19) | `npx playwright test -g "Home_17 \|"` | `npx playwright test --headed -g "Home_17 \|"` |
+| Home_20 | Timeline & Calendar icons on /home (Home_20,21,22,23) | `npx playwright test -g "Home_20 \|"` | `npx playwright test --headed -g "Home_20 \|"` |
+| Home_25 | Create New → Enquiry and Quotation (Home_24,25,26) | `npx playwright test -g "Home_25 \|"` | `npx playwright test --headed -g "Home_25 \|"` |
 | Item_01 | Create item with valid mandatory fields | `npx playwright test -g "Item_01 \|"` | `npx playwright test --headed -g "Item_01 \|"` |
 | Item_02 | Create item with all fields | `npx playwright test -g "Item_02 \|"` | `npx playwright test --headed -g "Item_02 \|"` |
 | Item_03 | Access Add Item without login redirects to Login | `npx playwright test -g "Item_03 \|"` | `npx playwright test --headed -g "Item_03 \|"` |

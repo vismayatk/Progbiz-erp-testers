@@ -1,0 +1,27 @@
+{
+  "name": "playwright-erp",
+  "version": "1.0.0",
+  "description": "Playwright (POM) automation for PROGBIZ ERP — generated from the merged manual test-case workbook.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:login": "playwright test tests/login.spec.js",
+    "test:headed": "playwright test --headed",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:chrome": "playwright test --project=\"Google Chrome\"",
+    "test:edge": "playwright test --project=\"Microsoft Edge\"",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen https://erp.progbiz.io/login",
+    "install:browsers": "playwright install"
+  },
+  "keywords": ["playwright", "automation", "pom", "erp", "qa"],
+  "author": "QA Automation",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "dotenv": "^16.4.5"
+  }
+}

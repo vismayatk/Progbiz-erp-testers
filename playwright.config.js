@@ -10,8 +10,9 @@ module.exports = defineConfig({
   expect: { timeout:  20_000 }, // assertion timeout
 
   // ── Test discovery ────────────────────────────────────────────────────────
-  testDir:  './tests',
-  testMatch: '**/*.spec.js',
+  // Specs live under erp/<module>/tests/ (erp/crm, erp/task-management).
+  testDir:  './erp',
+  testMatch: '**/tests/**/*.spec.js',
 
   // ── Parallelism ───────────────────────────────────────────────────────────
   workers:  1,   // run sequentially (CRM state is shared)

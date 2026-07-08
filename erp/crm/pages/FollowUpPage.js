@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAlertText, waitOverviewReady } = require('../utils/helpers');
+const { getAlertText, waitOverviewReady } = require('../../common/helpers');
 
 class FollowUpPage {
   /**

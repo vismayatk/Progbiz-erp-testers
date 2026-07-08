@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAlertText, waitOverviewReady, throwIfServerError } = require('../utils/helpers');
+const { getAlertText, waitOverviewReady, throwIfServerError } = require('../../common/helpers');
 
 class EnquiryPage {
   /**

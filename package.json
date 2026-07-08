@@ -9,8 +9,10 @@
     "pretest": "node scripts/gen-testcases.js",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:enquiry": "playwright test tests/enquiry_flow.spec.js",
-    "test:enquiry:headed": "playwright test tests/enquiry_flow.spec.js --headed",
+    "test:crm": "playwright test erp/crm",
+    "test:task": "playwright test erp/task-management",
+    "test:enquiry": "playwright test erp/crm/tests/enquiry_flow.spec.js",
+    "test:enquiry:headed": "playwright test erp/crm/tests/enquiry_flow.spec.js --headed",
     "report": "playwright show-report reports/html",
     "ui": "playwright test --ui",
     "install:browsers": "playwright install chromium"

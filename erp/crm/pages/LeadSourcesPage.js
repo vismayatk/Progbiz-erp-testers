@@ -1,6 +1,6 @@
 'use strict';
 
-const { throwIfServerError } = require('../utils/helpers');
+const { throwIfServerError } = require('../../common/helpers');
 
 /**
  * CRM → Settings → Lead Sources  (/lead-sources)

@@ -1,7 +1,7 @@
 'use strict';
 require('dotenv').config();
 const { chromium } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
+const { LoginPage } = require('../erp/common/LoginPage');
 const C = { company: process.env.COMPANY_CODE, username: process.env.CRM_USERNAME, password: process.env.PASSWORD };
 
 (async () => {

@@ -21,16 +21,16 @@
 require('dotenv').config();
 const path = require('path');
 const { test, expect } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
+const { LoginPage } = require('../../common/LoginPage');
 const { TaskManagementPage } = require('../pages/TaskManagementPage');
-const { screenshot } = require('../utils/helpers');
+const { screenshot } = require('../../common/helpers');
 
 const CREDS = {
   company:  process.env.COMPANY_CODE || 'lesol_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
-const DOC = path.resolve(__dirname, '..', 'fixtures', 'sample-document.txt');
+const DOC = path.resolve(__dirname, '..', '..', 'common', 'sample-document.txt');
 
 async function arriveWithTask(page, label) {
   const login = new LoginPage(page);

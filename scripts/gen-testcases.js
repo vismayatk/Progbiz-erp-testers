@@ -9,14 +9,25 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const TESTS_DIR = path.join(ROOT, 'tests');
+const ERP_DIR = path.join(ROOT, 'erp');
 const OUT = path.join(ROOT, 'TEST_CASES.md');
 
-// Collect tests from every *.spec.js
-const specs = fs.readdirSync(TESTS_DIR).filter(f => f.endsWith('.spec.js'));
+// Recursively collect every *.spec.js under erp/ (erp/<module>/tests/…)
+function walk(dir) {
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) out.push(...walk(full));
+    else if (e.name.endsWith('.spec.js')) out.push(full);
+  }
+  return out;
+}
+const specFiles = walk(ERP_DIR);
+const specs = specFiles.map(f => path.relative(ROOT, f).replace(/\\/g, '/'));
 const rows = [];
-for (const spec of specs) {
-  const src = fs.readFileSync(path.join(TESTS_DIR, spec), 'utf8');
+for (let i = 0; i < specFiles.length; i++) {
+  const spec = specs[i];
+  const src = fs.readFileSync(specFiles[i], 'utf8');
   // test('TC-.. | ...') / test('TM-.. | ...') — lazy match to the matching closing
   // quote + comma, so titles with embedded quotes (e.g. "In Follow-up") are captured.
   const re = /test(?:\.\w+)?\(\s*(['"`])((?:TC|TM|MU|Login|Home|Item|ENQ|QT)[-_][\s\S]*?)\1\s*,/g;

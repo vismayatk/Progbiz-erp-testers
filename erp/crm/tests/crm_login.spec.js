@@ -9,8 +9,8 @@
  */
 require('dotenv').config();
 const { test, expect } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
-const { screenshot } = require('../utils/helpers');
+const { LoginPage } = require('../../common/LoginPage');
+const { screenshot } = require('../../common/helpers');
 
 const C = {
   company:  process.env.COMPANY_CODE || 'lesol_test',

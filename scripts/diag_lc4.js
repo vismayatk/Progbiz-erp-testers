@@ -1,8 +1,8 @@
 'use strict';
 require('dotenv').config();
 const { chromium } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
-const { TaskManagementPage } = require('../pages/TaskManagementPage');
+const { LoginPage } = require('../erp/common/LoginPage');
+const { TaskManagementPage } = require('../erp/task-management/pages/TaskManagementPage');
 const C = { company: process.env.COMPANY_CODE, username: process.env.CRM_USERNAME, password: process.env.PASSWORD };
 const hdr = () => { const m = document.querySelector('#task-overview-modal'); if (!m) return { closed: true }; const vis = e => e.getClientRects().length > 0;
   return { btns: [...m.querySelectorAll('button')].filter(vis).map(b => b.textContent.replace(/\s+/g, ' ').trim()).filter(t => /hold|end|resume|start/i.test(t)).slice(0,5),

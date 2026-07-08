@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAlertText } = require('../utils/helpers');
+const { getAlertText } = require('../../common/helpers');
 
 class QuotationPage {
   /**

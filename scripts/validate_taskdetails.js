@@ -2,8 +2,8 @@
 require('dotenv').config();
 const path = require('path');
 const { chromium } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
-const { TaskManagementPage } = require('../pages/TaskManagementPage');
+const { LoginPage } = require('../erp/common/LoginPage');
+const { TaskManagementPage } = require('../erp/task-management/pages/TaskManagementPage');
 const C = { company: process.env.COMPANY_CODE, username: process.env.CRM_USERNAME, password: process.env.PASSWORD };
 
 (async () => {

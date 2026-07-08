@@ -5,7 +5,7 @@
  */
 require('dotenv').config();
 const { chromium } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
+const { LoginPage } = require('../erp/common/LoginPage');
 
 const CREDS = {
   company:  process.env.COMPANY_CODE || 'lesol_test',

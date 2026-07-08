@@ -1,8 +1,8 @@
 'use strict';
 require('dotenv').config();
 const { chromium } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
-const { EnquiryPage } = require('../pages/EnquiryPage');
+const { LoginPage } = require('../erp/common/LoginPage');
+const { EnquiryPage } = require('../erp/crm/pages/EnquiryPage');
 const C = { company: process.env.COMPANY_CODE, username: process.env.CRM_USERNAME, password: process.env.PASSWORD };
 const uniq = () => { const ts = Date.now(); return { customerName: `QT Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `qt${ts}@x.com`, source: 'Website', product: 'Inverter', description: 'qt', quantity: '2', unitPrice: '1000' }; };
 (async () => {

@@ -17,7 +17,7 @@
 require('dotenv').config();
 
 const { test, expect } = require('@playwright/test');
-const { LoginPage }    = require('../pages/LoginPage');
+const { LoginPage }    = require('../../common/LoginPage');
 const { EnquiryPage }  = require('../pages/EnquiryPage');
 const { FollowUpPage } = require('../pages/FollowUpPage');
 const { QuotationPage }= require('../pages/QuotationPage');
@@ -26,8 +26,8 @@ const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
 const { LeadStatusPage }   = require('../pages/LeadStatusPage');
 const { ItemCategoryPage } = require('../pages/ItemCategoryPage');
 const { ItemPage }         = require('../pages/ItemPage');
-const { screenshot }   = require('../utils/helpers');
-const { testData }     = require('../fixtures/testData');
+const { screenshot }   = require('../../common/helpers');
+const { testData }     = require('../../common/testData');
 
 // ── Shared state across tests in this file ──────────────────────────────────
 let enquiryUrl = '';

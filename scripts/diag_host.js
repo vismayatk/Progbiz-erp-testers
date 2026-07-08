@@ -1,8 +1,8 @@
 'use strict';
 require('dotenv').config();
 const { chromium } = require('@playwright/test');
-const { LoginPage } = require('../pages/LoginPage');
-const { TaskManagementPage } = require('../pages/TaskManagementPage');
+const { LoginPage } = require('../erp/common/LoginPage');
+const { TaskManagementPage } = require('../erp/task-management/pages/TaskManagementPage');
 const A = { company: process.env.COMPANY_CODE, username: process.env.CRM_USERNAME, password: process.env.PASSWORD };
 const S = { company: process.env.COMPANY_CODE, username: process.env.SECOND_USERNAME, password: process.env.SECOND_PASSWORD, name: process.env.SECOND_NAME };
 

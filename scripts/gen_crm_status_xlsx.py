@@ -7,7 +7,7 @@ import os
 
 SRC = r"C:\Users\PROBOOK\Downloads\CRM- Test Case.xlsx"
 OUT = r"C:\Users\PROBOOK\Downloads\CRM- Test Case - Automation Status.xlsx"
-REPO = os.path.join(os.path.dirname(__file__), "..", "CRM- Test Case - Automation Status.xlsx")
+REPO = os.path.join(os.path.dirname(__file__), "..", "docs", "excel", "CRM- Test Case - Automation Status.xlsx")
 
 # Pass = directly asserted & green | Partial = covered by a passing test but the
 # deep/dynamic behaviour not separately asserted | Skip = N/A on this build (feature/role absent)

@@ -11,3 +11,8 @@ screenshots/
 # Local Claude artifacts
 .claude/settings.local.json
 git_max/
+
+# scratch / audit image folders
+*_shots/
+crm_shots/
+erp/screenshots/

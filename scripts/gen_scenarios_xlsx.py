@@ -164,5 +164,5 @@ def build(path, title, rows):
 for fn, title, rows in [("CRM_Automation_Scenarios.xlsx","CRM Automation Scenarios",crm),
                         ("TaskManagement_Automation_Scenarios.xlsx","Task Mgmt Automation Scenarios",tm)]:
     n1=build(os.path.join(DL,fn), title, rows)
-    build(os.path.join(REPO,fn), title, rows)
-    print(f"{fn}: {n1} rows -> Downloads + repo")
+    build(os.path.join(REPO,"docs","excel",fn), title, rows)
+    print(f"{fn}: {n1} rows -> Downloads + docs/excel/")

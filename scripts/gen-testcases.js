@@ -10,7 +10,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const ERP_DIR = path.join(ROOT, 'erp');
-const OUT = path.join(ROOT, 'TEST_CASES.md');
+const OUT = path.join(ROOT, 'docs', 'TEST_CASES.md');
 
 // Recursively collect every *.spec.js under erp/ (erp/<module>/tests/…)
 function walk(dir) {

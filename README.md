@@ -18,18 +18,21 @@ erp-tests/
 ├─ package.json                  ← npm scripts (test / test:crm / test:task / docs …)
 ├─ .env  (git-ignored)           ← BASE_URL · COMPANY_CODE · CRM_USERNAME · PASSWORD · SECOND_*
 │
-├─ erp/                          ← ✦ AUTOMATION CODE
-│   ├─ common/                   ← shared across both modules
-│   │   ├─ LoginPage.js
-│   │   ├─ helpers.js
-│   │   ├─ testData.js
-│   │   └─ sample-document.txt
+├─ erp/                          ← ✦ AUTOMATION CODE (one folder per module)
+│   ├─ common/                   ← shared across all modules
+│   │   ├─ LoginPage.js · helpers.js · testData.js · sample-document.txt
 │   ├─ crm/
-│   │   ├─ pages/                ← 8 CRM page objects (Enquiry, FollowUp, Quotation, Item, …)
-│   │   └─ tests/                ← 7 CRM specs (login, homepage, item, enquiry, followup, quotation, flow)
-│   └─ task-management/
-│       ├─ pages/                ← TaskManagementPage.js
-│       └─ tests/                ← 4 TM specs (base, modal, details, multiuser)
+│   │   ├─ pages/                ← CRM page objects (Enquiry, FollowUp, Quotation, LeadSources/Status/Transfer)
+│   │   └─ tests/                ← 6 CRM specs (login, homepage, enquiry, followup, quotation, flow)
+│   ├─ item/
+│   │   ├─ pages/                ← ItemPage · ItemCategoryPage
+│   │   └─ tests/                ← item.spec.js (Item master CRUD + validations)
+│   ├─ task-management/
+│   │   ├─ pages/                ← TaskManagementPage.js
+│   │   └─ tests/                ← 4 TM specs (base, modal, details, multiuser)
+│   └─ project-management/
+│       ├─ pages/                ← ProjectPage.js
+│       └─ tests/                ← project.spec.js (Projects list, add, sub-pages)
 │
 ├─ docs/                         ← ✦ DOCUMENTATION
 │   ├─ TEST_CASES.md             ← auto-generated index of every test id + run command
@@ -56,19 +59,20 @@ erp-tests/
 
 ```mermaid
 flowchart TD
-    CFG["playwright.config.js\n(testDir: ./erp)"] --> CRM["erp/crm/tests/*.spec.js"]
-    CFG --> TM["erp/task-management/tests/*.spec.js"]
+    CFG["playwright.config.js\n(testDir: ./erp)"] --> CRM["erp/crm"]
+    CFG --> ITEM["erp/item"]
+    CFG --> TM["erp/task-management"]
+    CFG --> PM["erp/project-management"]
 
-    CRM --> CP["erp/crm/pages/*\n(Page Objects)"]
-    TM  --> TP["erp/task-management/pages/\nTaskManagementPage"]
-
-    CP --> COM["erp/common/\nLoginPage · helpers · testData"]
-    TP --> COM
+    CRM --> COM["erp/common/\nLoginPage · helpers · testData"]
+    ITEM --> COM
+    TM  --> COM
+    PM  --> COM
 
     COM --> ENV[".env\nBASE_URL · creds"]
     ENV --> APP["Progbiz ERP\n(erptest / devtest)"]
 
-    CRM -. writes .-> DOCS["docs/ + docs/excel/\n(reports & coverage)"]
+    CRM -. writes .-> DOCS["docs/ + docs/excel/"]
     TM  -. writes .-> DOCS
 ```
 
@@ -90,16 +94,20 @@ flowchart LR
 
 ## 🧩 Modules & coverage
 
-### CRM — `erp/crm/` (7 specs)
+### CRM — `erp/crm/` (6 specs)
 | Area | Spec | Scenarios |
 |---|---|---|
 | Login | `crm_login.spec.js` | Login_01–08 |
 | Homepage | `crm_homepage.spec.js` | Home_01–26 |
-| Item | `crm_item.spec.js` | Item_01–15 |
 | Enquiry | `crm_enquiry.spec.js` | ENQ‑01–28 |
 | Followup | `crm_followup.spec.js` | ENQ‑29–42 · QT‑019–028 |
 | Quotation | `crm_quotation.spec.js` | QT‑001–018 |
 | CRM Flow (E2E) | `enquiry_flow.spec.js` | TC‑01–16 |
+
+### Item — `erp/item/` (1 spec)
+| Area | Spec | Scenarios |
+|---|---|---|
+| Item master (create, validations, duplicate, search, edit, delete) | `item.spec.js` | Item_01–15 |
 
 ### Task Management — `erp/task-management/` (4 specs)
 | Area | Spec | Scenarios |
@@ -108,6 +116,11 @@ flowchart LR
 | Create New → Task modal | `task_management_modal.spec.js` | TM‑09–23 |
 | Task Details (notes, docs, edit, reschedule, add‑lead, lifecycle) | `task_management_details.spec.js` | TM‑24–28 |
 | Multi‑user visibility | `task_management_multiuser.spec.js` | MU‑01–03 |
+
+### Project Management — `erp/project-management/` (1 spec)
+| Area | Spec | Scenarios |
+|---|---|---|
+| Projects list · Add Project · sub‑pages (Notes/Attachments/Expenses/Collections) | `project.spec.js` | PM‑01–03 |
 
 > Full scenario → step → status mapping: **`docs/excel/CRM_Automation_Scenarios.xlsx`** and **`docs/excel/TaskManagement_Automation_Scenarios.xlsx`**.
 
@@ -135,9 +148,11 @@ SECOND_NAME=
 ## ▶️ Running
 
 ```bash
-npx playwright test                 # everything (103 tests)
-npm run test:crm                    # all CRM        (npx playwright test erp/crm)
-npm run test:task                   # all Task Mgmt  (npx playwright test erp/task-management)
+npx playwright test                 # everything (all modules)
+npm run test:crm                    # CRM            (npx playwright test erp/crm)
+npm run test:item                   # Item           (npx playwright test erp/item)
+npm run test:task                   # Task Mgmt      (npx playwright test erp/task-management)
+npm run test:project                # Project Mgmt   (npx playwright test erp/project-management)
 
 npx playwright test erp/crm/tests/crm_login.spec.js   # one file
 npx playwright test -g "TM-28 \|"                      # one case by id

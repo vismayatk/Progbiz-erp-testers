@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-07-10T17:29:08.606Z · 100 test cases in 11 spec file(s).
+> Last generated: 2026-07-10T17:50:33.822Z · 103 test cases in 12 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -36,18 +36,6 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | Home_17 | Executive filter on CRM Dashboard (Home_17,18,19) | `npx playwright test -g "Home_17 \|"` | `npx playwright test --headed -g "Home_17 \|"` |
 | Home_20 | Timeline & Calendar icons on /home (Home_20,21,22,23) | `npx playwright test -g "Home_20 \|"` | `npx playwright test --headed -g "Home_20 \|"` |
 | Home_25 | Create New → Enquiry and Quotation (Home_24,25,26) | `npx playwright test -g "Home_25 \|"` | `npx playwright test --headed -g "Home_25 \|"` |
-| Item_01 | Create item with valid mandatory fields | `npx playwright test -g "Item_01 \|"` | `npx playwright test --headed -g "Item_01 \|"` |
-| Item_02 | Create item with all fields | `npx playwright test -g "Item_02 \|"` | `npx playwright test --headed -g "Item_02 \|"` |
-| Item_03 | Access Add Item without login redirects to Login | `npx playwright test -g "Item_03 \|"` | `npx playwright test --headed -g "Item_03 \|"` |
-| Item_04 | Session timeout while creating item | `npx playwright test -g "Item_04 \|"` | `npx playwright test --headed -g "Item_04 \|"` |
-| Item_05 | Create without Item Name is rejected | `npx playwright test -g "Item_05 \|"` | `npx playwright test --headed -g "Item_05 \|"` |
-| Item_06 | Create with whitespace-only Item Name is rejected | `npx playwright test -g "Item_06 \|"` | `npx playwright test --headed -g "Item_06 \|"` |
-| Item_10 | Duplicate Item Name is rejected | `npx playwright test -g "Item_10 \|"` | `npx playwright test --headed -g "Item_10 \|"` |
-| Item_11 | Save creates and lists the item | `npx playwright test -g "Item_11 \|"` | `npx playwright test --headed -g "Item_11 \|"` |
-| Item_12 | Search Item functionality | `npx playwright test -g "Item_12 \|"` | `npx playwright test --headed -g "Item_12 \|"` |
-| Item_13 | Edit Item | `npx playwright test -g "Item_13 \|"` | `npx playwright test --headed -g "Item_13 \|"` |
-| Item_14 | Delete Item | `npx playwright test -g "Item_14 \|"` | `npx playwright test --headed -g "Item_14 \|"` |
-| Item_15 | Cancel while adding item returns to list | `npx playwright test -g "Item_15 \|"` | `npx playwright test --headed -g "Item_15 \|"` |
 | Login_01 | Login page loads successfully | `npx playwright test -g "Login_01 \|"` | `npx playwright test --headed -g "Login_01 \|"` |
 | Login_02 | Login with valid Company Code, Username and Password | `npx playwright test -g "Login_02 \|"` | `npx playwright test --headed -g "Login_02 \|"` |
 | Login_03 | Login when Company Code is valid and mapped to user | `npx playwright test -g "Login_03 \|"` | `npx playwright test --headed -g "Login_03 \|"` |
@@ -77,6 +65,21 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | TC-14 | Lead Status (Settings) — create a followup status with a Nature | `npx playwright test -g "TC-14 \|"` | `npx playwright test --headed -g "TC-14 \|"` |
 | TC-15 | Item Categories — create a category and verify duplicates are rejected | `npx playwright test -g "TC-15 \|"` | `npx playwright test --headed -g "TC-15 \|"` |
 | TC-16 | Items — create a Product, verify duplicates are rejected, then delete | `npx playwright test -g "TC-16 \|"` | `npx playwright test --headed -g "TC-16 \|"` |
+| Item_01 | Create item with valid mandatory fields | `npx playwright test -g "Item_01 \|"` | `npx playwright test --headed -g "Item_01 \|"` |
+| Item_02 | Create item with all fields | `npx playwright test -g "Item_02 \|"` | `npx playwright test --headed -g "Item_02 \|"` |
+| Item_03 | Access Add Item without login redirects to Login | `npx playwright test -g "Item_03 \|"` | `npx playwright test --headed -g "Item_03 \|"` |
+| Item_04 | Session timeout while creating item | `npx playwright test -g "Item_04 \|"` | `npx playwright test --headed -g "Item_04 \|"` |
+| Item_05 | Create without Item Name is rejected | `npx playwright test -g "Item_05 \|"` | `npx playwright test --headed -g "Item_05 \|"` |
+| Item_06 | Create with whitespace-only Item Name is rejected | `npx playwright test -g "Item_06 \|"` | `npx playwright test --headed -g "Item_06 \|"` |
+| Item_10 | Duplicate Item Name is rejected | `npx playwright test -g "Item_10 \|"` | `npx playwright test --headed -g "Item_10 \|"` |
+| Item_11 | Save creates and lists the item | `npx playwright test -g "Item_11 \|"` | `npx playwright test --headed -g "Item_11 \|"` |
+| Item_12 | Search Item functionality | `npx playwright test -g "Item_12 \|"` | `npx playwright test --headed -g "Item_12 \|"` |
+| Item_13 | Edit Item | `npx playwright test -g "Item_13 \|"` | `npx playwright test --headed -g "Item_13 \|"` |
+| Item_14 | Delete Item | `npx playwright test -g "Item_14 \|"` | `npx playwright test --headed -g "Item_14 \|"` |
+| Item_15 | Cancel while adding item returns to list | `npx playwright test -g "Item_15 \|"` | `npx playwright test --headed -g "Item_15 \|"` |
+| PM-01 | Projects listing loads with columns | `npx playwright test -g "PM-01 \|"` | `npx playwright test --headed -g "PM-01 \|"` |
+| PM-02 | Add New Project page loads | `npx playwright test -g "PM-02 \|"` | `npx playwright test --headed -g "PM-02 \|"` |
+| PM-03 | Project sub-pages reachable | `npx playwright test -g "PM-03 \|"` | `npx playwright test --headed -g "PM-03 \|"` |
 | TM-01 | My Tasks page loads with status tabs | `npx playwright test -g "TM-01 \|"` | `npx playwright test --headed -g "TM-01 \|"` |
 | TM-02 | Create a task and verify it is listed | `npx playwright test -g "TM-02 \|"` | `npx playwright test --headed -g "TM-02 \|"` |
 | TM-03 | All Task-Management pages are reachable | `npx playwright test -g "TM-03 \|"` | `npx playwright test --headed -g "TM-03 \|"` |

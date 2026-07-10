@@ -30,7 +30,7 @@ for (let i = 0; i < specFiles.length; i++) {
   const src = fs.readFileSync(specFiles[i], 'utf8');
   // test('TC-.. | ...') / test('TM-.. | ...') — lazy match to the matching closing
   // quote + comma, so titles with embedded quotes (e.g. "In Follow-up") are captured.
-  const re = /test(?:\.\w+)?\(\s*(['"`])((?:TC|TM|MU|Login|Home|Item|ENQ|QT)[-_][\s\S]*?)\1\s*,/g;
+  const re = /test(?:\.\w+)?\(\s*(['"`])((?:TC|TM|MU|PM|Login|Home|Item|ENQ|QT)[-_][\s\S]*?)\1\s*,/g;
   let m;
   while ((m = re.exec(src)) !== null) {
     const title = m[2].trim();

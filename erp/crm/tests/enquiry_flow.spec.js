@@ -24,8 +24,8 @@ const { QuotationPage }= require('../pages/QuotationPage');
 const { LeadTransferPage } = require('../pages/LeadTransferPage');
 const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
 const { LeadStatusPage }   = require('../pages/LeadStatusPage');
-const { ItemCategoryPage } = require('../pages/ItemCategoryPage');
-const { ItemPage }         = require('../pages/ItemPage');
+const { ItemCategoryPage } = require('../../item/pages/ItemCategoryPage');
+const { ItemPage }         = require('../../item/pages/ItemPage');
 const { screenshot }   = require('../../common/helpers');
 const { testData }     = require('../../common/testData');
 

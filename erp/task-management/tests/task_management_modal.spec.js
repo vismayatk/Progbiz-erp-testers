@@ -256,14 +256,20 @@ test.describe('Task Management — Documented Cases', () => {
     const tm = await arrive(page);
     await tm.gotoMyTasks();
     const counts = await tm.getTabCounts();
-    console.log('  📊 Tab counts:', JSON.stringify(counts));
+    console.log('  📊 Tab badges:', JSON.stringify(counts));
+    const topRows = {};
+    let renderedSomewhere = false;
     for (const tab of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
       const n = await tm.clickTab(tab);
-      console.log(`  📑 ${tab} → ${n} row(s)`);
-      expect(typeof n).toBe('number');
+      topRows[tab] = await tm.firstRowText();
+      console.log(`  📑 ${tab} (badge ${counts[tab]}) → ${n} row(s) | top: "${topRows[tab].slice(0, 40)}"`);
+      if (n > 0) renderedSomewhere = true;
     }
+    expect(renderedSomewhere, 'no status tab rendered any rows — task list not loading').toBeTruthy();
+    const distinct = new Set(Object.values(topRows).filter(Boolean));
+    expect(distinct.size, `tab switching had no effect — every tab showed the same top row (${[...distinct]})`).toBeGreaterThan(1);
     await screenshot(page, 'tm19_tabs');
-    console.log('  ✅ ASSERT: Pending/Overdue/Completed style tabs navigable');
+    console.log('  ✅ ASSERT: status tabs navigable AND switching filters the list');
   });
 
   test('TM-20 | Task lifecycle controls on dashboard (Scenario 4)', async ({ page }) => {

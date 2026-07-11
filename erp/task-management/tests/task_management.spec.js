@@ -137,13 +137,24 @@ test.describe('Task Management Module', () => {
     await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
 
     await tm.gotoMyTasks();
+    const counts = await tm.getTabCounts();
+    console.log('  📊 Tab badges:', JSON.stringify(counts));
+    // Prove tab switching actually FILTERS: capture the first rendered row per tab.
+    // If clicking tabs did nothing (old bug: wrong selector), every tab shows the same top row.
+    const topRows = {};
+    let renderedSomewhere = false;
     for (const tab of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
       const n = await tm.clickTab(tab);
-      console.log(`  📑 ${tab} → ${n} row(s)`);
-      expect(typeof n, `${tab} tab not navigable`).toBe('number');
+      topRows[tab] = await tm.firstRowText();
+      console.log(`  📑 ${tab} (badge ${counts[tab]}) → ${n} row(s) | top: "${topRows[tab].slice(0, 40)}"`);
+      if (n > 0) renderedSomewhere = true;
     }
+    expect(renderedSomewhere, 'no status tab rendered any rows — task list not loading').toBeTruthy();
+    // At least two tabs must differ → switching has an observable effect (data is filtered)
+    const distinct = new Set(Object.values(topRows).filter(Boolean));
+    expect(distinct.size, `tab switching had no effect — every tab showed the same top row (${[...distinct]})`).toBeGreaterThan(1);
     await screenshot(page, 'tm07_tabs');
-    console.log('  ✅ ASSERT: All status tabs navigable');
+    console.log('  ✅ ASSERT: status tabs navigable AND switching filters the list');
   });
 
   test('TM-08 | Daily Activity Report loads with data', async ({ page }) => {

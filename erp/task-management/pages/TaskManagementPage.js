@@ -389,10 +389,24 @@ class TaskManagementPage {
   }
 
   /** Click a My Tasks status tab by label and return the row count after load. */
+  /** The My Tasks status tabs are <li class="nav-item"> wrapping a <button class="nav-link">.
+   *  Click the inner control so the list actually filters, then wait for the reload. */
   async clickTab(label) {
-    await this.page.locator('button, a.btn').filter({ hasText: new RegExp(`^${label}\\s+\\d`, 'i') }).first().click().catch(() => {});
-    await this.page.waitForTimeout(2000);
+    const tab = this.page.locator('li.nav-item')
+      .filter({ hasText: new RegExp(`^\\s*${label}\\s*\\d*\\s*$`, 'i') })
+      .locator('button, a').first();
+    await tab.click().catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
+    await this.page.waitForTimeout(1500);
     return this.rows.count();
+  }
+
+  /** Text of the first data row (used to prove a tab switch changed the rendered set). */
+  async firstRowText() {
+    return this.page.evaluate(() => {
+      const r = document.querySelector('table tbody tr');
+      return r ? (r.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80) : '';
+    });
   }
 
   /** Visible table header labels on the current page. */

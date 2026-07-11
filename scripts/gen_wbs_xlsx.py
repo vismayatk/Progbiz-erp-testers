@@ -51,6 +51,23 @@ ROWS = [
  ("Task Management","Timeline","Timeline checks","Started/finished/held statuses on history, unscheduled-started status correctness",2.0,"Known bug area (status display) - re-verify"),
  ("Task Management","Daily Activity Report","Report checks","All-user rows, durations (running vs hold vs completed), date/user filters",2.0,"Duration correctness needs timed tasks"),
  ("Task Management","Multi-user","Cross-user visibility","Host-assigned & participant tasks visible to assignee; admin calendar/timeline oversight",3.0,"Requires 2nd login + task seeding both directions"),
+ # ───────────────────────────── MASTER ─────────────────────────────
+ ("Master","Business Contacts","Business contacts master (/business-contacts)","List, create, edit, search, duplicate handling",2.0,"Standard CRUD master + search modes"),
+ ("Master","Users","User management (/users)","Create user, assign role, edit, activate/deactivate, login as new user",3.0,"User creation affects auth; verify with a real login"),
+ ("Master","Users","Reset password (/change-user-password)","Change a user's password, old password invalid, new one logs in",1.5,"2-login verification per change"),
+ ("Master","Branch","Branch master (/branches)","Create/edit branch, appears in branch dropdowns (task/enquiry forms)",1.5,"CRUD + cross-module dropdown effect"),
+ ("Master","User Role Groups","Role groups & permissions (/user-role-groups)","Create group, permission matrix on/off, menu visibility per role",3.0,"Permission matrix = many toggle-effect checks with role login"),
+ ("Master","Teams","Teams master (/teams)","Create team, add/remove members, team reflected in task/project assignment",2.0,"CRUD + effect check in 2 modules"),
+ ("Master","Client Settings","Client settings (/client-setting)","Settings toggles, save, verify each toggle's effect on the app",2.5,"Each setting needs an effect verification, not just save"),
+ ("Master","Custom Fields","Custom/dynamic fields (/dynamic-fields)","Create field per entity, appears on target form, data saves & displays",2.5,"Field-type matrix (text/date/select) x target forms"),
+ ("Master","Dynamic Reports","Dynamic report builder (/dynamic-list)","Create report (Leads/Tasks/Customers/Project), field picker, filters, generate & verify data",3.0,"4 report types; builder + output correctness"),
+ ("Master","Field Mapping","Field mapping tags (/field-map-tags)","Create/edit mapping tags, used correctly in templates/reports",1.5,"Small master; effect check in one consumer"),
+ # ─────────────────────────── EXCEL UPLOAD ───────────────────────────
+ ("Excel Upload","Individual Customer","Individual customer upload (/individual-customer-upload)","Template download, valid file upload, invalid/missing-column file, duplicate rows, data verification in Customers",2.5,"5 checks incl. negative files; verify rows landed"),
+ ("Excel Upload","Business Customer","Business customer upload (/business-customer-upload)","Same matrix as individual: template, valid, invalid, duplicates, verification",2.5,"Mirrors individual-customer flow with business fields"),
+ ("Excel Upload","Enquiry Upload","Enquiry upload (/enquiry-upload)","Template, valid upload creates leads, invalid rows report, duplicate phone handling, leads visible in CRM listing",3.0,"Creates CRM data — cross-module verification is slower"),
+ ("Excel Upload","Project Upload","Project upload (/projects-upload)","Template, valid upload, invalid rows, projects visible in Projects list",2.5,"Cross-check in Project module"),
+ ("Excel Upload","Solar Project Upload","Solar project upload (/solar-project-upload)","Template, valid upload, invalid rows, solar projects listed",2.5,"Variant of project upload with solar fields"),
 ]
 
 HDR = ["Project","Module","Sub-Module","Page / Functionality Check","Scope of Check","Estimation Rationale",
@@ -100,12 +117,13 @@ dl["A2"] = None  # first empty log row
 
 # ---------- Sheet 3: Dashboard ----------
 db = wb.create_sheet("Dashboard")
-db["A1"] = "WBS DASHBOARD — CRM + Task Management"; db["A1"].font = Font(bold=True, size=14)
+db["A1"] = "WBS DASHBOARD — CRM · Task Management · Master · Excel Upload"; db["A1"].font = Font(bold=True, size=14)
 db["A3"] = "By Module"; db["A3"].font = Font(bold=True)
 hdrs = ["Module","Checks","Completed","Pending/In-Prog","Est Hours","Actual Hours","Variance (h)","% Complete"]
 for c, h in enumerate(hdrs, 1):
     cell = db.cell(4, c, h); cell.fill = hf; cell.font = Font(bold=True, color="FFFFFF")
-for i, m in enumerate(["CRM", "Task Management"], 5):
+MODULES = ["CRM", "Task Management", "Master", "Excel Upload"]
+for i, m in enumerate(MODULES, 5):
     db.cell(i, 1, m)
     db.cell(i, 2, f'=COUNTIF(\'WBS Tracker\'!B:B,A{i})')
     db.cell(i, 3, f'=COUNTIFS(\'WBS Tracker\'!B:B,A{i},\'WBS Tracker\'!J:J,"Completed")')
@@ -114,9 +132,10 @@ for i, m in enumerate(["CRM", "Task Management"], 5):
     db.cell(i, 6, f'=SUMIF(\'WBS Tracker\'!B:B,A{i},\'WBS Tracker\'!H:H)')
     db.cell(i, 7, f'=E{i}-F{i}')
     db.cell(i, 8, f'=IF(B{i}=0,0,C{i}/B{i})'); db.cell(i, 8).number_format = "0%"
-db.cell(7, 1, "TOTAL").font = Font(bold=True)
-for c in range(2, 8): db.cell(7, c, f"=SUM({get_column_letter(c)}5:{get_column_letter(c)}6)").font = Font(bold=True)
-db.cell(7, 8, "=IF(B7=0,0,C7/B7)").number_format = "0%"
+TOT = 5 + len(MODULES)
+db.cell(TOT, 1, "TOTAL").font = Font(bold=True)
+for c in range(2, 8): db.cell(TOT, c, f"=SUM({get_column_letter(c)}5:{get_column_letter(c)}{TOT-1})").font = Font(bold=True)
+db.cell(TOT, 8, f"=IF(B{TOT}=0,0,C{TOT}/B{TOT})").number_format = "0%"
 
 db["A10"] = "Daily hours (from Daily Hours Log)"; db["A10"].font = Font(bold=True)
 db["A11"] = "Today's logged hours:"; db["B11"] = '=SUMIF(DailyLog[Date],TODAY(),DailyLog[Hours Spent])'
@@ -137,6 +156,7 @@ db.column_dimensions["A"].width = 30
 for col in "BCDEFGH": db.column_dimensions[col].width = 14
 
 wb.save(DL); wb.save(REPO)
-crm = sum(r[4] for r in ROWS if r[0] == "CRM"); tm = sum(r[4] for r in ROWS if r[0] == "Task Management")
-print(f"rows={len(ROWS)}  CRM={crm}h  TaskMgmt={tm}h  TOTAL={crm+tm}h")
+mods = {}
+for r in ROWS: mods[r[0]] = mods.get(r[0], 0) + r[4]
+print(f"rows={len(ROWS)}  " + "  ".join(f"{k}={v}h" for k, v in mods.items()) + f"  TOTAL={sum(mods.values())}h")
 print("saved:", DL); print("saved:", REPO)

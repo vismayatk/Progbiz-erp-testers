@@ -375,46 +375,21 @@ class EnquiryPage {
   async openFirstEnquiry() {
     await this.gotoList();
     await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForTimeout(1000);
+    await this.page.waitForTimeout(1500);
 
-    // Try multiple selector strategies in order of specificity
-    const candidates = [
-      'table tbody tr:first-child td a',
-      'table tbody tr:first-child a',
-      'table tbody tr:first-child button',
-      'tbody tr:first-child td:first-child a',
-      '.table tbody tr:first-child a',
-      'tr:nth-child(1) a',
-      '[class*="list"] a:first-of-type',
-      '[class*="row"]:first-child a',
-      // icon-based view/eye buttons
-      'table tbody tr:first-child [title*="view" i]',
-      'table tbody tr:first-child [class*="eye" i]',
-      'table tbody tr:first-child [class*="view" i]',
-    ];
-
-    for (const sel of candidates) {
-      const el = this.page.locator(sel).first();
-      const count = await el.count();
-      if (count > 0) {
-        await el.waitFor({ state: 'visible', timeout: 5000 });
-        await el.click();
-        await this.page.waitForLoadState('domcontentloaded');
-        console.log(`  🔗 Opened first enquiry via "${sel}" — URL: ${this.page.url()}`);
+    // The /leads rows contain NO anchors/buttons — navigation is a JS handler on the
+    // ENQ-number / customer-name CELLS. Clicking the row body or hunting for <a> does
+    // nothing (the old anchor-based strategies silently left us on /leads).
+    await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 });
+    for (const nth of [1, 2]) {              // td[1] = ENQ number, td[2] = customer name
+      await this.page.locator('table tbody tr').first().locator('td').nth(nth).click().catch(() => {});
+      const ok = await this.page.waitForURL(/enquiry-overview/i, { timeout: 8000 }).then(() => true).catch(() => false);
+      if (ok) {
+        console.log(`  🔗 Opened first enquiry via td[${nth}] — URL: ${this.page.url()}`);
         return;
       }
     }
-
-    // Last resort: JS click on first anchor inside a table row
-    const clicked = await this.page.evaluate(() => {
-      const a = document.querySelector('table tbody tr a, tbody tr a, tr td a');
-      if (a) { a.click(); return true; }
-      return false;
-    });
-
-    if (!clicked) throw new Error('openFirstEnquiry: no clickable row found in enquiry listing');
-    await this.page.waitForLoadState('domcontentloaded');
-    console.log(`  🔗 Opened first enquiry via JS click — URL: ${this.page.url()}`);
+    throw new Error(`openFirstEnquiry: clicking ENQ/customer cells did not reach enquiry-overview (still on ${this.page.url()})`);
   }
 
   /**
@@ -442,6 +417,13 @@ class EnquiryPage {
     await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1500);
 
+    // Two REQUIRED fields the prefill does NOT set — without them the save is blocked
+    // by a "Please select lead quality" swal and we silently stay on /quotation/0/:
+    const validUpto = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+    await this.page.locator('#expdate').fill(validUpto).catch(() => {});
+    await this.page.locator('#quotation-quality').selectOption({ index: 1 }).catch(() => {});
+    console.log(`  📅 Valid Upto ${validUpto} + Lead Quality selected`);
+
     const saveQ = this.page.locator('#btn-save-quotation');
     try {
       await saveQ.waitFor({ state: 'visible', timeout: 12000 });
@@ -450,7 +432,9 @@ class EnquiryPage {
     } catch {
       console.log('  ⚠️  #btn-save-quotation not found — left on quotation form');
     }
-    await this.page.waitForTimeout(2500);
+    // a successful save navigates off the /quotation/0/ create form
+    await this.page.waitForURL((u) => !/\/quotation\/0\//.test(String(u)), { timeout: 15000 }).catch(() => {});
+    await this.page.waitForTimeout(1500);
     console.log(`  ➡️  URL after convert: ${this.page.url()}`);
   }
 
@@ -512,18 +496,34 @@ class EnquiryPage {
   }
 
   /** Read the "Status :" value shown in the Enquiry Details panel. */
+  /** Read the overview's status lines: "Status : <lifecycle>" and "Followup Status : <label>".
+   *  The value can live in a SIBLING element (so read the parent line), and the panel
+   *  AJAX-loads slowly — poll until a real value (not just the bare labels) appears.
+   *  Returns the combined line text, e.g. "Status : In FollowUp | Followup Status : Interested". */
   async getCurrentStatus() {
-    try {
+    for (let i = 0; i < 10; i++) {
       const t = await this.page.evaluate(() => {
-        const hit = [...document.querySelectorAll('*')]
-          .map(e => (e.childElementCount === 0 ? (e.textContent || '').trim() : ''))
-          .find(x => /^status\s*:/i.test(x));
-        return hit || '';
-      });
-      return t.replace(/^status\s*:/i, '').trim();
-    } catch {
-      return '';
+        // VISIBLE leaves only — the closed #followupModal also contains a
+        // "Followup Status :" label (value "Choose") that must not be read.
+        const leaves = [...document.querySelectorAll('*')]
+          .filter(e => e.childElementCount === 0 && e.getClientRects().length > 0);
+        const out = [];
+        for (const e of leaves) {
+          const txt = (e.textContent || '').replace(/\s+/g, ' ').trim();
+          if (/^(followup\s*)?status\s*:/i.test(txt) && txt.length < 60) {
+            const line = ((e.parentElement && e.parentElement.textContent) || txt)
+              .replace(/\s+/g, ' ').trim().slice(0, 120);
+            out.push(line);
+          }
+        }
+        return [...new Set(out)].join(' | ');
+      }).catch(() => '');
+      // keep polling until some VALUE exists beyond the bare labels
+      const valueOnly = t.replace(/(followup\s*)?status\s*:/gi, '').replace(/\|/g, ' ').trim();
+      if (valueOnly) return t;
+      await this.page.waitForTimeout(1500);
     }
+    return '';
   }
 
   // ── private helpers ──────────────────────────────────────────────────────

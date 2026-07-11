@@ -88,7 +88,8 @@ test.describe('CRM — Quotation', () => {
     const before = await qt.autoFillState();
     expect(before.number, 'quotation number auto-generated').toMatch(/QUO-?\d+/i);
     const d = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
-    await qt.setValidUpto(d);                                  // the required field
+    await qt.setValidUpto(d);                                  // required, not prefilled
+    await qt.setLeadQuality();                                 // required — save swal-blocks without it
     const msg = await qt.save();                               // QT-008/012
     await page.waitForTimeout(2000);
     await screenshot(page, 'qt12_saved');
@@ -96,10 +97,12 @@ test.describe('CRM — Quotation', () => {
     // The old check (URL has "quotation" OR body has nav words) passed even on a failed save.
     // Prove the save persisted: no error, and the quotation NUMBER appears in the listing.
     expect(String(msg || ''), 'save must not surface an error').not.toMatch(/oops|error|went wrong|failed/i); // QT-013
-    await qt.gotoList();
-    await page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
+    // a successful save leaves the /quotation/0/ create form (view page or overview)
+    expect(page.url(), 'save did not persist — still on the /quotation/0/ create form').not.toContain('/quotation/0/');
+    // and the quotation appears in /leads under the Type=Quotation filter with its QUO number
+    await qt.gotoQuotationList();
     const found = await page.evaluate(n => document.body.innerText.includes(n), before.number);
-    expect(found, `saved quotation ${before.number} should appear in the Leads/Quotation listing`).toBeTruthy();
+    expect(found, `saved quotation ${before.number} should appear in the Type=Quotation listing`).toBeTruthy();
     console.log(`  ✅ Quotation ${before.number} saved and listed`);
   });
 

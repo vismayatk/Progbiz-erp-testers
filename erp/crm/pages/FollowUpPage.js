@@ -144,9 +144,16 @@ class FollowUpPage {
     return count;
   }
 
-  /** Return text of the most recent follow-up row. */
+  /** Return text of the most recent follow-up row.
+   *  Self-sufficient: on a fresh navigation the history is behind the "Followup History"
+   *  tab and AJAX-loads — open it and wait (getFollowUpCount does both), otherwise this
+   *  returns null when called first on a page. */
   async getLatestFollowUpText() {
-    const count = await this.followUpRows.count();
+    let count = await this.followUpRows.count();
+    if (count === 0) {
+      await this.getFollowUpCount();
+      count = await this.followUpRows.count();
+    }
     if (count === 0) return null;
     return (await this.followUpRows.last().textContent()).trim();
   }

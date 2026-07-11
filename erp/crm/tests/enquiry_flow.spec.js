@@ -201,6 +201,9 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       await page.goto(enquiryUrl, { waitUntil: 'domcontentloaded' });
     } else {
       await enquiryPage.openFirstEnquiry();
+      // record which enquiry we used — adding a follow-up re-orders /leads, so
+      // TC-05 must revisit THIS enquiry, not whatever floats to the top next
+      enquiryUrl = page.url();
     }
 
     const beforeCount = await followUpPage.getFollowUpCount();
@@ -308,15 +311,15 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
 
     await loginPage.goto();
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
-    await quotationPage.gotoList();
+    // The unfiltered /leads master lists enquiries (ENQ-x) — quotations only surface
+    // behind the Type=Quotation filter, where rows carry their QUO-x numbers.
+    await quotationPage.gotoQuotationList();
 
-    // /leads is the shared lead+quotation master and is essentially always populated,
-    // so count>0 proved nothing. Require at least one row that is actually a Quotation (QUO#).
     const rows = await page.$$eval('table tbody tr', trs => trs.map(tr => (tr.innerText || '').trim()));
     const quotationRows = rows.filter(r => /QUO[-\s]?\d/i.test(r));
-    console.log(`  🧾 quotation rows in master: ${quotationRows.length} / ${rows.length}`);
-    expect(quotationRows.length, 'listing should contain at least one Quotation (QUO#) row').toBeGreaterThan(0);
-    console.log('  ✅ ASSERT: quotation listing shows Quotation rows');
+    console.log(`  🧾 quotation rows (Type=Quotation): ${quotationRows.length} / ${rows.length}`);
+    expect(quotationRows.length, 'Type=Quotation filter should list at least one QUO# row (TC-06 just converted one)').toBeGreaterThan(0);
+    console.log('  ✅ ASSERT: quotation listing shows QUO# rows');
 
     await screenshot(page, 'tc07_quotation_listing');
   });
@@ -371,9 +374,14 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
 
     // /leads is always pre-populated, so count>0 proved nothing about this run. Require the
     // specific enquiry created in TC-02 (unique "Test Customer <ts>") to be listed.
+    // The table AJAX-loads several seconds after domcontentloaded — poll for it.
     const wanted = testData.enquiry.customerName;
-    const found = await page.evaluate((name) =>
-      [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
+    let found = false;
+    for (let i = 0; i < 8 && !found; i++) {
+      found = await page.evaluate((name) =>
+        [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
+      if (!found) await page.waitForTimeout(1500);
+    }
     console.log(`  🔎 "${wanted}" listed in /leads: ${found}`);
     expect(found, `Enquiry for "${wanted}" (created in TC-02) not visible in /leads listing`).toBeTruthy();
     console.log('  ✅ ASSERT: created enquiry is visible in the /leads listing');

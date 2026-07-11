@@ -91,11 +91,12 @@ test.describe('Task Management Module', () => {
     const msg = await tm.createTask(name, { type: 'Call', mode: 'later' });
     await screenshot(page, 'tm04_later_task');
     expect(msg, `Scheduled task should save, got: "${msg}"`).toBeFalsy();
-    // Data round-trip: scheduled task must appear in My Tasks (Upcoming/Today)
-    const tab = await tm.findAcrossTabs(name);
-    console.log(`  🔎 "${name}" visible under tab: ${tab}`);
-    expect(tab, `Scheduled task "${name}" not listed in My Tasks`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Scheduled task "${name}" created and listed`);
+    // The "later" scheduling is what distinguishes TM-04 from TM-02 — verify the task lands
+    // specifically under the Upcoming bucket (a swallowed date-fill would drop it into Today/instant).
+    const inUpcoming = await tm.tabContains(name, 'Upcoming');
+    console.log(`  🔎 "${name}" under Upcoming: ${inUpcoming}`);
+    expect(inUpcoming, `"Task for Later" (+3d) should land under the Upcoming tab, not Today/instant`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Scheduled task "${name}" listed under Upcoming`);
   });
 
   test('TM-05 | Creating a task without Task Type is rejected', async ({ page }) => {
@@ -163,11 +164,14 @@ test.describe('Task Management Module', () => {
     await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
 
     const n = await tm.reportRowCount();
-    console.log(`  📊 Daily Activity rows: ${n}`);
+    console.log(`  📊 Daily Activity rows (raw): ${n}`);
     expect(page.url()).toContain('daily-activity-report');
-    // tasks exist from this suite's own runs, so the report must have rows
-    expect(n, 'Daily Activity Report should list at least one row').toBeGreaterThan(0);
+    // A raw tbody-tr count also matches a single "No records found" placeholder row.
+    // Require at least one REAL multi-column activity row.
+    const dataRows = await tm.dataRowCount();
+    console.log(`  📊 real activity rows: ${dataRows}`);
+    expect(dataRows, 'Daily Activity Report should list a real activity row (not an empty-state placeholder)').toBeGreaterThan(0);
     await screenshot(page, 'tm08_report');
-    console.log('  ✅ ASSERT: Daily Activity Report loaded with data');
+    console.log('  ✅ ASSERT: Daily Activity Report loaded with real data rows');
   });
 });

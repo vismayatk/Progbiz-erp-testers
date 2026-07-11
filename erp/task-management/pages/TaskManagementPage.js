@@ -666,11 +666,37 @@ class TaskManagementPage {
     return null;
   }
 
+  /** True if `name` appears specifically under the given My Tasks status tab.
+   *  (findAcrossTabs short-circuits on the unfiltered view; this pins one bucket.) */
+  async tabContains(name, tabLabel) {
+    await this.gotoMyTasks();
+    await this.clickTab(tabLabel);
+    await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+    const needle = name.toLowerCase();
+    for (let i = 0; i < 4; i++) {
+      const hit = await this.page.evaluate((x) =>
+        [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x)), needle);
+      if (hit) return true;
+      await this.page.waitForTimeout(1000);
+    }
+    return false;
+  }
+
   /** Daily Activity Report: wait for rows and return the count. */
   async reportRowCount() {
     await this.gotoDailyActivity();
     await this.rows.first().waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
     return this.rows.count();
+  }
+
+  /** Count only real multi-column data rows on the current page, excluding
+   *  empty-state placeholders ("No records found" single-cell rows). */
+  async dataRowCount() {
+    return this.page.evaluate(() => [...document.querySelectorAll('table tbody tr')].filter(r => {
+      const t = (r.textContent || '').trim();
+      if (!t || /no records|no data|not found|nothing/i.test(t)) return false;
+      return r.querySelectorAll('td').length >= 2;
+    }).length);
   }
 }
 

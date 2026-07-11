@@ -51,9 +51,21 @@ test.describe('CRM — Quotation', () => {
     // Data round-trip: the auto-filled customer must be EXACTLY the enquiry's customer
     expect(s.customer, `autofill should carry customer "${qt.seed.customerName}"`).toContain(qt.seed.customerName); // QT-010
     expect(s.validUpto, 'Valid Upto should NOT be auto-filled (per spec)').toBeFalsy(); // QT-010
-    expect(s.itemRows, 'items carried from enquiry').toBeGreaterThan(0);    // QT-004
-    // totals present (QT-006)
-    expect(/\d/.test(s.gross + s.payable) || s.gross !== '' || s.payable !== '', 'totals should render').toBeTruthy();
+    // QT-004: the enquiry line item (qty 2 @ 1000) must actually carry into the quotation grid.
+    // A generic row count passed on a blank "add new item" placeholder row, so match the data.
+    const grid = await page.evaluate(() => [...document.querySelectorAll('table tbody tr')]
+      .map(r => [...r.querySelectorAll('td')].map(c => {
+        const i = c.querySelector('input,select,textarea');
+        return ((i ? i.value : c.textContent) || '').trim();
+      })));
+    const line = grid.find(cells => cells.includes(qt.seed.quantity) &&
+      cells.some(c => parseFloat((c || '').replace(/[^\d.]/g, '')) > 0));
+    expect(line, `enquiry line item (qty ${qt.seed.quantity} + a non-zero price) should carry into the quotation grid`).toBeTruthy();
+    // QT-006: totals must be COMPUTED from the carried items (qty 2 × 1000), not a blank/0 placeholder
+    const grossNum = parseFloat(String(s.gross).replace(/[^\d.]/g, ''));
+    const payNum = parseFloat(String(s.payable).replace(/[^\d.]/g, ''));
+    expect(grossNum, 'gross total should be computed from carried items (2×1000)').toBeGreaterThan(0);
+    expect(payNum, 'payable total should be computed from carried items').toBeGreaterThan(0);
     // editable after auto-fill (QT-011): set Valid Upto
     const d = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
     await qt.setValidUpto(d);
@@ -73,19 +85,22 @@ test.describe('CRM — Quotation', () => {
 
   test('QT-012 | Save quotation from enquiry → Overview + actions (QT-008,012,013,014,015,016,017,018)', async ({ page }) => {
     const qt = await seedQuotation(page);
+    const before = await qt.autoFillState();
+    expect(before.number, 'quotation number auto-generated').toMatch(/QUO-?\d+/i);
     const d = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
     await qt.setValidUpto(d);                                  // the required field
     const msg = await qt.save();                               // QT-008/012
     await page.waitForTimeout(2000);
     await screenshot(page, 'qt12_saved');
-    console.log('  💾 save →', msg, '| url:', page.url());
-    // overview shows the quotation + actions (View Enquiry / Followup / etc.)
-    const body = (await page.locator('body').textContent().catch(() => '')) || '';
-    const ok = /quotation/i.test(page.url()) || /quotation|enquiry|follow/i.test(body);
-    expect(ok, 'quotation did not save to overview').toBeTruthy();          // QT-013
-    const actions = /view enquiry|view quotation|follow|history/i.test(body);
-    console.log('  🛠  overview actions present:', actions);                // QT-015..018
-    console.log('  ✅ Quotation saved → Overview reachable with actions');
+    console.log('  💾 save →', msg, '| number:', before.number, '| url:', page.url());
+    // The old check (URL has "quotation" OR body has nav words) passed even on a failed save.
+    // Prove the save persisted: no error, and the quotation NUMBER appears in the listing.
+    expect(String(msg || ''), 'save must not surface an error').not.toMatch(/oops|error|went wrong|failed/i); // QT-013
+    await qt.gotoList();
+    await page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
+    const found = await page.evaluate(n => document.body.innerText.includes(n), before.number);
+    expect(found, `saved quotation ${before.number} should appear in the Leads/Quotation listing`).toBeTruthy();
+    console.log(`  ✅ Quotation ${before.number} saved and listed`);
   });
 
   test('QT-001 | Create New → Quotation page (QT-001,002,009)', async ({ page }) => {
@@ -94,13 +109,15 @@ test.describe('CRM — Quotation', () => {
     // Create New → Quotation
     const item = page.locator('#new-quotation-item');
     for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await page.locator('#new-task').click().catch(() => {}); await page.waitForTimeout(600); }
-    await item.click().catch(async () => { await page.goto(`${process.env.BASE_URL}/quotation`, { waitUntil: 'domcontentloaded' }); });
+    // No direct-goto fallback: the Create-New → Quotation menu path itself is under test,
+    // so a broken menu must fail rather than be masked by a forced page.goto('/quotation').
+    await item.click();
     await page.waitForTimeout(2500);
     await screenshot(page, 'qt01_create');
     console.log('  🧾 Create New → Quotation url:', page.url());
-    expect(/quotation/i.test(page.url()), 'did not reach quotation form').toBeTruthy();   // QT-001
-    // QT-002 (mandatory) and QT-009 (cancel) are exercised by the convert-flow save
-    // (Valid Upto is required) and the stepped form's flow respectively.
-    console.log('  ✅ Quotation creation page reachable from Create New');
+    // Assert the actual quotation FORM rendered (URL substring alone was maskable). QT-001
+    await expect(page.locator('#btn-save-quotation, #quotation-no').first(),
+      'quotation create form did not render').toBeVisible({ timeout: 15000 });
+    console.log('  ✅ Quotation creation form reachable from Create New');
   });
 });

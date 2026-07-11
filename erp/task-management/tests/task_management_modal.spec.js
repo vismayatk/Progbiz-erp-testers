@@ -173,18 +173,22 @@ test.describe('Task Management — Documented Cases', () => {
     const name = `Repeat ${Date.now()}`;
     const msg = await tm.createRepeatTask(name, { type: 'Call', recurrence: 'Daily' });
     await screenshot(page, 'tm12_repeat_created');
-    // A recurring task is "created properly" when the save succeeds (no validation/backend error).
-    // Its occurrences are schedule-driven (From Date is future), so they legitimately may NOT be
-    // in *today's* My Tasks — visibility is logged as informational, not asserted.
+    // _afterSave() returns null on genuine success AND on a silent no-op, so a falsy msg
+    // alone can't confirm creation. A recurring task's occurrences are future-scheduled
+    // (so they may be absent from today's My Tasks), but the task itself must appear in
+    // Created Tasks — assert that as the real data round-trip.
     expect(msg, `Repeat task should save, got: "${msg}"`).toBeFalsy();
-    const tab = await tm.findAcrossTabs(name);
-    let where = tab;
-    if (!where) {
-      await tm.gotoHome();
-      if (await page.evaluate((n) => document.body.innerText.includes(n), name)) where = 'home schedule';
+    await tm.gotoCreated();
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+    let listed = false;
+    for (let i = 0; i < 4 && !listed; i++) {
+      listed = await page.evaluate((n) =>
+        [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').includes(n)), name);
+      if (!listed) await page.waitForTimeout(1200);
     }
-    console.log(`  🔎 "${name}" occurrence visible at: ${where || 'not today (scheduled for future date)'}`);
-    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created (save succeeded)`);
+    console.log(`  🔎 "${name}" listed in Created Tasks: ${listed}`);
+    expect(listed, `Repeat task "${name}" not listed in Created Tasks after save`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created and listed in Created Tasks`);
   });
 
   test('TM-13 | Negative — Save without Task Type is rejected', async ({ page }) => {
@@ -223,9 +227,12 @@ test.describe('Task Management — Documented Cases', () => {
     const kinds = await tm.rowActionKinds();
     console.log('  🧾 Created columns:', JSON.stringify(cols), '| actions:', JSON.stringify(kinds));
     await screenshot(page, 'tm16_created');
-    // Page must load; if rows exist, View/Delete actions should be present
-    expect(Array.isArray(kinds)).toBeTruthy();
-    console.log('  ✅ ASSERT: Created Task page reachable (actions:', kinds.join(',') || 'none yet', ')');
+    // Array.isArray(kinds) is always true (tautology). This suite creates tasks (TM-10/11/12),
+    // so Created Tasks must list rows, and those rows must expose the overview action.
+    const createdRows = await page.locator('table tbody tr').count();
+    expect(createdRows, 'Created Tasks should list tasks this suite created (TM-10/11/12)').toBeGreaterThan(0);
+    expect(kinds, 'each Created-task row must expose an overview control').toEqual(expect.arrayContaining(['overview-task']));
+    console.log('  ✅ ASSERT: Created Task page lists rows with actions (', kinds.join(',') || 'none', ')');
   });
 
   test('TM-17 | Delegated Tasks shows Assignees column', async ({ page }) => {
@@ -247,9 +254,15 @@ test.describe('Task Management — Documented Cases', () => {
     const kinds = await tm.rowActionKinds();
     console.log('  🧾 Unscheduled columns:', JSON.stringify(cols), '| actions:', JSON.stringify(kinds));
     await screenshot(page, 'tm18_unscheduled');
-    expect(Array.isArray(kinds)).toBeTruthy();
-    // Edit / Delete / overview (view) actions are the documented row controls
-    console.log('  ✅ ASSERT: Unscheduled page reachable (actions:', kinds.join(',') || 'none', ')');
+    // Array.isArray(kinds) is always true. Assert the table header rendered, and that
+    // any rows present expose row actions (Unscheduled can legitimately be empty).
+    expect(cols.join(' | '), 'Unscheduled table header must render').toMatch(/Task/i);
+    const unschedRows = await page.locator('table tbody tr').count();
+    if (unschedRows > 0) {
+      expect(kinds.some(k => /edit-task|delete-task|overview-task/.test(k)),
+        'Unscheduled rows present but no row actions rendered').toBeTruthy();
+    }
+    console.log('  ✅ ASSERT: Unscheduled page reachable (rows:', unschedRows, 'actions:', kinds.join(',') || 'none', ')');
   });
 
   test('TM-19 | Status tabs Pending/Overdue/Completed navigable (TC_057-059)', async ({ page }) => {
@@ -301,8 +314,11 @@ test.describe('Task Management — Documented Cases', () => {
     console.log('  📅 Calendar reachable');
     await tm.gotoTimeline();
     console.log('  🗓️  Timeline →', page.url());
+    // The Timeline half had no assertion — goto() resolves on 4xx/redirects, so a broken
+    // timeline bounced to /login/error slipped through. Require the timeline route.
+    expect(page.url(), 'Timeline route should be reachable (not bounced to login/error)').toMatch(/timeline/i);
     await screenshot(page, 'tm22_calendar');
-    console.log('  ✅ ASSERT: Calendar & Timeline reachable');
+    console.log('  ✅ ASSERT: Calendar & Timeline both reachable');
   });
 
   test('TM-23 | Multi-user participant/admin visibility (TC_018-024, Scenarios 5 & 6)', async () => {

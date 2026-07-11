@@ -69,6 +69,8 @@ test.describe('Project Management', () => {
     for (const [label, nav, slug] of pages) {
       await nav();
       expect(page.url(), `${label} did not load`).toContain(slug);
+      // goto() doesn't throw on a soft-404/error page rendered at the same URL — assert it isn't one
+      expect(await pm.is404(), `${label} shows a 404/not-found page`).toBeFalsy();
       console.log(`  ✅ ${label} reachable`);
     }
     await screenshot(page, 'pm03_subpages');

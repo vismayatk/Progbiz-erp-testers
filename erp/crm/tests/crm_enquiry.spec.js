@@ -124,16 +124,19 @@ test.describe('CRM — Enquiry', () => {
     }
     expect(added, 'item picker never opened — could not add "Inverter"').toBeTruthy();
     await screenshot(page, 'enq16_items');
-    // Data round-trip: the item name lands in an INPUT under "Enquired For"
-    // (input values are NOT in textContent) — scan input VALUES + the section text.
+    // Data round-trip: the item name lands in an Enquired-For LINE input.
+    // EXCLUDE the #searchItemModal search box — it keeps the typed 'Inverter' value even
+    // when the row-add is a no-op, which would make this pass on a broken picker.
     const shown = await page.evaluate(() => {
-      const inputVals = [...document.querySelectorAll('input')].map(i => i.value || '').join(' | ');
-      const secText = (document.body.innerText || '');
-      return { inputVals, hasInverter: /Inverter/i.test(inputVals) || /Inverter/i.test(secText) };
+      const modal = document.querySelector('#searchItemModal');
+      const inputVals = [...document.querySelectorAll('input')]
+        .filter(i => !modal || !modal.contains(i))
+        .map(i => i.value || '').join(' | ');
+      return { inputVals, hasInverter: /Inverter/i.test(inputVals) };
     });
-    console.log('  📦 item input values:', shown.inputVals.slice(0, 120));
-    expect(shown.hasInverter, 'added item "Inverter" not shown in the Enquired-For row').toBeTruthy();
-    console.log('  ✅ ASSERT: item "Inverter" selected and displayed in the Enquired-For row');
+    console.log('  📦 line-item input values:', shown.inputVals.slice(0, 120));
+    expect(shown.hasInverter, 'added item "Inverter" not present in an Enquired-For line input (excluding the search box)').toBeTruthy();
+    console.log('  ✅ ASSERT: item "Inverter" landed in an Enquired-For line input');
   });
 
   test('ENQ-05 | Customer search picker (ENQ-05)', async ({ page }) => {
@@ -143,10 +146,12 @@ test.describe('CRM — Enquiry', () => {
     const ok = await enq.selectExistingCustomer('a').then(() => true).catch(() => false);
     await screenshot(page, 'enq05_search');
     console.log('  🔎 customer search picker used:', ok);
-    // either a customer got selected (name filled) or the picker opened — both prove the search works
+    // Real round-trip: picking a search result must POPULATE the customer field.
+    // (The old `ok || filled>0` passed even if selection never wrote to #TxtCustomer.)
     const filled = (await enq.customerNameInput.inputValue().catch(() => '')) || '';
-    expect(ok || filled.length > 0, 'customer search did not work').toBeTruthy();
-    console.log('  ✅ Customer search picker works');
+    console.log('  🔎 customer field after pick:', JSON.stringify(filled));
+    expect(filled.trim().length, 'picking a search result did not populate the customer field').toBeGreaterThan(0);
+    console.log('  ✅ Customer search picker selects a customer into the form');
   });
 
   test('ENQ-19 | Save enquiry → success + Overview redirect (ENQ-19,21)', async ({ page }) => {
@@ -172,34 +177,47 @@ test.describe('CRM — Enquiry', () => {
     await page.waitForTimeout(1500);
     await screenshot(page, 'enq20_cancel');
     console.log('  ↩  after Cancel →', page.url());
-    expect(/leads|enquir/i.test(page.url()), 'cancel should leave the form').toBeTruthy();
-    console.log('  ✅ Cancel returned to listing without saving');
+    // The Add form itself lives at /enquiry, which matches /enquir/i — so the old regex
+    // passed even if Cancel never navigated. Require the /leads LISTING specifically.
+    await expect(enq.saveBtn, 'Save button should be gone — still on the form').toBeHidden();
+    expect(page.url(), 'Cancel should return to the /leads listing').toContain('/leads');
+    await expect(page.locator('table tbody tr').first(), 'listing rows should render').toBeVisible();
+    console.log('  ✅ Cancel returned to the /leads listing without saving');
   });
 
   test('ENQ-22 | Enquiry Overview shows details (ENQ-22,23,24)', async ({ page }) => {
     const enq = await arrive(page);
     await enq.openFirstEnquiry();
     await page.waitForTimeout(1500);
-    const body = (await page.locator('body').textContent().catch(() => '')) || '';
     await screenshot(page, 'enq22_overview');
-    // overview should show customer, status and item/value info
-    expect(/customer|name/i.test(body), 'no customer section').toBeTruthy();   // ENQ-23
-    expect(/status|follow/i.test(body), 'no status section').toBeTruthy();      // ENQ-22
-    console.log('  ✅ Enquiry Overview displays customer/status/details');
+    // The words "customer"/"follow" appear in the persistent nav/menu, so scanning body
+    // text proved nothing. Read the enquiry's ACTUAL Status value from the overview panel.
+    const status = await enq.getCurrentStatus();     // extracts the "Status : <value>" text
+    console.log('  📋 overview status:', JSON.stringify(status));
+    expect(status.length, 'overview must show a concrete Status value (not just the nav "FollowUps" label)').toBeGreaterThan(0); // ENQ-22
+    expect(status, 'status should be a real lifecycle value')
+      .toMatch(/New|Interested|Follow|Won|Lost|Warm|Hot|Cold|Awaiting|Postpon|busy|attended|price|business|pending/i);
+    console.log('  ✅ Enquiry Overview displays a concrete Status value');
   });
 
   test('ENQ-28 | Create Quotation from enquiry', async ({ page }) => {
     const enq = await arrive(page);
     // create a fresh enquiry (lands on its Overview) so a convertible one exists
     await enq.openAddForm();
-    await enq.fillAndCreate(uniqEnquiry());
+    const data = uniqEnquiry();
+    await enq.fillAndCreate(data);
     await page.waitForTimeout(1500);
     await enq.convertToQuotation();
     await page.waitForTimeout(1500);
     await screenshot(page, 'enq28_quotation');
     console.log('  🧾 after convert →', page.url());
-    expect(/quotation/i.test(page.url()), 'did not reach quotation flow').toBeTruthy();
-    console.log('  ✅ Quotation created from enquiry');
+    const url = page.url();
+    // Reaching the quotation FORM (/quotation/0/{id}) isn't proof of a saved quotation.
+    expect(/quotation/i.test(url), 'did not reach the quotation flow').toBeTruthy();
+    expect(url, 'convert did not persist — still on the unsaved /quotation/0/ create form').not.toContain('/quotation/0/');
+    const qbody = (await page.locator('body').textContent().catch(() => '')) || '';
+    expect(qbody, `saved quotation should carry the enquiry customer "${data.customerName}"`).toContain(data.customerName);
+    console.log('  ✅ Quotation created from enquiry (persisted + carries customer)');
   });
 
   test('ENQ-25 | Open enquiry → Overview with actions (View/Edit/Followup) (ENQ-25,26,27)', async ({ page }) => {
@@ -209,11 +227,10 @@ test.describe('CRM — Enquiry', () => {
     // follow-up state (ENQ-25 delete-before-followup / ENQ-26 blocked-after).
     await enq.openFirstEnquiry();
     await page.waitForTimeout(1500);
-    const hasFollow = await page.locator('#btn-add-followup').isVisible().catch(() => false);
-    const body = (await page.locator('body').textContent().catch(() => '')) || '';
     await screenshot(page, 'enq25_overview');
-    console.log('  🛠  overview followup action visible:', hasFollow);
-    expect(hasFollow || /follow|edit|quotation/i.test(body), 'overview actions not found').toBeTruthy();
-    console.log('  ✅ Enquiry opens to Overview with available actions');
+    // The old `|| /follow|edit|quotation/i.test(body)` fallback matched the nav chrome and
+    // was always true. Require the actual Followup action control to render on the overview.
+    await expect(page.locator('#btn-add-followup'), 'overview should expose the Followup action').toBeVisible({ timeout: 15000 });
+    console.log('  ✅ Enquiry opens to Overview with the Followup action available');
   });
 });

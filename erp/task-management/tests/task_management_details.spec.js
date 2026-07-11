@@ -56,11 +56,15 @@ test.describe('Task Management — Task Details, Notes, Lifecycle', () => {
     expect(noteOk, 'Note did not appear in the activity log').toBeTruthy();
     console.log('  ✅ Note saved and visible in activity log');
 
-    // TC_063-064 — document
+    // TC_063-064 — document. A falsy msg alone passes even if nothing attached
+    // (setInputFiles is swallowed), so require the uploaded file to appear in Task Details.
     const up = await tm.uploadDocument(DOC);
     await screenshot(page, 'tm24_notes_docs');
-    expect(up, `Document upload should succeed, got "${up}"`).toBeFalsy();
-    console.log('  ✅ ASSERT: Note added + document uploaded');
+    expect(up, `Document upload should not error, got "${up}"`).toBeFalsy();
+    const docBody = (await tm.detailsModal.textContent().catch(() => '')) || '';
+    const docName = DOC.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
+    expect(docBody, `Uploaded document "${docName}" not listed in Task Details`).toContain(docName);
+    console.log('  ✅ ASSERT: Note added + document uploaded AND listed');
   });
 
   test('TM-25 | Edit an existing task title (Scenario 13)', async ({ page }) => {
@@ -79,13 +83,21 @@ test.describe('Task Management — Task Details, Notes, Lifecycle', () => {
   });
 
   test('TM-26 | Reschedule a task (Scenario 14)', async ({ page }) => {
-    const { tm } = await arriveWithTask(page, 'Reschedule');
+    const { tm, name } = await arriveWithTask(page, 'Reschedule');
 
     const d = new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10);
     const msg = await tm.reschedule(d, '14:30');
     await screenshot(page, 'tm26_reschedule');
     expect(msg, `Reschedule should save, got "${msg}"`).toBeFalsy();
-    console.log(`  ✅ ASSERT: Task rescheduled to ${d} 14:30`);
+    // A falsy msg alone passes on a silent no-op (all reschedule steps are swallowed).
+    // Reopen the Reschedule dialog and read the saved date back to prove it persisted.
+    expect(await tm.openTaskDetails(name), 'Task Details should reopen for verification').toBeTruthy();
+    await tm.detailsMenu('Reschedule Task');
+    const dlg = page.locator('.modal:visible, [role="dialog"]:visible').last();
+    const savedDate = await dlg.locator('input[type="date"]:visible').first().inputValue().catch(() => '');
+    console.log('  📅 saved reschedule date:', savedDate);
+    expect(savedDate, `Task should be rescheduled to ${d}`).toBe(d);
+    console.log(`  ✅ ASSERT: Task rescheduled to ${d} 14:30 (persisted)`);
   });
 
   test('TM-27 | Add a Lead from a task (Scenario 15)', async ({ page }) => {
@@ -112,21 +124,32 @@ test.describe('Task Management — Task Details, Notes, Lifecycle', () => {
     console.log('  ⏸ row status after Hold:', sHold);
     expect(sHold, 'Task should be On Hold after Hold').toMatch(/hold/i);
 
-    // RESUME → control reappears once held; success returns falsy. (hard assertion)
+    // RESUME → control reappears once held; success returns falsy AND the task must
+    // return to Running (a dead Resume control also returns null — verify the transition).
     await tm.openTaskDetails(name);
     const resume = await tm.resumeTask();
     console.log('  ▶ resume result:', resume);
     expect(resume, `Resume should not error, got "${resume}"`).toBeFalsy();
+    const sResume = await tm.rowStatus(name);
+    console.log('  ▶ row status after Resume:', sResume);
+    expect(sResume, 'Task should be Running after Resume').toMatch(/running/i);
 
-    // END → confirm "End Task" modal. Best-effort: the end-time window is minute-
-    // granular and can be too tight right after a resume on the slow dev tenant.
+    // END → confirm "End Task" modal. The end-time window is minute-granular and can be
+    // too tight right after a resume on the slow tenant, so END may legitimately return a
+    // time-window validation message (which itself proves the control is wired).
     await tm.openTaskDetails(name);
     const end = await tm.endTask();
     await screenshot(page, 'tm28_lifecycle');
-    console.log('  ⏹ End result:', end === null ? 'ended' : `(time-window) ${end}`);
-    // controls executed without throwing; End either completes or reports the
-    // end-time-window validation — both prove the End control is wired.
-    expect(end === null || /time|start/i.test(String(end)), `Unexpected End error: ${end}`).toBeTruthy();
-    console.log('  ✅ ASSERT: Lifecycle Hold (→Hold) → Resume → End executed');
+    console.log('  ⏹ End result:', end === null ? 'ended' : `(msg) ${end}`);
+    if (end === null) {
+      // A clean end must actually reach Completed — a dead End control also returns null.
+      const sEnd = await tm.rowStatus(name);
+      console.log('  ⏹ row status after End:', sEnd);
+      expect(sEnd, 'Ended task should be Completed').toMatch(/completed/i);
+    } else {
+      // Non-null = the end-time-window validation surfaced; the End control is wired.
+      expect(/time|start/i.test(String(end)), `Unexpected End error: ${end}`).toBeTruthy();
+    }
+    console.log('  ✅ ASSERT: Lifecycle Hold(→Hold) → Resume(→Running) → End verified');
   });
 });

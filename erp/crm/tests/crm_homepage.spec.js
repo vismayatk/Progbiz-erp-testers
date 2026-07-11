@@ -62,10 +62,15 @@ test.describe('CRM — Homepage', () => {
     const newCount = await tabCount(page, 'tab-lead-new');
     console.log('  📊 New Leads count:', newCount);                          // Home_03
     expect(newCount, 'New Leads count did not render').not.toBeNull();
-    await page.locator('#tab-lead-new').click().catch(() => {});             // Home_04
+    // Home_04 drill-down: click must actually work (no swallowed failure) and open the list
+    await page.locator('#tab-lead-new').click();
     await page.waitForTimeout(1500);
+    const rows = await page.locator('table tbody tr').count();
+    console.log('  📊 New-leads drill-down rows:', rows);
+    // consistency: a positive badge must be backed by a rendered list (catches stale/stuck 0 vs broken list)
+    if (newCount > 0) expect(rows, 'New badge > 0 but the leads list rendered no rows').toBeGreaterThan(0);
     await screenshot(page, 'home03_leads');
-    console.log('  ✅ New Leads tab + counts shown; tab opens the list');
+    console.log('  ✅ New Leads count shown AND the drill-down opens a populated list');
   });
 
   test('Home_05 | Followups Today/Overdue counts + drill-down (Home_05,06,07,08)', async ({ page }) => {
@@ -78,11 +83,16 @@ test.describe('CRM — Homepage', () => {
     const today = await tabCount(page, 'tab-followup-today');               // Home_05
     const overdue = await tabCount(page, 'tab-followup-overdue');           // Home_07 (Delayed = overdue)
     console.log('  📊 Today followups:', today, '| Overdue (Delayed):', overdue);
-    expect(today, 'Today count did not render').not.toBeNull(); expect(overdue, 'Overdue count did not render').not.toBeNull();
-    await page.locator('#tab-followup-overdue').click().catch(() => {});    // Home_08
+    expect(today, 'Today count did not render').not.toBeNull();
+    expect(overdue, 'Overdue count did not render').not.toBeNull();
+    // Home_08 drill-down: click must work (no swallow) and, for a nonzero count, render rows
+    await page.locator('#tab-followup-overdue').click();
     await page.waitForTimeout(1500);
+    const overdueRows = await page.evaluate(() => document.querySelectorAll('table tbody tr').length);
+    console.log('  📊 Overdue drill-down rows:', overdueRows);
+    if (overdue > 0) expect(overdueRows, 'Overdue badge > 0 but the drill-down rendered no rows').toBeGreaterThan(0);
     await screenshot(page, 'home05_followups');
-    console.log('  ✅ Followups Today + Overdue counts + drill-down work');
+    console.log('  ✅ Followups Today + Overdue counts AND the drill-down opens rows');
   });
 
   test('Home_09 | Won/Completed leads listing (Home_09,10)', async ({ page }) => {
@@ -91,10 +101,14 @@ test.describe('CRM — Homepage', () => {
     const won = await tabCount(page, 'tab-lead-won');
     console.log('  📊 Won (completed) leads:', won);
     expect(won, 'Won count did not render').not.toBeNull();               // Home_09
-    await page.locator('#tab-lead-won').click().catch(() => {});            // Home_10
+    // Home_10: click must work (no swallow); a nonzero Won badge must open a populated list
+    await page.locator('#tab-lead-won').click();
     await page.waitForTimeout(1500);
+    const rows = await page.locator('table tbody tr').count();
+    console.log('  📊 Won listing rows:', rows);
+    if (won > 0) expect(rows, 'Won badge > 0 but the Won listing rendered no rows').toBeGreaterThan(0);
     await screenshot(page, 'home09_won');
-    console.log('  ✅ Won/Completed leads listing reachable');
+    console.log('  ✅ Won/Completed leads count AND listing reachable');
   });
 
   test('Home_11 | Today\'s Schedule section (Home_11,12)', async ({ page }) => {
@@ -109,10 +123,16 @@ test.describe('CRM — Homepage', () => {
   test('Home_13 | Follow-up History (Home_13,14)', async ({ page }) => {
     await arrive(page);
     await go(page, 'followups');
-    // Non-Followup / history-style listing of past follow-ups
-    const has = await page.evaluate(() => /follow ?up history|non followup|last follow/i.test(document.body.innerText));
+    // Non-Followup / history-style listing of past follow-ups.
+    // The old `|| page.url().includes('followups')` was constant-true (we navigated there),
+    // so it hid a missing history listing. Require the actual history section to render.
+    const historyOk = await page.evaluate(() => {
+      const tab = document.getElementById('tab-followup-nonfollowup');
+      const bodyOk = /follow ?up history|non followup|last follow/i.test(document.body.innerText);
+      return (!!tab && /\d/.test(tab.textContent || '')) || bodyOk;
+    });
     await screenshot(page, 'home13_history');
-    expect(has || page.url().includes('followups'), 'follow-up history not found').toBeTruthy(); // Home_13
+    expect(historyOk, 'Non-Followup/follow-up history listing did not render').toBeTruthy(); // Home_13
     console.log('  ✅ Follow-up history/listing present');
   });
 
@@ -123,8 +143,20 @@ test.describe('CRM — Homepage', () => {
     for (const w of ['New', 'Cold', 'Warm', 'Hot', 'Won', 'Lost']) {
       expect(body, `Summary should include "${w}"`).toMatch(new RegExp('\\b' + w + '\\b'));   // Home_15
     }
+    // Labels alone also appear in filter <option>s and column headers, so require COUNTS
+    // rendered next to the classification labels (a broken/empty Summary widget then fails).
+    const withCounts = await page.evaluate(() => {
+      const cats = ['New', 'Cold', 'Warm', 'Hot', 'Won', 'Lost'];
+      const nodes = [...document.querySelectorAll('body *')];
+      return cats.filter((c) => {
+        const re = new RegExp('\\b' + c + '\\b\\s*:?\\s*\\d+', 'i'); // label immediately followed by a count
+        return nodes.some((e) => re.test((e.textContent || '').replace(/\s+/g, ' ')));
+      }).length;
+    });
+    console.log('  📊 classification labels with counts:', withCounts, '/ 6');
+    expect(withCounts, 'Leads Summary showed labels but no counts').toBeGreaterThanOrEqual(5);
     await screenshot(page, 'home15_summary');
-    console.log('  ✅ Summary shows Total/New/Cold/Warm/Hot/Won/Lost classification');
+    console.log('  ✅ Summary shows classification labels WITH counts');
   });
 
   test('Home_17 | Executive filter on CRM Dashboard (Home_17,18,19)', async ({ page }) => {
@@ -142,13 +174,16 @@ test.describe('CRM — Homepage', () => {
   test('Home_20 | Timeline & Calendar icons on /home (Home_20,21,22,23)', async ({ page }) => {
     await arrive(page);
     await go(page, 'home');
+    // The old [class*="time" i] matched any "datetime"/"task-time" label in the schedule rows,
+    // so it passed even if the real Timeline/Calendar entry points were removed. Use
+    // timeline-specific classes/links only.
     const icons = await page.evaluate(() => ({
-      calendar: !!document.querySelector('[class*="calendar" i], .ri-calendar-line, .bi-calendar, [href*="calendar"]'),
-      clock: !!document.querySelector('[class*="time" i], .ri-time-line, .bi-clock, [href*="timeline"]'),
+      calendar: !!document.querySelector('.ri-calendar-line, .bi-calendar, [class*="calendar" i], [href*="calendar"]'),
+      clock: !!document.querySelector('.ri-time-line, .bi-clock, [class*="timeline" i], [href*="timeline"]'),
     }));
     await screenshot(page, 'home20_icons');
     console.log('  🕒 icons:', JSON.stringify(icons));
-    expect(icons.calendar || icons.clock, 'no timeline/calendar icons on home').toBeTruthy(); // Home_20/22
+    expect(icons.calendar || icons.clock, 'no timeline/calendar entry point on Home').toBeTruthy(); // Home_20/22
     console.log('  ✅ Timeline/Calendar entry points present on Home');
   });
 

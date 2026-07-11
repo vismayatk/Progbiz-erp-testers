@@ -49,7 +49,12 @@ test.describe('CRM — Followup', () => {
     await expect(fu.modal).toBeVisible();                              // ENQ-29
     const date = await fu.dateValue();
     console.log('  📅 followup date:', date);
-    expect(date, 'follow-up date/time should auto-fill').toBeTruthy(); // ENQ-30
+    // ENQ-30: the field auto-fills to NOW. Non-empty isn't enough — a stale/hard-coded
+    // default (e.g. "2000-01-01") is also non-empty. Require it to reflect the current date.
+    const now = new Date();
+    expect(date, 'follow-up date should auto-fill to the current year').toContain(String(now.getFullYear()));
+    expect(date, "follow-up date should include today's day-of-month")
+      .toMatch(new RegExp(`\\b0?${now.getDate()}\\b`));
 
     const opts = (await fu.statusOptions()).map(s => s.trim());
     console.log('  🏷  status options:', JSON.stringify(opts));
@@ -67,7 +72,9 @@ test.describe('CRM — Followup', () => {
     expect(await fu.leadQualityVisible(), 'Lead Quality hidden for Lost').toBeFalsy(); // ENQ-34
     expect(await fu.descriptionVisible()).toBeTruthy();
 
-    await fu.businessValueInput.fill('15000').catch(() => {});        // ENQ-35
+    // ENQ-35: business value field must actually accept and retain input (was a swallowed fill)
+    await fu.businessValueInput.fill('15000');
+    expect(await fu.businessValueInput.inputValue(), 'business value field should accept and retain 15000').toBe('15000');
     await screenshot(page, 'fu29_modal');
     console.log('  ✅ Followup modal structure + conditional fields verified');
   });
@@ -96,7 +103,9 @@ test.describe('CRM — Followup', () => {
     await fu.cancel();
     await screenshot(page, 'fu37_cancel');
     await expect(fu.modal).toBeHidden();
-    console.log('  ✅ Follow-up popup closed via Cancel');
+    // "without saving": a fresh enquiry's history must stay empty after Cancel
+    expect(await fu.getFollowUpCount(), 'Cancel must not persist a follow-up').toBe(0);
+    console.log('  ✅ Follow-up popup closed via Cancel without saving');
   });
 
   test('ENQ-39 | Latest follow-up is editable/deletable (ENQ-39..42)', async ({ page }) => {

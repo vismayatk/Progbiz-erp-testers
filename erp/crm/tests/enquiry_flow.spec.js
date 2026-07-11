@@ -101,11 +101,12 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     const title = await page.title();
     console.log(`  📄 Page title: "${title}"`);
 
-    // Assertion: either URL left the create form OR a success alert appeared
-    const urlChanged = !enquiryUrl.includes('/create') && !enquiryUrl.includes('/new') && !enquiryUrl.includes('/add');
-    const hasSuccess = msg !== null;
-    expect(urlChanged || hasSuccess, `Expected success after enquiry creation. URL: ${enquiryUrl}, Alert: "${msg}"`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Enquiry created — ${hasSuccess ? `alert="${msg}"` : `URL=${enquiryUrl}`}`);
+    // The old `urlChanged` was true on BOTH success and failure URLs (neither contains
+    // /create|/new|/add), so it never failed. A real save redirects to /enquiry-overview/{id}.
+    expect(enquiryUrl, `Enquiry should redirect to /enquiry-overview/{id} after save. URL: ${enquiryUrl}, Alert: "${msg}"`)
+      .toMatch(/enquiry-overview\/\d+/i);
+    await expect(page.locator('body')).toContainText(testData.enquiry.customerName);
+    console.log(`  ✅ ASSERT: Enquiry created — overview ${enquiryUrl} shows "${testData.enquiry.customerName}"`);
   });
 
   // --------------------------------------------------------------------------
@@ -139,11 +140,12 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     console.log(`  📌 Existing-customer enquiry URL: ${enquiryUrl}`);
     await screenshot(page, 'tc02b_existing_enquiry');
 
-    const urlChanged = enquiryUrl.includes('enquiry-overview');
-    expect(urlChanged || msg !== null,
-      `Expected existing-customer enquiry to be created. URL: ${enquiryUrl}, Alert: "${msg}"`
-    ).toBeTruthy();
-    console.log(`  ✅ ASSERT: Existing-customer enquiry created — ${urlChanged ? enquiryUrl : `alert="${msg}"`}`);
+    // The `|| msg !== null` fallback passed on failed saves (error toasts also match).
+    // Require the overview redirect AND the chosen customer's phone to appear on it.
+    expect(enquiryUrl, `Expected redirect to enquiry-overview but got ${enquiryUrl}`).toMatch(/enquiry-overview\/\d+/i);
+    const digits = (await page.evaluate(() => document.body.innerText)).replace(/\D/g, '');
+    expect(digits, `Chosen existing customer phone ${existing.phone} not shown on the created enquiry`).toContain(existing.phone);
+    console.log(`  ✅ ASSERT: Existing-customer enquiry created — overview shows phone ${existing.phone}`);
   });
 
   // --------------------------------------------------------------------------
@@ -169,14 +171,12 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       await enquiryPage.openFirstEnquiry();
     }
 
-    // Assert we are on a detail/view page (not the list)
-    expect(page.url()).toMatch(/\/(enquiry|enquiries|detail|view)\/.+|\/enquir\w*\/\d+/i.test(page.url()) ? /.*/ : /.+/);
-    console.log(`  ✅ ASSERT: Opened enquiry detail — URL: ${page.url()}`);
-
-    // Verify page has meaningful content
-    const bodyText = await page.locator('body').textContent();
-    expect(bodyText.length).toBeGreaterThan(100);
-    console.log('  ✅ ASSERT: Page body has content');
+    // The old ternary fed toMatch a regex that matches any string (tautology), and
+    // body.length>100 is true on any app-shell page. Assert the overview actually opened:
+    // the URL is an enquiry-overview and its overview-only Followup control rendered.
+    expect(page.url(), `Expected enquiry-overview, still on: ${page.url()}`).toMatch(/enquiry-overview/i);
+    await expect(page.locator('#btn-add-followup'), 'overview Followup control did not render').toBeVisible({ timeout: 15000 });
+    console.log(`  ✅ ASSERT: Opened enquiry overview — URL: ${page.url()}`);
 
     await screenshot(page, 'tc03_enquiry_opened');
   });
@@ -215,13 +215,15 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     await page.reload({ waitUntil: 'domcontentloaded' });
     const afterCount = await followUpPage.getFollowUpCount();
 
-    // Assertion: row count increased OR success message appeared
-    const hasSuccess = msg !== null;
-    const rowAdded   = afterCount > beforeCount;
-    expect(hasSuccess || rowAdded,
-      `Expected follow-up to be added. Alert: "${msg}", rows before=${beforeCount}, after=${afterCount}`
+    // The `hasSuccess = msg !== null` fallback passed on error toasts too. Require the
+    // history to actually GROW and the latest entry to carry the note we wrote.
+    const rowAdded = afterCount > beforeCount;
+    expect(rowAdded,
+      `Expected a new follow-up row after save. rows before=${beforeCount}, after=${afterCount}, alert="${msg}"`
     ).toBeTruthy();
-    console.log(`  ✅ ASSERT: Follow-up added — ${hasSuccess ? `alert="${msg}"` : `rows ${beforeCount}→${afterCount}`}`);
+    const latest = await followUpPage.getLatestFollowUpText();
+    expect(latest, 'latest follow-up should contain the note just created').toContain(testData.followUp.notes);
+    console.log(`  ✅ ASSERT: Follow-up added — rows ${beforeCount}→${afterCount}, note round-tripped`);
   });
 
   // --------------------------------------------------------------------------
@@ -245,12 +247,12 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       await enquiryPage.openFirstEnquiry();
     }
 
-    const count = await followUpPage.getFollowUpCount();
-    expect(count).toBeGreaterThan(0);
-    console.log(`  ✅ ASSERT: ${count} follow-up(s) visible`);
-
+    // count>0 also matches an empty-state placeholder li. Assert the LATEST entry carries
+    // the note created in TC-04 — a real listing round-trip.
     const latestText = await followUpPage.getLatestFollowUpText();
     console.log(`  📝 Latest follow-up excerpt: "${latestText?.substring(0, 80)}"`);
+    expect(latestText, 'latest follow-up should contain the note created in TC-04').toContain(testData.followUp.notes);
+    console.log('  ✅ ASSERT: follow-up from TC-04 is visible in the listing');
 
     await screenshot(page, 'tc05_followup_listing');
   });
@@ -282,12 +284,13 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     const quotNo   = await quotationPage.getQuotationNumber();
     await screenshot(page, 'tc06_quotation_created');
 
-    const hasSuccess  = msg !== null;
-    const hasQuotNo   = quotNo !== null && quotNo.length > 0;
-    const urlChanged  = page.url().includes('quot');
-
-    expect(hasSuccess || hasQuotNo || urlChanged,
-      `Expected quotation to be generated. Alert: "${msg}", QuotNo: "${quotNo}", URL: ${page.url()}`
+    // `urlChanged = url.includes('quot')` was already true once the create form opened,
+    // so it hid a failed save. A real save leaves the unsaved /quotation/0/ create form.
+    const stillOnNewForm = /\/quotation\/0\//.test(page.url());
+    const savedOk        = msg !== null && /success|saved|created|generated/i.test(msg);
+    const hasRealQuotNo  = quotNo !== null && /QUO/i.test(quotNo);
+    expect(savedOk || hasRealQuotNo || (page.url().includes('quot') && !stillOnNewForm),
+      `Expected a SAVED quotation, not just the create form. Alert:"${msg}" QuotNo:"${quotNo}" URL:${page.url()}`
     ).toBeTruthy();
     console.log(`  ✅ ASSERT: Quotation generated — alert="${msg}", quotNo="${quotNo}"`);
   });
@@ -307,9 +310,13 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
     await quotationPage.gotoList();
 
-    const count = await quotationPage.getListingCount();
-    expect(count).toBeGreaterThan(0);
-    console.log(`  ✅ ASSERT: ${count} quotation(s) in listing`);
+    // /leads is the shared lead+quotation master and is essentially always populated,
+    // so count>0 proved nothing. Require at least one row that is actually a Quotation (QUO#).
+    const rows = await page.$$eval('table tbody tr', trs => trs.map(tr => (tr.innerText || '').trim()));
+    const quotationRows = rows.filter(r => /QUO[-\s]?\d/i.test(r));
+    console.log(`  🧾 quotation rows in master: ${quotationRows.length} / ${rows.length}`);
+    expect(quotationRows.length, 'listing should contain at least one Quotation (QUO#) row').toBeGreaterThan(0);
+    console.log('  ✅ ASSERT: quotation listing shows Quotation rows');
 
     await screenshot(page, 'tc07_quotation_listing');
   });
@@ -362,10 +369,14 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
     await enquiryPage.gotoList();
 
-    const rows = page.locator('table tbody tr, .list-row, .enquiry-row');
-    const count = await rows.count();
-    expect(count).toBeGreaterThan(0);
-    console.log(`  ✅ ASSERT: ${count} enquiry row(s) in listing`);
+    // /leads is always pre-populated, so count>0 proved nothing about this run. Require the
+    // specific enquiry created in TC-02 (unique "Test Customer <ts>") to be listed.
+    const wanted = testData.enquiry.customerName;
+    const found = await page.evaluate((name) =>
+      [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
+    console.log(`  🔎 "${wanted}" listed in /leads: ${found}`);
+    expect(found, `Enquiry for "${wanted}" (created in TC-02) not visible in /leads listing`).toBeTruthy();
+    console.log('  ✅ ASSERT: created enquiry is visible in the /leads listing');
 
     await screenshot(page, 'tc11_enquiry_listing');
   });
@@ -613,18 +624,18 @@ async function _runStatusTransition(page, status, screenshotName) {
 
   await enquiryPage.updateStatus(status);
 
-  const msg            = await enquiryPage.getSuccessMessage();
-  const currentStatus  = await enquiryPage.getCurrentStatus();
+  const msg = await enquiryPage.getSuccessMessage();
   await screenshot(page, screenshotName);
 
-  // Won/Lost/In-Follow-Up map to Followup Status labels (see EnquiryPage.statusLabelFor)
-  const expectedLabel  = enquiryPage.statusLabelFor(status);
-  const savedCorrectly = currentStatus.toLowerCase().includes(expectedLabel.toLowerCase());
-  const hasSuccess     = msg !== null;
+  // The old `hasSuccess = msg !== null` fallback passed on any toast (incl. errors), so the
+  // status transition was never really verified. Re-read the PERSISTED status after reload.
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2000);
+  const currentStatus = await enquiryPage.getCurrentStatus();
+  const expectedLabel = enquiryPage.statusLabelFor(status);   // Won→"Got the business", etc.
+  expect(currentStatus.toLowerCase(),
+    `Status "${status}" should persist as "${expectedLabel}". Alert: "${msg}", Status field: "${currentStatus}"`
+  ).toContain(expectedLabel.toLowerCase());
 
-  expect(hasSuccess || savedCorrectly,
-    `Expected status "${status}" (→ "${expectedLabel}") to be saved. Alert: "${msg}", Current status: "${currentStatus}"`
-  ).toBeTruthy();
-
-  console.log(`  ✅ ASSERT: Status "${status}" saved — alert="${msg}", statusField="${currentStatus}"`);
+  console.log(`  ✅ ASSERT: Status "${status}" persisted as "${currentStatus}"`);
 }

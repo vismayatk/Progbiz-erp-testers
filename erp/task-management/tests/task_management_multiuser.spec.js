@@ -120,13 +120,33 @@ test.describe('Task Management — Multi-user visibility', () => {
   });
 
   test('MU-03 | Admin sees the assigned task in Calendar & Timeline (Scenario 6)', async ({ browser }) => {
+    test.setTimeout(300_000);
     const a = await loginAs(browser, ADMIN);
     try {
+      // Seed a today-dated task so oversight views have something concrete to show.
+      const name = `CalTask ${Date.now()}`;
+      await a.tm.openTaskModal();
+      await a.tm.taskTypeSelect.selectOption({ label: 'Call' }).catch(() => {});
+      await a.tm.taskInput.fill(name);
+      const d = new Date().toISOString().slice(0, 10);
+      await a.tm.modal.locator('input[type="date"]:visible').first().fill(d).catch(() => {});
+      await a.tm.saveBtn.click();
+      await a.page.waitForTimeout(2500);
+
+      // Calendar must actually SHOW the assigned task (not merely load the route).
       await a.tm.gotoCalendar();
       expect(a.page.url()).toContain('calendar');
-      await a.tm.gotoTimeline();
+      const inCal = await a.page.evaluate((n) => document.body.innerText.toLowerCase().includes(n.toLowerCase()), name);
       await screenshot(a.page, 'mu03_admin_views');
-      console.log('  ✅ ASSERT: Admin Calendar & Timeline reachable for oversight');
+      console.log(`  📅 "${name}" shown in admin Calendar: ${inCal}`);
+      expect(inCal, `Assigned task "${name}" not shown in admin Calendar`).toBeTruthy();
+
+      // Timeline must be reachable (goto resolves on redirects/4xx — assert the route).
+      await a.tm.gotoTimeline();
+      expect(a.page.url(), 'Timeline route should be reachable').toMatch(/timeline/i);
+      const inTL = await a.page.evaluate((n) => document.body.innerText.toLowerCase().includes(n.toLowerCase()), name);
+      console.log(`  🗓️  "${name}" shown in Timeline: ${inTL}`);
+      console.log('  ✅ ASSERT: Admin Calendar shows the assigned task; Timeline reachable');
     } finally { await a.ctx.close(); }
   });
 });

@@ -50,19 +50,23 @@ test.describe('CRM — Item', () => {
     const msg = await item.createWith({ name, variant: `${name} V1`, description: 'all-fields item' });
     await screenshot(page, 'item02_allfields');
     expect(msg, `Create with all fields should succeed, got "${msg}"`).toBeFalsy();
-    console.log('  ✅ Item created with name + variant + description');
+    // Data round-trip: a falsy msg alone can hide a silent no-save — require it in the grid.
+    expect(await item.existsInList(name), 'created item not persisted to the /items grid').toBeTruthy();
+    console.log('  ✅ Item created with name + variant + description, persisted to grid');
   });
 
   test('Item_03 | Access Add Item without login redirects to Login', async ({ page }) => {
     // fresh context (no session) — navigating straight to /item must not show the form
     await page.context().clearCookies();
     await page.goto(`${process.env.BASE_URL}/item`, { waitUntil: 'domcontentloaded' }).catch(() => {});
-    await page.waitForTimeout(3000);
-    const onForm = await page.locator('#item-name').isVisible().catch(() => false);
+    // Positively confirm the auth guard redirected to LOGIN, rather than accepting a
+    // merely-absent form (this SPA is slow to render, so "form not visible yet" ≠ blocked).
+    const redirected = await page.waitForURL(/login/i, { timeout: 15000 }).then(() => true).catch(() => false);
+    const onLogin = redirected || await page.locator('#companycode, #signin-username').first().isVisible().catch(() => false);
     await screenshot(page, 'item03_noauth');
-    console.log('  🔒 url:', page.url(), '| item form visible:', onForm);
-    expect(/login/i.test(page.url()) || !onForm, 'Unauthenticated user reached the Add Item form').toBeTruthy();
-    console.log('  ✅ Unauthenticated access is blocked');
+    console.log('  🔒 url:', page.url(), '| on login screen:', onLogin);
+    expect(onLogin, 'unauthenticated access to /item must redirect to the login screen').toBeTruthy();
+    console.log('  ✅ Unauthenticated access is redirected to Login');
   });
 
   test('Item_04 | Session timeout while creating item', async () => {
@@ -144,10 +148,14 @@ test.describe('CRM — Item', () => {
 
   test('Item_15 | Cancel while adding item returns to list', async ({ page }) => {
     const item = await arrive(page);
-    const url = await item.cancelCreate(`CancelItem ${Date.now()}`);
+    const name = `CancelItem ${Date.now()}`;
+    const url = await item.cancelCreate(name);
     await screenshot(page, 'item15_cancel');
     console.log('  ↩  after Cancel →', url);
-    expect(/\/items?(\b|$)/.test(url), 'Cancel should leave the form').toBeTruthy();
-    console.log('  ✅ Cancel returned without saving');
+    // The old /\/items?/ allowed staying on the form (/item). Require the /items LIST route,
+    // and prove Cancel did not persist the item.
+    expect(/\/items(\b|$)/.test(url), 'Cancel should return to the /items list, not stay on /item').toBeTruthy();
+    expect(await item.existsInList(name), 'Cancel must not persist the item').toBeFalsy();
+    console.log('  ✅ Cancel returned to the /items list without saving');
   });
 });

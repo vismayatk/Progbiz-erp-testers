@@ -100,6 +100,7 @@ test.describe('Task Management — Documented Cases', () => {
   });
 
   test('TM-10 | Create an Instant Task via the modal (Scenario 1)', async ({ page }) => {
+    test.setTimeout(300_000);   // create + cross-tab visibility check on a slow tenant
     const tm = await arrive(page);
     const name = `Instant ${Date.now()}`;
     const msg = await tm.createViaModal(name, { type: 'Call', priority: 'Normal', description: 'instant via modal' });
@@ -107,13 +108,14 @@ test.describe('Task Management — Documented Cases', () => {
     expect(msg, `Instant task should save, got: "${msg}"`).toBeFalsy();
     console.log(`  ✅ ASSERT: Instant task "${name}" created (TC_017/026/028)`);
 
-    // TC_027 — appears in My Tasks
-    const found = await tm.findTask(name);
-    console.log(`  🔎 Visible in My Tasks: ${found}`);
-    expect(typeof found).toBe('boolean');
+    // TC_027 — data round-trip: the created task must appear in My Tasks
+    const tab = await tm.findAcrossTabs(name);
+    console.log(`  🔎 "${name}" visible in My Tasks under tab: ${tab}`);
+    expect(tab, `Instant task "${name}" not found on any My Tasks tab`).toBeTruthy();
   });
 
   test('TM-11 | Create a Task for Later — Hosts + scheduling (Scenario 2)', async ({ page }) => {
+    test.setTimeout(300_000);   // create + cross-tab visibility check on a slow tenant
     const tm = await arrive(page);
     await tm.openTaskModal();
 
@@ -139,10 +141,15 @@ test.describe('Task Management — Documented Cases', () => {
     const msg = await tm._afterSave();
     await screenshot(page, 'tm11_later');
     expect(msg, `Scheduled task should save, got: "${msg}"`).toBeFalsy();
-    console.log(`  ✅ ASSERT: Scheduled "Task for Later" "${name}" created`);
+    // Data round-trip: scheduled task must be listed in My Tasks
+    const tab = await tm.findAcrossTabs(name);
+    console.log(`  🔎 "${name}" visible under tab: ${tab}`);
+    expect(tab, `Task-for-Later "${name}" not listed in My Tasks`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Scheduled "Task for Later" "${name}" created and listed`);
   });
 
   test('TM-12 | Repeat mode — recurring schedule fields + create (NEW feature, not in doc)', async ({ page }) => {
+    test.setTimeout(300_000);   // create + cross-tab visibility check on a slow tenant
     const tm = await arrive(page);
     await tm.openTaskModal();
     await tm.selectMode('repeat');
@@ -166,8 +173,18 @@ test.describe('Task Management — Documented Cases', () => {
     const name = `Repeat ${Date.now()}`;
     const msg = await tm.createRepeatTask(name, { type: 'Call', recurrence: 'Daily' });
     await screenshot(page, 'tm12_repeat_created');
+    // A recurring task is "created properly" when the save succeeds (no validation/backend error).
+    // Its occurrences are schedule-driven (From Date is future), so they legitimately may NOT be
+    // in *today's* My Tasks — visibility is logged as informational, not asserted.
     expect(msg, `Repeat task should save, got: "${msg}"`).toBeFalsy();
-    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created`);
+    const tab = await tm.findAcrossTabs(name);
+    let where = tab;
+    if (!where) {
+      await tm.gotoHome();
+      if (await page.evaluate((n) => document.body.innerText.includes(n), name)) where = 'home schedule';
+    }
+    console.log(`  🔎 "${name}" occurrence visible at: ${where || 'not today (scheduled for future date)'}`);
+    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created (save succeeded)`);
   });
 
   test('TM-13 | Negative — Save without Task Type is rejected', async ({ page }) => {
@@ -265,9 +282,10 @@ test.describe('Task Management — Documented Cases', () => {
     const n = await tm.reportRowCount();
     console.log(`  📊 Daily Activity rows: ${n}`);
     expect(page.url()).toContain('daily-activity-report');
-    expect(n).toBeGreaterThanOrEqual(0);
+    // tasks exist from this suite's own runs, so the report must have rows
+    expect(n, 'Daily Activity Report should list at least one row').toBeGreaterThan(0);
     await screenshot(page, 'tm21_report');
-    console.log('  ✅ ASSERT: Daily Activity Report loaded');
+    console.log('  ✅ ASSERT: Daily Activity Report loaded with data');
   });
 
   test('TM-22 | Calendar & Timeline reachable (Scenario 6 — single user)', async ({ page }) => {

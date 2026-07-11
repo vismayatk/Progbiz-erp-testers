@@ -74,13 +74,20 @@ test.describe('CRM — Followup', () => {
 
   test('ENQ-36 | Save follow-up → success + appears in history (ENQ-36,38)', async ({ page }) => {
     const fu = await seedAndOpenFollowup(page);
-    await fu.fillAndSave({ notes: `Auto follow-up ${Date.now()}`, status: 'Interested', businessValue: 5000 });
+    const note = `Auto follow-up ${Date.now()}`;
+    await fu.fillAndSave({ notes: note, status: 'Interested', businessValue: 5000 });
     const msg = await fu.getSuccessMessage();
     console.log('  💬 save msg:', msg);
     const count = await fu.getFollowUpCount();
     await screenshot(page, 'fu36_history');
     expect(count, 'follow-up should appear in history').toBeGreaterThan(0);  // ENQ-38
-    console.log('  ✅ Follow-up saved and visible in history');
+    // Data round-trip: history must show the follow-up with the correct STATUS (ENQ-38),
+    // and ideally the note text we wrote.
+    const hist = await page.evaluate(() =>
+      (document.querySelector('#followups')?.textContent || '').replace(/\s+/g, ' '));
+    expect(hist, 'history should show the saved status "Interested"').toMatch(/Interested/i);
+    const noteShown = hist.includes(note);
+    console.log(`  ✅ Follow-up in history with status Interested ✓, note text ${noteShown ? '✓' : '(not rendered in list)'}`);
   });
 
   test('ENQ-37 | Cancel closes the follow-up popup without saving', async ({ page }) => {

@@ -48,8 +48,14 @@ test.describe('Project Management', () => {
     await pm.gotoAddProject();
     expect(page.url()).toContain('/project');
     expect(await pm.is404(), 'Add Project page 404').toBeFalsy();
+    // form content actually rendered (stepped form starts with customer/section pickers)
+    const controls = await page.evaluate(() =>
+      [...document.querySelectorAll('button, a.btn')].map(b => (b.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter(t => /add customer|add section|save|create/i.test(t)));
+    console.log('  🔧 form controls:', JSON.stringify(controls.slice(0, 5)));
+    expect(controls.length, 'Add Project form controls not rendered').toBeGreaterThan(0);
     await screenshot(page, 'pm02_add_project');
-    console.log('  ✅ Add New Project page reachable');
+    console.log('  ✅ Add New Project page reachable with form controls');
   });
 
   test('PM-03 | Project sub-pages reachable', async ({ page }) => {

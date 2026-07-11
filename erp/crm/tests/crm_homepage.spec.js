@@ -61,7 +61,7 @@ test.describe('CRM — Homepage', () => {
     }
     const newCount = await tabCount(page, 'tab-lead-new');
     console.log('  📊 New Leads count:', newCount);                          // Home_03
-    expect(typeof newCount).toBe('number');
+    expect(newCount, 'New Leads count did not render').not.toBeNull();
     await page.locator('#tab-lead-new').click().catch(() => {});             // Home_04
     await page.waitForTimeout(1500);
     await screenshot(page, 'home03_leads');
@@ -78,7 +78,7 @@ test.describe('CRM — Homepage', () => {
     const today = await tabCount(page, 'tab-followup-today');               // Home_05
     const overdue = await tabCount(page, 'tab-followup-overdue');           // Home_07 (Delayed = overdue)
     console.log('  📊 Today followups:', today, '| Overdue (Delayed):', overdue);
-    expect(typeof today).toBe('number'); expect(typeof overdue).toBe('number');
+    expect(today, 'Today count did not render').not.toBeNull(); expect(overdue, 'Overdue count did not render').not.toBeNull();
     await page.locator('#tab-followup-overdue').click().catch(() => {});    // Home_08
     await page.waitForTimeout(1500);
     await screenshot(page, 'home05_followups');
@@ -90,7 +90,7 @@ test.describe('CRM — Homepage', () => {
     await go(page, 'leads');
     const won = await tabCount(page, 'tab-lead-won');
     console.log('  📊 Won (completed) leads:', won);
-    expect(typeof won).toBe('number');                                      // Home_09
+    expect(won, 'Won count did not render').not.toBeNull();               // Home_09
     await page.locator('#tab-lead-won').click().catch(() => {});            // Home_10
     await page.waitForTimeout(1500);
     await screenshot(page, 'home09_won');

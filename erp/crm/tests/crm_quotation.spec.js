@@ -24,15 +24,19 @@ const C = {
 };
 const uniq = () => { const ts = Date.now(); return { customerName: `QT Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `qt${ts}@x.com`, source: 'Website', product: 'Inverter', description: 'qt', quantity: '2', unitPrice: '1000' }; };
 
-/** Login, seed a fresh enquiry, open its prefilled Quotation form (not saved). */
+/** Login, seed a fresh enquiry, open its prefilled Quotation form (not saved).
+ *  Returns the QuotationPage; the seeded enquiry data is exposed as `qt.seed`. */
 async function seedQuotation(page) {
   const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
   const enq = new EnquiryPage(page);
   await enq.openAddForm();
-  await enq.fillAndCreate(uniq());
+  const data = uniq();
+  await enq.fillAndCreate(data);
   await page.waitForTimeout(1500);
   await enq.openQuotationForm();
-  return new QuotationPage(page);
+  const qt = new QuotationPage(page);
+  qt.seed = data;
+  return qt;
 }
 
 test.describe('CRM — Quotation', () => {
@@ -44,7 +48,8 @@ test.describe('CRM — Quotation', () => {
     const s = await qt.autoFillState();
     console.log('  🧾 auto-fill state:', JSON.stringify(s));
     expect(s.number, 'Quotation No auto-generated').toMatch(/QUO-?\d+/i);   // QT-001 number
-    expect(s.customer, 'customer auto-filled').toBeTruthy();                // QT-010
+    // Data round-trip: the auto-filled customer must be EXACTLY the enquiry's customer
+    expect(s.customer, `autofill should carry customer "${qt.seed.customerName}"`).toContain(qt.seed.customerName); // QT-010
     expect(s.validUpto, 'Valid Upto should NOT be auto-filled (per spec)').toBeFalsy(); // QT-010
     expect(s.itemRows, 'items carried from enquiry').toBeGreaterThan(0);    // QT-004
     // totals present (QT-006)

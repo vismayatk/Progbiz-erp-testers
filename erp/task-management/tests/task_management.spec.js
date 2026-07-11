@@ -42,7 +42,7 @@ test.describe('Task Management Module', () => {
   });
 
   test('TM-02 | Create a task and verify it is listed', async ({ page }) => {
-    test.setTimeout(150_000);
+    test.setTimeout(300_000);   // create + cross-tab verification on a slow tenant
     const login = new LoginPage(page);
     const tm = new TaskManagementPage(page);
     await login.goto();
@@ -54,10 +54,10 @@ test.describe('Task Management Module', () => {
     expect(msg, `Task create should succeed, got: "${msg}"`).toBeFalsy();
     console.log(`  ✅ ASSERT: Task "${name}" created`);
 
-    const found = await tm.findTask(name);
-    console.log(`  🔎 Found in My Tasks list: ${found}`);
-    // Creation success is the primary assertion; listing is best-effort (tab/scheduling dependent)
-    expect(typeof found).toBe('boolean');
+    // Data round-trip: the created task NAME must actually appear in My Tasks
+    const tab = await tm.findAcrossTabs(name);
+    console.log(`  🔎 "${name}" visible in My Tasks under tab: ${tab}`);
+    expect(tab, `Created task "${name}" not found on any My Tasks tab`).toBeTruthy();
   });
 
   test('TM-03 | All Task-Management pages are reachable', async ({ page }) => {
@@ -83,7 +83,7 @@ test.describe('Task Management Module', () => {
   });
 
   test('TM-04 | Create a scheduled task (Task for Later)', async ({ page }) => {
-    test.setTimeout(150_000);
+    test.setTimeout(300_000);   // create + cross-tab verification on a slow tenant
     const login = new LoginPage(page); const tm = new TaskManagementPage(page);
     await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
 
@@ -91,7 +91,11 @@ test.describe('Task Management Module', () => {
     const msg = await tm.createTask(name, { type: 'Call', mode: 'later' });
     await screenshot(page, 'tm04_later_task');
     expect(msg, `Scheduled task should save, got: "${msg}"`).toBeFalsy();
-    console.log(`  ✅ ASSERT: Scheduled task "${name}" created`);
+    // Data round-trip: scheduled task must appear in My Tasks (Upcoming/Today)
+    const tab = await tm.findAcrossTabs(name);
+    console.log(`  🔎 "${name}" visible under tab: ${tab}`);
+    expect(tab, `Scheduled task "${name}" not listed in My Tasks`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Scheduled task "${name}" created and listed`);
   });
 
   test('TM-05 | Creating a task without Task Type is rejected', async ({ page }) => {
@@ -107,7 +111,7 @@ test.describe('Task Management Module', () => {
   });
 
   test('TM-06 | Create task (Online Meeting, High priority)', async ({ page }) => {
-    test.setTimeout(150_000);
+    test.setTimeout(300_000);   // create + cross-tab verification on a slow tenant
     const login = new LoginPage(page); const tm = new TaskManagementPage(page);
     await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
 
@@ -115,7 +119,16 @@ test.describe('Task Management Module', () => {
     const msg = await tm.createTask(name, { type: 'Online Meeting', priority: 'High' });
     await screenshot(page, 'tm06_meeting');
     expect(msg, `Task should save, got: "${msg}"`).toBeFalsy();
-    console.log(`  ✅ ASSERT: Online Meeting task "${name}" created (High priority)`);
+    // Data round-trip: verify the row shows the task with its type
+    const tab = await tm.findAcrossTabs(name);
+    console.log(`  🔎 "${name}" visible under tab: ${tab}`);
+    expect(tab, `Online Meeting task "${name}" not listed in My Tasks`).toBeTruthy();
+    const rowHasType = await page.evaluate((n) => {
+      const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
+      return r ? /online meeting/i.test(r.textContent || '') : false;
+    }, name);
+    expect(rowHasType, 'Row should display Task Type "Online Meeting"').toBeTruthy();
+    console.log(`  ✅ ASSERT: Online Meeting task "${name}" created, listed with correct type`);
   });
 
   test('TM-07 | My Tasks status tabs are navigable', async ({ page }) => {
@@ -141,8 +154,9 @@ test.describe('Task Management Module', () => {
     const n = await tm.reportRowCount();
     console.log(`  📊 Daily Activity rows: ${n}`);
     expect(page.url()).toContain('daily-activity-report');
-    expect(n).toBeGreaterThanOrEqual(0);
+    // tasks exist from this suite's own runs, so the report must have rows
+    expect(n, 'Daily Activity Report should list at least one row').toBeGreaterThan(0);
     await screenshot(page, 'tm08_report');
-    console.log('  ✅ ASSERT: Daily Activity Report loaded');
+    console.log('  ✅ ASSERT: Daily Activity Report loaded with data');
   });
 });

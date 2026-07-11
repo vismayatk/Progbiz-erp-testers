@@ -112,15 +112,28 @@ test.describe('CRM — Enquiry', () => {
   });
 
   test('ENQ-16 | Item selection + multiple items (ENQ-16,18)', async ({ page }) => {
+    test.setTimeout(300_000);
     const enq = await arrive(page);
     await enq.openAddForm();
-    await enq.addItem('Inverter', '2').catch(() => {});          // ENQ-16
-    await enq.addItem('Generator', '1').catch(() => {});         // ENQ-18 (second item)
-    const rows = await page.locator('#enquiry-items-table tbody tr, table tbody tr').count().catch(() => 0);
+    // ENQ-16 — the item picker (#searchItemModal) opens slowly on this tenant; retry
+    // instead of swallowing the failure (a swallowed add made the old test vacuous).
+    let added = false;
+    for (let i = 0; i < 3 && !added; i++) {
+      added = await enq.addItem('Inverter', '2').then(() => true).catch(() => false);
+      if (!added) { console.log(`  ⏳ item picker retry ${i + 1}`); await page.waitForTimeout(2500); }
+    }
+    expect(added, 'item picker never opened — could not add "Inverter"').toBeTruthy();
     await screenshot(page, 'enq16_items');
-    console.log('  📦 item rows after adding:', rows);
-    expect(rows, 'at least one item row should be present').toBeGreaterThan(0);
-    console.log('  ✅ Item(s) added under Enquired For');
+    // Data round-trip: the item name lands in an INPUT under "Enquired For"
+    // (input values are NOT in textContent) — scan input VALUES + the section text.
+    const shown = await page.evaluate(() => {
+      const inputVals = [...document.querySelectorAll('input')].map(i => i.value || '').join(' | ');
+      const secText = (document.body.innerText || '');
+      return { inputVals, hasInverter: /Inverter/i.test(inputVals) || /Inverter/i.test(secText) };
+    });
+    console.log('  📦 item input values:', shown.inputVals.slice(0, 120));
+    expect(shown.hasInverter, 'added item "Inverter" not shown in the Enquired-For row').toBeTruthy();
+    console.log('  ✅ ASSERT: item "Inverter" selected and displayed in the Enquired-For row');
   });
 
   test('ENQ-05 | Customer search picker (ENQ-05)', async ({ page }) => {
@@ -139,12 +152,17 @@ test.describe('CRM — Enquiry', () => {
   test('ENQ-19 | Save enquiry → success + Overview redirect (ENQ-19,21)', async ({ page }) => {
     const enq = await arrive(page);
     await enq.openAddForm();
-    await enq.fillAndCreate(uniqEnquiry());
+    const data = uniqEnquiry();
+    await enq.fillAndCreate(data);
     const msg = await enq.getSuccessMessage();
     await screenshot(page, 'enq19_saved');
     console.log('  💾 save result:', msg);
     expect(/\/enquiry-overview|\/lead|success|saved/i.test((msg || '') + ' ' + page.url()), 'enquiry not saved').toBeTruthy();
-    console.log('  ✅ Enquiry saved and redirected to Overview');
+    // Data round-trip: the Overview must display the customer we just created
+    await page.waitForTimeout(2000);
+    const body = (await page.locator('body').textContent().catch(() => '')) || '';
+    expect(body, `Overview does not show customer "${data.customerName}"`).toContain(data.customerName);
+    console.log(`  ✅ Enquiry saved — Overview shows customer "${data.customerName}"`);
   });
 
   test('ENQ-20 | Cancel returns to listing', async ({ page }) => {

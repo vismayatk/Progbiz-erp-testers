@@ -177,12 +177,21 @@ class EnquiryPage {
     console.log('  👤 New Customer modal opened — creating customer');
 
     // Individual/Business variants share duplicate IDs, so target the VISIBLE
-    // controls by placeholder. Level defaults to a valid value ("Suspect"),
-    // phone is pre-filled, so only Customer Name is required.
-    await this._safeFill(
-      modal.locator('input[placeholder="please enter name"]:visible').first(),
-      customerName
-    );
+    // controls by placeholder. Two build variants exist:
+    //  - old: single name field  (placeholder "please enter name")
+    //  - DEV: split #first-name / #last-name + a display-name combo (#cust-disp-ind)
+    const oldName = modal.locator('input[placeholder="please enter name"]:visible').first();
+    if (await oldName.count()) {
+      await this._safeFill(oldName, customerName);
+    } else {
+      const parts = String(customerName).split(/\s+/);
+      await this._safeFill(modal.locator('#first-name:visible, input[placeholder="please enter first name"]:visible').first(), parts[0]);
+      if (parts.length > 1) {
+        await this._safeFill(modal.locator('#last-name:visible, input[placeholder="please enter last name"]:visible').first(), parts.slice(1).join(' '));
+      }
+      // display name (type-ahead combo) — type the full name so the record shows it
+      await this._safeFill(modal.locator('#cust-disp-ind:visible, input[placeholder*="display name" i]:visible').first(), customerName);
+    }
     if (email) {
       await this._safeFill(
         modal.locator('input[placeholder="please enter email address"]:visible').first(),

@@ -46,7 +46,10 @@ test.describe('CRM — Login Page', () => {
     await lp.login(C.company, C.username, C.password);
     // Prove the mapped company reached its tenant dashboard, not a /login-left-but-wrong page.
     expect(page.url(), 'mapped company should land on its tenant dashboard/home').toMatch(/home|dashboard/i);
-    const authed = await page.locator('text=/logout|dashboard|profile/i').first().isVisible().catch(() => false);
+    // authenticated-shell marker: the home "Create New" control (visible text like
+    // "logout"/"profile" lives behind the avatar menu on some builds)
+    const authed = await page.locator('#new-task').first().isVisible().catch(() => false)
+      || await page.locator('text=/logout|dashboard|profile/i').first().isVisible().catch(() => false);
     expect(authed, 'expected an authenticated area for the mapped company').toBeTruthy();
     console.log('  ✅ Mapped company login succeeded');
   });

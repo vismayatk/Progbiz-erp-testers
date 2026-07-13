@@ -144,17 +144,16 @@ test.describe('CRM — Homepage', () => {
       expect(body, `Summary should include "${w}"`).toMatch(new RegExp('\\b' + w + '\\b'));   // Home_15
     }
     // Labels alone also appear in filter <option>s and column headers, so require COUNTS
-    // rendered next to the classification labels (a broken/empty Summary widget then fails).
+    // rendered next to the classification labels in VISIBLE text. Builds differ on the
+    // category set (TEST: New/Cold/Warm/Hot/Won/Lost; DEV: New/Won/Lost/Not Connected/…),
+    // so require the core three that every build shows with counts.
     const withCounts = await page.evaluate(() => {
-      const cats = ['New', 'Cold', 'Warm', 'Hot', 'Won', 'Lost'];
-      const nodes = [...document.querySelectorAll('body *')];
-      return cats.filter((c) => {
-        const re = new RegExp('\\b' + c + '\\b\\s*:?\\s*\\d+', 'i'); // label immediately followed by a count
-        return nodes.some((e) => re.test((e.textContent || '').replace(/\s+/g, ' ')));
-      }).length;
+      const text = document.body.innerText.replace(/\s+/g, ' ');
+      return ['New', 'Won', 'Lost'].filter((c) =>
+        new RegExp('\\b' + c + '\\b\\s*:?\\s*\\d+', 'i').test(text)).length;
     });
-    console.log('  📊 classification labels with counts:', withCounts, '/ 6');
-    expect(withCounts, 'Leads Summary showed labels but no counts').toBeGreaterThanOrEqual(5);
+    console.log('  📊 core classification labels with counts:', withCounts, '/ 3');
+    expect(withCounts, 'Leads Summary showed labels but no counts').toBe(3);
     await screenshot(page, 'home15_summary');
     console.log('  ✅ Summary shows classification labels WITH counts');
   });

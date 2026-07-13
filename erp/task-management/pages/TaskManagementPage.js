@@ -666,6 +666,13 @@ class TaskManagementPage {
     return null;
   }
 
+  /** True when the current page is the SPA's dead-route screen. The DEV build removed
+   *  some routes (/created-tasks, /unscheduled-tasks) — goto() resolves fine on them. */
+  async isDeadRoute() {
+    return this.page.evaluate(() =>
+      /nothing at this address|page not found|404/i.test(document.body.innerText)).catch(() => false);
+  }
+
   /** True if `name` appears specifically under the given My Tasks status tab.
    *  (findAcrossTabs short-circuits on the unfiltered view; this pins one bucket.) */
   async tabContains(name, tabLabel) {

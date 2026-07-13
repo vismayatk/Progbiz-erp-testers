@@ -83,10 +83,21 @@ class QuotationPage {
     console.log(`  📋 Leads/Quotation listing loaded: ${this.page.url()}`);
   }
 
-  /** Open /leads filtered to Type = Quotation (rows then show QUO-x numbers).
-   *  The unfiltered master lists enquiries (ENQ-x) — quotations only surface
-   *  behind the filter panel: #btn-toggle-filter → Type select → #btn-apply-filter. */
+  /** Open the quotation listing. Per the CRM module doc there is a dedicated
+   *  /quotations route (Quotations.razor) — prefer it. Builds without it fall
+   *  back to /leads filtered to Type=Quotation via the filter panel
+   *  (#btn-toggle-filter → Type select → #btn-apply-filter). */
   async gotoQuotationList() {
+    await this.page.goto(`${this.baseUrl}/quotations`, { waitUntil: 'domcontentloaded' });
+    await this.page.waitForTimeout(3500);
+    const dead = await this.page.evaluate(() =>
+      /nothing at this address|page not found/i.test(document.body.innerText)).catch(() => false);
+    if (!dead) {
+      await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+      await this.page.waitForTimeout(1500);
+      console.log('  📋 /quotations listing loaded');
+      return;
+    }
     await this.gotoList();
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(3000);                                // AJAX list settles

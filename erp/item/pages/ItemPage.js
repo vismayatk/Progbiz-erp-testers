@@ -109,11 +109,15 @@ class ItemPage {
     return this._afterSaveOrValidation();
   }
 
-  /** Click Cancel on the create form and confirm we leave without saving. */
+  /** Click Cancel on the create form and confirm we leave without saving.
+   *  Returns the resulting URL, or null when this build's item form exposes
+   *  no Cancel control at all (e.g. the DEV redesign has none). */
   async cancelCreate(name) {
     await this.gotoForm();
     await this.nameInput.fill(name);
-    await this.page.locator('button:visible, a:visible').filter({ hasText: /^\s*cancel\s*$/i }).first().click().catch(() => {});
+    const cancel = this.page.locator('button:visible, a:visible').filter({ hasText: /^\s*cancel\s*$/i }).first();
+    if (!(await cancel.count())) return null;
+    await cancel.click().catch(() => {});
     await this.page.waitForTimeout(1500);
     return this.page.url();
   }

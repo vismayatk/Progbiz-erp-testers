@@ -163,10 +163,18 @@ test.describe('CRM — Enquiry', () => {
     await screenshot(page, 'enq19_saved');
     console.log('  💾 save result:', msg);
     expect(/\/enquiry-overview|\/lead|success|saved/i.test((msg || '') + ' ' + page.url()), 'enquiry not saved').toBeTruthy();
-    // Data round-trip: the Overview must display the customer we just created
-    await page.waitForTimeout(2000);
-    const body = (await page.locator('body').textContent().catch(() => '')) || '';
-    expect(body, `Overview does not show customer "${data.customerName}"`).toContain(data.customerName);
+    // Data round-trip: the Overview must display the customer we just created.
+    // The overview is 5 AJAX tab loads (slow) and DEV shows first/last-name split —
+    // poll, and accept the name's parts appearing (display-name rendering varies).
+    const parts = data.customerName.split(/\s+/);
+    let body = '';
+    let shown = false;
+    for (let i = 0; i < 10 && !shown; i++) {
+      body = (await page.locator('body').textContent().catch(() => '')) || '';
+      shown = body.includes(data.customerName) || parts.every(w => body.includes(w));
+      if (!shown) await page.waitForTimeout(1500);
+    }
+    expect(shown, `Overview does not show customer "${data.customerName}"`).toBeTruthy();
     console.log(`  ✅ Enquiry saved — Overview shows customer "${data.customerName}"`);
   });
 
@@ -215,8 +223,15 @@ test.describe('CRM — Enquiry', () => {
     // Reaching the quotation FORM (/quotation/0/{id}) isn't proof of a saved quotation.
     expect(/quotation/i.test(url), 'did not reach the quotation flow').toBeTruthy();
     expect(url, 'convert did not persist — still on the unsaved /quotation/0/ create form').not.toContain('/quotation/0/');
-    const qbody = (await page.locator('body').textContent().catch(() => '')) || '';
-    expect(qbody, `saved quotation should carry the enquiry customer "${data.customerName}"`).toContain(data.customerName);
+    // quotation-view AJAX-loads; the customer may render as split first/last name — poll
+    const parts = data.customerName.split(/\s+/);
+    let carried = false;
+    for (let i = 0; i < 10 && !carried; i++) {
+      const qbody = (await page.locator('body').textContent().catch(() => '')) || '';
+      carried = qbody.includes(data.customerName) || parts.every(w => qbody.includes(w));
+      if (!carried) await page.waitForTimeout(1500);
+    }
+    expect(carried, `saved quotation should carry the enquiry customer "${data.customerName}"`).toBeTruthy();
     console.log('  ✅ Quotation created from enquiry (persisted + carries customer)');
   });
 

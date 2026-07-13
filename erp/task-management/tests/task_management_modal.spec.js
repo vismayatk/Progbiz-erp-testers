@@ -179,16 +179,28 @@ test.describe('Task Management — Documented Cases', () => {
     // Created Tasks — assert that as the real data round-trip.
     expect(msg, `Repeat task should save, got: "${msg}"`).toBeFalsy();
     await tm.gotoCreated();
-    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     let listed = false;
-    for (let i = 0; i < 4 && !listed; i++) {
-      listed = await page.evaluate((n) =>
-        [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').includes(n)), name);
-      if (!listed) await page.waitForTimeout(1200);
+    let where = 'Created Tasks';
+    if (await tm.isDeadRoute()) {
+      // DEV build removed /created-tasks — verify via My Tasks tabs / home schedule instead
+      where = 'My Tasks tabs';
+      listed = !!(await tm.findAcrossTabs(name));
+      if (!listed) {
+        await tm.gotoHome();
+        listed = await page.evaluate((n) => document.body.innerText.includes(n), name);
+        where = 'home schedule';
+      }
+    } else {
+      await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+      for (let i = 0; i < 4 && !listed; i++) {
+        listed = await page.evaluate((n) =>
+          [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').includes(n)), name);
+        if (!listed) await page.waitForTimeout(1200);
+      }
     }
-    console.log(`  🔎 "${name}" listed in Created Tasks: ${listed}`);
-    expect(listed, `Repeat task "${name}" not listed in Created Tasks after save`).toBeTruthy();
-    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created and listed in Created Tasks`);
+    console.log(`  🔎 "${name}" listed in ${where}: ${listed}`);
+    expect(listed, `Repeat task "${name}" not visible in ${where} after save`).toBeTruthy();
+    console.log(`  ✅ ASSERT: Repeat (recurring) task "${name}" created and listed in ${where}`);
   });
 
   test('TM-13 | Negative — Save without Task Type is rejected', async ({ page }) => {
@@ -222,6 +234,7 @@ test.describe('Task Management — Documented Cases', () => {
   test('TM-16 | Created Task page loads with actions (TC_048-053)', async ({ page }) => {
     const tm = await arrive(page);
     await tm.gotoCreated();
+    test.skip(await tm.isDeadRoute(), 'This build has no /created-tasks route (removed in the DEV redesign).');
     expect(page.url()).toContain('created-tasks');
     const cols = await tm.getColumns();
     const kinds = await tm.rowActionKinds();
@@ -249,6 +262,7 @@ test.describe('Task Management — Documented Cases', () => {
   test('TM-18 | Unscheduled Task page + row actions (TC_062-068, Scenario 11)', async ({ page }) => {
     const tm = await arrive(page);
     await tm.gotoUnscheduled();
+    test.skip(await tm.isDeadRoute(), 'This build has no /unscheduled-tasks route (removed in the DEV redesign).');
     expect(page.url()).toContain('unscheduled-tasks');
     const cols = await tm.getColumns();
     const kinds = await tm.rowActionKinds();

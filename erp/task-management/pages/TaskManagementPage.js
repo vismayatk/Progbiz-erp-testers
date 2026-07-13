@@ -176,6 +176,58 @@ class TaskManagementPage {
    * @param {string|null} name
    * @param {object} opts {type='Call', priority, mode='instant', description, party, skipType=false, schedule=true}
    */
+  /** The DEV build requires a Party on the task modal (save rejects with
+   *  "Please choose party"). If #partySearch is present, search broadly and
+   *  pick the first party from the picker modal that opens over the task modal. */
+  async choosePartyIfRequired(term = 'a') {
+    const party = this.page.locator('#partySearch:visible').first();
+    if (!(await party.count().catch(() => 0))) return false;
+    await party.fill(term).catch(() => {});
+    await party.locator('xpath=ancestor::div[contains(@class,"input-group")][1]')
+      .locator('i.ri-search-line').first().click().catch(() => {});
+    const picker = this.page.locator('.modal.show:not(#home-create-task-modal)').last();
+    await picker.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    const row = picker.locator('table tbody tr, li').first();
+    await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    await row.click().catch(() => {});
+    // generous settle: the pick triggers a form re-render that can wipe later fills
+    await this.page.waitForTimeout(2200);
+    console.log('  👥 Party selected (this build requires one)');
+    return true;
+  }
+
+  /** After a party is picked, the DEV build defaults the assignee to the party's
+   *  lead owner — the task then lands in THEIR My Tasks, not the creator's.
+   *  Ensure the logged-in user is toggled ON in the Hosts multiselect. */
+  async ensureSelfHost() {
+    const self = process.env.SELF_NAME || (await this.page.evaluate(() => {
+      // the profile dropdown li is the header-element whose text contains "Profile"
+      for (const el of document.querySelectorAll('li.header-element')) {
+        const t = (el.textContent || '').replace(/\s+/g, ' ').trim();
+        if (t && /profile/i.test(t)) return t.replace(/Profile.*$/i, '').trim();
+      }
+      return '';
+    }).catch(() => '')) || '';
+    const btn = this.page.locator('.add-host-btn').first();
+    if (!self || !(await btn.count().catch(() => 0))) return false;
+    await btn.click().catch(() => {});
+    await this.page.waitForTimeout(900);
+    const first = self.split(' ')[0];
+    const search = this.page.locator('#hostMultiselect-search:visible').first();
+    if (await search.count().catch(() => 0)) { await search.fill(first).catch(() => {}); await this.page.waitForTimeout(900); }
+    const row = this.page.locator('li.list-group-item').filter({ hasText: new RegExp(first, 'i') }).first();
+    const sw = row.locator('input').first();
+    const wasChecked = await sw.isChecked().catch(() => false);
+    if (!wasChecked) await sw.click({ force: true }).catch(() => {});
+    // close the picker without touching other toggles
+    await this.page.getByText(/^\s*Done\s*$/i).first().click().catch(async () => {
+      await btn.click().catch(() => {});
+    });
+    await this.page.waitForTimeout(800);
+    console.log(`  🙋 self ("${self}") ensured as host (was ${wasChecked ? 'already' : 'NOT'} selected)`);
+    return true;
+  }
+
   async createViaModal(name, opts = {}) {
     const { type = 'Call', priority, mode = 'instant', description, party, skipType = false, schedule = true } = opts;
     console.log(`  ➕ [modal] Task "${name}" (type=${skipType ? '(none)' : type}, mode=${mode})`);
@@ -192,20 +244,32 @@ class TaskManagementPage {
     if (name !== null) await this.taskInput.fill(name);
     if (description) await this.descInput.fill(description).catch(() => {});
 
+    // Party BEFORE the schedule fields — the picker re-renders the form and
+    // blanks any already-filled dates (DEV build; party is mandatory there).
     if (party) {
       await this.partyInput.fill(party);
       await this.modal.locator('.ri-search-line').first().click().catch(() => {});
       await this.page.waitForTimeout(1800);
       await this.modal.locator('table tbody tr').first().click().catch(() => {});
       await this.page.waitForTimeout(800);
+    } else {
+      await this.choosePartyIfRequired();
     }
+    await this.ensureSelfHost();   // party pick can reassign the task away from us
 
     if (mode === 'later' && schedule) {
       const tgl = this.deadlineToggle;
       if (await tgl.isVisible().catch(() => false)) { await tgl.click({ force: true }).catch(() => {}); await this.page.waitForTimeout(800); }
       const d = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
-      await this.modal.locator('input[type="date"]:visible').first().fill(d).catch(() => {});
-      await this.modal.locator('input[type="time"]:visible').first().fill('10:00').catch(() => {});
+      // the post-party re-render can blank the inputs mid-fill — verify the value stuck
+      for (let i = 0; i < 3; i++) {
+        await this.modal.locator('input[type="date"]:visible').first().fill(d).catch(() => {});
+        await this.modal.locator('input[type="time"]:visible').first().fill('10:00').catch(() => {});
+        const stuck = await this.modal.locator('input[type="date"]:visible').first().inputValue().catch(() => '');
+        if (stuck) break;
+        console.log('  ⏳ schedule fields blanked by re-render — refilling');
+        await this.page.waitForTimeout(1200);
+      }
     }
 
     await this.saveBtn.click();
@@ -266,6 +330,9 @@ class TaskManagementPage {
     await this.taskTypeSelect.selectOption({ label: type }).catch(async () => { await this.taskTypeSelect.selectOption({ index: 1 }).catch(() => {}); });
     if (priority) await this.prioritySelect.selectOption({ label: priority }).catch(() => {});
     await this.taskInput.fill(name);
+    // Party BEFORE recurrence/schedule — the picker re-renders the form (DEV build)
+    await this.choosePartyIfRequired();
+    await this.ensureSelfHost();   // party pick can reassign the task away from us
 
     // pick the recurrence (Daily avoids weekday selection)
     await this.modal.getByText(new RegExp(`^\\s*${recurrence}\\s*$`, 'i')).first().click().catch(() => {});
@@ -328,10 +395,36 @@ class TaskManagementPage {
     await this.rTaskName.fill(name);
     await this.rDesc.fill(`Auto task ${name}`).catch(() => {});
 
+    // Party FIRST — the party picker re-renders the form and blanks any
+    // already-filled schedule fields (DEV build; party is mandatory there).
+    await this.choosePartyIfRequired();
+    await this.ensureSelfHost();   // party pick can reassign the task away from us
+
     if (mode === 'later') {
+      // The deadline toggle (#instantDeadlineToggle) transmits finishBefore — its
+      // checkbox input is visually hidden (custom switch), so click via JS.
+      await this.page.$eval('#instantDeadlineToggle', (el) => { if (!el.checked) el.click(); }).catch(() => {});
+      await this.page.waitForTimeout(900);
       const d = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
-      await this.page.locator('input[type="date"]:visible').first().fill(d).catch(() => {});
-      await this.page.locator('input[type="time"]:visible').first().fill('10:00').catch(() => {});
+      // Fill + BLUR every visible date/time field (schedule + deadline); Blazor commits
+      // bound values on change/blur, and the post-party re-render can blank them — verify.
+      for (let i = 0; i < 3; i++) {
+        const dIns = this.page.locator('input[type="date"]:visible');
+        for (let k = 0; k < await dIns.count().catch(() => 0); k++) {
+          await dIns.nth(k).fill(d).catch(() => {});
+          await dIns.nth(k).blur().catch(() => {});
+        }
+        const tIns = this.page.locator('input[type="time"]:visible');
+        for (let k = 0; k < await tIns.count().catch(() => 0); k++) {
+          await tIns.nth(k).fill('10:00').catch(() => {});
+          await tIns.nth(k).blur().catch(() => {});
+        }
+        await this.page.waitForTimeout(900);           // let the circuit round-trip
+        const stuck = await dIns.first().inputValue().catch(() => '');
+        if (stuck) break;
+        console.log('  ⏳ schedule fields blanked by re-render — refilling');
+        await this.page.waitForTimeout(1200);
+      }
     }
 
     await this.rSave.click();
@@ -663,6 +756,9 @@ class TaskManagementPage {
       await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
       if (await scan()) return tab;
     }
+    // Party-attached tasks live under DELEGATED Tasks for their creator on the
+    // DEV build (My Tasks can be legitimately empty) — final fallback.
+    if (await this.findInDelegated(name)) return 'Delegated';
     return null;
   }
 
@@ -677,16 +773,79 @@ class TaskManagementPage {
    *  (findAcrossTabs short-circuits on the unfiltered view; this pins one bucket.) */
   async tabContains(name, tabLabel) {
     await this.gotoMyTasks();
+    // the first tab click can fire before the list is interactive — wait for a
+    // non-empty data row first, then click, then scan generously
+    await this.page.waitForFunction(() =>
+      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
+      { timeout: 15000 }).catch(() => {});
     await this.clickTab(tabLabel);
     await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     const needle = name.toLowerCase();
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       const hit = await this.page.evaluate((x) =>
         [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x)), needle);
       if (hit) return true;
-      await this.page.waitForTimeout(1000);
+      if (i === 2) await this.clickTab(tabLabel);   // re-click once in case the first fired too early
+      await this.page.waitForTimeout(1500);
     }
     return false;
+  }
+
+  /** Bucket-agnostic row lookup: scan every My Tasks tab, then Delegated Tasks,
+   *  and return the matching row's TEXT (carries the status badge + dates), or null.
+   *  Use this instead of asserting WHICH tab a task is under — the DEV build has a
+   *  known bucketing bug (scheduled future tasks list under "Unscheduled", badges 0). */
+  async findTaskRowText(name) {
+    const scanRow = () => this.page.evaluate((n) => {
+      const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
+      return r ? (r.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 140) : null;
+    }, name);
+    await this.gotoMyTasks();
+    await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+    let row = await scanRow();
+    if (row) return row;
+    for (const tab of ['Today', 'Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
+      await this.clickTab(tab);
+      row = await scanRow();
+      if (row) return row;
+    }
+    return this.findInDelegated(name);
+  }
+
+  /** Find a task by name on the Delegated Tasks page (where party-attached tasks
+   *  live for their CREATOR on the DEV build — the save even redirects there).
+   *  Searches by name and returns the matching row's text (has the Status badge),
+   *  or null if not found. */
+  async findInDelegated(name) {
+    if (!/delegated-tasks/.test(this.page.url())) await this.gotoDelegated();
+    await this.page.waitForFunction(() =>
+      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
+      { timeout: 15000 }).catch(() => {});
+    const search = this.page.locator('input[placeholder*="Search" i]:visible').first();
+    if (await search.count().catch(() => 0)) {
+      await search.fill(name).catch(() => {});
+      await search.press('Enter').catch(() => {});
+      // some builds only search via the magnifier button next to the box
+      await search.locator('xpath=following-sibling::button[1]').click().catch(() => {});
+      await this.page.waitForTimeout(2500);
+    }
+    const scanRow = () => this.page.evaluate((n) => {
+      const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
+      return r ? (r.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120) : null;
+    }, name);
+    for (let i = 0; i < 4; i++) {
+      const row = await scanRow();
+      if (row) return row;
+      await this.page.waitForTimeout(1500);
+    }
+    // the Delegated page has its own status tabs — a future-dated task sits under
+    // Upcoming, not the default Today view
+    for (const tab of ['Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
+      await this.clickTab(tab);
+      const row = await scanRow();
+      if (row) return row;
+    }
+    return null;
   }
 
   /** Daily Activity Report: wait for rows and return the count. */

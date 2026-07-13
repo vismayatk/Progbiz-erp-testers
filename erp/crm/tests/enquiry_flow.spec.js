@@ -105,7 +105,15 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     // /create|/new|/add), so it never failed. A real save redirects to /enquiry-overview/{id}.
     expect(enquiryUrl, `Enquiry should redirect to /enquiry-overview/{id} after save. URL: ${enquiryUrl}, Alert: "${msg}"`)
       .toMatch(/enquiry-overview\/\d+/i);
-    await expect(page.locator('body')).toContainText(testData.enquiry.customerName);
+    // overview AJAX-loads and DEV renders split first/last names — poll with name parts
+    const nameParts = testData.enquiry.customerName.split(/\s+/);
+    let nameShown = false;
+    for (let i = 0; i < 10 && !nameShown; i++) {
+      const btext = (await page.locator('body').textContent().catch(() => '')) || '';
+      nameShown = btext.includes(testData.enquiry.customerName) || nameParts.every(w => btext.includes(w));
+      if (!nameShown) await page.waitForTimeout(1500);
+    }
+    expect(nameShown, `overview should show customer "${testData.enquiry.customerName}"`).toBeTruthy();
     console.log(`  ✅ ASSERT: Enquiry created — overview ${enquiryUrl} shows "${testData.enquiry.customerName}"`);
   });
 

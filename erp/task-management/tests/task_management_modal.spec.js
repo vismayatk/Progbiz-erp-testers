@@ -58,7 +58,7 @@ test.describe('Task Management — Documented Cases', () => {
     // TC_002 — Task opens the Add Task modal
     await tm.openTaskModal();
     await expect(tm.modal).toBeVisible();
-    await expect(page.locator('#home-create-task-modal')).toContainText(/Add Task/i);
+    await expect(page.locator('#home-create-task-modal, #crm-home-create-task-modal').first()).toContainText(/Add Task/i);
 
     // TC_003 / TC_004 — Instant default, three modes present
     expect(await tm.activeMode()).toMatch(/instant/i);
@@ -164,7 +164,7 @@ test.describe('Task Management — Documented Cases', () => {
 
     // Structure: recurrence + Start/End Time + From/To Date
     const ui = await page.evaluate(() => {
-      const m = document.querySelector('#home-create-task-modal');
+      const m = document.querySelector('#home-create-task-modal, #crm-home-create-task-modal');
       const labels = [...m.querySelectorAll('label, .form-label')].map(l => l.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
       const recur = [...m.querySelectorAll('label,button,span,.day')].map(e => e.textContent.replace(/\s+/g, ' ').trim()).filter(t => /^(Daily|Weekly|Monthly)$/i.test(t));
       return { labels: labels.join(' | '), recur: [...new Set(recur)] };

@@ -36,9 +36,14 @@ class TaskManagementPage {
     // NOTE: /home holds BOTH #home-create-task-modal (create) and #task-edit-modal
     // (edit), which share field ids (#taskName, #taskType, …). All modal-field
     // locators MUST be scoped to the create modal to avoid strict-mode clashes.
-    this.createNewBtn = page.locator('#new-task');
+    // The "Create New" toggle is #new-task on some renders and #new-lead-type on others
+    // (DEV /home) — match either. Its menu item #new-task-item is consistent.
+    this.createNewBtn = page.locator('#new-task, #new-lead-type').first();
     this.newTaskItem  = page.locator('#new-task-item');
-    this.modal        = page.locator('#home-create-task-modal');
+    // The create-task modal is #home-create-task-modal on some renders and
+    // #crm-home-create-task-modal on others (DEV /home). Match either (only one
+    // exists per page, so child-locator scoping stays unambiguous).
+    this.modal        = page.locator('#home-create-task-modal, #crm-home-create-task-modal');
     this.tabInstant   = this.modal.locator('#instantBtn');
     this.tabLater     = this.modal.locator('#laterBtn');
     this.tabRepeat    = this.modal.locator('#repeatBtn');
@@ -133,7 +138,7 @@ class TaskManagementPage {
   /** Label of the currently-active mode tab (TC_TASK_003). */
   async activeMode() {
     return this.page.evaluate(() => {
-      const root = document.querySelector('#home-create-task-modal') || document;
+      const root = document.querySelector('#home-create-task-modal, #crm-home-create-task-modal') || document;
       const tabs = [...root.querySelectorAll('#instantBtn,#laterBtn,#repeatBtn')];
       if (!tabs.length) return null;
       let best = tabs.find(t => /\bactive\b|selected/.test(t.className) || t.getAttribute('aria-selected') === 'true');
@@ -155,7 +160,7 @@ class TaskManagementPage {
   /** Presence of party / participant / host controls in the modal (TC_TASK_013..016, 030). */
   async modalControls() {
     return this.page.evaluate(() => {
-      const m = document.querySelector('#home-create-task-modal') || document;
+      const m = document.querySelector('#home-create-task-modal, #crm-home-create-task-modal') || document;
       const has = (sel) => !!m.querySelector(sel);
       const txt = (m.textContent || '');
       return {
@@ -185,7 +190,7 @@ class TaskManagementPage {
     await party.fill(term).catch(() => {});
     await party.locator('xpath=ancestor::div[contains(@class,"input-group")][1]')
       .locator('i.ri-search-line').first().click().catch(() => {});
-    const picker = this.page.locator('.modal.show:not(#home-create-task-modal)').last();
+    const picker = this.page.locator('.modal.show:not(#home-create-task-modal):not(#crm-home-create-task-modal)').last();
     await picker.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
     const row = picker.locator('table tbody tr, li').first();
     await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});

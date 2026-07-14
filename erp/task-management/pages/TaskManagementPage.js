@@ -677,7 +677,11 @@ class TaskManagementPage {
     await this.detailsMenu('Reschedule Task');
     const dlg = this.page.locator('.modal:visible, [role="dialog"]:visible').last();
     await dlg.locator('input[type="date"]:visible').first().fill(dateStr).catch(() => {});
+    await dlg.locator('input[type="date"]:visible').first().blur().catch(() => {});
     await dlg.locator('input[type="time"]:visible').first().fill(timeStr).catch(() => {});
+    await dlg.locator('input[type="time"]:visible').first().blur().catch(() => {});
+    // read the date the dialog actually holds back (proves the field accepted it)
+    this._lastRescheduleDate = await dlg.locator('input[type="date"]:visible').first().inputValue().catch(() => '');
     await dlg.getByRole('button', { name: /save|reschedule|update|confirm|ok/i }).first().click().catch(() => {});
     await this.page.waitForTimeout(2500);
     return this._afterSave();

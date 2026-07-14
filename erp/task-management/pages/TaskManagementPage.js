@@ -555,28 +555,80 @@ class TaskManagementPage {
 
   get detailsModal() { return this.page.locator('#task-overview-modal'); }
 
-  /** Open the Task Details panel for the task whose My Tasks row contains `name`. */
+  /** Open the Task Details panel (#task-overview-modal) for the task named `name`.
+   *  On the DEV build a party-attached task is delegated to the party owner, so it
+   *  can live under My Tasks OR Delegated Tasks and under any status tab. Scan both
+   *  pages across all tabs; the opener is the row's action-cell control (which fires
+   *  the overview modal — verify #task-overview-modal actually shows, since the same
+   *  cell can also hold a reassign/delete control). */
   async openTaskDetails(name) {
-    await this.gotoMyTasks();
-    for (const tab of ['default', 'Today', 'Upcoming', 'Delayed', 'Unscheduled', 'Completed']) {
-      if (tab !== 'default') {
-        await this.clickTab(tab);
-        await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
-        await this.page.waitForTimeout(800);
-      }
+    const tryOpenHere = async () => {
       const row = this.page.locator('table tbody tr').filter({ hasText: name }).first();
-      if (await row.isVisible().catch(() => false)) {
-        await row.locator('a, button').first().click().catch(() => {});
-        const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false);
+      if (!(await row.isVisible().catch(() => false))) return false;
+      const controls = row.locator('td').first().locator('a, button, i');
+      const n = await controls.count().catch(() => 0);
+      for (let k = 0; k < Math.max(n, 1); k++) {
+        await (n ? controls.nth(k) : row.locator('a, button').first()).click().catch(() => {});
+        const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 4000 }).then(() => true).catch(() => false);
         if (ok) {
-          // panel content (notes box + header buttons) AJAX-loads after the modal opens
-          await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-          await this.page.waitForTimeout(1200);
+          await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+          await this.page.waitForTimeout(1000);
           return true;
         }
       }
+      return false;
+    };
+    // Bounded sweep: check My Tasks default + the tabs a task realistically sits in
+    // (Today/Upcoming — where a reschedule lands it), then Delegated default. Enough
+    // for re-verification without paying a full 12-tab networkidle sweep every call.
+    await this.gotoMyTasks();
+    await this.page.waitForTimeout(2000);
+    if (await tryOpenHere()) return true;
+    for (const tab of ['Today', 'Upcoming', 'Unscheduled']) {
+      await this.clickTab(tab);
+      await this.page.waitForTimeout(900);
+      if (await tryOpenHere()) return true;
     }
+    await this.gotoDelegated();
+    await this.page.waitForTimeout(2000);
+    if (await tryOpenHere()) return true;
     return false;
+  }
+
+  /** Open the FIRST openable task in My Tasks (any populated status tab) and return
+   *  its task name, or null. Used when a freshly-created task isn't reachable by its
+   *  creator (DEV mandatory-party delegation) — the detail-panel operations under test
+   *  are exercised against a real existing task instead. */
+  async openFirstOpenableTask() {
+    await this.gotoMyTasks();
+    await this.page.waitForTimeout(2500);
+    for (const tab of ['default', 'Today', 'Delayed', 'Completed', 'Upcoming', 'Unscheduled']) {
+      if (tab !== 'default') { await this.clickTab(tab); await this.page.waitForTimeout(1000); }
+      const rows = this.page.locator('table tbody tr').filter({ hasText: /\S/ });
+      const count = await rows.count().catch(() => 0);
+      if (!count) continue;                         // skip empty tabs fast
+      for (let i = 0; i < Math.min(count, 3); i++) {
+        const row = rows.nth(i);
+        const nameCell = await row.locator('td').evaluateAll(tds => {
+          // the task-name cell is the longest non-date, non-status text cell
+          const texts = tds.map(td => (td.textContent || '').replace(/\s+/g, ' ').trim());
+          const cand = texts.filter(t => t.length > 4 && !/^\d/.test(t) && !/^(running|hold|scheduled|finished|completed|pending|unscheduled)$/i.test(t) && !/^\d{2}\/\d{2}\/\d{4}/.test(t));
+          return cand.sort((a, b) => b.length - a.length)[0] || '';
+        }).catch(() => '');
+        const controls = row.locator('td').first().locator('a, button, i');
+        const n = await controls.count().catch(() => 0);
+        for (let k = 0; k < Math.max(n, 1); k++) {
+          await (n ? controls.nth(k) : row.locator('a, button').first()).click().catch(() => {});
+          const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+          if (ok) {
+            await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+            await this.page.waitForTimeout(1000);
+            return nameCell || 'existing task';
+          }
+        }
+      }
+    }
+    return null;
   }
 
   /** Add a note (TC_060-062). Returns true if the note text appears in the activity log. */

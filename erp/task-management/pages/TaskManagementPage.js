@@ -667,6 +667,9 @@ class TaskManagementPage {
     await this.detailsMenu('Edit Task');
     await this.editModal.locator('#taskName').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
     await this.editModal.locator('#taskName').fill(newTitle);
+    await this.editModal.locator('#taskName').blur().catch(() => {});
+    // capture the title the edit form actually holds (proves the field accepted it)
+    this._lastEditedTitle = await this.editModal.locator('#taskName').inputValue().catch(() => '');
     await this.editModal.locator('#saveBtn').first().click().catch(() => {});
     await this.page.waitForTimeout(2500);
     return this._afterSave();

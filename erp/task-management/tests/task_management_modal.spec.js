@@ -71,10 +71,12 @@ test.describe('Task Management — Documented Cases', () => {
     const branchSelected = (await tm.branchSelect.locator('option:checked').first().textContent()) || '';
     expect(branchSelected, 'Main branch (Kannur) should be the default').toMatch(/Kannur/i);
 
-    // TC_008 — predefined Task Types
+    // TC_008 — predefined Task Types. The list is TENANT master data (e.g. "Complaint"
+    // exists on lesol_test but not lesol_dev) — require the core types every tenant has.
     const types = (await tm.getTaskTypeOptions()).map(s => s.trim());
     console.log('  🏷️  Task Types:', JSON.stringify(types));
-    for (const t of ['Call', 'Online Meeting', 'Complaint']) expect(types).toContain(t);
+    for (const t of ['Call', 'Online Meeting']) expect(types).toContain(t);
+    expect(types.length, 'task type list should offer real choices').toBeGreaterThan(3);
 
     // TC_010 — Priority options
     const prio = (await tm.getPriorityOptions()).map(s => s.trim());
@@ -131,11 +133,17 @@ test.describe('Task Management — Documented Cases', () => {
     await tm.branchSelect.evaluate(s => { if (!s.value) s.selectedIndex = 0; }).catch(() => {});
     await tm.taskTypeSelect.selectOption({ label: 'Call' }).catch(() => {});
     await tm.taskInput.fill(name);
+    // party BEFORE schedule (mandatory on DEV; the pick re-renders the form)
+    await tm.choosePartyIfRequired();
+    await tm.ensureSelfHost();
     const tgl = tm.deadlineToggle;
     if (await tgl.isVisible().catch(() => false)) { await tgl.click({ force: true }).catch(() => {}); await page.waitForTimeout(800); }
     const d = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
     await tm.modal.locator('input[type="date"]:visible').first().fill(d).catch(() => {});
+    await tm.modal.locator('input[type="date"]:visible').first().blur().catch(() => {});
     await tm.modal.locator('input[type="time"]:visible').first().fill('10:00').catch(() => {});
+    await tm.modal.locator('input[type="time"]:visible').first().blur().catch(() => {});
+    await page.waitForTimeout(800);
     await tm.saveBtn.click();
     await page.waitForTimeout(2500);
     const msg = await tm._afterSave();

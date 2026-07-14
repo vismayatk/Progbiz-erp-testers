@@ -599,12 +599,15 @@ class TaskManagementPage {
    *  its task name, or null. Used when a freshly-created task isn't reachable by its
    *  creator (DEV mandatory-party delegation) — the detail-panel operations under test
    *  are exercised against a real existing task instead. */
-  async openFirstOpenableTask() {
+  async openFirstOpenableTask(preferStatus) {
     await this.gotoMyTasks();
     await this.page.waitForTimeout(2500);
+    // When a status is preferred (e.g. 'Running' for the lifecycle test), scan the whole
+    // list for a row in that state first; fall back to the first openable row otherwise.
     for (const tab of ['default', 'Today', 'Delayed', 'Completed', 'Upcoming', 'Unscheduled']) {
       if (tab !== 'default') { await this.clickTab(tab); await this.page.waitForTimeout(1000); }
-      const rows = this.page.locator('table tbody tr').filter({ hasText: /\S/ });
+      const filter = preferStatus ? new RegExp(preferStatus, 'i') : /\S/;
+      const rows = this.page.locator('table tbody tr').filter({ hasText: filter });
       const count = await rows.count().catch(() => 0);
       if (!count) continue;                         // skip empty tabs fast
       for (let i = 0; i < Math.min(count, 3); i++) {

@@ -1,0 +1,65 @@
+{
+  "route": "timesheet",
+  "finalUrl": "https://hrms-erp.progbiz.in/timesheet",
+  "group": "attendance",
+  "headers": [
+    "Timesheet Attendance Timesheet",
+    "Timesheet",
+    "Attendance Timesheet",
+    "Attendance Timesheet",
+    "Attendance",
+    "Attendance",
+    "Timesheet"
+  ],
+  "breadcrumb": "Timesheet Attendance Timesheet",
+  "tabs": [],
+  "buttons": [],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Date",
+        "Employee",
+        "Shift",
+        "Status",
+        "Attendance Hrs",
+        "Task Hrs",
+        "Tasks"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search employee..."
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Daily Worked Hours Vs Task Hours"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Timesheet Attendance Timesheet Daily Worked Hours Vs Task Hours Sl.No Date Employee Shift Status Attendance Hrs Task Hrs Tasks"
+}

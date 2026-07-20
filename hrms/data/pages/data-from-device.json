@@ -1,0 +1,47 @@
+{
+  "route": "data-from-device",
+  "finalUrl": "https://hrms-erp.progbiz.in/data-from-device",
+  "group": "attendance",
+  "headers": [
+    "Data from device HRMS Data from device",
+    "Data from device",
+    "HRMS Data from device",
+    "HRMS Data from device",
+    "HRMS Data from device",
+    "HRMS",
+    "HRMS",
+    "Data from device"
+  ],
+  "breadcrumb": "Data from device HRMS Data from device",
+  "tabs": [],
+  "buttons": [
+    "Filter"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL.No",
+        "ID Number",
+        "Employee Name",
+        "Punching Time",
+        "Punch Type",
+        "Recognition Type",
+        "Is Registered In System",
+        "Device Name",
+        "Punching Sync Time",
+        "Location",
+        "Image"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Data From Device"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Data from device HRMS Data from device Data From Device Filter SL.No ID Number Employee Name Punching Time Punch Type Recognition Type Is Registered In System Device Name Punching Sync Time Location Image"
+}

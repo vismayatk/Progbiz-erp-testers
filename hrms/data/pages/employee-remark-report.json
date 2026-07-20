@@ -1,0 +1,39 @@
+{
+  "route": "employee-remark-report",
+  "finalUrl": "https://hrms-erp.progbiz.in/employee-remark-report",
+  "group": "core-hr",
+  "headers": [
+    "Employee Remark Reports HRMS Reports Employee Remark Reports",
+    "Employee Remark Reports",
+    "HRMS Reports Employee Remark Reports",
+    "HRMS Reports Employee Remark Reports",
+    "HRMS Reports Employee Remark Reports",
+    "HRMS",
+    "HRMS",
+    "Reports",
+    "Employee Remark Reports"
+  ],
+  "breadcrumb": "Employee Remark Reports HRMS Reports Employee Remark Reports",
+  "tabs": [],
+  "buttons": [
+    "View Report"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "report-assignee"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "timePeriodSelect"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Employee Remark Reports HRMS Reports Employee Remark Reports Staff All Period Choose This Week This Month This Year Custom View Report"
+}

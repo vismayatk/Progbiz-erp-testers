@@ -1,0 +1,66 @@
+{
+  "route": "salary-revisions",
+  "finalUrl": "https://hrms-erp.progbiz.in/salary-revisions",
+  "group": "core-hr",
+  "headers": [
+    "Salary Revisions HRMS Salary Revisions",
+    "Salary Revisions",
+    "HRMS Salary Revisions",
+    "HRMS Salary Revisions",
+    "HRMS",
+    "HRMS",
+    "Salary Revisions"
+  ],
+  "breadcrumb": "Salary Revisions HRMS Salary Revisions",
+  "tabs": [],
+  "buttons": [
+    "Raise Revision"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Employee",
+        "Branch",
+        "Effective",
+        "Old",
+        "New",
+        "%",
+        "Status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No revisions yet."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Raise A Revision",
+    "Revision History"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Salary Revisions HRMS Salary Revisions Raise A Revision Branch -- Select branch -- Employee -- Select employee -- New Gross Effective Date Reason Raise Revision Revision History Employee Branch Effective Old New % Status No revisions yet."
+}

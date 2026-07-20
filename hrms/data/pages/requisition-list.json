@@ -1,0 +1,54 @@
+{
+  "route": "requisition-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/requisition-list",
+  "group": "recruitment",
+  "headers": [
+    "Job Requisitions Recruitment Requisitions",
+    "Job Requisitions",
+    "Recruitment Requisitions",
+    "Recruitment Requisitions",
+    "Recruitment",
+    "Recruitment",
+    "Requisitions"
+  ],
+  "breadcrumb": "Job Requisitions Recruitment Requisitions",
+  "tabs": [],
+  "buttons": [
+    "New Requisition"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Designation",
+        "Department",
+        "Positions",
+        "Type",
+        "Work Type",
+        "Status",
+        "Branch",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search designation..."
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Manpower Requests"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Job Requisitions Recruitment Requisitions Manpower Requests All Status Draft Submitted Approved Rejected Returned New Requisition Sl.No Designation Department Positions Type Work Type Status Branch Action"
+}

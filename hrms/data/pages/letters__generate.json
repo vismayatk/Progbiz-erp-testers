@@ -1,0 +1,47 @@
+{
+  "route": "letters/generate",
+  "finalUrl": "https://hrms-erp.progbiz.in/letters/generate",
+  "group": "core-hr",
+  "headers": [
+    "Generate Letter Letter Templates Generate",
+    "Generate Letter",
+    "Letter Templates Generate",
+    "Letter Templates Generate",
+    "Letter Templates",
+    "Letter Templates",
+    "Generate"
+  ],
+  "breadcrumb": "Generate Letter Letter Templates Generate",
+  "tabs": [],
+  "buttons": [
+    "Preview",
+    "Generate"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "sendmail"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Preview"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Generate Letter Letter Templates Generate Template -- Select template -- Branch -- Select branch -- Employee -- Select employee -- Email the letter Preview Generate Preview Select a template and employee, then Preview."
+}

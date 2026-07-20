@@ -1,0 +1,48 @@
+{
+  "route": "approvals",
+  "finalUrl": "https://hrms-erp.progbiz.in/approvals",
+  "group": "core-hr",
+  "headers": [
+    "My Approvals Workflow Pending Approvals",
+    "My Approvals",
+    "Workflow Pending Approvals",
+    "Workflow Pending Approvals",
+    "Workflow",
+    "Workflow",
+    "Pending Approvals",
+    "Refresh"
+  ],
+  "breadcrumb": "My Approvals Workflow Pending Approvals Refresh",
+  "tabs": [
+    "Awaiting my decision (0)",
+    "My requests",
+    "History"
+  ],
+  "buttons": [
+    "Refresh"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Type",
+        "Details",
+        "Level",
+        "As",
+        "Raised",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "Nothing awaiting your approval."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Awaiting My Decision (0)"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Approvals Workflow Pending Approvals Refresh Awaiting my decision (0) My requests History Awaiting My Decision (0) Type Details Level As Raised Action Nothing awaiting your approval."
+}

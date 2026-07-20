@@ -1,0 +1,57 @@
+{
+  "route": "talent-pool",
+  "finalUrl": "https://hrms-erp.progbiz.in/talent-pool",
+  "group": "recruitment",
+  "headers": [
+    "Talent Pool Recruitment Talent Pool & Archive",
+    "Talent Pool",
+    "Recruitment Talent Pool & Archive",
+    "Recruitment Talent Pool & Archive",
+    "Recruitment",
+    "Recruitment",
+    "Talent Pool & Archive"
+  ],
+  "breadcrumb": "Talent Pool Recruitment Talent Pool & Archive",
+  "tabs": [],
+  "buttons": [
+    "Search"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Name",
+        "Designation",
+        "Skills",
+        "Tags",
+        "Status",
+        "Score",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "Loading..."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Name or email"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Talent Pool Recruitment Talent Pool & Archive Search Skill — Any — Pool Archived (talent pool) Active All Search Sl.No Name Designation Skills Tags Status Score Action Loading..."
+}

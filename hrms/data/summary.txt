@@ -1,0 +1,579 @@
+
+=================== GROUP: leave (21) ===================
+
+--- /absence-analytics
+   headers  : Absence Analytics | HRMS Leave Absence Analytics | HRMS Leave Absence Analytics | HRMS
+   crumb    : Absence Analytics HRMS Leave Absence Analytics
+   buttons  : Filter | Export
+   table    : [SL No, Employee, Department, Spells (S), Days (D), Score (S²·D), Signal] rows=1
+   inputs   : number | select-one | select-one
+   cards    : Monthly Absence Trend | Absence Rate By Department | Bradford Factor — Highest Risk (S² × D)
+
+--- /comp-off-management
+   headers  : Comp-Off Management | HRMS Leave Comp-Off Management | HRMS Leave Comp-Off Management | HRMS
+   crumb    : Comp-Off Management HRMS Leave Comp-Off Management
+   buttons  : Grant | Reject
+   table    : [SlNo, Employee, Earned, Source, Days, Expiry, Status, Action] rows=1
+   inputs   : reqOnly
+   cards    : Comp-Off Credits — All Employees
+
+--- /comp-offs
+   headers  : Comp-Off | HRMS Leave Comp-Off | HRMS Leave Comp-Off | HRMS
+   crumb    : Comp-Off HRMS Leave Comp-Off
+   buttons  : Request Comp-Off
+   table    : [Earned, Source, Days, Expiry, Status, Action] rows=1
+   cards    : My Comp-Off Credits
+
+--- /employee-handover
+   headers  : Employee Duty Handover | HRMS Handover | HRMS Handover | HRMS
+   crumb    : Employee Duty Handover HRMS Handover
+   buttons  : Save | Clear
+   table    : [#, From, To, From Date, To Date, Covers, Active, Action] rows=1
+   inputs   : select-one | select-one | date | date | ca | ct | active | textarea
+   cards    : Set Up Handover | All Handovers
+
+--- /holiday-assignment-list
+   headers  : Holiday Assignment HRMS Holiday Assignment List | Holiday Assignment | HRMS Holiday Assignment List | HRMS Holiday Assignment List
+   crumb    : Holiday Assignment HRMS Holiday Assignment List
+   buttons  : Filter | New Holiday Assignment
+   table    : [Sl.No, Assignment Type, Assigned Target Name, Action] rows=0
+   cards    : Holiday Assignment List
+
+--- /holiday-list
+   headers  : Holiday Holiday Holidays | Holiday | Holiday Holidays | Holiday Holidays
+   crumb    : Holiday Holiday Holidays
+   buttons  : Calendar | Export | New Holiday
+   table    : [Sl.No, Holiday Name, Dates, Calendar, Action] rows=1
+   inputs   : Search by Holiday Name
+   cards    : Holiday Calendar — 2026
+
+--- /leave-approval
+   headers  : Leave Approval Leave Leave Approval | Leave Approval | Leave Leave Approval | Leave Leave Approval
+   crumb    : Leave Approval Leave Leave Approval
+   buttons  : Delegate approvals | Filter | Approve Selected | Reject Selected | Clear
+   table    : [SL.No, Employee Name, Leave Type, Details, Leave Status, Action] rows=0
+   inputs   : checkbox | selectbox | selectbox | selectbox | custodianname
+   cards    : Leave Approval
+
+--- /leave-assignment-list
+   headers  : Leave Assignment List HRMS Leave Assignment | Leave Assignment List | HRMS Leave Assignment | HRMS Leave Assignment
+   crumb    : Leave Assignment List HRMS Leave Assignment
+   buttons  : Filter | New Leave Assignment
+   table    : [Sl.No, Assignment Type, Assignment Target Name, Leave Pattern, Action] rows=0
+   cards    : Leave Assignment
+
+--- /leave-attendance-sync
+   headers  : Leave ↔ Attendance Sync HRMS Leave Attendance Sync | Leave ↔ Attendance Sync | HRMS Leave Attendance Sync | HRMS Leave Attendance Sync
+   crumb    : Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period
+   buttons  : Filter | Recalculate period
+   table    : [Leave Ref, Employee, Dates, Attendance rows, LOP, Sync status] rows=1
+   inputs   : number | select-one | select-one | select-one
+
+--- /leave-balances
+   headers  : My Leave Balance HRMS Leave My Balance | My Leave Balance | HRMS Leave My Balance | HRMS Leave My Balance
+   crumb    : My Leave Balance HRMS Leave My Balance Year Show Run Accrual
+   buttons  : Show | Run Accrual
+   table    : [Sl.No, Leave Type, Opening, Accrued, Carried Fwd, Used, Encashed, Reserved, Available, Liability] rows=1
+   inputs   : number
+   cards    : Balance Detail — 2026
+
+--- /leave-calendar
+   headers  : Leave Calendar | HRMS Leave Management Leave Calendar | HRMS Leave Management Leave Calendar | HRMS
+   crumb    : Leave Calendar HRMS Leave Management Leave Calendar
+   buttons  : Show
+   inputs   : select-one | select-one | Type a name to filter…
+
+--- /leave-delegation
+   headers  : Leave Approval Delegation | HRMS Delegation | HRMS Delegation | HRMS
+   crumb    : Leave Approval Delegation HRMS Delegation
+   table    : [SlNo, From, To, From Date, To Date, Active, Action] rows=1
+   cards    : Active & Past Delegations
+
+--- /leave-encashment
+   headers  : Leave Encashment | HRMS Encashment | HRMS Encashment | HRMS
+   crumb    : Leave Encashment HRMS Encashment
+   buttons  : Submit Request
+   table    : [SlNo, Leave Type, Days, Amount, Status] rows=1
+   inputs   : select-one | number | number
+   cards    : Request Encashment | My Requests
+
+--- /leave-encashment-approval
+   headers  : Encashment Approvals | HRMS Leave Encashment Approvals | HRMS Leave Encashment Approvals | HRMS
+   crumb    : Encashment Approvals HRMS Leave Encashment Approvals
+   buttons  : Filter
+   table    : [SlNo, Employee, Leave Type, Days, Amount, Status, Action] rows=1
+   inputs   : select-one | select-one | select-one | select-one | select-one
+   cards    : Encashment Requests
+
+--- /leave-ledger
+   headers  : Leave Ledger HRMS Leave Ledger | Leave Ledger | HRMS Leave Ledger | HRMS Leave Ledger
+   crumb    : Leave Ledger HRMS Leave Ledger Filter Export
+   buttons  : Filter | Export
+   table    : [Date, Employee, Leave Type, Txn, Days, Source Ref, Balance after, Posted by] rows=1
+   inputs   : All (search name / ID) | select-one | date | date
+
+--- /leave-patterns
+   headers  : Leave Patterns HRMS Leave Patterns | Leave Patterns | HRMS Leave Patterns | HRMS Leave Patterns
+   crumb    : Leave Patterns HRMS Leave Patterns
+   buttons  : New Leave Pattern
+   table    : [Sl.No, Leave Pattern Name, Details, Action] rows=0
+   cards    : Leave Patterns
+
+--- /leave-policy
+   headers  : Leave Policy Configuration | HRMS Leave Policy | HRMS Leave Policy | HRMS
+   crumb    : Leave Policy Configuration HRMS Leave Policy
+   inputs   : select-one
+   cards    : Choose A Leave Pattern
+
+--- /leave-reports
+   headers  : Leave Reports | HRMS Leave Management Reports | HRMS Leave Management Reports | HRMS
+   crumb    : Leave Reports HRMS Leave Management Reports
+   buttons  : Register | Balance | Utilization | Filter
+   inputs   : number | select-one | select-one | select-one
+   cards    : Leave Register
+
+--- /leave-request-list
+   headers  : Leave Request HRMS Leave Request | Leave Request | HRMS Leave Request | HRMS Leave Request
+   crumb    : Leave Request HRMS Leave Request
+   buttons  : New Leave Request
+   table    : [Sl.No, Leave Type, Start Date, End Date, Approval Status, Remarks, Action] rows=0
+   cards    : Leave Request List
+
+--- /leave-types
+   headers  : Leave Types HRMS Leave Types | Leave Types | HRMS Leave Types | HRMS Leave Types
+   crumb    : Leave Types HRMS Leave Types
+   buttons  : Save | Clear
+   table    : [SlNo, Leave Type Name, Is Support Half Day, Is Need Document, Action] rows=0
+   inputs   : leavetypename | checkebox-sb | checkebox-sb
+   cards    : Leave Types | Add LeaveType
+
+--- /my-leave-policy
+   headers  : My Leave Policy HRMS Leave My Policy | My Leave Policy | HRMS Leave My Policy | HRMS Leave My Policy
+   crumb    : My Leave Policy HRMS Leave My Policy Year Show
+   buttons  : Show
+   inputs   : number
+
+=================== GROUP: attendance (15) ===================
+
+--- /add-visit-report
+   headers  : Add Vist Report HRMS Add visit report | Add Vist Report | HRMS Add visit report | HRMS Add visit report
+   crumb    : Add Vist Report HRMS Add visit report
+   buttons  : Filter
+   table    : [SL.No, IDNumber, Employee Name, CheckIn Time, CheckOut Time, Punch Type, Site Name, Purpose, Site Image, Mobile Location, Location] rows=0
+   cards    : Attendance Log
+
+--- /approval-absent
+   headers  : Approval Absent HRMS Approval Absent | Approval Absent | HRMS Approval Absent | HRMS Approval Absent
+   crumb    : Approval Absent HRMS Approval Absent
+   buttons  : Filter
+   table    : [SL NO, IDNumber, Employee Name, Branch, Department, Date, Period Name, Period Type, Hours Employee Must Work, Approval] rows=0
+   cards    : Approval Absent
+
+--- /approval-absent-report
+   headers  : Approval Absent Report HRMS Approval Absent Report | Approval Absent Report | HRMS Approval Absent Report | HRMS Approval Absent Report
+   crumb    : Approval Absent Report HRMS Approval Absent Report
+   buttons  : Filter
+   table    : [SL No, IDNumber, Employee Name, Date, Period Name, Start Time, End Time, Balance Hours, Fixed Hours, Fixed Date, Remarks, Final Hours, Details, Delete] rows=0
+   cards    : Approval Absent Report
+
+--- /approval-operation
+   headers  : Approval Operation HRMS Approval Operation | Approval Operation | HRMS Approval Operation | HRMS Approval Operation
+   crumb    : Approval Operation HRMS Approval Operation
+   buttons  : Filter
+   table    : [SL No, IDNumber, Employee Name, Branch, Date, Entry Time, Exit Time, Status, Period Name, Hours Employee Must Work, Worked Hours, Over Time Hours, Balance Hours, Entry Late Miutes, Exit Early Miutes, Approval] rows=0
+   cards    : Attendance Log
+
+--- /approval-operation-report
+   headers  : Approval Operation Report HRMS Approval Operation Report | Approval Operation Report | HRMS Approval Operation Report | HRMS Approval Operation Report
+   crumb    : Approval Operation Report HRMS Approval Operation Report
+   buttons  : Filter
+   table    : [SL No, IDNumber, Employee Name, Date, Entry Time, Exit Time, Balance Hours, Fixed Hours, Fixed Date, Discount from Permission Hours, Remarks, Final Hours, Details, Delete] rows=0
+   cards    : Approval Operation Report
+
+--- /attendance-finalization
+   headers  : Attendance Finalization Attendance Finalization | Attendance Finalization | Attendance Finalization | Attendance Finalization
+   crumb    : Attendance Finalization Attendance Finalization
+   buttons  : Finalize
+   table    : [Sl.No, Period, Scope, Target, Cut-Off, Pending, Status, Action] rows=1
+   inputs   : select-one | select-one | select-one | select-one | date | Search branch, department or employee... | select-one | select-one | select-one
+   cards    : Start / Refresh A Pay-Cycle Run | Runs
+
+--- /attendance-log
+   headers  : Attendance Report HRMS Attendance Log | Attendance Report | HRMS Attendance Log | HRMS Attendance Log
+   crumb    : Attendance Report HRMS Attendance Log
+   buttons  : Filter
+   table    : [SL.No, IDNumber, Employee Name, Date, Period, Employee Status, Entry Time, Exit Time, Worked Hours, Over Time Hours, Balance Working Hours, Must Work Hour, Fixed Hours, Total Hours, Session Details] rows=0
+   cards    : Attendance Log
+
+--- /attendance-report-pack
+   headers  : Attendance Report Pack Reports Attendance | Attendance Report Pack | Reports Attendance | Reports Attendance
+   crumb    : Attendance Report Pack Reports Attendance
+   buttons  : Export | Previous | Next
+   inputs   : select-one | select-one | date | date | select-one | select-one | select-one | select-one
+   cards    : Daily Register
+
+--- /data-from-device
+   headers  : Data from device HRMS Data from device | Data from device | HRMS Data from device | HRMS Data from device
+   crumb    : Data from device HRMS Data from device
+   buttons  : Filter
+   table    : [SL.No, ID Number, Employee Name, Punching Time, Punch Type, Recognition Type, Is Registered In System, Device Name, Punching Sync Time, Location, Image] rows=0
+   cards    : Data From Device
+
+--- /geofences
+   headers  : Geofence Locations Attendance Geofence Locations | Geofence Locations | Attendance Geofence Locations | Attendance Geofence Locations
+   crumb    : Geofence Locations Attendance Geofence Locations Add Location
+   buttons  : Add Location
+   table    : [Sl.No, Scope, Applies To, Name, Lat, Long, Radius, Status, Active] rows=1
+   inputs   : Search location or target... | select-one | select-one
+   cards    : Locations
+
+--- /overtime-approval
+   headers  : Overtime Approval Attendance Overtime Approval | Overtime Approval | Attendance Overtime Approval | Attendance Overtime Approval
+   crumb    : Overtime Approval Attendance Overtime Approval
+   table    : [Sl.No, Employee, Date, Shift, OT Min, Eligible, Payout, Status, Exported, Action] rows=1
+   inputs   : Search employee or shift... | select-one | select-one | date | date
+   cards    : Overtime Queue
+
+--- /regularization
+   headers  : Regularization Attendance Regularization | Regularization | Attendance Regularization | Attendance Regularization
+   crumb    : Regularization Attendance Regularization
+   buttons  : Submit | Clear
+   table    : [Sl.No, Employee, Date, Type, In, Out, Reason, Status, Action] rows=1
+   inputs   : select-one | date | select-one | datetime-local | datetime-local | textarea | file | Search employee or reason... | select-one | select-one | date | date
+   cards    : Raise A Correction | Requests
+
+--- /shift-roster
+   headers  : Shift Roster Attendance Shift Roster | Shift Roster | Attendance Shift Roster | Attendance Shift Roster
+   crumb    : Shift Roster Attendance Shift Roster
+   buttons  : Assign
+   table    : [Sl.No, Scope, Target, Shift, From, To, Active] rows=1
+   inputs   : select-one | select-one | text | date | date | Search scope or shift... | select-one | select-one | activeOnlyCheck
+   cards    : Assign A Shift | Current Assignments
+
+--- /shifts
+   headers  : Shifts Attendance Shifts | Shifts | Attendance Shifts | Attendance Shifts
+   crumb    : Shifts Attendance Shifts
+   buttons  : New Shift
+   table    : [Sl.No, Shift Name, Type, Timing, Night, Active, Action] rows=1
+   inputs   : Search by shift name | select-one | select-one
+   cards    : Shift Definitions
+
+--- /timesheet
+   headers  : Timesheet Attendance Timesheet | Timesheet | Attendance Timesheet | Attendance Timesheet
+   crumb    : Timesheet Attendance Timesheet
+   table    : [Sl.No, Date, Employee, Shift, Status, Attendance Hrs, Task Hrs, Tasks] rows=1
+   inputs   : Search employee... | select-one | select-one | date | date
+   cards    : Daily Worked Hours Vs Task Hours
+
+=================== GROUP: core-hr (18) ===================
+
+--- /approval/config
+   headers  : Approval Configuration Workflow Approval Config | Approval Configuration | Workflow Approval Config | Workflow Approval Config
+   crumb    : Approval Configuration Workflow Approval Config
+   buttons  : + Add level | Save Workflow
+   table    : [Type, Name, Approval chain] rows=1
+   inputs   : select-one | e.g. Long Leave Approval | cfgDefault
+   cards    : New Workflow | Configured Workflows
+
+--- /approvals
+   headers  : My Approvals Workflow Pending Approvals | My Approvals | Workflow Pending Approvals | Workflow Pending Approvals
+   crumb    : My Approvals Workflow Pending Approvals Refresh
+   tabs     : Awaiting my decision (0) | My requests | History
+   buttons  : Refresh
+   table    : [Type, Details, Level, As, Raised, Action] rows=1
+   cards    : Awaiting My Decision (0)
+
+--- /employee-deduction
+   headers  : Employee Deduction HRMS Employee Deduction | Employee Deduction | HRMS Employee Deduction | HRMS Employee Deduction
+   crumb    : Employee Deduction HRMS Employee Deduction
+   buttons  : Save | Cancel
+   inputs   : branch | employee | Enter Date | Enter deduction type and search | employee | amount | details-text-area
+   cards    : Employee Deduction
+
+--- /employee-deduction-report
+   headers  : Employee Deduction Reports HRMS Reports Employee Deduction Reports | Employee Deduction Reports | HRMS Reports Employee Deduction Reports | HRMS Reports Employee Deduction Reports
+   crumb    : Employee Deduction Reports HRMS Reports Employee Deduction Reports
+   buttons  : View Report
+   inputs   : report-assignee | report-assignee | timePeriodSelect
+
+--- /employee-remark
+   headers  : Employee Deduction HRMS Employee Deduction | Employee Deduction | HRMS Employee Deduction | HRMS Employee Deduction
+   crumb    : Employee Deduction HRMS Employee Deduction
+   buttons  : Save | Cancel
+   inputs   : branch | employee | Enter Date | details-text-area
+   cards    : Employee Deduction
+
+--- /employee-remark-report
+   headers  : Employee Remark Reports HRMS Reports Employee Remark Reports | Employee Remark Reports | HRMS Reports Employee Remark Reports | HRMS Reports Employee Remark Reports
+   crumb    : Employee Remark Reports HRMS Reports Employee Remark Reports
+   buttons  : View Report
+   inputs   : report-assignee | timePeriodSelect
+
+--- /employee-salary-process
+   headers  : Employee Salary Process HRMS Employee Salary Process | Employee Salary Process | HRMS Employee Salary Process | HRMS Employee Salary Process
+   crumb    : Employee Salary Process HRMS Employee Salary Process
+   buttons  : Save
+   table    : [Staff Name, Basic Salary, No of Leave, Payable Amount] rows=1
+   inputs   : assignedToBranch | narration-typ | narration-typ
+   cards    : Employee Salary Process
+
+--- /employees
+   headers  : Employees HRMS Employees | Employees | HRMS Employees | HRMS Employees
+   crumb    : Employees HRMS Employees
+   buttons  : Filter | New Employee
+   table    : [Sl.No, Employee Code, Employee Name, Department Name, Designation, Status, Actions] rows=0
+   inputs   : incl-archived
+   cards    : Employees
+
+--- /hrms/probation
+   headers  : Probation Dashboard HRMS Probation | Probation Dashboard | HRMS Probation | HRMS Probation
+   crumb    : Probation Dashboard HRMS Probation Report Templates Start Probation
+   buttons  : Report | Templates | Start Probation
+   table    : [Employee, Branch, Start, End, Reviews, Next Review, Days Left, Action] rows=1
+   cards    : Employees On Probation
+   links    : Report→/hrms/probation-report | Templates→/hrms/probation-templates
+
+--- /hrms/probation-report
+   headers  : Probation Report HRMS Probation Report | Probation Report | HRMS Probation Report | HRMS Probation Report
+   crumb    : Probation Report HRMS Probation Report Export Excel
+   buttons  : Export Excel | Run Report
+   table    : [Employee, Branch, Start, End, Outcome, Reviews, Overdue, Decision] rows=1
+   inputs   : date | date | select-one
+   cards    : Details (0)
+
+--- /hrms/probation-templates
+   headers  : Probation Templates HRMS Probation Templates | Probation Templates | HRMS Probation Templates | HRMS Probation Templates
+   crumb    : Probation Templates HRMS Probation Templates New Template
+   buttons  : New Template
+   table    : [Name, Duration, Checkpoints (days), Criteria, Default, Active, Action] rows=1
+
+--- /letters/generate
+   headers  : Generate Letter Letter Templates Generate | Generate Letter | Letter Templates Generate | Letter Templates Generate
+   crumb    : Generate Letter Letter Templates Generate
+   buttons  : Preview | Generate
+   inputs   : select-one | select-one | select-one | sendmail
+   cards    : Preview
+
+--- /letters/templates
+   headers  : Letter Templates HRMS Letter Templates | Letter Templates | HRMS Letter Templates | HRMS Letter Templates
+   crumb    : Letter Templates HRMS Letter Templates Merge Fields Generate Letter New Template
+   buttons  : Merge Fields | Generate Letter | New Template
+   table    : [Name, Owner, Type, Subject, Active, Action] rows=1
+   links    : Merge Fields→/letters/fields | Generate Letter→/letters/generate
+
+--- /resigned-employees
+   headers  : Resigned Employees HRMS Resigned Employees | Resigned Employees | HRMS Resigned Employees | HRMS Resigned Employees
+   crumb    : Resigned Employees HRMS Resigned Employees
+   table    : [SlNo, Date, Name, Phone, Designation, Nationality] rows=1
+   inputs   : filter-name
+   cards    : Resigned Employees
+
+--- /salary-revisions
+   headers  : Salary Revisions HRMS Salary Revisions | Salary Revisions | HRMS Salary Revisions | HRMS Salary Revisions
+   crumb    : Salary Revisions HRMS Salary Revisions
+   buttons  : Raise Revision
+   table    : [Employee, Branch, Effective, Old, New, %, Status] rows=1
+   inputs   : select-one | select-one | number | date | textarea
+   cards    : Raise A Revision | Revision History
+
+--- /sections
+   headers  : Sections HRMS Section | Sections | HRMS Section | HRMS Section
+   crumb    : Sections HRMS Section
+   buttons  : Save | Clear
+   table    : [SlNo, Department Name, Section Name, Action] rows=0
+   inputs   : select-one | sectionname
+   cards    : Sections | New Section
+
+--- /upload-employee
+   headers  : Employee Excel Import HRMS Upload Employee | Employee Excel Import | HRMS Upload Employee | HRMS Upload Employee
+   crumb    : Employee Excel Import HRMS Upload Employee
+   buttons  : Excel Rules | Upload
+   inputs   : file
+   cards    : Leave Request
+   links    : Download Sample Excel→/assets/images/EmployeeExcelImport.xlsx
+
+--- /worker-directory
+   headers  : Worker Directory HRMS Worker Directory | Worker Directory | HRMS Worker Directory | HRMS Worker Directory
+   crumb    : Worker Directory HRMS Worker Directory Cards Org Chart
+   buttons  : Cards | Org Chart | Search
+   inputs   : select-one | Name, designation or department
+
+=================== GROUP: recruitment (15) ===================
+
+--- /assessment-list
+   headers  : Assessments Recruitment Assessments | Assessments | Recruitment Assessments | Recruitment Assessments
+   crumb    : Assessments Recruitment Assessments
+   buttons  : New Assessment
+   table    : [Sl.No, Title, Type, Description, Max Score, Attachment, Action] rows=1
+   cards    : Assessment Library
+
+--- /candidate-status
+   headers  : Candidate Status HRMS Settings Candidate Followup Status | Candidate Status | HRMS Settings Candidate Followup Status | HRMS Settings Candidate Followup Status
+   crumb    : Candidate Status HRMS Settings Candidate Followup Status
+   buttons  : Add Followup Status
+   table    : [Sl No, Status Name, Nature, Action] rows=1
+   cards    : Status List
+
+--- /candidates
+   headers  : Candidates HRMS Candidates | Candidates | HRMS Candidates | HRMS Candidates
+   crumb    : Candidates HRMS Candidates Add New
+   tabs     : New 0 | In Progress 0 | Shortlisted 0 | Selected 0 | Rejected 0
+   buttons  : Add New | New 0 | In Progress 0 | Shortlisted 0 | Selected 0 | Rejected 0
+   table    : [Sl.No, Name, Email, Phone, Branch, Designation, Skills, Status, Added On, Action] rows=1
+   inputs   : Search Name/Phone | Candidate Name | Phone Number | select-one | select-one | select-one | select-one
+
+--- /communication-templates
+   headers  : Candidate Communication Recruitment Communication Templates | Candidate Communication | Recruitment Communication Templates | Recruitment Communication Templates
+   crumb    : Candidate Communication Recruitment Communication Templates
+   buttons  : New Template
+   table    : [Sl.No, Name, Type, Subject, Action] rows=1
+   cards    : Templates
+
+--- /current-openings
+   headers  : Join Our Team
+   inputs   : selectbox
+
+--- /interview-rounds
+   headers  : Interview Rounds HRMS Settings Interview Rounds | Interview Rounds | HRMS Settings Interview Rounds | HRMS Settings Interview Rounds
+   crumb    : Interview Rounds HRMS Settings Interview Rounds
+   buttons  : Add Round
+   table    : [Sl No, Round Name, Order, Action] rows=1
+   cards    : Interview Rounds
+
+--- /interview-schedules
+   headers  : Interviews Recruitment Interview Schedule | Interviews | Recruitment Interview Schedule | Recruitment Interview Schedule
+   crumb    : Interviews Recruitment Interview Schedule
+   buttons  : Schedule Interview
+   table    : [Sl.No, Candidate, Round, Scheduled On, Mode, Status, Action] rows=0
+   cards    : Scheduled Interviews
+
+--- /job-applications-list
+   headers  : Job Applications | Job Applications
+   crumb    : Job Applications
+   table    : [Sl.No, Name, Position Applied For, Phone, Email, Details, Status, Schedule Interview, Reject] rows=0
+   cards    : Applicant Details
+
+--- /offer-list
+   headers  : Offers Recruitment Offer Management | Offers | Recruitment Offer Management | Recruitment Offer Management
+   crumb    : Offers Recruitment Offer Management
+   buttons  : New Offer
+   table    : [Sl.No, Candidate, Total CTC, Joining, Status, Action] rows=0
+   cards    : Offers
+
+--- /onboarding-pipeline
+   headers  : Onboarding Pipeline HRMS Onboarding Pipeline | Onboarding Pipeline | HRMS Onboarding Pipeline | HRMS Onboarding Pipeline
+   crumb    : Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding
+   buttons  : Start Onboarding
+
+--- /onboarding-templates
+   headers  : Onboarding Templates HRMS Onboarding Templates | Onboarding Templates | HRMS Onboarding Templates | HRMS Onboarding Templates
+   crumb    : Onboarding Templates HRMS Onboarding Templates New Template
+   buttons  : New Template
+   cards    : Templates
+
+--- /recruitment-pipeline
+   headers  : Recruitment Pipeline Recruitment Pipeline (Kanban) | Recruitment Pipeline | Recruitment Pipeline (Kanban) | Recruitment Pipeline (Kanban)
+   crumb    : Recruitment Pipeline Recruitment Pipeline (Kanban) Configure Stages
+   buttons  : Configure Stages | Score
+   inputs   : select-one | autoSync
+
+--- /requisition-list
+   headers  : Job Requisitions Recruitment Requisitions | Job Requisitions | Recruitment Requisitions | Recruitment Requisitions
+   crumb    : Job Requisitions Recruitment Requisitions
+   buttons  : New Requisition
+   table    : [Sl.No, Designation, Department, Positions, Type, Work Type, Status, Branch, Action] rows=0
+   inputs   : select-one | Search designation...
+   cards    : Manpower Requests
+
+--- /talent-pool
+   headers  : Talent Pool Recruitment Talent Pool & Archive | Talent Pool | Recruitment Talent Pool & Archive | Recruitment Talent Pool & Archive
+   crumb    : Talent Pool Recruitment Talent Pool & Archive
+   buttons  : Search
+   table    : [Sl.No, Name, Designation, Skills, Tags, Status, Score, Action] rows=1
+   inputs   : Name or email | select-one | select-one
+
+--- /vacancy-list
+   headers  : Hiring Recruitment Job Openings | Hiring | Recruitment Job Openings | Recruitment Job Openings
+   crumb    : Hiring Recruitment Job Openings
+   tabs     : Job Openings | Candidates | Talent Pools
+   buttons  : Add Job Opening
+   table    : [Candidates, Job Opening, Hiring Lead, Created On, Status, Action] rows=0
+   inputs   : select-one
+   cards    : Job Openings
+
+=================== GROUP: ess (11) ===================
+
+--- /ess
+   headers  : My Workspace Self Service Dashboard | My Workspace | Self Service Dashboard | Self Service Dashboard
+   crumb    : My Workspace Self Service Dashboard
+
+--- /ess/attendance
+   headers  : My Attendance Self Service Attendance | My Attendance | Self Service Attendance | Self Service Attendance
+   crumb    : My Attendance Self Service Attendance
+   buttons  : Show | Regularize | Raise OT
+   table    : [Date, Entry, Exit, Worked (min), OT (min), Status] rows=1
+   inputs   : date | date
+   cards    : Attendance History
+
+--- /ess/documents
+   headers  : My Documents | Self Service Documents | Self Service Documents | Self Service
+   crumb    : My Documents Self Service Documents
+   buttons  : Upload
+   table    : [Type, Number, Category, Expiry, Status] rows=1
+   inputs   : select-one | text | date | file
+   cards    : Upload A Document | Documents
+
+--- /ess/leave
+   headers  : My Leave Self Service Leave | My Leave | Self Service Leave | Self Service Leave
+   crumb    : My Leave Self Service Leave
+   buttons  : Show | Submit Request
+   table    : [Leave Type, Balance, Reserved, Available] rows=1
+   table    : [Type, From, To, Days, Status] rows=1
+   inputs   : number | select-one | date | date | halfday | textarea
+   cards    : Balances 2026 | My Leave Requests 2026 | Apply For Leave
+
+--- /ess/letters
+   headers  : My Letters & Certificates | Self Service Letters | Self Service Letters | Self Service
+   crumb    : My Letters & Certificates Self Service Letters
+   table    : [Letter, Type, Issued, Acknowledged] rows=1
+   cards    : Request A Letter / Certificate | Published Letters
+
+--- /ess/locations
+   headers  : My Work Locations Self Service My Locations | My Work Locations | Self Service My Locations | Self Service My Locations
+   crumb    : My Work Locations Self Service My Locations
+   buttons  : Use my location | Submit for approval
+   table    : [Sl.No, Name, Lat, Long, Radius, Status] rows=1
+   inputs   : e.g. Home, Site A | number | number | number | Search an address to move the map…
+   cards    : Add A Work Location | My Locations
+   links    : Leaflet→https://leafletjs.com
+
+--- /ess/payslips
+   headers  : My Pay | Self Service Payslips | Self Service Payslips | Self Service
+   crumb    : My Pay Self Service Payslips
+   buttons  : Show
+   table    : [Period, Basic, Deductions, Net, Payable, Paid] rows=1
+   inputs   : number
+   cards    : Payslips
+
+--- /ess/probation
+   headers  : My Probation | Self Service Probation | Self Service Probation | Self Service
+   crumb    : My Probation Self Service Probation
+
+--- /ess/profile
+   headers  : My Profile | Self Service Profile | Self Service Profile | Self Service
+   crumb    : My Profile Self Service Profile
+
+--- /ess/requests
+   headers  : My Requests | Self Service Requests | Self Service Requests | Self Service
+   crumb    : My Requests Self Service Requests
+   cards    : Profile Change Requests
+
+--- /my-handover
+   headers  : My Duty Handover | ESS Handover | ESS Handover | ESS
+   crumb    : My Duty Handover ESS Handover
+   buttons  : Save | Clear
+   table    : [#, Assignee, From, To, Covers, Active, Action] rows=1
+   inputs   : select-one | date | date | ca | ct | textarea
+   cards    : Set Up Handover | My Handovers
+
+saved data/summary.json

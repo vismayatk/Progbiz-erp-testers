@@ -1,0 +1,55 @@
+{
+  "route": "leave-encashment",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-encashment",
+  "group": "leave",
+  "headers": [
+    "Leave Encashment",
+    "HRMS Encashment",
+    "HRMS Encashment",
+    "HRMS",
+    "HRMS",
+    "Encashment"
+  ],
+  "breadcrumb": "Leave Encashment HRMS Encashment",
+  "tabs": [],
+  "buttons": [
+    "Submit Request"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "Leave Type",
+        "Days",
+        "Amount",
+        "Status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No requests."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "input",
+      "type": "number"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Request Encashment",
+    "My Requests"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Encashment HRMS Encashment Request Encashment Leave Type Choose No leave type in your policy allows encashment. Days Per Day Rate Amount: 0 Submit Request My Requests SlNo Leave Type Days Amount Status No requests."
+}

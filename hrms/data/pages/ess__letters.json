@@ -1,0 +1,39 @@
+{
+  "route": "ess/letters",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/letters",
+  "group": "ess",
+  "headers": [
+    "My Letters & Certificates",
+    "Self Service Letters",
+    "Self Service Letters",
+    "Self Service",
+    "Self Service",
+    "Letters"
+  ],
+  "breadcrumb": "My Letters & Certificates Self Service Letters",
+  "tabs": [],
+  "buttons": [],
+  "tables": [
+    {
+      "headers": [
+        "Letter",
+        "Type",
+        "Issued",
+        "Acknowledged"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No letters published to you."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Request A Letter / Certificate",
+    "Published Letters"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Letters & Certificates Self Service Letters Request A Letter / Certificate No self-service letter types are available. Published Letters Letter Type Issued Acknowledged No letters published to you."
+}

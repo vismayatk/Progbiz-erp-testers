@@ -1,0 +1,40 @@
+{
+  "route": "upload-employee",
+  "finalUrl": "https://hrms-erp.progbiz.in/upload-employee",
+  "group": "core-hr",
+  "headers": [
+    "Employee Excel Import HRMS Upload Employee",
+    "Employee Excel Import",
+    "HRMS Upload Employee",
+    "HRMS Upload Employee",
+    "HRMS Upload Employee",
+    "HRMS",
+    "HRMS",
+    "Upload Employee"
+  ],
+  "breadcrumb": "Employee Excel Import HRMS Upload Employee",
+  "tabs": [],
+  "buttons": [
+    "Excel Rules",
+    "Upload"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "file"
+    }
+  ],
+  "selectsNg": [],
+  "links": [
+    {
+      "text": "Download Sample Excel",
+      "href": "/assets/images/EmployeeExcelImport.xlsx"
+    }
+  ],
+  "cards": [
+    "Leave Request"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Employee Excel Import HRMS Upload Employee Leave Request Upload Recipient Excel File Download Sample Excel Excel Rules Upload"
+}

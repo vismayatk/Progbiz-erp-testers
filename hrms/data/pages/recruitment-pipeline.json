@@ -1,0 +1,38 @@
+{
+  "route": "recruitment-pipeline",
+  "finalUrl": "https://hrms-erp.progbiz.in/recruitment-pipeline",
+  "group": "recruitment",
+  "headers": [
+    "Recruitment Pipeline Recruitment Pipeline (Kanban)",
+    "Recruitment Pipeline",
+    "Recruitment Pipeline (Kanban)",
+    "Recruitment Pipeline (Kanban)",
+    "Recruitment",
+    "Recruitment",
+    "Pipeline (Kanban)",
+    "Configure Stages"
+  ],
+  "breadcrumb": "Recruitment Pipeline Recruitment Pipeline (Kanban) Configure Stages",
+  "tabs": [],
+  "buttons": [
+    "Configure Stages",
+    "Score"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "autoSync"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Recruitment Pipeline Recruitment Pipeline (Kanban) Configure Stages Vacancy — Select a vacancy — All vacancies Score Auto-Sync"
+}

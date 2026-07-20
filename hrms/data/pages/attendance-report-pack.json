@@ -1,0 +1,63 @@
+{
+  "route": "attendance-report-pack",
+  "finalUrl": "https://hrms-erp.progbiz.in/attendance-report-pack",
+  "group": "attendance",
+  "headers": [
+    "Attendance Report Pack Reports Attendance",
+    "Attendance Report Pack",
+    "Reports Attendance",
+    "Reports Attendance",
+    "Reports",
+    "Reports",
+    "Attendance"
+  ],
+  "breadcrumb": "Attendance Report Pack Reports Attendance",
+  "tabs": [],
+  "buttons": [
+    "Export",
+    "Previous",
+    "Next"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Daily Register"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Attendance Report Pack Reports Attendance Daily Register Export No records. Rows per page 50 100 250 500 Page 1 Previous Next"
+}

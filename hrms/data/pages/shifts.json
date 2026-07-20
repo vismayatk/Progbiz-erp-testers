@@ -1,0 +1,58 @@
+{
+  "route": "shifts",
+  "finalUrl": "https://hrms-erp.progbiz.in/shifts",
+  "group": "attendance",
+  "headers": [
+    "Shifts Attendance Shifts",
+    "Shifts",
+    "Attendance Shifts",
+    "Attendance Shifts",
+    "Attendance",
+    "Attendance",
+    "Shifts"
+  ],
+  "breadcrumb": "Shifts Attendance Shifts",
+  "tabs": [],
+  "buttons": [
+    "New Shift"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Shift Name",
+        "Type",
+        "Timing",
+        "Night",
+        "Active",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search by shift name"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Shift Definitions"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Shifts Attendance Shifts Shift Definitions New Shift Sl.No Shift Name Type Timing Night Active Action"
+}

@@ -1,0 +1,58 @@
+{
+  "route": "leave-balances",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-balances",
+  "group": "leave",
+  "headers": [
+    "My Leave Balance HRMS Leave My Balance",
+    "My Leave Balance",
+    "HRMS Leave My Balance",
+    "HRMS Leave My Balance",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "My Balance",
+    "Year Show Run Accrual",
+    "Year",
+    "Year"
+  ],
+  "breadcrumb": "My Leave Balance HRMS Leave My Balance Year Show Run Accrual",
+  "tabs": [],
+  "buttons": [
+    "Show",
+    "Run Accrual"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Leave Type",
+        "Opening",
+        "Accrued",
+        "Carried Fwd",
+        "Used",
+        "Encashed",
+        "Reserved",
+        "Available",
+        "Liability"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No balances found."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "number"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Balance Detail — 2026"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Leave Balance HRMS Leave My Balance Year Show Run Accrual No balances found for 2026. Balance Detail — 2026 Sl.No Leave Type Opening Accrued Carried Fwd Used Encashed Reserved Available Liability No balances found. Balances are computed live from the leave ledger. Liability = encashable available balance × (active monthly gross ÷ 30)."
+}

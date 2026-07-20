@@ -1,0 +1,42 @@
+{
+  "route": "communication-templates",
+  "finalUrl": "https://hrms-erp.progbiz.in/communication-templates",
+  "group": "recruitment",
+  "headers": [
+    "Candidate Communication Recruitment Communication Templates",
+    "Candidate Communication",
+    "Recruitment Communication Templates",
+    "Recruitment Communication Templates",
+    "Recruitment",
+    "Recruitment",
+    "Communication Templates"
+  ],
+  "breadcrumb": "Candidate Communication Recruitment Communication Templates",
+  "tabs": [],
+  "buttons": [
+    "New Template"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Name",
+        "Type",
+        "Subject",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "Loading..."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Templates"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Candidate Communication Recruitment Communication Templates Templates New Template Sl.No Name Type Subject Action Loading..."
+}

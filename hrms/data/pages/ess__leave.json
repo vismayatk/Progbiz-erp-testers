@@ -1,0 +1,83 @@
+{
+  "route": "ess/leave",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/leave",
+  "group": "ess",
+  "headers": [
+    "My Leave Self Service Leave",
+    "My Leave",
+    "Self Service Leave",
+    "Self Service Leave",
+    "Self Service",
+    "Self Service",
+    "Leave"
+  ],
+  "breadcrumb": "My Leave Self Service Leave",
+  "tabs": [],
+  "buttons": [
+    "Show",
+    "Submit Request"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Leave Type",
+        "Balance",
+        "Reserved",
+        "Available"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No balances."
+      ]
+    },
+    {
+      "headers": [
+        "Type",
+        "From",
+        "To",
+        "Days",
+        "Status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No leave requests."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "halfday"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Balances 2026",
+    "My Leave Requests 2026",
+    "Apply For Leave"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Leave Self Service Leave Balances 2026 Show Leave Type Balance Reserved Available No balances. My Leave Requests 2026 Type From To Days Status No leave requests. Apply For Leave Leave Type -- Select -- Start Date End Date Half Day Reason Submit Request"
+}

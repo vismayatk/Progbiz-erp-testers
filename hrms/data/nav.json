@@ -1,0 +1,1570 @@
+{
+  "landing": "https://hrms-erp.progbiz.in/home",
+  "anchors": [
+    {
+      "text": "",
+      "href": "/",
+      "nav": false,
+      "cls": "header-logo"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "header-link"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "header-link layout-setting"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "header-link dropdown-toggle"
+    },
+    {
+      "text": "Go to Chat",
+      "href": null,
+      "nav": true,
+      "cls": "link-primary text-decoration-underline"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "header-link"
+    },
+    {
+      "text": "Vismaya",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "header-link dropdown-toggle"
+    },
+    {
+      "text": "Profile",
+      "href": "profile",
+      "nav": true,
+      "cls": "dropdown-item d-flex align-items-center"
+    },
+    {
+      "text": "Change Password",
+      "href": "change-password",
+      "nav": true,
+      "cls": "dropdown-item d-flex align-items-center"
+    },
+    {
+      "text": "Log Out",
+      "href": null,
+      "nav": true,
+      "cls": "dropdown-item d-flex align-items-center"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "header-link switcher-icon"
+    },
+    {
+      "text": "",
+      "href": "/",
+      "nav": true,
+      "cls": "header-logo"
+    },
+    {
+      "text": "Home",
+      "href": "home",
+      "nav": true,
+      "cls": "side-menu__item active"
+    },
+    {
+      "text": "AI Assistant",
+      "href": "data-assistant",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Dashboards",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Dashboards",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "CRM",
+      "href": "crm-dashboard",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Executive Performance",
+      "href": "executive-performance",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Task",
+      "href": "task-dashboard",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Task Management",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Task Management",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "Task Timeline",
+      "href": "redirect/task-timeline",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Calendar",
+      "href": "calendar",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Tasks",
+      "href": "my-tasks",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Delegated Tasks",
+      "href": "delegated-tasks",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "To Do List",
+      "href": "todo-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Daily Activity Report",
+      "href": "daily-activity-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Settings",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Predefined Tasks",
+      "href": "predefined-tasks",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "CRM",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "CRM",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "FollowUps",
+      "href": "followups",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Sales Targets",
+      "href": "sales-targets",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Lead Expenses",
+      "href": "lead-expenses",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Create Enquiry",
+      "href": "redirect/enquiry",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Create Quotation",
+      "href": "redirect/quotation",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leads",
+      "href": "leads",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Lead Task Assignment",
+      "href": "add-multiple-lead-tasks",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Project",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Project",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "Add New Project",
+      "href": "project",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Projects",
+      "href": "projects",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Notes",
+      "href": "project-notes",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Attachments",
+      "href": "project-attachments",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Task Scheduler",
+      "href": "task-scheduler",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Whatsapp",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Whatsapp",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "Chat Bots",
+      "href": "chatbots",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Whatsapp Accounts",
+      "href": "whatsapp-accounts",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Templates",
+      "href": "whatsapp-templates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Broadcasts",
+      "href": "broadcasts",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Customer Broadcast",
+      "href": "customer-broadcast",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Chat",
+      "href": "chat",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Master",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Master",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "Business Contacts",
+      "href": "business-contacts",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Reset Password",
+      "href": "change-user-password",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Teams",
+      "href": "teams",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "AI Tokens",
+      "href": "token-wallet",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Credentials",
+      "href": "credential",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Credential Sources",
+      "href": "credential-sources",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Department",
+      "href": "department",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Designations",
+      "href": "designations",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "HRMS",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "HRMS",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "Core HR",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Employee",
+      "href": "employees",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Section",
+      "href": "sections",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Worker Directory",
+      "href": "worker-directory",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Salary Revisions",
+      "href": "salary-revisions",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Employee Salary Process",
+      "href": "employee-salary-process",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Employee Deductions",
+      "href": "employee-deduction",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Employee Remarks",
+      "href": "employee-remark",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Probation Dashboard",
+      "href": "hrms/probation",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Probation Templates",
+      "href": "hrms/probation-templates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Probation Report",
+      "href": "hrms/probation-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Resigned Employees",
+      "href": "resigned-employees",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Employee Excel Import",
+      "href": "upload-employee",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Letters",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Letter Templates",
+      "href": "letters/templates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Generate Letter",
+      "href": "letters/generate",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approvals",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Approvals",
+      "href": "approvals",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approval Config",
+      "href": "approval/config",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Reports",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Deduction Report",
+      "href": "employee-deduction-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Remark Report",
+      "href": "employee-remark-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Recruitment",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Job Requisitions",
+      "href": "requisition-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Job Board",
+      "href": "vacancy-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Current Openings",
+      "href": "current-openings",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Job Applications",
+      "href": "job-applications-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Candidates",
+      "href": "candidates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Assessments",
+      "href": "assessment-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Interview Schedules",
+      "href": "interview-schedules",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Offers",
+      "href": "offer-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Pipeline",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Pipeline Board",
+      "href": "recruitment-pipeline",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Communication Templates",
+      "href": "communication-templates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Talent Pool",
+      "href": "talent-pool",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Settings",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Candidate Status",
+      "href": "candidate-status",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Interview Rounds",
+      "href": "interview-rounds",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Onboarding",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Onboarding Templates",
+      "href": "onboarding-templates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Onboarding Pipeline",
+      "href": "onboarding-pipeline",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Attendance",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Shifts & Rules",
+      "href": "shifts",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Shift Roster",
+      "href": "shift-roster",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Attendance Log",
+      "href": "attendance-log",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Data from Device",
+      "href": "data-from-device",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Add Visit Report",
+      "href": "add-visit-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Regularization",
+      "href": "regularization",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Overtime Approval",
+      "href": "overtime-approval",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Attendance Finalization",
+      "href": "attendance-finalization",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Geofences",
+      "href": "geofences",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Timesheet",
+      "href": "timesheet",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Attendance Report Pack",
+      "href": "attendance-report-pack",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approvals",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approval Operation",
+      "href": "approval-operation",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approval Operation Report",
+      "href": "approval-operation-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approval Absent",
+      "href": "approval-absent",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approval Absent Report",
+      "href": "approval-absent-report",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Management",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Types",
+      "href": "leave-types",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Patterns",
+      "href": "leave-patterns",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Policy",
+      "href": "leave-policy",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Assignment",
+      "href": "leave-assignment-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Request",
+      "href": "leave-request-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Approval",
+      "href": "leave-approval",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Leave Policy",
+      "href": "my-leave-policy",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Balances",
+      "href": "leave-balances",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Ledger",
+      "href": "leave-ledger",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Attendance Sync",
+      "href": "leave-attendance-sync",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Encashment",
+      "href": "leave-encashment",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Encashment Approval",
+      "href": "leave-encashment-approval",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Delegation",
+      "href": "leave-delegation",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Employee Handover",
+      "href": "employee-handover",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Comp-Offs",
+      "href": "comp-offs",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Comp-Off Management",
+      "href": "comp-off-management",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Holidays",
+      "href": "holiday-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Holiday Assignment",
+      "href": "holiday-assignment-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Analytics",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Reports",
+      "href": "leave-reports",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Absence Analytics",
+      "href": "absence-analytics",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Calendar",
+      "href": "leave-calendar",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Workspace",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Workspace",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "My Workspace",
+      "href": "ess",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Profile",
+      "href": "ess/profile",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Requests",
+      "href": "ess/requests",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Leave",
+      "href": "ess/leave",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Handover",
+      "href": "my-handover",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Attendance",
+      "href": "ess/attendance",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Locations",
+      "href": "ess/locations",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Documents",
+      "href": "ess/documents",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Letters",
+      "href": "ess/letters",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Pay",
+      "href": "ess/payslips",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Probation",
+      "href": "ess/probation",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Excel Upload",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Excel Upload",
+      "href": "javascript:void(0)",
+      "nav": true,
+      "cls": ""
+    },
+    {
+      "text": "Individual Customer",
+      "href": "individual-customer-upload",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Business Customer",
+      "href": "business-customer-upload",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Enquiry Upload",
+      "href": "enquiry-upload",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Project Upload",
+      "href": "projects-upload",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Reports",
+      "href": "reports",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Task",
+      "href": null,
+      "nav": true,
+      "cls": "dropdown-item"
+    },
+    {
+      "text": "Enquiry",
+      "href": "enquiry",
+      "nav": true,
+      "cls": "dropdown-item"
+    },
+    {
+      "text": "Quotation",
+      "href": "quotation",
+      "nav": true,
+      "cls": "dropdown-item"
+    },
+    {
+      "text": "Pending Tasks 1",
+      "href": null,
+      "nav": false,
+      "cls": ""
+    },
+    {
+      "text": "Delayed Tasks 0",
+      "href": null,
+      "nav": false,
+      "cls": ""
+    },
+    {
+      "text": "Completed Tasks 0",
+      "href": null,
+      "nav": false,
+      "cls": ""
+    },
+    {
+      "text": "Unscheduled 0",
+      "href": null,
+      "nav": false,
+      "cls": ""
+    },
+    {
+      "text": "Progbiz",
+      "href": "https://www.progbiz.io",
+      "nav": false,
+      "cls": "text-dark fw-medium"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0);",
+      "nav": false,
+      "cls": "btn btn-danger m-1 w-100"
+    }
+  ],
+  "navText": "Home\nAI Assistant\nDashboards\nTask Management\nCRM\nProject\nWhatsapp\nMaster\nHRMS\nMy Workspace\nExcel Upload\nIndividual Customer\nBusiness Customer\nEnquiry Upload\nProject Upload\nReports",
+  "shell": {
+    "tag": "body",
+    "children": [
+      {
+        "tag": "div",
+        "id": "app",
+        "children": [
+          {
+            "tag": "div",
+            "cls": "page",
+            "children": [
+              {
+                "tag": "header",
+                "cls": "app-header",
+                "children": []
+              },
+              {
+                "tag": "aside",
+                "id": "sidebar",
+                "cls": "app-sidebar sticky",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "main-content app-content fadeup",
+                "children": []
+              },
+              {
+                "tag": "footer",
+                "cls": "footer mt-auto py-3 bg-white text-center",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "id": "switcher-canvas",
+            "cls": "offcanvas offcanvas-end",
+            "children": [
+              {
+                "tag": "div",
+                "cls": "offcanvas-header border-bottom d-block p-0",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "offcanvas-body",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "id": "apiloader",
+        "children": [
+          {
+            "tag": "img",
+            "children": []
+          }
+        ]
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "div",
+        "cls": "scrollToTop",
+        "children": [
+          {
+            "tag": "span",
+            "cls": "arrow",
+            "children": [
+              {
+                "tag": "i",
+                "cls": "ti ti-arrow-narrow-up fs-20",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "id": "responsive-overlay",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "link",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "link",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "script",
+        "children": []
+      },
+      {
+        "tag": "svg",
+        "id": "SvgjsSvg1001",
+        "cls": "[object SVGAnimatedString]",
+        "children": [
+          {
+            "tag": "defs",
+            "id": "SvgjsDefs1002",
+            "cls": "[object SVGAnimatedString]",
+            "children": []
+          },
+          {
+            "tag": "polyline",
+            "id": "SvgjsPolyline1003",
+            "cls": "[object SVGAnimatedString]",
+            "children": []
+          },
+          {
+            "tag": "path",
+            "id": "SvgjsPath1004",
+            "cls": "[object SVGAnimatedString]",
+            "children": []
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "cls": "pcr-app ",
+        "children": [
+          {
+            "tag": "div",
+            "cls": "pcr-selection",
+            "children": [
+              {
+                "tag": "div",
+                "cls": "pcr-color-preview",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "pcr-color-palette",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "pcr-color-chooser",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "pcr-color-opacity",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "cls": "pcr-swatches ",
+            "children": []
+          },
+          {
+            "tag": "div",
+            "cls": "pcr-interaction",
+            "children": [
+              {
+                "tag": "input",
+                "cls": "pcr-result",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type active",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-save",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-cancel",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-clear",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "cls": "pcr-app ",
+        "children": [
+          {
+            "tag": "div",
+            "cls": "pcr-selection",
+            "children": [
+              {
+                "tag": "div",
+                "cls": "pcr-color-preview",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "pcr-color-palette",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "pcr-color-chooser",
+                "children": []
+              },
+              {
+                "tag": "div",
+                "cls": "pcr-color-opacity",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "cls": "pcr-swatches ",
+            "children": []
+          },
+          {
+            "tag": "div",
+            "cls": "pcr-interaction",
+            "children": [
+              {
+                "tag": "input",
+                "cls": "pcr-result",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type active",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-type",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-save",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-cancel",
+                "children": []
+              },
+              {
+                "tag": "input",
+                "cls": "pcr-clear",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

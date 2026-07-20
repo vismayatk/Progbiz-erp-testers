@@ -1,0 +1,60 @@
+{
+  "route": "comp-off-management",
+  "finalUrl": "https://hrms-erp.progbiz.in/comp-off-management",
+  "group": "leave",
+  "headers": [
+    "Comp-Off Management",
+    "HRMS Leave Comp-Off Management",
+    "HRMS Leave Comp-Off Management",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "Comp-Off Management"
+  ],
+  "breadcrumb": "Comp-Off Management HRMS Leave Comp-Off Management",
+  "tabs": [],
+  "buttons": [
+    "Grant",
+    "Reject"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "Employee",
+        "Earned",
+        "Source",
+        "Days",
+        "Expiry",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "1",
+        "Akshay ASK112",
+        "19/07/26",
+        "worked in holiday",
+        "1",
+        "17/10/26",
+        "Requested",
+        "Grant Reject"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "reqOnly"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Comp-Off Credits — All Employees"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Comp-Off Management HRMS Leave Comp-Off Management Comp-Off Credits — All Employees Pending grant only SlNo Employee Earned Source Days Expiry Status Action 1 Akshay ASK112 19/07/26 worked in holiday 1 17/10/26 Requested Grant Reject"
+}

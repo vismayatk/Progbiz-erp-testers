@@ -1,0 +1,51 @@
+{
+  "route": "attendance-log",
+  "finalUrl": "https://hrms-erp.progbiz.in/attendance-log",
+  "group": "attendance",
+  "headers": [
+    "Attendance Report HRMS Attendance Log",
+    "Attendance Report",
+    "HRMS Attendance Log",
+    "HRMS Attendance Log",
+    "HRMS Attendance Log",
+    "HRMS",
+    "HRMS",
+    "Attendance Log"
+  ],
+  "breadcrumb": "Attendance Report HRMS Attendance Log",
+  "tabs": [],
+  "buttons": [
+    "Filter"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL.No",
+        "IDNumber",
+        "Employee Name",
+        "Date",
+        "Period",
+        "Employee Status",
+        "Entry Time",
+        "Exit Time",
+        "Worked Hours",
+        "Over Time Hours",
+        "Balance Working Hours",
+        "Must Work Hour",
+        "Fixed Hours",
+        "Total Hours",
+        "Session Details"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Attendance Log"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Attendance Report HRMS Attendance Log Attendance Log Filter SL.No IDNumber Employee Name Date Period Employee Status Entry Time Exit Time Worked Hours Over Time Hours Balance Working Hours Must Work Hour Fixed Hours Total Hours Session Details"
+}

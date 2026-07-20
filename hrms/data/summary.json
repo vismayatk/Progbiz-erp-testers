@@ -1,0 +1,4168 @@
+{
+  "leave": [
+    {
+      "route": "absence-analytics",
+      "finalUrl": "https://hrms-erp.progbiz.in/absence-analytics",
+      "group": "leave",
+      "headers": [
+        "Absence Analytics",
+        "HRMS Leave Absence Analytics",
+        "HRMS Leave Absence Analytics",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "Absence Analytics",
+        "0%",
+        "0%",
+        "0",
+        "0.01"
+      ],
+      "breadcrumb": "Absence Analytics HRMS Leave Absence Analytics",
+      "tabs": [],
+      "buttons": [
+        "Filter",
+        "Export"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL No",
+            "Employee",
+            "Department",
+            "Spells (S)",
+            "Days (D)",
+            "Score (S²·D)",
+            "Signal"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "1",
+            "Akshay",
+            "Dotnet",
+            "1",
+            "1",
+            "1",
+            "Normal"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Monthly Absence Trend",
+        "Absence Rate By Department",
+        "Bradford Factor — Highest Risk (S² × D)"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Absence Analytics HRMS Leave Absence Analytics Year Branch All Branches Main Branch Chennai Department All Departments 2D DigitalMarkrting Dotnet Sales SEO Filter healthy Absence rate 0% of scheduled days watch Unplanned share 0% sick + same-day alerts Bradford alerts 0 score > 250 YTD Avg days / employee 0.01 this year (2026) Monthly Absence Trend Jan Feb Mar Apr May Jun 100% Jul Aug Sep Oct Nov Dec Jan – Dec 2026 · % of yearly total · current month highlighted Absence Rate By Department Absence rate = leave days ÷ scheduled working days (per department) 0.13% Dotnet 0% 2D 0% DigitalMarkrting 0% Sales 0% SEO Bradford Factor — Highest Risk (S² × D) Alert > 250 Monitor > 125 Normal Export SL No Employee Department Spells (S) Days (D) Score (S²·D) Signal 1 Akshay Dotnet 1 1 1 Normal"
+    },
+    {
+      "route": "comp-off-management",
+      "finalUrl": "https://hrms-erp.progbiz.in/comp-off-management",
+      "group": "leave",
+      "headers": [
+        "Comp-Off Management",
+        "HRMS Leave Comp-Off Management",
+        "HRMS Leave Comp-Off Management",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "Comp-Off Management"
+      ],
+      "breadcrumb": "Comp-Off Management HRMS Leave Comp-Off Management",
+      "tabs": [],
+      "buttons": [
+        "Grant",
+        "Reject"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Employee",
+            "Earned",
+            "Source",
+            "Days",
+            "Expiry",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "1",
+            "Akshay ASK112",
+            "19/07/26",
+            "worked in holiday",
+            "1",
+            "17/10/26",
+            "Requested",
+            "Grant Reject"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "reqOnly"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Comp-Off Credits — All Employees"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Comp-Off Management HRMS Leave Comp-Off Management Comp-Off Credits — All Employees Pending grant only SlNo Employee Earned Source Days Expiry Status Action 1 Akshay ASK112 19/07/26 worked in holiday 1 17/10/26 Requested Grant Reject"
+    },
+    {
+      "route": "comp-offs",
+      "finalUrl": "https://hrms-erp.progbiz.in/comp-offs",
+      "group": "leave",
+      "headers": [
+        "Comp-Off",
+        "HRMS Leave Comp-Off",
+        "HRMS Leave Comp-Off",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "Comp-Off"
+      ],
+      "breadcrumb": "Comp-Off HRMS Leave Comp-Off",
+      "tabs": [],
+      "buttons": [
+        "Request Comp-Off"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Earned",
+            "Source",
+            "Days",
+            "Expiry",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No comp-off credits yet. Worked an off-day? Request one above."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "My Comp-Off Credits"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Comp-Off HRMS Leave Comp-Off My Comp-Off Credits Credits are earned automatically when you work an approved off-day / holiday, or you can request one below. Request Comp-Off Earned Source Days Expiry Status Action No comp-off credits yet. Worked an off-day? Request one above."
+    },
+    {
+      "route": "employee-handover",
+      "finalUrl": "https://hrms-erp.progbiz.in/employee-handover",
+      "group": "leave",
+      "headers": [
+        "Employee Duty Handover",
+        "HRMS Handover",
+        "HRMS Handover",
+        "HRMS",
+        "HRMS",
+        "Handover"
+      ],
+      "breadcrumb": "Employee Duty Handover HRMS Handover",
+      "tabs": [],
+      "buttons": [
+        "Save",
+        "Clear"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "#",
+            "From",
+            "To",
+            "From Date",
+            "To Date",
+            "Covers",
+            "Active",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No handovers."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "ca"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "ct"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "active"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Set Up Handover",
+        "All Handovers"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Employee Duty Handover HRMS Handover Set Up Handover Hand an away employee's HRMS approvals and HRMS/recruitment tasks to an assignee for a date window. Sales/CRM duties are never handed over. Employee going away -- Select employee -- Assign duties to -- Select assignee -- From To Cover approvals Cover HRMS tasks Active Note (optional) Save Clear All Handovers # From To From Date To Date Covers Active Action No handovers."
+    },
+    {
+      "route": "holiday-assignment-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/holiday-assignment-list",
+      "group": "leave",
+      "headers": [
+        "Holiday Assignment HRMS Holiday Assignment List",
+        "Holiday Assignment",
+        "HRMS Holiday Assignment List",
+        "HRMS Holiday Assignment List",
+        "HRMS Holiday Assignment List",
+        "HRMS",
+        "HRMS",
+        "Holiday Assignment List"
+      ],
+      "breadcrumb": "Holiday Assignment HRMS Holiday Assignment List",
+      "tabs": [],
+      "buttons": [
+        "Filter",
+        "New Holiday Assignment"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Assignment Type",
+            "Assigned Target Name",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Holiday Assignment List"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Holiday Assignment HRMS Holiday Assignment List Holiday Assignment List Filter New Holiday Assignment Sl.No Assignment Type Assigned Target Name Action"
+    },
+    {
+      "route": "holiday-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/holiday-list",
+      "group": "leave",
+      "headers": [
+        "Holiday Holiday Holidays",
+        "Holiday",
+        "Holiday Holidays",
+        "Holiday Holidays",
+        "Holiday Holidays",
+        "Holiday",
+        "Holiday",
+        "Holidays"
+      ],
+      "breadcrumb": "Holiday Holiday Holidays",
+      "tabs": [],
+      "buttons": [
+        "Calendar",
+        "Export",
+        "New Holiday"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Holiday Name",
+            "Dates",
+            "Calendar",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "1",
+            "Onam",
+            "24/08/2026",
+            "State - Kerala",
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search by Holiday Name"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Holiday Calendar — 2026"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Holiday Holiday Holidays Holiday Calendar — 2026 Calendar Export New Holiday Sl.No Holiday Name Dates Calendar Action 1 Onam 24/08/2026 State - Kerala"
+    },
+    {
+      "route": "leave-approval",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-approval",
+      "group": "leave",
+      "headers": [
+        "Leave Approval Leave Leave Approval",
+        "Leave Approval",
+        "Leave Leave Approval",
+        "Leave Leave Approval",
+        "Leave Leave Approval",
+        "Leave",
+        "Leave",
+        "Leave Approval"
+      ],
+      "breadcrumb": "Leave Approval Leave Leave Approval",
+      "tabs": [],
+      "buttons": [
+        "Delegate approvals",
+        "Filter",
+        "Approve Selected",
+        "Reject Selected",
+        "Clear"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL.No",
+            "Employee Name",
+            "Leave Type",
+            "Details",
+            "Leave Status",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "checkbox"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "custodianname"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Leave Approval"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Approval Leave Leave Approval Leave Approval Delegate approvals Filter Bulk actions— tick the rows you want, then approve or reject them together Approve Selected Reject Selected Clear SL.No Employee Name Leave Type Details Leave Status Action"
+    },
+    {
+      "route": "leave-assignment-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-assignment-list",
+      "group": "leave",
+      "headers": [
+        "Leave Assignment List HRMS Leave Assignment",
+        "Leave Assignment List",
+        "HRMS Leave Assignment",
+        "HRMS Leave Assignment",
+        "HRMS Leave Assignment",
+        "HRMS",
+        "HRMS",
+        "Leave Assignment"
+      ],
+      "breadcrumb": "Leave Assignment List HRMS Leave Assignment",
+      "tabs": [],
+      "buttons": [
+        "Filter",
+        "New Leave Assignment"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Assignment Type",
+            "Assignment Target Name",
+            "Leave Pattern",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Leave Assignment"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Assignment List HRMS Leave Assignment Leave Assignment Filter New Leave Assignment Sl.No Assignment Type Assignment Target Name Leave Pattern Action"
+    },
+    {
+      "route": "leave-attendance-sync",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-attendance-sync",
+      "group": "leave",
+      "headers": [
+        "Leave ↔ Attendance Sync HRMS Leave Attendance Sync",
+        "Leave ↔ Attendance Sync",
+        "HRMS Leave Attendance Sync",
+        "HRMS Leave Attendance Sync",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "Attendance Sync",
+        "Filter Recalculate period",
+        "Filter",
+        "Recalculate period"
+      ],
+      "breadcrumb": "Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period",
+      "tabs": [],
+      "buttons": [
+        "Filter",
+        "Recalculate period"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Leave Ref",
+            "Employee",
+            "Dates",
+            "Attendance rows",
+            "LOP",
+            "Sync status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No leave in this period."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period Leave Ref Employee Dates Attendance rows LOP Sync status No leave in this period. LOP days carry IsLOP = 1 on the attendance row and flow to payroll at finalization. Use Recalculate period after a retroactive holiday/policy change to re-run the engine for the filtered month."
+    },
+    {
+      "route": "leave-balances",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-balances",
+      "group": "leave",
+      "headers": [
+        "My Leave Balance HRMS Leave My Balance",
+        "My Leave Balance",
+        "HRMS Leave My Balance",
+        "HRMS Leave My Balance",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "My Balance",
+        "Year Show Run Accrual",
+        "Year",
+        "Year"
+      ],
+      "breadcrumb": "My Leave Balance HRMS Leave My Balance Year Show Run Accrual",
+      "tabs": [],
+      "buttons": [
+        "Show",
+        "Run Accrual"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Leave Type",
+            "Opening",
+            "Accrued",
+            "Carried Fwd",
+            "Used",
+            "Encashed",
+            "Reserved",
+            "Available",
+            "Liability"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No balances found."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Balance Detail — 2026"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Leave Balance HRMS Leave My Balance Year Show Run Accrual No balances found for 2026. Balance Detail — 2026 Sl.No Leave Type Opening Accrued Carried Fwd Used Encashed Reserved Available Liability No balances found. Balances are computed live from the leave ledger. Liability = encashable available balance × (active monthly gross ÷ 30)."
+    },
+    {
+      "route": "leave-calendar",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-calendar",
+      "group": "leave",
+      "headers": [
+        "Leave Calendar",
+        "HRMS Leave Management Leave Calendar",
+        "HRMS Leave Management Leave Calendar",
+        "HRMS",
+        "HRMS",
+        "Leave Management",
+        "Leave Management",
+        "Leave Calendar"
+      ],
+      "breadcrumb": "Leave Calendar HRMS Leave Management Leave Calendar",
+      "tabs": [],
+      "buttons": [
+        "Show"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Type a name to filter…"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Leave Calendar HRMS Leave Management Leave Calendar Branch All Branches Department All Departments Employee Show Loading calendar…"
+    },
+    {
+      "route": "leave-delegation",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-delegation",
+      "group": "leave",
+      "headers": [
+        "Leave Approval Delegation",
+        "HRMS Delegation",
+        "HRMS Delegation",
+        "HRMS",
+        "HRMS",
+        "Delegation"
+      ],
+      "breadcrumb": "Leave Approval Delegation HRMS Delegation",
+      "tabs": [],
+      "buttons": [],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "From",
+            "To",
+            "From Date",
+            "To Date",
+            "Active",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No delegations."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Active & Past Delegations"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Approval Delegation HRMS Delegation Active & Past Delegations SlNo From To From Date To Date Active Action No delegations."
+    },
+    {
+      "route": "leave-encashment",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-encashment",
+      "group": "leave",
+      "headers": [
+        "Leave Encashment",
+        "HRMS Encashment",
+        "HRMS Encashment",
+        "HRMS",
+        "HRMS",
+        "Encashment"
+      ],
+      "breadcrumb": "Leave Encashment HRMS Encashment",
+      "tabs": [],
+      "buttons": [
+        "Submit Request"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Leave Type",
+            "Days",
+            "Amount",
+            "Status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No requests."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "input",
+          "type": "number"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Request Encashment",
+        "My Requests"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Encashment HRMS Encashment Request Encashment Leave Type Choose No leave type in your policy allows encashment. Days Per Day Rate Amount: 0 Submit Request My Requests SlNo Leave Type Days Amount Status No requests."
+    },
+    {
+      "route": "leave-encashment-approval",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-encashment-approval",
+      "group": "leave",
+      "headers": [
+        "Encashment Approvals",
+        "HRMS Leave Encashment Approvals",
+        "HRMS Leave Encashment Approvals",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "Encashment Approvals"
+      ],
+      "breadcrumb": "Encashment Approvals HRMS Leave Encashment Approvals",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Employee",
+            "Leave Type",
+            "Days",
+            "Amount",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No requests."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Encashment Requests"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Encashment Approvals HRMS Leave Encashment Approvals Encashment Requests Filter SlNo Employee Leave Type Days Amount Status Action No requests."
+    },
+    {
+      "route": "leave-ledger",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-ledger",
+      "group": "leave",
+      "headers": [
+        "Leave Ledger HRMS Leave Ledger",
+        "Leave Ledger",
+        "HRMS Leave Ledger",
+        "HRMS Leave Ledger",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "Ledger",
+        "Filter Export",
+        "Filter",
+        "Export"
+      ],
+      "breadcrumb": "Leave Ledger HRMS Leave Ledger Filter Export",
+      "tabs": [],
+      "buttons": [
+        "Filter",
+        "Export"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Date",
+            "Employee",
+            "Leave Type",
+            "Txn",
+            "Days",
+            "Source Ref",
+            "Balance after",
+            "Posted by"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No transactions."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "All (search name / ID)"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Leave Ledger HRMS Leave Ledger Filter Export Append-only — rows are never edited or deleted. Corrections post a new Adjust or Reverse entry referencing the original. Date Employee Leave Type Txn Days Source Ref Balance after Posted by No transactions."
+    },
+    {
+      "route": "leave-patterns",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-patterns",
+      "group": "leave",
+      "headers": [
+        "Leave Patterns HRMS Leave Patterns",
+        "Leave Patterns",
+        "HRMS Leave Patterns",
+        "HRMS Leave Patterns",
+        "HRMS Leave Patterns",
+        "HRMS",
+        "HRMS",
+        "Leave Patterns"
+      ],
+      "breadcrumb": "Leave Patterns HRMS Leave Patterns",
+      "tabs": [],
+      "buttons": [
+        "New Leave Pattern"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Leave Pattern Name",
+            "Details",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Leave Patterns"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Patterns HRMS Leave Patterns Leave Patterns New Leave Pattern Sl.No Leave Pattern Name Details Action"
+    },
+    {
+      "route": "leave-policy",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-policy",
+      "group": "leave",
+      "headers": [
+        "Leave Policy Configuration",
+        "HRMS Leave Policy",
+        "HRMS Leave Policy",
+        "HRMS",
+        "HRMS",
+        "Leave Policy"
+      ],
+      "breadcrumb": "Leave Policy Configuration HRMS Leave Policy",
+      "tabs": [],
+      "buttons": [],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Choose A Leave Pattern"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Policy Configuration HRMS Leave Policy Choose A Leave Pattern Leave Pattern Choose"
+    },
+    {
+      "route": "leave-reports",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-reports",
+      "group": "leave",
+      "headers": [
+        "Leave Reports",
+        "HRMS Leave Management Reports",
+        "HRMS Leave Management Reports",
+        "HRMS",
+        "HRMS",
+        "Leave Management",
+        "Leave Management",
+        "Reports"
+      ],
+      "breadcrumb": "Leave Reports HRMS Leave Management Reports",
+      "tabs": [],
+      "buttons": [
+        "Register",
+        "Balance",
+        "Utilization",
+        "Filter"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Leave Register"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Reports HRMS Leave Management Reports Report Hub Pick a report, set your filters, then run. Register Balance Utilization Year Branch All Branches Main Branch Chennai Department All Departments 2D DigitalMarkrting Dotnet Sales SEO Leave Type All Types Casual leave Earned leave Maternity leave Medical leave Paternity leave Filter Leave Register Choose a report type and click Run Report."
+    },
+    {
+      "route": "leave-request-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-request-list",
+      "group": "leave",
+      "headers": [
+        "Leave Request HRMS Leave Request",
+        "Leave Request",
+        "HRMS Leave Request",
+        "HRMS Leave Request",
+        "HRMS Leave Request",
+        "HRMS",
+        "HRMS",
+        "Leave Request"
+      ],
+      "breadcrumb": "Leave Request HRMS Leave Request",
+      "tabs": [],
+      "buttons": [
+        "New Leave Request"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Leave Type",
+            "Start Date",
+            "End Date",
+            "Approval Status",
+            "Remarks",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Leave Request List"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Request HRMS Leave Request Leave Request List New Leave Request Sl.No Leave Type Start Date End Date Approval Status Remarks Action"
+    },
+    {
+      "route": "leave-types",
+      "finalUrl": "https://hrms-erp.progbiz.in/leave-types",
+      "group": "leave",
+      "headers": [
+        "Leave Types HRMS Leave Types",
+        "Leave Types",
+        "HRMS Leave Types",
+        "HRMS Leave Types",
+        "HRMS Leave Types",
+        "HRMS",
+        "HRMS",
+        "Leave Types"
+      ],
+      "breadcrumb": "Leave Types HRMS Leave Types",
+      "tabs": [],
+      "buttons": [
+        "Save",
+        "Clear"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Leave Type Name",
+            "Is Support Half Day",
+            "Is Need Document",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "leavetypename"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "checkebox-sb"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "checkebox-sb"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Leave Types",
+        "Add LeaveType"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Leave Types HRMS Leave Types Leave Types SlNo Leave Type Name Is Support Half Day Is Need Document Action Add LeaveType Leave Type Name* Support HalfDay Need Document Save Clear"
+    },
+    {
+      "route": "my-leave-policy",
+      "finalUrl": "https://hrms-erp.progbiz.in/my-leave-policy",
+      "group": "leave",
+      "headers": [
+        "My Leave Policy HRMS Leave My Policy",
+        "My Leave Policy",
+        "HRMS Leave My Policy",
+        "HRMS Leave My Policy",
+        "HRMS",
+        "HRMS",
+        "Leave",
+        "Leave",
+        "My Policy",
+        "Year Show",
+        "Year",
+        "Year"
+      ],
+      "breadcrumb": "My Leave Policy HRMS Leave My Policy Year Show",
+      "tabs": [],
+      "buttons": [
+        "Show"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "My Leave Policy HRMS Leave My Policy Year Show No leave policy is assigned to you yet. Once HR assigns a leave pattern, your leave types, balances and rules appear here."
+    }
+  ],
+  "attendance": [
+    {
+      "route": "add-visit-report",
+      "finalUrl": "https://hrms-erp.progbiz.in/add-visit-report",
+      "group": "attendance",
+      "headers": [
+        "Add Vist Report HRMS Add visit report",
+        "Add Vist Report",
+        "HRMS Add visit report",
+        "HRMS Add visit report",
+        "HRMS Add visit report",
+        "HRMS",
+        "HRMS",
+        "Add visit report"
+      ],
+      "breadcrumb": "Add Vist Report HRMS Add visit report",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL.No",
+            "IDNumber",
+            "Employee Name",
+            "CheckIn Time",
+            "CheckOut Time",
+            "Punch Type",
+            "Site Name",
+            "Purpose",
+            "Site Image",
+            "Mobile Location",
+            "Location"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Attendance Log"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Add Vist Report HRMS Add visit report Attendance Log Filter SL.No IDNumber Employee Name CheckIn Time CheckOut Time Punch Type Site Name Purpose Site Image Mobile Location Location"
+    },
+    {
+      "route": "approval-absent",
+      "finalUrl": "https://hrms-erp.progbiz.in/approval-absent",
+      "group": "attendance",
+      "headers": [
+        "Approval Absent HRMS Approval Absent",
+        "Approval Absent",
+        "HRMS Approval Absent",
+        "HRMS Approval Absent",
+        "HRMS Approval Absent",
+        "HRMS",
+        "HRMS",
+        "Approval Absent"
+      ],
+      "breadcrumb": "Approval Absent HRMS Approval Absent",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL NO",
+            "IDNumber",
+            "Employee Name",
+            "Branch",
+            "Department",
+            "Date",
+            "Period Name",
+            "Period Type",
+            "Hours Employee Must Work",
+            "Approval"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Approval Absent"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Approval Absent HRMS Approval Absent Approval Absent Filter SL NO IDNumber Employee Name Branch Department Date Period Name Period Type Hours Employee Must Work Approval"
+    },
+    {
+      "route": "approval-absent-report",
+      "finalUrl": "https://hrms-erp.progbiz.in/approval-absent-report",
+      "group": "attendance",
+      "headers": [
+        "Approval Absent Report HRMS Approval Absent Report",
+        "Approval Absent Report",
+        "HRMS Approval Absent Report",
+        "HRMS Approval Absent Report",
+        "HRMS Approval Absent Report",
+        "HRMS",
+        "HRMS",
+        "Approval Absent Report"
+      ],
+      "breadcrumb": "Approval Absent Report HRMS Approval Absent Report",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL No",
+            "IDNumber",
+            "Employee Name",
+            "Date",
+            "Period Name",
+            "Start Time",
+            "End Time",
+            "Balance Hours",
+            "Fixed Hours",
+            "Fixed Date",
+            "Remarks",
+            "Final Hours",
+            "Details",
+            "Delete"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Approval Absent Report"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Approval Absent Report HRMS Approval Absent Report Approval Absent Report Filter SL No IDNumber Employee Name Date Period Name Start Time End Time Balance Hours Fixed Hours Fixed Date Remarks Final Hours Details Delete"
+    },
+    {
+      "route": "approval-operation",
+      "finalUrl": "https://hrms-erp.progbiz.in/approval-operation",
+      "group": "attendance",
+      "headers": [
+        "Approval Operation HRMS Approval Operation",
+        "Approval Operation",
+        "HRMS Approval Operation",
+        "HRMS Approval Operation",
+        "HRMS Approval Operation",
+        "HRMS",
+        "HRMS",
+        "Approval Operation"
+      ],
+      "breadcrumb": "Approval Operation HRMS Approval Operation",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL No",
+            "IDNumber",
+            "Employee Name",
+            "Branch",
+            "Date",
+            "Entry Time",
+            "Exit Time",
+            "Status",
+            "Period Name",
+            "Hours Employee Must Work",
+            "Worked Hours",
+            "Over Time Hours",
+            "Balance Hours",
+            "Entry Late Miutes",
+            "Exit Early Miutes",
+            "Approval"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Attendance Log"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Approval Operation HRMS Approval Operation Attendance Log Filter SL No IDNumber Employee Name Branch Date Entry Time Exit Time Status Period Name Hours Employee Must Work Worked Hours Over Time Hours Balance Hours Entry Late Miutes Exit Early Miutes Approval"
+    },
+    {
+      "route": "approval-operation-report",
+      "finalUrl": "https://hrms-erp.progbiz.in/approval-operation-report",
+      "group": "attendance",
+      "headers": [
+        "Approval Operation Report HRMS Approval Operation Report",
+        "Approval Operation Report",
+        "HRMS Approval Operation Report",
+        "HRMS Approval Operation Report",
+        "HRMS Approval Operation Report",
+        "HRMS",
+        "HRMS",
+        "Approval Operation Report"
+      ],
+      "breadcrumb": "Approval Operation Report HRMS Approval Operation Report",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL No",
+            "IDNumber",
+            "Employee Name",
+            "Date",
+            "Entry Time",
+            "Exit Time",
+            "Balance Hours",
+            "Fixed Hours",
+            "Fixed Date",
+            "Discount from Permission Hours",
+            "Remarks",
+            "Final Hours",
+            "Details",
+            "Delete"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Approval Operation Report"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Approval Operation Report HRMS Approval Operation Report Approval Operation Report Filter SL No IDNumber Employee Name Date Entry Time Exit Time Balance Hours Fixed Hours Fixed Date Discount from Permission Hours Remarks Final Hours Details Delete"
+    },
+    {
+      "route": "attendance-finalization",
+      "finalUrl": "https://hrms-erp.progbiz.in/attendance-finalization",
+      "group": "attendance",
+      "headers": [
+        "Attendance Finalization Attendance Finalization",
+        "Attendance Finalization",
+        "Attendance Finalization",
+        "Attendance Finalization",
+        "Attendance",
+        "Attendance",
+        "Finalization"
+      ],
+      "breadcrumb": "Attendance Finalization Attendance Finalization",
+      "tabs": [],
+      "buttons": [
+        "Finalize"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Period",
+            "Scope",
+            "Target",
+            "Cut-Off",
+            "Pending",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search branch, department or employee..."
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Start / Refresh A Pay-Cycle Run",
+        "Runs"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Attendance Finalization Attendance Finalization Start / Refresh A Pay-Cycle Run Finalize Month* January February March April May June July August September October November December Year* 2023 2024 2025 2026 2027 Scope* Company Branch Department Employee Target * -- select branch -- Cut-Off* Runs Sl.No Period Scope Target Cut-Off Pending Status Action"
+    },
+    {
+      "route": "attendance-log",
+      "finalUrl": "https://hrms-erp.progbiz.in/attendance-log",
+      "group": "attendance",
+      "headers": [
+        "Attendance Report HRMS Attendance Log",
+        "Attendance Report",
+        "HRMS Attendance Log",
+        "HRMS Attendance Log",
+        "HRMS Attendance Log",
+        "HRMS",
+        "HRMS",
+        "Attendance Log"
+      ],
+      "breadcrumb": "Attendance Report HRMS Attendance Log",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL.No",
+            "IDNumber",
+            "Employee Name",
+            "Date",
+            "Period",
+            "Employee Status",
+            "Entry Time",
+            "Exit Time",
+            "Worked Hours",
+            "Over Time Hours",
+            "Balance Working Hours",
+            "Must Work Hour",
+            "Fixed Hours",
+            "Total Hours",
+            "Session Details"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Attendance Log"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Attendance Report HRMS Attendance Log Attendance Log Filter SL.No IDNumber Employee Name Date Period Employee Status Entry Time Exit Time Worked Hours Over Time Hours Balance Working Hours Must Work Hour Fixed Hours Total Hours Session Details"
+    },
+    {
+      "route": "attendance-report-pack",
+      "finalUrl": "https://hrms-erp.progbiz.in/attendance-report-pack",
+      "group": "attendance",
+      "headers": [
+        "Attendance Report Pack Reports Attendance",
+        "Attendance Report Pack",
+        "Reports Attendance",
+        "Reports Attendance",
+        "Reports",
+        "Reports",
+        "Attendance"
+      ],
+      "breadcrumb": "Attendance Report Pack Reports Attendance",
+      "tabs": [],
+      "buttons": [
+        "Export",
+        "Previous",
+        "Next"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Daily Register"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Attendance Report Pack Reports Attendance Daily Register Export No records. Rows per page 50 100 250 500 Page 1 Previous Next"
+    },
+    {
+      "route": "data-from-device",
+      "finalUrl": "https://hrms-erp.progbiz.in/data-from-device",
+      "group": "attendance",
+      "headers": [
+        "Data from device HRMS Data from device",
+        "Data from device",
+        "HRMS Data from device",
+        "HRMS Data from device",
+        "HRMS Data from device",
+        "HRMS",
+        "HRMS",
+        "Data from device"
+      ],
+      "breadcrumb": "Data from device HRMS Data from device",
+      "tabs": [],
+      "buttons": [
+        "Filter"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SL.No",
+            "ID Number",
+            "Employee Name",
+            "Punching Time",
+            "Punch Type",
+            "Recognition Type",
+            "Is Registered In System",
+            "Device Name",
+            "Punching Sync Time",
+            "Location",
+            "Image"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Data From Device"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Data from device HRMS Data from device Data From Device Filter SL.No ID Number Employee Name Punching Time Punch Type Recognition Type Is Registered In System Device Name Punching Sync Time Location Image"
+    },
+    {
+      "route": "geofences",
+      "finalUrl": "https://hrms-erp.progbiz.in/geofences",
+      "group": "attendance",
+      "headers": [
+        "Geofence Locations Attendance Geofence Locations",
+        "Geofence Locations",
+        "Attendance Geofence Locations",
+        "Attendance Geofence Locations",
+        "Attendance",
+        "Attendance",
+        "Geofence Locations",
+        "Add Location"
+      ],
+      "breadcrumb": "Geofence Locations Attendance Geofence Locations Add Location",
+      "tabs": [],
+      "buttons": [
+        "Add Location"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Scope",
+            "Applies To",
+            "Name",
+            "Lat",
+            "Long",
+            "Radius",
+            "Status",
+            "Active"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search location or target..."
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Locations"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Geofence Locations Attendance Geofence Locations Add Location Locations Sl.No Scope Applies To Name Lat Long Radius Status Active"
+    },
+    {
+      "route": "overtime-approval",
+      "finalUrl": "https://hrms-erp.progbiz.in/overtime-approval",
+      "group": "attendance",
+      "headers": [
+        "Overtime Approval Attendance Overtime Approval",
+        "Overtime Approval",
+        "Attendance Overtime Approval",
+        "Attendance Overtime Approval",
+        "Attendance",
+        "Attendance",
+        "Overtime Approval"
+      ],
+      "breadcrumb": "Overtime Approval Attendance Overtime Approval",
+      "tabs": [],
+      "buttons": [],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Employee",
+            "Date",
+            "Shift",
+            "OT Min",
+            "Eligible",
+            "Payout",
+            "Status",
+            "Exported",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search employee or shift..."
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Overtime Queue"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Overtime Approval Attendance Overtime Approval Overtime Queue Sl.No Employee Date Shift OT Min Eligible Payout Status Exported Action"
+    },
+    {
+      "route": "regularization",
+      "finalUrl": "https://hrms-erp.progbiz.in/regularization",
+      "group": "attendance",
+      "headers": [
+        "Regularization Attendance Regularization",
+        "Regularization",
+        "Attendance Regularization",
+        "Attendance Regularization",
+        "Attendance",
+        "Attendance",
+        "Regularization"
+      ],
+      "breadcrumb": "Regularization Attendance Regularization",
+      "tabs": [],
+      "buttons": [
+        "Submit",
+        "Clear"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Employee",
+            "Date",
+            "Type",
+            "In",
+            "Out",
+            "Reason",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "datetime-local"
+        },
+        {
+          "tag": "input",
+          "type": "datetime-local"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea"
+        },
+        {
+          "tag": "input",
+          "type": "file"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search employee or reason..."
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Raise A Correction",
+        "Requests"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Regularization Attendance Regularization Raise A Correction Submit Clear Employee* -- select -- Date* Type* Missed Punch Wrong Punch Missed Check In Missed Check Out Manual Entry In Time Out Time Reason Attachment Requests Sl.No Employee Date Type In Out Reason Status Action"
+    },
+    {
+      "route": "shift-roster",
+      "finalUrl": "https://hrms-erp.progbiz.in/shift-roster",
+      "group": "attendance",
+      "headers": [
+        "Shift Roster Attendance Shift Roster",
+        "Shift Roster",
+        "Attendance Shift Roster",
+        "Attendance Shift Roster",
+        "Attendance",
+        "Attendance",
+        "Shift Roster"
+      ],
+      "breadcrumb": "Shift Roster Attendance Shift Roster",
+      "tabs": [],
+      "buttons": [
+        "Assign"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Scope",
+            "Target",
+            "Shift",
+            "From",
+            "To",
+            "Active"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search scope or shift..."
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "activeOnlyCheck"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Assign A Shift",
+        "Current Assignments"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Shift Roster Attendance Shift Roster Assign A Shift Assign Shift* -- select -- Scope* Company Branch Department Employee Target Effective From* Effective To Pick the branch, department or employee for this assignment. The most-specific assignment wins when a shift is resolved. Sub-departments inherit the parent department's shift unless they have an assignment of their own. Current Assignments Sl.No Scope Target Shift From To Active"
+    },
+    {
+      "route": "shifts",
+      "finalUrl": "https://hrms-erp.progbiz.in/shifts",
+      "group": "attendance",
+      "headers": [
+        "Shifts Attendance Shifts",
+        "Shifts",
+        "Attendance Shifts",
+        "Attendance Shifts",
+        "Attendance",
+        "Attendance",
+        "Shifts"
+      ],
+      "breadcrumb": "Shifts Attendance Shifts",
+      "tabs": [],
+      "buttons": [
+        "New Shift"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Shift Name",
+            "Type",
+            "Timing",
+            "Night",
+            "Active",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search by shift name"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Shift Definitions"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Shifts Attendance Shifts Shift Definitions New Shift Sl.No Shift Name Type Timing Night Active Action"
+    },
+    {
+      "route": "timesheet",
+      "finalUrl": "https://hrms-erp.progbiz.in/timesheet",
+      "group": "attendance",
+      "headers": [
+        "Timesheet Attendance Timesheet",
+        "Timesheet",
+        "Attendance Timesheet",
+        "Attendance Timesheet",
+        "Attendance",
+        "Attendance",
+        "Timesheet"
+      ],
+      "breadcrumb": "Timesheet Attendance Timesheet",
+      "tabs": [],
+      "buttons": [],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Date",
+            "Employee",
+            "Shift",
+            "Status",
+            "Attendance Hrs",
+            "Task Hrs",
+            "Tasks"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search employee..."
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Daily Worked Hours Vs Task Hours"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Timesheet Attendance Timesheet Daily Worked Hours Vs Task Hours Sl.No Date Employee Shift Status Attendance Hrs Task Hrs Tasks"
+    }
+  ],
+  "core-hr": [
+    {
+      "route": "approval/config",
+      "finalUrl": "https://hrms-erp.progbiz.in/approval/config",
+      "group": "core-hr",
+      "headers": [
+        "Approval Configuration Workflow Approval Config",
+        "Approval Configuration",
+        "Workflow Approval Config",
+        "Workflow Approval Config",
+        "Workflow",
+        "Workflow",
+        "Approval Config"
+      ],
+      "breadcrumb": "Approval Configuration Workflow Approval Config",
+      "tabs": [],
+      "buttons": [
+        "+ Add level",
+        "Save Workflow"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Type",
+            "Name",
+            "Approval chain"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No workflows configured yet."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "e.g. Long Leave Approval"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "cfgDefault"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "New Workflow",
+        "Configured Workflows"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Approval Configuration Workflow Approval Config New Workflow Approval Type -- Select type -- Salary Revision Leave Request Expense Claim Policy Publish Job Requisition Offer Compensation Cycle Document Verification Benefit Enrollment Attendance Regularization Overtime Material Purchase Request Stock Transfer Supplier PO Sales Order Quotation Credit Limit Override Sales Return Profile Change Request Com Off Request Encashment Request Geo Fence Request Probation Decision Workflow Name Shown when a section (e.g. a leave pattern) picks which workflow to use. You can define several per type. Default for this type (used when a document doesn't pick a specific workflow) Approval Levels + Add level No levels = direct (auto-approve, no approval step). Add one or more levels for a chain. Save Workflow Configured Workflows Type Name Approval chain No workflows configured yet."
+    },
+    {
+      "route": "approvals",
+      "finalUrl": "https://hrms-erp.progbiz.in/approvals",
+      "group": "core-hr",
+      "headers": [
+        "My Approvals Workflow Pending Approvals",
+        "My Approvals",
+        "Workflow Pending Approvals",
+        "Workflow Pending Approvals",
+        "Workflow",
+        "Workflow",
+        "Pending Approvals",
+        "Refresh"
+      ],
+      "breadcrumb": "My Approvals Workflow Pending Approvals Refresh",
+      "tabs": [
+        "Awaiting my decision (0)",
+        "My requests",
+        "History"
+      ],
+      "buttons": [
+        "Refresh"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Type",
+            "Details",
+            "Level",
+            "As",
+            "Raised",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "Nothing awaiting your approval."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Awaiting My Decision (0)"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Approvals Workflow Pending Approvals Refresh Awaiting my decision (0) My requests History Awaiting My Decision (0) Type Details Level As Raised Action Nothing awaiting your approval."
+    },
+    {
+      "route": "employee-deduction",
+      "finalUrl": "https://hrms-erp.progbiz.in/employee-deduction",
+      "group": "core-hr",
+      "headers": [
+        "Employee Deduction HRMS Employee Deduction",
+        "Employee Deduction",
+        "HRMS Employee Deduction",
+        "HRMS Employee Deduction",
+        "HRMS Employee Deduction",
+        "HRMS",
+        "HRMS",
+        "Employee Deduction"
+      ],
+      "breadcrumb": "Employee Deduction HRMS Employee Deduction",
+      "tabs": [],
+      "buttons": [
+        "Save",
+        "Cancel"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "branch"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "employee"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "id": "enquiry-date",
+          "placeholder": "Enter Date"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "building-type",
+          "placeholder": "Enter deduction type and search"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "employee"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "amount"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "id": "details-text-area"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Employee Deduction"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Employee Deduction HRMS Employee Deduction Employee Deduction Branch Choose Staff Choose Date Deduction Type * Pay Using Choose Amount : Details Save Cancel"
+    },
+    {
+      "route": "employee-deduction-report",
+      "finalUrl": "https://hrms-erp.progbiz.in/employee-deduction-report",
+      "group": "core-hr",
+      "headers": [
+        "Employee Deduction Reports HRMS Reports Employee Deduction Reports",
+        "Employee Deduction Reports",
+        "HRMS Reports Employee Deduction Reports",
+        "HRMS Reports Employee Deduction Reports",
+        "HRMS Reports Employee Deduction Reports",
+        "HRMS",
+        "HRMS",
+        "Reports",
+        "Employee Deduction Reports"
+      ],
+      "breadcrumb": "Employee Deduction Reports HRMS Reports Employee Deduction Reports",
+      "tabs": [],
+      "buttons": [
+        "View Report"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "report-assignee"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "report-assignee"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "timePeriodSelect"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Employee Deduction Reports HRMS Reports Employee Deduction Reports Deduction Type All Staff All Period Choose This Week This Month This Year Custom View Report"
+    },
+    {
+      "route": "employee-remark",
+      "finalUrl": "https://hrms-erp.progbiz.in/employee-remark",
+      "group": "core-hr",
+      "headers": [
+        "Employee Deduction HRMS Employee Deduction",
+        "Employee Deduction",
+        "HRMS Employee Deduction",
+        "HRMS Employee Deduction",
+        "HRMS Employee Deduction",
+        "HRMS",
+        "HRMS",
+        "Employee Deduction"
+      ],
+      "breadcrumb": "Employee Deduction HRMS Employee Deduction",
+      "tabs": [],
+      "buttons": [
+        "Save",
+        "Cancel"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "branch"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "employee"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "id": "enquiry-date",
+          "placeholder": "Enter Date"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "id": "details-text-area"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Employee Deduction"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Employee Deduction HRMS Employee Deduction Employee Deduction Branch Choose Staff Choose Date Details Save Cancel"
+    },
+    {
+      "route": "employee-remark-report",
+      "finalUrl": "https://hrms-erp.progbiz.in/employee-remark-report",
+      "group": "core-hr",
+      "headers": [
+        "Employee Remark Reports HRMS Reports Employee Remark Reports",
+        "Employee Remark Reports",
+        "HRMS Reports Employee Remark Reports",
+        "HRMS Reports Employee Remark Reports",
+        "HRMS Reports Employee Remark Reports",
+        "HRMS",
+        "HRMS",
+        "Reports",
+        "Employee Remark Reports"
+      ],
+      "breadcrumb": "Employee Remark Reports HRMS Reports Employee Remark Reports",
+      "tabs": [],
+      "buttons": [
+        "View Report"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "report-assignee"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "timePeriodSelect"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Employee Remark Reports HRMS Reports Employee Remark Reports Staff All Period Choose This Week This Month This Year Custom View Report"
+    },
+    {
+      "route": "employee-salary-process",
+      "finalUrl": "https://hrms-erp.progbiz.in/employee-salary-process",
+      "group": "core-hr",
+      "headers": [
+        "Employee Salary Process HRMS Employee Salary Process",
+        "Employee Salary Process",
+        "HRMS Employee Salary Process",
+        "HRMS Employee Salary Process",
+        "HRMS Employee Salary Process",
+        "HRMS",
+        "HRMS",
+        "Employee Salary Process"
+      ],
+      "breadcrumb": "Employee Salary Process HRMS Employee Salary Process",
+      "tabs": [],
+      "buttons": [
+        "Save"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Staff Name",
+            "Basic Salary",
+            "No of Leave",
+            "Payable Amount"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No Data"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "assignedToBranch"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "narration-typ"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "narration-typ"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Employee Salary Process"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Employee Salary Process HRMS Employee Salary Process Employee Salary Process Branch All Salary Year : Salary Month : January February March April May June July August September October November December Staff Name Basic Salary No of Leave Payable Amount No Data Save"
+    },
+    {
+      "route": "employees",
+      "finalUrl": "https://hrms-erp.progbiz.in/employees",
+      "group": "core-hr",
+      "headers": [
+        "Employees HRMS Employees",
+        "Employees",
+        "HRMS Employees",
+        "HRMS Employees",
+        "HRMS Employees",
+        "HRMS",
+        "HRMS",
+        "Employees"
+      ],
+      "breadcrumb": "Employees HRMS Employees",
+      "tabs": [],
+      "buttons": [
+        "Filter",
+        "New Employee"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Employee Code",
+            "Employee Name",
+            "Department Name",
+            "Designation",
+            "Status",
+            "Actions"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "incl-archived"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Employees"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Employees HRMS Employees Employees Include archived Filter New Employee Sl.No Employee Code Employee Name Department Name Designation Status Actions"
+    },
+    {
+      "route": "hrms/probation",
+      "finalUrl": "https://hrms-erp.progbiz.in/hrms/probation",
+      "group": "core-hr",
+      "headers": [
+        "Probation Dashboard HRMS Probation",
+        "Probation Dashboard",
+        "HRMS Probation",
+        "HRMS Probation",
+        "HRMS",
+        "HRMS",
+        "Probation",
+        "Report Templates Start Probation",
+        "Report",
+        "Templates",
+        "Start Probation"
+      ],
+      "breadcrumb": "Probation Dashboard HRMS Probation Report Templates Start Probation",
+      "tabs": [],
+      "buttons": [
+        "Report",
+        "Templates",
+        "Start Probation"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Employee",
+            "Branch",
+            "Start",
+            "End",
+            "Reviews",
+            "Next Review",
+            "Days Left",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No one on probation."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [
+        {
+          "text": "Report",
+          "href": "/hrms/probation-report"
+        },
+        {
+          "text": "Templates",
+          "href": "/hrms/probation-templates"
+        }
+      ],
+      "cards": [
+        "Employees On Probation"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Probation Dashboard HRMS Probation Report Templates Start Probation 0 On Probation 0 Reviews Due (7d) 0 Overdue Reviews 0 Ending Soon (30d) Employees On Probation Employee Branch Start End Reviews Next Review Days Left Action No one on probation."
+    },
+    {
+      "route": "hrms/probation-report",
+      "finalUrl": "https://hrms-erp.progbiz.in/hrms/probation-report",
+      "group": "core-hr",
+      "headers": [
+        "Probation Report HRMS Probation Report",
+        "Probation Report",
+        "HRMS Probation Report",
+        "HRMS Probation Report",
+        "HRMS",
+        "HRMS",
+        "Probation",
+        "Probation",
+        "Report",
+        "Export Excel"
+      ],
+      "breadcrumb": "Probation Report HRMS Probation Report Export Excel",
+      "tabs": [],
+      "buttons": [
+        "Export Excel",
+        "Run Report"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Employee",
+            "Branch",
+            "Start",
+            "End",
+            "Outcome",
+            "Reviews",
+            "Overdue",
+            "Decision"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No probations in this range."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Details (0)"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Probation Report HRMS Probation Report Export Excel From (start date) To (start date) Branch All branches Run Report 0 Total 0 On Probation 0 Confirmed 0 Terminated 0 Awaiting Approval 0 Overdue Reviews 0% Completion Rate Details (0) Employee Branch Start End Outcome Reviews Overdue Decision No probations in this range."
+    },
+    {
+      "route": "hrms/probation-templates",
+      "finalUrl": "https://hrms-erp.progbiz.in/hrms/probation-templates",
+      "group": "core-hr",
+      "headers": [
+        "Probation Templates HRMS Probation Templates",
+        "Probation Templates",
+        "HRMS Probation Templates",
+        "HRMS Probation Templates",
+        "HRMS",
+        "HRMS",
+        "Probation",
+        "Probation",
+        "Templates",
+        "New Template"
+      ],
+      "breadcrumb": "Probation Templates HRMS Probation Templates New Template",
+      "tabs": [],
+      "buttons": [
+        "New Template"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Name",
+            "Duration",
+            "Checkpoints (days)",
+            "Criteria",
+            "Default",
+            "Active",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No templates yet."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Probation Templates HRMS Probation Templates New Template Name Duration Checkpoints (days) Criteria Default Active Action No templates yet."
+    },
+    {
+      "route": "letters/generate",
+      "finalUrl": "https://hrms-erp.progbiz.in/letters/generate",
+      "group": "core-hr",
+      "headers": [
+        "Generate Letter Letter Templates Generate",
+        "Generate Letter",
+        "Letter Templates Generate",
+        "Letter Templates Generate",
+        "Letter Templates",
+        "Letter Templates",
+        "Generate"
+      ],
+      "breadcrumb": "Generate Letter Letter Templates Generate",
+      "tabs": [],
+      "buttons": [
+        "Preview",
+        "Generate"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "sendmail"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Preview"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Generate Letter Letter Templates Generate Template -- Select template -- Branch -- Select branch -- Employee -- Select employee -- Email the letter Preview Generate Preview Select a template and employee, then Preview."
+    },
+    {
+      "route": "letters/templates",
+      "finalUrl": "https://hrms-erp.progbiz.in/letters/templates",
+      "group": "core-hr",
+      "headers": [
+        "Letter Templates HRMS Letter Templates",
+        "Letter Templates",
+        "HRMS Letter Templates",
+        "HRMS Letter Templates",
+        "HRMS",
+        "HRMS",
+        "Letter Templates",
+        "Merge Fields Generate Letter New Template",
+        "Merge Fields",
+        "Generate Letter",
+        "New Template"
+      ],
+      "breadcrumb": "Letter Templates HRMS Letter Templates Merge Fields Generate Letter New Template",
+      "tabs": [],
+      "buttons": [
+        "Merge Fields",
+        "Generate Letter",
+        "New Template"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Name",
+            "Owner",
+            "Type",
+            "Subject",
+            "Active",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No templates yet."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [
+        {
+          "text": "Merge Fields",
+          "href": "/letters/fields"
+        },
+        {
+          "text": "Generate Letter",
+          "href": "/letters/generate"
+        }
+      ],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Letter Templates HRMS Letter Templates Merge Fields Generate Letter New Template Name Owner Type Subject Active Action No templates yet."
+    },
+    {
+      "route": "resigned-employees",
+      "finalUrl": "https://hrms-erp.progbiz.in/resigned-employees",
+      "group": "core-hr",
+      "headers": [
+        "Resigned Employees HRMS Resigned Employees",
+        "Resigned Employees",
+        "HRMS Resigned Employees",
+        "HRMS Resigned Employees",
+        "HRMS Resigned Employees",
+        "HRMS",
+        "HRMS",
+        "Resigned Employees"
+      ],
+      "breadcrumb": "Resigned Employees HRMS Resigned Employees",
+      "tabs": [],
+      "buttons": [],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Date",
+            "Name",
+            "Phone",
+            "Designation",
+            "Nationality"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "filter-name"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Resigned Employees"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Resigned Employees HRMS Resigned Employees Resigned Employees SlNo Date Name Phone Designation Nationality"
+    },
+    {
+      "route": "salary-revisions",
+      "finalUrl": "https://hrms-erp.progbiz.in/salary-revisions",
+      "group": "core-hr",
+      "headers": [
+        "Salary Revisions HRMS Salary Revisions",
+        "Salary Revisions",
+        "HRMS Salary Revisions",
+        "HRMS Salary Revisions",
+        "HRMS",
+        "HRMS",
+        "Salary Revisions"
+      ],
+      "breadcrumb": "Salary Revisions HRMS Salary Revisions",
+      "tabs": [],
+      "buttons": [
+        "Raise Revision"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Employee",
+            "Branch",
+            "Effective",
+            "Old",
+            "New",
+            "%",
+            "Status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No revisions yet."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Raise A Revision",
+        "Revision History"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Salary Revisions HRMS Salary Revisions Raise A Revision Branch -- Select branch -- Employee -- Select employee -- New Gross Effective Date Reason Raise Revision Revision History Employee Branch Effective Old New % Status No revisions yet."
+    },
+    {
+      "route": "sections",
+      "finalUrl": "https://hrms-erp.progbiz.in/sections",
+      "group": "core-hr",
+      "headers": [
+        "Sections HRMS Section",
+        "Sections",
+        "HRMS Section",
+        "HRMS Section",
+        "HRMS Section",
+        "HRMS",
+        "HRMS",
+        "Section"
+      ],
+      "breadcrumb": "Sections HRMS Section",
+      "tabs": [],
+      "buttons": [
+        "Save",
+        "Clear"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "SlNo",
+            "Department Name",
+            "Section Name",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "id": "sectionname"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Sections",
+        "New Section"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Sections HRMS Section Sections SlNo Department Name Section Name Action New Section Department : Choose Section Name* Save Clear"
+    },
+    {
+      "route": "upload-employee",
+      "finalUrl": "https://hrms-erp.progbiz.in/upload-employee",
+      "group": "core-hr",
+      "headers": [
+        "Employee Excel Import HRMS Upload Employee",
+        "Employee Excel Import",
+        "HRMS Upload Employee",
+        "HRMS Upload Employee",
+        "HRMS Upload Employee",
+        "HRMS",
+        "HRMS",
+        "Upload Employee"
+      ],
+      "breadcrumb": "Employee Excel Import HRMS Upload Employee",
+      "tabs": [],
+      "buttons": [
+        "Excel Rules",
+        "Upload"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "file"
+        }
+      ],
+      "selectsNg": [],
+      "links": [
+        {
+          "text": "Download Sample Excel",
+          "href": "/assets/images/EmployeeExcelImport.xlsx"
+        }
+      ],
+      "cards": [
+        "Leave Request"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Employee Excel Import HRMS Upload Employee Leave Request Upload Recipient Excel File Download Sample Excel Excel Rules Upload"
+    },
+    {
+      "route": "worker-directory",
+      "finalUrl": "https://hrms-erp.progbiz.in/worker-directory",
+      "group": "core-hr",
+      "headers": [
+        "Worker Directory HRMS Worker Directory",
+        "Worker Directory",
+        "HRMS Worker Directory",
+        "HRMS Worker Directory",
+        "HRMS",
+        "HRMS",
+        "Worker Directory",
+        "Cards Org Chart",
+        "Cards",
+        "Org Chart"
+      ],
+      "breadcrumb": "Worker Directory HRMS Worker Directory Cards Org Chart",
+      "tabs": [],
+      "buttons": [
+        "Cards",
+        "Org Chart",
+        "Search"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Name, designation or department"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Worker Directory HRMS Worker Directory Cards Org Chart Branch -- All branches -- Search Search No employees match the current filters."
+    }
+  ],
+  "recruitment": [
+    {
+      "route": "assessment-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/assessment-list",
+      "group": "recruitment",
+      "headers": [
+        "Assessments Recruitment Assessments",
+        "Assessments",
+        "Recruitment Assessments",
+        "Recruitment Assessments",
+        "Recruitment",
+        "Recruitment",
+        "Assessments"
+      ],
+      "breadcrumb": "Assessments Recruitment Assessments",
+      "tabs": [],
+      "buttons": [
+        "New Assessment"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Title",
+            "Type",
+            "Description",
+            "Max Score",
+            "Attachment",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "Loading..."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Assessment Library"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Assessments Recruitment Assessments Assessment Library New Assessment Sl.No Title Type Description Max Score Attachment Action Loading..."
+    },
+    {
+      "route": "candidate-status",
+      "finalUrl": "https://hrms-erp.progbiz.in/candidate-status",
+      "group": "recruitment",
+      "headers": [
+        "Candidate Status HRMS Settings Candidate Followup Status",
+        "Candidate Status",
+        "HRMS Settings Candidate Followup Status",
+        "HRMS Settings Candidate Followup Status",
+        "HRMS",
+        "HRMS",
+        "Settings",
+        "Settings",
+        "Candidate Followup Status"
+      ],
+      "breadcrumb": "Candidate Status HRMS Settings Candidate Followup Status",
+      "tabs": [],
+      "buttons": [
+        "Add Followup Status"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl No",
+            "Status Name",
+            "Nature",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "Loading..."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Status List"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Candidate Status HRMS Settings Candidate Followup Status Status List Add Followup Status Sl No Status Name Nature Action Loading..."
+    },
+    {
+      "route": "candidates",
+      "finalUrl": "https://hrms-erp.progbiz.in/candidates",
+      "group": "recruitment",
+      "headers": [
+        "Candidates HRMS Candidates",
+        "Candidates",
+        "HRMS Candidates",
+        "HRMS Candidates",
+        "HRMS",
+        "HRMS",
+        "Candidates",
+        "Add New",
+        "Add New",
+        "Add New"
+      ],
+      "breadcrumb": "Candidates HRMS Candidates Add New",
+      "tabs": [
+        "New 0",
+        "In Progress 0",
+        "Shortlisted 0",
+        "Selected 0",
+        "Rejected 0"
+      ],
+      "buttons": [
+        "Add New",
+        "New 0",
+        "In Progress 0",
+        "Shortlisted 0",
+        "Selected 0",
+        "Rejected 0"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Name",
+            "Email",
+            "Phone",
+            "Branch",
+            "Designation",
+            "Skills",
+            "Status",
+            "Added On",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search Name/Phone"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Candidate Name"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Phone Number"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Candidates HRMS Candidates Add New New 0 In Progress 0 Shortlisted 0 Selected 0 Rejected 0 Sl.No Name Email Phone Branch Designation Skills Status Added On Action"
+    },
+    {
+      "route": "communication-templates",
+      "finalUrl": "https://hrms-erp.progbiz.in/communication-templates",
+      "group": "recruitment",
+      "headers": [
+        "Candidate Communication Recruitment Communication Templates",
+        "Candidate Communication",
+        "Recruitment Communication Templates",
+        "Recruitment Communication Templates",
+        "Recruitment",
+        "Recruitment",
+        "Communication Templates"
+      ],
+      "breadcrumb": "Candidate Communication Recruitment Communication Templates",
+      "tabs": [],
+      "buttons": [
+        "New Template"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Name",
+            "Type",
+            "Subject",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "Loading..."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Templates"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Candidate Communication Recruitment Communication Templates Templates New Template Sl.No Name Type Subject Action Loading..."
+    },
+    {
+      "route": "current-openings",
+      "finalUrl": "https://hrms-erp.progbiz.in/current-openings",
+      "group": "recruitment",
+      "headers": [
+        "Join Our Team"
+      ],
+      "breadcrumb": "",
+      "tabs": [],
+      "buttons": [],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one",
+          "id": "selectbox"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Join Our Team Choose"
+    },
+    {
+      "route": "interview-rounds",
+      "finalUrl": "https://hrms-erp.progbiz.in/interview-rounds",
+      "group": "recruitment",
+      "headers": [
+        "Interview Rounds HRMS Settings Interview Rounds",
+        "Interview Rounds",
+        "HRMS Settings Interview Rounds",
+        "HRMS Settings Interview Rounds",
+        "HRMS",
+        "HRMS",
+        "Settings",
+        "Settings",
+        "Interview Rounds"
+      ],
+      "breadcrumb": "Interview Rounds HRMS Settings Interview Rounds",
+      "tabs": [],
+      "buttons": [
+        "Add Round"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl No",
+            "Round Name",
+            "Order",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "Loading..."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Interview Rounds"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Interview Rounds HRMS Settings Interview Rounds Interview Rounds Add Round Sl No Round Name Order Action Loading..."
+    },
+    {
+      "route": "interview-schedules",
+      "finalUrl": "https://hrms-erp.progbiz.in/interview-schedules",
+      "group": "recruitment",
+      "headers": [
+        "Interviews Recruitment Interview Schedule",
+        "Interviews",
+        "Recruitment Interview Schedule",
+        "Recruitment Interview Schedule",
+        "Recruitment",
+        "Recruitment",
+        "Interview Schedule"
+      ],
+      "breadcrumb": "Interviews Recruitment Interview Schedule",
+      "tabs": [],
+      "buttons": [
+        "Schedule Interview"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Candidate",
+            "Round",
+            "Scheduled On",
+            "Mode",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Scheduled Interviews"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Interviews Recruitment Interview Schedule Scheduled Interviews Schedule Interview Sl.No Candidate Round Scheduled On Mode Status Action"
+    },
+    {
+      "route": "job-applications-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/job-applications-list",
+      "group": "recruitment",
+      "headers": [
+        "Job Applications",
+        "Job Applications"
+      ],
+      "breadcrumb": "Job Applications",
+      "tabs": [],
+      "buttons": [],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Name",
+            "Position Applied For",
+            "Phone",
+            "Email",
+            "Details",
+            "Status",
+            "Schedule Interview",
+            "Reject"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Applicant Details"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Job Applications Applicant Details Sl.No Name Position Applied For Phone Email Details Status Schedule Interview Reject"
+    },
+    {
+      "route": "offer-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/offer-list",
+      "group": "recruitment",
+      "headers": [
+        "Offers Recruitment Offer Management",
+        "Offers",
+        "Recruitment Offer Management",
+        "Recruitment Offer Management",
+        "Recruitment",
+        "Recruitment",
+        "Offer Management"
+      ],
+      "breadcrumb": "Offers Recruitment Offer Management",
+      "tabs": [],
+      "buttons": [
+        "New Offer"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Candidate",
+            "Total CTC",
+            "Joining",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Offers"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Offers Recruitment Offer Management Offers New Offer Sl.No Candidate Total CTC Joining Status Action"
+    },
+    {
+      "route": "onboarding-pipeline",
+      "finalUrl": "https://hrms-erp.progbiz.in/onboarding-pipeline",
+      "group": "recruitment",
+      "headers": [
+        "Onboarding Pipeline HRMS Onboarding Pipeline",
+        "Onboarding Pipeline",
+        "HRMS Onboarding Pipeline",
+        "HRMS Onboarding Pipeline",
+        "HRMS",
+        "HRMS",
+        "Onboarding Pipeline",
+        "Start Onboarding"
+      ],
+      "breadcrumb": "Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding",
+      "tabs": [],
+      "buttons": [
+        "Start Onboarding"
+      ],
+      "tables": [],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding No active onboardings."
+    },
+    {
+      "route": "onboarding-templates",
+      "finalUrl": "https://hrms-erp.progbiz.in/onboarding-templates",
+      "group": "recruitment",
+      "headers": [
+        "Onboarding Templates HRMS Onboarding Templates",
+        "Onboarding Templates",
+        "HRMS Onboarding Templates",
+        "HRMS Onboarding Templates",
+        "HRMS",
+        "HRMS",
+        "Onboarding Templates",
+        "New Template"
+      ],
+      "breadcrumb": "Onboarding Templates HRMS Onboarding Templates New Template",
+      "tabs": [],
+      "buttons": [
+        "New Template"
+      ],
+      "tables": [],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Templates"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Onboarding Templates HRMS Onboarding Templates New Template Templates No templates yet. Select a template or create a new one."
+    },
+    {
+      "route": "recruitment-pipeline",
+      "finalUrl": "https://hrms-erp.progbiz.in/recruitment-pipeline",
+      "group": "recruitment",
+      "headers": [
+        "Recruitment Pipeline Recruitment Pipeline (Kanban)",
+        "Recruitment Pipeline",
+        "Recruitment Pipeline (Kanban)",
+        "Recruitment Pipeline (Kanban)",
+        "Recruitment",
+        "Recruitment",
+        "Pipeline (Kanban)",
+        "Configure Stages"
+      ],
+      "breadcrumb": "Recruitment Pipeline Recruitment Pipeline (Kanban) Configure Stages",
+      "tabs": [],
+      "buttons": [
+        "Configure Stages",
+        "Score"
+      ],
+      "tables": [],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "autoSync"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Recruitment Pipeline Recruitment Pipeline (Kanban) Configure Stages Vacancy — Select a vacancy — All vacancies Score Auto-Sync"
+    },
+    {
+      "route": "requisition-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/requisition-list",
+      "group": "recruitment",
+      "headers": [
+        "Job Requisitions Recruitment Requisitions",
+        "Job Requisitions",
+        "Recruitment Requisitions",
+        "Recruitment Requisitions",
+        "Recruitment",
+        "Recruitment",
+        "Requisitions"
+      ],
+      "breadcrumb": "Job Requisitions Recruitment Requisitions",
+      "tabs": [],
+      "buttons": [
+        "New Requisition"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Designation",
+            "Department",
+            "Positions",
+            "Type",
+            "Work Type",
+            "Status",
+            "Branch",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search designation..."
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Manpower Requests"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Job Requisitions Recruitment Requisitions Manpower Requests All Status Draft Submitted Approved Rejected Returned New Requisition Sl.No Designation Department Positions Type Work Type Status Branch Action"
+    },
+    {
+      "route": "talent-pool",
+      "finalUrl": "https://hrms-erp.progbiz.in/talent-pool",
+      "group": "recruitment",
+      "headers": [
+        "Talent Pool Recruitment Talent Pool & Archive",
+        "Talent Pool",
+        "Recruitment Talent Pool & Archive",
+        "Recruitment Talent Pool & Archive",
+        "Recruitment",
+        "Recruitment",
+        "Talent Pool & Archive"
+      ],
+      "breadcrumb": "Talent Pool Recruitment Talent Pool & Archive",
+      "tabs": [],
+      "buttons": [
+        "Search"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Name",
+            "Designation",
+            "Skills",
+            "Tags",
+            "Status",
+            "Score",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "Loading..."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Name or email"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "Talent Pool Recruitment Talent Pool & Archive Search Skill — Any — Pool Archived (talent pool) Active All Search Sl.No Name Designation Skills Tags Status Score Action Loading..."
+    },
+    {
+      "route": "vacancy-list",
+      "finalUrl": "https://hrms-erp.progbiz.in/vacancy-list",
+      "group": "recruitment",
+      "headers": [
+        "Hiring Recruitment Job Openings",
+        "Hiring",
+        "Recruitment Job Openings",
+        "Recruitment Job Openings",
+        "Recruitment Job Openings",
+        "Recruitment",
+        "Recruitment",
+        "Job Openings"
+      ],
+      "breadcrumb": "Hiring Recruitment Job Openings",
+      "tabs": [
+        "Job Openings",
+        "Candidates",
+        "Talent Pools"
+      ],
+      "buttons": [
+        "Add Job Opening"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Candidates",
+            "Job Opening",
+            "Hiring Lead",
+            "Created On",
+            "Status",
+            "Action"
+          ],
+          "rowCount": 0,
+          "firstRow": []
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Job Openings"
+      ],
+      "emptyState": "",
+      "bodySnippet": "Hiring Recruitment Job Openings Job Openings Candidates Talent Pools Job Openings 0 published · 0 total · Show Draft & Open All Open Draft On Hold Filled Cancelled Add Job Opening Candidates Job Opening Hiring Lead Created On Status Action"
+    }
+  ],
+  "ess": [
+    {
+      "route": "ess",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess",
+      "group": "ess",
+      "headers": [
+        "My Workspace Self Service Dashboard",
+        "My Workspace",
+        "Self Service Dashboard",
+        "Self Service Dashboard",
+        "Self Service",
+        "Self Service",
+        "Dashboard"
+      ],
+      "breadcrumb": "My Workspace Self Service Dashboard",
+      "tabs": [],
+      "buttons": [],
+      "tables": [],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "My Workspace Self Service Dashboard Loading your workspace..."
+    },
+    {
+      "route": "ess/attendance",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/attendance",
+      "group": "ess",
+      "headers": [
+        "My Attendance Self Service Attendance",
+        "My Attendance",
+        "Self Service Attendance",
+        "Self Service Attendance",
+        "Self Service",
+        "Self Service",
+        "Attendance"
+      ],
+      "breadcrumb": "My Attendance Self Service Attendance",
+      "tabs": [],
+      "buttons": [
+        "Show",
+        "Regularize",
+        "Raise OT"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Date",
+            "Entry",
+            "Exit",
+            "Worked (min)",
+            "OT (min)",
+            "Status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No attendance in range."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Attendance History"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Attendance Self Service Attendance Attendance History From To Show Regularize Raise OT Date Entry Exit Worked (min) OT (min) Status No attendance in range."
+    },
+    {
+      "route": "ess/documents",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/documents",
+      "group": "ess",
+      "headers": [
+        "My Documents",
+        "Self Service Documents",
+        "Self Service Documents",
+        "Self Service",
+        "Self Service",
+        "Documents"
+      ],
+      "breadcrumb": "My Documents Self Service Documents",
+      "tabs": [],
+      "buttons": [
+        "Upload"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Type",
+            "Number",
+            "Category",
+            "Expiry",
+            "Status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No documents on file."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "text"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "file"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Upload A Document",
+        "Documents"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Documents Self Service Documents Upload A Document Document Type -- Select -- Number Expiry File Upload Documents Type Number Category Expiry Status No documents on file."
+    },
+    {
+      "route": "ess/leave",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/leave",
+      "group": "ess",
+      "headers": [
+        "My Leave Self Service Leave",
+        "My Leave",
+        "Self Service Leave",
+        "Self Service Leave",
+        "Self Service",
+        "Self Service",
+        "Leave"
+      ],
+      "breadcrumb": "My Leave Self Service Leave",
+      "tabs": [],
+      "buttons": [
+        "Show",
+        "Submit Request"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Leave Type",
+            "Balance",
+            "Reserved",
+            "Available"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No balances."
+          ]
+        },
+        {
+          "headers": [
+            "Type",
+            "From",
+            "To",
+            "Days",
+            "Status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No leave requests."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "halfday"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Balances 2026",
+        "My Leave Requests 2026",
+        "Apply For Leave"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Leave Self Service Leave Balances 2026 Show Leave Type Balance Reserved Available No balances. My Leave Requests 2026 Type From To Days Status No leave requests. Apply For Leave Leave Type -- Select -- Start Date End Date Half Day Reason Submit Request"
+    },
+    {
+      "route": "ess/letters",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/letters",
+      "group": "ess",
+      "headers": [
+        "My Letters & Certificates",
+        "Self Service Letters",
+        "Self Service Letters",
+        "Self Service",
+        "Self Service",
+        "Letters"
+      ],
+      "breadcrumb": "My Letters & Certificates Self Service Letters",
+      "tabs": [],
+      "buttons": [],
+      "tables": [
+        {
+          "headers": [
+            "Letter",
+            "Type",
+            "Issued",
+            "Acknowledged"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No letters published to you."
+          ]
+        }
+      ],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Request A Letter / Certificate",
+        "Published Letters"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Letters & Certificates Self Service Letters Request A Letter / Certificate No self-service letter types are available. Published Letters Letter Type Issued Acknowledged No letters published to you."
+    },
+    {
+      "route": "ess/locations",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/locations",
+      "group": "ess",
+      "headers": [
+        "My Work Locations Self Service My Locations",
+        "My Work Locations",
+        "Self Service My Locations",
+        "Self Service My Locations",
+        "Self Service",
+        "Self Service",
+        "My Locations"
+      ],
+      "breadcrumb": "My Work Locations Self Service My Locations",
+      "tabs": [],
+      "buttons": [
+        "Use my location",
+        "Submit for approval"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Sl.No",
+            "Name",
+            "Lat",
+            "Long",
+            "Radius",
+            "Status"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            ""
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "e.g. Home, Site A"
+        },
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "input",
+          "type": "number"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search an address to move the map…"
+        }
+      ],
+      "selectsNg": [],
+      "links": [
+        {
+          "text": "Leaflet",
+          "href": "https://leafletjs.com"
+        }
+      ],
+      "cards": [
+        "Add A Work Location",
+        "My Locations"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Work Locations Self Service My Locations Add A Work Location Open this on your phone and tap Use my location to capture your exact spot with GPS, or drag the pin. Locations you add here are submitted for approval and only used for check-in once approved. Location Name* Radius (m)* Latitude* Longitude* Location on map Use my location + − Leaflet | © OpenStreetMap contributors Drag the pin (or click the map) to set the exact spot. Submit for approval My Locations Sl.No Name Lat Long Radius Status"
+    },
+    {
+      "route": "ess/payslips",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/payslips",
+      "group": "ess",
+      "headers": [
+        "My Pay",
+        "Self Service Payslips",
+        "Self Service Payslips",
+        "Self Service",
+        "Self Service",
+        "Payslips"
+      ],
+      "breadcrumb": "My Pay Self Service Payslips",
+      "tabs": [],
+      "buttons": [
+        "Show"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Period",
+            "Basic",
+            "Deductions",
+            "Net",
+            "Payable",
+            "Paid"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No payslips found."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Payslips"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Pay Self Service Payslips Payslips Show Period Basic Deductions Net Payable Paid No payslips found. Payslip PDF download is not yet available — see your HR department for a stamped copy."
+    },
+    {
+      "route": "ess/probation",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/probation",
+      "group": "ess",
+      "headers": [
+        "My Probation",
+        "Self Service Probation",
+        "Self Service Probation",
+        "Self Service",
+        "Self Service",
+        "Probation"
+      ],
+      "breadcrumb": "My Probation Self Service Probation",
+      "tabs": [],
+      "buttons": [],
+      "tables": [],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "My Probation Self Service Probation Loading…"
+    },
+    {
+      "route": "ess/profile",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/profile",
+      "group": "ess",
+      "headers": [
+        "My Profile",
+        "Self Service Profile",
+        "Self Service Profile",
+        "Self Service",
+        "Self Service",
+        "Profile"
+      ],
+      "breadcrumb": "My Profile Self Service Profile",
+      "tabs": [],
+      "buttons": [],
+      "tables": [],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [],
+      "emptyState": "",
+      "bodySnippet": "My Profile Self Service Profile"
+    },
+    {
+      "route": "ess/requests",
+      "finalUrl": "https://hrms-erp.progbiz.in/ess/requests",
+      "group": "ess",
+      "headers": [
+        "My Requests",
+        "Self Service Requests",
+        "Self Service Requests",
+        "Self Service",
+        "Self Service",
+        "Requests"
+      ],
+      "breadcrumb": "My Requests Self Service Requests",
+      "tabs": [],
+      "buttons": [],
+      "tables": [],
+      "inputs": [],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Profile Change Requests"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Requests Self Service Requests Profile Change Requests You have no change requests."
+    },
+    {
+      "route": "my-handover",
+      "finalUrl": "https://hrms-erp.progbiz.in/my-handover",
+      "group": "ess",
+      "headers": [
+        "My Duty Handover",
+        "ESS Handover",
+        "ESS Handover",
+        "ESS",
+        "ESS",
+        "Handover"
+      ],
+      "breadcrumb": "My Duty Handover ESS Handover",
+      "tabs": [],
+      "buttons": [
+        "Save",
+        "Clear"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "#",
+            "Assignee",
+            "From",
+            "To",
+            "Covers",
+            "Active",
+            "Action"
+          ],
+          "rowCount": 1,
+          "firstRow": [
+            "No handovers set up."
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select",
+          "type": "select-one"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "date"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "ca"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "id": "ct"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea"
+        }
+      ],
+      "selectsNg": [],
+      "links": [],
+      "cards": [
+        "Set Up Handover",
+        "My Handovers"
+      ],
+      "emptyState": "",
+      "bodySnippet": "My Duty Handover ESS Handover Set Up Handover While you're away, the assignee can see and act on your HRMS approvals and your assigned HRMS/recruitment tasks. Sales/CRM duties are never handed over. Assign my duties to -- Select assignee -- From To Cover my approvals Cover my HRMS tasks Note (optional) Save Clear My Handovers # Assignee From To Covers Active Action No handovers set up."
+    }
+  ]
+}

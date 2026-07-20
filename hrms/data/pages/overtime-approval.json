@@ -1,0 +1,67 @@
+{
+  "route": "overtime-approval",
+  "finalUrl": "https://hrms-erp.progbiz.in/overtime-approval",
+  "group": "attendance",
+  "headers": [
+    "Overtime Approval Attendance Overtime Approval",
+    "Overtime Approval",
+    "Attendance Overtime Approval",
+    "Attendance Overtime Approval",
+    "Attendance",
+    "Attendance",
+    "Overtime Approval"
+  ],
+  "breadcrumb": "Overtime Approval Attendance Overtime Approval",
+  "tabs": [],
+  "buttons": [],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Employee",
+        "Date",
+        "Shift",
+        "OT Min",
+        "Eligible",
+        "Payout",
+        "Status",
+        "Exported",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search employee or shift..."
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Overtime Queue"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Overtime Approval Attendance Overtime Approval Overtime Queue Sl.No Employee Date Shift OT Min Eligible Payout Status Exported Action"
+}

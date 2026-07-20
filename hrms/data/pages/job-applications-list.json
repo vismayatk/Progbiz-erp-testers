@@ -1,0 +1,37 @@
+{
+  "route": "job-applications-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/job-applications-list",
+  "group": "recruitment",
+  "headers": [
+    "Job Applications",
+    "Job Applications"
+  ],
+  "breadcrumb": "Job Applications",
+  "tabs": [],
+  "buttons": [],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Name",
+        "Position Applied For",
+        "Phone",
+        "Email",
+        "Details",
+        "Status",
+        "Schedule Interview",
+        "Reject"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Applicant Details"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Job Applications Applicant Details Sl.No Name Position Applied For Phone Email Details Status Schedule Interview Reject"
+}

@@ -1,0 +1,67 @@
+{
+  "route": "leave-ledger",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-ledger",
+  "group": "leave",
+  "headers": [
+    "Leave Ledger HRMS Leave Ledger",
+    "Leave Ledger",
+    "HRMS Leave Ledger",
+    "HRMS Leave Ledger",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "Ledger",
+    "Filter Export",
+    "Filter",
+    "Export"
+  ],
+  "breadcrumb": "Leave Ledger HRMS Leave Ledger Filter Export",
+  "tabs": [],
+  "buttons": [
+    "Filter",
+    "Export"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Date",
+        "Employee",
+        "Leave Type",
+        "Txn",
+        "Days",
+        "Source Ref",
+        "Balance after",
+        "Posted by"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No transactions."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "All (search name / ID)"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Leave Ledger HRMS Leave Ledger Filter Export Append-only — rows are never edited or deleted. Corrections post a new Adjust or Reverse entry referencing the original. Date Employee Leave Type Txn Days Source Ref Balance after Posted by No transactions."
+}

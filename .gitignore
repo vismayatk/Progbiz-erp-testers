@@ -8,6 +8,9 @@ screenshots/
 # Local secrets
 .env
 
+# Playwright auth storage-state (session artifacts — never commit)
+.auth/
+
 # Local Claude artifacts
 .claude/settings.local.json
 git_max/

@@ -1,0 +1,71 @@
+{
+  "route": "leave-approval",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-approval",
+  "group": "leave",
+  "headers": [
+    "Leave Approval Leave Leave Approval",
+    "Leave Approval",
+    "Leave Leave Approval",
+    "Leave Leave Approval",
+    "Leave Leave Approval",
+    "Leave",
+    "Leave",
+    "Leave Approval"
+  ],
+  "breadcrumb": "Leave Approval Leave Leave Approval",
+  "tabs": [],
+  "buttons": [
+    "Delegate approvals",
+    "Filter",
+    "Approve Selected",
+    "Reject Selected",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL.No",
+        "Employee Name",
+        "Leave Type",
+        "Details",
+        "Leave Status",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "checkbox"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "selectbox"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "selectbox"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "selectbox"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "custodianname"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Leave Approval"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Approval Leave Leave Approval Leave Approval Delegate approvals Filter Bulk actions— tick the rows you want, then approve or reject them together Approve Selected Reject Selected Clear SL.No Employee Name Leave Type Details Leave Status Action"
+}

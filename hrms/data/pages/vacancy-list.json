@@ -1,0 +1,51 @@
+{
+  "route": "vacancy-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/vacancy-list",
+  "group": "recruitment",
+  "headers": [
+    "Hiring Recruitment Job Openings",
+    "Hiring",
+    "Recruitment Job Openings",
+    "Recruitment Job Openings",
+    "Recruitment Job Openings",
+    "Recruitment",
+    "Recruitment",
+    "Job Openings"
+  ],
+  "breadcrumb": "Hiring Recruitment Job Openings",
+  "tabs": [
+    "Job Openings",
+    "Candidates",
+    "Talent Pools"
+  ],
+  "buttons": [
+    "Add Job Opening"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Candidates",
+        "Job Opening",
+        "Hiring Lead",
+        "Created On",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Job Openings"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Hiring Recruitment Job Openings Job Openings Candidates Talent Pools Job Openings 0 published · 0 total · Show Draft & Open All Open Draft On Hold Filled Cancelled Add Job Opening Candidates Job Opening Hiring Lead Created On Status Action"
+}

@@ -1,0 +1,50 @@
+{
+  "route": "approval-absent-report",
+  "finalUrl": "https://hrms-erp.progbiz.in/approval-absent-report",
+  "group": "attendance",
+  "headers": [
+    "Approval Absent Report HRMS Approval Absent Report",
+    "Approval Absent Report",
+    "HRMS Approval Absent Report",
+    "HRMS Approval Absent Report",
+    "HRMS Approval Absent Report",
+    "HRMS",
+    "HRMS",
+    "Approval Absent Report"
+  ],
+  "breadcrumb": "Approval Absent Report HRMS Approval Absent Report",
+  "tabs": [],
+  "buttons": [
+    "Filter"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL No",
+        "IDNumber",
+        "Employee Name",
+        "Date",
+        "Period Name",
+        "Start Time",
+        "End Time",
+        "Balance Hours",
+        "Fixed Hours",
+        "Fixed Date",
+        "Remarks",
+        "Final Hours",
+        "Details",
+        "Delete"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Approval Absent Report"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Approval Absent Report HRMS Approval Absent Report Approval Absent Report Filter SL No IDNumber Employee Name Date Period Name Start Time End Time Balance Hours Fixed Hours Fixed Date Remarks Final Hours Details Delete"
+}

@@ -1,0 +1,64 @@
+{
+  "route": "leave-attendance-sync",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-attendance-sync",
+  "group": "leave",
+  "headers": [
+    "Leave ↔ Attendance Sync HRMS Leave Attendance Sync",
+    "Leave ↔ Attendance Sync",
+    "HRMS Leave Attendance Sync",
+    "HRMS Leave Attendance Sync",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "Attendance Sync",
+    "Filter Recalculate period",
+    "Filter",
+    "Recalculate period"
+  ],
+  "breadcrumb": "Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period",
+  "tabs": [],
+  "buttons": [
+    "Filter",
+    "Recalculate period"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Leave Ref",
+        "Employee",
+        "Dates",
+        "Attendance rows",
+        "LOP",
+        "Sync status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No leave in this period."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period Leave Ref Employee Dates Attendance rows LOP Sync status No leave in this period. LOP days carry IsLOP = 1 on the attendance row and flow to payroll at finalization. Use Recalculate period after a retroactive holiday/policy change to re-run the engine for the filtered month."
+}

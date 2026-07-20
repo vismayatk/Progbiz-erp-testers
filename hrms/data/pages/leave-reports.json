@@ -1,0 +1,49 @@
+{
+  "route": "leave-reports",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-reports",
+  "group": "leave",
+  "headers": [
+    "Leave Reports",
+    "HRMS Leave Management Reports",
+    "HRMS Leave Management Reports",
+    "HRMS",
+    "HRMS",
+    "Leave Management",
+    "Leave Management",
+    "Reports"
+  ],
+  "breadcrumb": "Leave Reports HRMS Leave Management Reports",
+  "tabs": [],
+  "buttons": [
+    "Register",
+    "Balance",
+    "Utilization",
+    "Filter"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Leave Register"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Reports HRMS Leave Management Reports Report Hub Pick a report, set your filters, then run. Register Balance Utilization Year Branch All Branches Main Branch Chennai Department All Departments 2D DigitalMarkrting Dotnet Sales SEO Leave Type All Types Casual leave Earned leave Maternity leave Medical leave Paternity leave Filter Leave Register Choose a report type and click Run Report."
+}

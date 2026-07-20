@@ -1,0 +1,27 @@
+{
+  "route": "onboarding-pipeline",
+  "finalUrl": "https://hrms-erp.progbiz.in/onboarding-pipeline",
+  "group": "recruitment",
+  "headers": [
+    "Onboarding Pipeline HRMS Onboarding Pipeline",
+    "Onboarding Pipeline",
+    "HRMS Onboarding Pipeline",
+    "HRMS Onboarding Pipeline",
+    "HRMS",
+    "HRMS",
+    "Onboarding Pipeline",
+    "Start Onboarding"
+  ],
+  "breadcrumb": "Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding",
+  "tabs": [],
+  "buttons": [
+    "Start Onboarding"
+  ],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding No active onboardings."
+}

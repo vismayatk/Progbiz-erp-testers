@@ -1,0 +1,91 @@
+{
+  "route": "candidates",
+  "finalUrl": "https://hrms-erp.progbiz.in/candidates",
+  "group": "recruitment",
+  "headers": [
+    "Candidates HRMS Candidates",
+    "Candidates",
+    "HRMS Candidates",
+    "HRMS Candidates",
+    "HRMS",
+    "HRMS",
+    "Candidates",
+    "Add New",
+    "Add New",
+    "Add New"
+  ],
+  "breadcrumb": "Candidates HRMS Candidates Add New",
+  "tabs": [
+    "New 0",
+    "In Progress 0",
+    "Shortlisted 0",
+    "Selected 0",
+    "Rejected 0"
+  ],
+  "buttons": [
+    "Add New",
+    "New 0",
+    "In Progress 0",
+    "Shortlisted 0",
+    "Selected 0",
+    "Rejected 0"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Name",
+        "Email",
+        "Phone",
+        "Branch",
+        "Designation",
+        "Skills",
+        "Status",
+        "Added On",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search Name/Phone"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Candidate Name"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Phone Number"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Candidates HRMS Candidates Add New New 0 In Progress 0 Shortlisted 0 Selected 0 Rejected 0 Sl.No Name Email Phone Branch Designation Skills Status Added On Action"
+}

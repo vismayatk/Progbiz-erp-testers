@@ -1,0 +1,44 @@
+{
+  "route": "employee-deduction-report",
+  "finalUrl": "https://hrms-erp.progbiz.in/employee-deduction-report",
+  "group": "core-hr",
+  "headers": [
+    "Employee Deduction Reports HRMS Reports Employee Deduction Reports",
+    "Employee Deduction Reports",
+    "HRMS Reports Employee Deduction Reports",
+    "HRMS Reports Employee Deduction Reports",
+    "HRMS Reports Employee Deduction Reports",
+    "HRMS",
+    "HRMS",
+    "Reports",
+    "Employee Deduction Reports"
+  ],
+  "breadcrumb": "Employee Deduction Reports HRMS Reports Employee Deduction Reports",
+  "tabs": [],
+  "buttons": [
+    "View Report"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "report-assignee"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "report-assignee"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "timePeriodSelect"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Employee Deduction Reports HRMS Reports Employee Deduction Reports Deduction Type All Staff All Period Choose This Week This Month This Year Custom View Report"
+}

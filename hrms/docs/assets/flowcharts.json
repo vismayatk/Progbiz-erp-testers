@@ -1,0 +1,44 @@
+[
+  {
+    "index": 1,
+    "caption": "3. HRMS module map (flowchart)",
+    "file": "assets/flow_1.png",
+    "w": 6354,
+    "h": 1458
+  },
+  {
+    "index": 2,
+    "caption": "4.1 Hire-to-Employee (Recruitment → Onboarding → Core HR)",
+    "file": "assets/flow_2.png",
+    "w": 2987,
+    "h": 304
+  },
+  {
+    "index": 3,
+    "caption": "4.2 Daily attendance cycle",
+    "file": "assets/flow_3.png",
+    "w": 1887,
+    "h": 459
+  },
+  {
+    "index": 4,
+    "caption": "4.3 Leave lifecycle",
+    "file": "assets/flow_4.png",
+    "w": 2503,
+    "h": 412
+  },
+  {
+    "index": 5,
+    "caption": "4.4 Salary & document admin (Core HR)",
+    "file": "assets/flow_5.png",
+    "w": 1272,
+    "h": 333
+  },
+  {
+    "index": 6,
+    "caption": "4.5 Approval workflow engine (cross-cutting)",
+    "file": "assets/flow_6.png",
+    "w": 1038,
+    "h": 570
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "route": "employee-remark",
+  "finalUrl": "https://hrms-erp.progbiz.in/employee-remark",
+  "group": "core-hr",
+  "headers": [
+    "Employee Deduction HRMS Employee Deduction",
+    "Employee Deduction",
+    "HRMS Employee Deduction",
+    "HRMS Employee Deduction",
+    "HRMS Employee Deduction",
+    "HRMS",
+    "HRMS",
+    "Employee Deduction"
+  ],
+  "breadcrumb": "Employee Deduction HRMS Employee Deduction",
+  "tabs": [],
+  "buttons": [
+    "Save",
+    "Cancel"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "branch"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "employee"
+    },
+    {
+      "tag": "input",
+      "type": "date",
+      "id": "enquiry-date",
+      "placeholder": "Enter Date"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea",
+      "id": "details-text-area"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Employee Deduction"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Employee Deduction HRMS Employee Deduction Employee Deduction Branch Choose Staff Choose Date Details Save Cancel"
+}

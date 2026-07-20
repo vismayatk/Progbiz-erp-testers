@@ -1,0 +1,24 @@
+{
+  "route": "current-openings",
+  "finalUrl": "https://hrms-erp.progbiz.in/current-openings",
+  "group": "recruitment",
+  "headers": [
+    "Join Our Team"
+  ],
+  "breadcrumb": "",
+  "tabs": [],
+  "buttons": [],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "selectbox"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Join Our Team Choose"
+}

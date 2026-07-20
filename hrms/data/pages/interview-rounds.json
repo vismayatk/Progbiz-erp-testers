@@ -1,0 +1,43 @@
+{
+  "route": "interview-rounds",
+  "finalUrl": "https://hrms-erp.progbiz.in/interview-rounds",
+  "group": "recruitment",
+  "headers": [
+    "Interview Rounds HRMS Settings Interview Rounds",
+    "Interview Rounds",
+    "HRMS Settings Interview Rounds",
+    "HRMS Settings Interview Rounds",
+    "HRMS",
+    "HRMS",
+    "Settings",
+    "Settings",
+    "Interview Rounds"
+  ],
+  "breadcrumb": "Interview Rounds HRMS Settings Interview Rounds",
+  "tabs": [],
+  "buttons": [
+    "Add Round"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl No",
+        "Round Name",
+        "Order",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "Loading..."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Interview Rounds"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Interview Rounds HRMS Settings Interview Rounds Interview Rounds Add Round Sl No Round Name Order Action Loading..."
+}

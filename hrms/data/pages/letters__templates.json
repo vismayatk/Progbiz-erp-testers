@@ -1,0 +1,56 @@
+{
+  "route": "letters/templates",
+  "finalUrl": "https://hrms-erp.progbiz.in/letters/templates",
+  "group": "core-hr",
+  "headers": [
+    "Letter Templates HRMS Letter Templates",
+    "Letter Templates",
+    "HRMS Letter Templates",
+    "HRMS Letter Templates",
+    "HRMS",
+    "HRMS",
+    "Letter Templates",
+    "Merge Fields Generate Letter New Template",
+    "Merge Fields",
+    "Generate Letter",
+    "New Template"
+  ],
+  "breadcrumb": "Letter Templates HRMS Letter Templates Merge Fields Generate Letter New Template",
+  "tabs": [],
+  "buttons": [
+    "Merge Fields",
+    "Generate Letter",
+    "New Template"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Name",
+        "Owner",
+        "Type",
+        "Subject",
+        "Active",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No templates yet."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [
+    {
+      "text": "Merge Fields",
+      "href": "/letters/fields"
+    },
+    {
+      "text": "Generate Letter",
+      "href": "/letters/generate"
+    }
+  ],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Letter Templates HRMS Letter Templates Merge Fields Generate Letter New Template Name Owner Type Subject Active Action No templates yet."
+}

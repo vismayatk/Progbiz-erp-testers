@@ -1,0 +1,59 @@
+{
+  "route": "ess/documents",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/documents",
+  "group": "ess",
+  "headers": [
+    "My Documents",
+    "Self Service Documents",
+    "Self Service Documents",
+    "Self Service",
+    "Self Service",
+    "Documents"
+  ],
+  "breadcrumb": "My Documents Self Service Documents",
+  "tabs": [],
+  "buttons": [
+    "Upload"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Type",
+        "Number",
+        "Category",
+        "Expiry",
+        "Status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No documents on file."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "file"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Upload A Document",
+    "Documents"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Documents Self Service Documents Upload A Document Document Type -- Select -- Number Expiry File Upload Documents Type Number Category Expiry Status No documents on file."
+}

@@ -1,0 +1,41 @@
+{
+  "route": "holiday-assignment-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/holiday-assignment-list",
+  "group": "leave",
+  "headers": [
+    "Holiday Assignment HRMS Holiday Assignment List",
+    "Holiday Assignment",
+    "HRMS Holiday Assignment List",
+    "HRMS Holiday Assignment List",
+    "HRMS Holiday Assignment List",
+    "HRMS",
+    "HRMS",
+    "Holiday Assignment List"
+  ],
+  "breadcrumb": "Holiday Assignment HRMS Holiday Assignment List",
+  "tabs": [],
+  "buttons": [
+    "Filter",
+    "New Holiday Assignment"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Assignment Type",
+        "Assigned Target Name",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Holiday Assignment List"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Holiday Assignment HRMS Holiday Assignment List Holiday Assignment List Filter New Holiday Assignment Sl.No Assignment Type Assigned Target Name Action"
+}

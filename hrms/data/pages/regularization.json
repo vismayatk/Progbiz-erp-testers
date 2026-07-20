@@ -1,0 +1,98 @@
+{
+  "route": "regularization",
+  "finalUrl": "https://hrms-erp.progbiz.in/regularization",
+  "group": "attendance",
+  "headers": [
+    "Regularization Attendance Regularization",
+    "Regularization",
+    "Attendance Regularization",
+    "Attendance Regularization",
+    "Attendance",
+    "Attendance",
+    "Regularization"
+  ],
+  "breadcrumb": "Regularization Attendance Regularization",
+  "tabs": [],
+  "buttons": [
+    "Submit",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Employee",
+        "Date",
+        "Type",
+        "In",
+        "Out",
+        "Reason",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "datetime-local"
+    },
+    {
+      "tag": "input",
+      "type": "datetime-local"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea"
+    },
+    {
+      "tag": "input",
+      "type": "file"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search employee or reason..."
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Raise A Correction",
+    "Requests"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Regularization Attendance Regularization Raise A Correction Submit Clear Employee* -- select -- Date* Type* Missed Punch Wrong Punch Missed Check In Missed Check Out Manual Entry In Time Out Time Reason Attachment Requests Sl.No Employee Date Type In Out Reason Status Action"
+}

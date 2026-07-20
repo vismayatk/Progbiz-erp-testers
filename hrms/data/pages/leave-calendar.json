@@ -1,0 +1,41 @@
+{
+  "route": "leave-calendar",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-calendar",
+  "group": "leave",
+  "headers": [
+    "Leave Calendar",
+    "HRMS Leave Management Leave Calendar",
+    "HRMS Leave Management Leave Calendar",
+    "HRMS",
+    "HRMS",
+    "Leave Management",
+    "Leave Management",
+    "Leave Calendar"
+  ],
+  "breadcrumb": "Leave Calendar HRMS Leave Management Leave Calendar",
+  "tabs": [],
+  "buttons": [
+    "Show"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Type a name to filter…"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Leave Calendar HRMS Leave Management Leave Calendar Branch All Branches Department All Departments Employee Show Loading calendar…"
+}

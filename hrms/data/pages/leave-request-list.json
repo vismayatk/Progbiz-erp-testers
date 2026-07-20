@@ -1,0 +1,43 @@
+{
+  "route": "leave-request-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-request-list",
+  "group": "leave",
+  "headers": [
+    "Leave Request HRMS Leave Request",
+    "Leave Request",
+    "HRMS Leave Request",
+    "HRMS Leave Request",
+    "HRMS Leave Request",
+    "HRMS",
+    "HRMS",
+    "Leave Request"
+  ],
+  "breadcrumb": "Leave Request HRMS Leave Request",
+  "tabs": [],
+  "buttons": [
+    "New Leave Request"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Leave Type",
+        "Start Date",
+        "End Date",
+        "Approval Status",
+        "Remarks",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Leave Request List"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Request HRMS Leave Request Leave Request List New Leave Request Sl.No Leave Type Start Date End Date Approval Status Remarks Action"
+}

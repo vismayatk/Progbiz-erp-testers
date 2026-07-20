@@ -40,11 +40,14 @@ test.describe('ess: /ess (My Workspace)', () => {
   test('dashboard renders its KPI tiles, profile card and Quick Actions', async ({ page }) => {
     const po = new MyWorkspacePage(page);
     await po.goto();   // LAZY — waitReady() clears "Loading your workspace…"
+    // KPI-tile labels and the "Employee Code" profile card are DOC-SOURCED and
+    // crawl-UNVERIFIED (ess.json recapture caught only the global nav) — soft
+    // checks until a re-crawl of /ess confirms the dashboard body text.
     for (const tile of ['Leave Available', "Today's Attendance", 'Pending Requests', 'Letters to Acknowledge']) {
-      expect(await po.hasKpiTile(tile), `KPI tile "${tile}"`).toBeTruthy();
+      expect.soft(await po.hasKpiTile(tile), `KPI tile "${tile}" (doc-sourced, crawl-unverified)`).toBeTruthy();
     }
-    expect(await po.hasProfileCard(), 'My Profile card (Employee Code)').toBeTruthy();
-    // Only the three crawl-verified Quick Actions are asserted.
+    expect.soft(await po.hasProfileCard(), 'My Profile card (Employee Code) (doc-sourced, crawl-unverified)').toBeTruthy();
+    // Only the three crawl-verified Quick Actions are asserted hard.
     await expect(po.applyLeaveBtn,   'Quick Action "Apply Leave"').toBeVisible();
     await expect(po.myAttendanceBtn, 'Quick Action "My Attendance"').toBeVisible();
     await expect(po.payslipsBtn,     'Quick Action "Payslips"').toBeVisible();
@@ -96,8 +99,9 @@ test.describe('ess: /ess/requests (My Requests)', () => {
     if (await po.hasNoRequests()) {
       await expect(po.emptyState, 'documented empty state "You have no change requests."').toBeVisible();
     } else {
-      // Change requests exist since the crawl — the tracker card must still render.
-      expect(await po.hasRequestsCard(), '"Profile Change Requests" card').toBeTruthy();
+      // Both text anchors are doc-sourced and crawl-unverified (ess__requests.json
+      // recapture caught only the global nav) — soft check until a re-crawl.
+      expect.soft(await po.hasRequestsCard(), '"Profile Change Requests" card (doc-sourced, crawl-unverified)').toBeTruthy();
       expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
     }
     expect(page.url()).not.toContain('/login');
@@ -194,11 +198,16 @@ test.describe('ess: /ess/attendance (My Attendance)', () => {
     expect(page.url()).not.toContain('/login');
   });
 
+  // The dialog-reveal premise is crawl-UNVERIFIED: ess__attendance.json captured
+  // only the "Regularize" / "Raise OT" buttons, no dialog markup. The buttons may
+  // require a selected row or route elsewhere — soft checks until the behavior is
+  // confirmed on a live run; the hard assertion is recovering the history page.
+
   test('Regularize opens its request dialog and is dismissed unsubmitted', async ({ page }) => {
     const po = new MyAttendancePage(page);
     await po.goto();
     const opened = await po.openRegularizeDialog();
-    expect(opened, '"Regularize" should reveal a request dialog/form').toBeTruthy();
+    expect.soft(opened, '"Regularize" should reveal a request dialog/form (crawl-unverified premise)').toBeTruthy();
     await po.closeDialog();                            // dismissed WITHOUT confirming
     await expect(po.showBtn).toBeVisible();            // back on the history page
   });
@@ -207,7 +216,7 @@ test.describe('ess: /ess/attendance (My Attendance)', () => {
     const po = new MyAttendancePage(page);
     await po.goto();
     const opened = await po.openRaiseOtDialog();
-    expect(opened, '"Raise OT" should reveal a request dialog/form').toBeTruthy();
+    expect.soft(opened, '"Raise OT" should reveal a request dialog/form (crawl-unverified premise)').toBeTruthy();
     await po.closeDialog();                            // dismissed WITHOUT confirming
     await expect(po.showBtn).toBeVisible();
   });

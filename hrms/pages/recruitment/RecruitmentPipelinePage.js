@@ -46,20 +46,20 @@ class RecruitmentPipelinePage extends BasePage {
     await this.page.waitForTimeout(400);
   }
 
+  /** True when the stage editor (dialog OR inline panel with Save/Submit) is on screen. */
+  async stageConfigVisible() {
+    if (await this.modal.isVisible().catch(() => false)) return true;
+    // Inline fallback — a Save/Submit button the baseline board does not have
+    // (crawl captured only "Configure Stages" and "Score").
+    return this.main.locator('button').filter({ hasText: /^\s*(save|submit)\s*$/i }).first()
+      .isVisible().catch(() => false);
+  }
+
   /** Dismiss the stage-configuration UI WITHOUT saving any stage changes. */
   async closeStageConfig() {
-    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else {
-        const cancel = this.modal.locator('button').filter({ hasText: /^\s*(cancel|close)\s*$/i }).first();
-        if (await cancel.count()) await cancel.click().catch(() => {});
-        else await this.page.keyboard.press('Escape').catch(() => {});
-      }
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
-    // Panel variant (non-modal) → reload the route to discard the editor.
-    if (await this.modal.isVisible().catch(() => false)) await this.goto();
+    await this.dismissModal();
+    // Panel variant (non-modal) still showing the editor → reload to discard it.
+    if (await this.stageConfigVisible()) await this.goto();
     await this.page.waitForTimeout(300);
   }
 }

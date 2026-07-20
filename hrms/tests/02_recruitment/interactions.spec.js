@@ -239,6 +239,7 @@ test.describe('recruitment: /recruitment-pipeline (Kanban)', () => {
     const po = new RecruitmentPipelinePage(page);
     await po.goto();
     await po.openStageConfig();
+    expect(await po.stageConfigVisible(), 'Configure Stages should open the stage editor').toBeTruthy();
     await po.closeStageConfig();                        // dismissed WITHOUT saving stages
     await expect(po.configureStagesBtn).toBeVisible();  // back on the board baseline
   });

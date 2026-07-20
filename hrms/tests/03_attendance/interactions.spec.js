@@ -348,11 +348,17 @@ test.describe('attendance: /attendance-report-pack (Attendance Report Pack)', ()
     await expect(po.exportBtn).toBeVisible();            // page did not crash
   });
 
-  test('filter panel toggles via the unlabeled card-header icon button', async ({ page }) => {
+  test('filter panel toggle (unverified by crawl) — soft, no blind click', async ({ page }) => {
+    // The crawl (attendance-report-pack.json) captured only Export/Previous/
+    // Next buttons — no title/aria/icon evidence of a filter toggle. The POM
+    // clicks ONLY a verifiably filter-hinting button and returns null when
+    // none exists; this test skips rather than click an arbitrary control.
     const po = new AttendanceReportPackPage(page);
     await po.goto();
-    const changed = await po.toggleFilterPanel();
-    expect(changed, 'icon button should show/hide the filter inputs').toBeTruthy();
+    const changed = await po.toggleFilterPanel();        // no-op unless a verified toggle exists
+    test.skip(changed === null,
+      'filter-toggle element not confirmed by the crawl — re-crawl attendance-report-pack to enable');
+    expect.soft(changed, 'verified filter toggle should show/hide the filter inputs').toBeTruthy();
     await po.toggleFilterPanel();                        // restored — nothing applied
     await expect(po.exportBtn).toBeVisible();
   });

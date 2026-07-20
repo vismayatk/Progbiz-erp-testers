@@ -63,16 +63,7 @@ class CandidatesPage extends BasePage {
 
   /** Dismiss the Add-New form WITHOUT saving. */
   async closeAddForm() {
-    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else {
-        const cancel = this.modal.locator('button').filter({ hasText: /^\s*(cancel|close)\s*$/i }).first();
-        if (await cancel.count()) await cancel.click().catch(() => {});
-        else await this.page.keyboard.press('Escape').catch(() => {});
-      }
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
+    await this.dismissModal();
     // Non-modal variant still showing the form → reload to discard it.
     if (await this.candidateNameInput.isVisible().catch(() => false)) await this.goto();
     await this.page.waitForTimeout(300);

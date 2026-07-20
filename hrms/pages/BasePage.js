@@ -92,6 +92,29 @@ class BasePage {
     const body = await this.main.innerText().catch(() => '');
     return new RegExp(escapeRe(text), 'i').test(body);
   }
+
+  /**
+   * Best-effort dismissal of the open modal WITHOUT saving:
+   * close X → Cancel/Close text button → Escape, retried once, waiting for
+   * the modal to hide after each attempt. Shared by every POM so the dismiss
+   * selector chain lives in ONE place.
+   * NOTE: the crawl never captured an open modal, so these selectors are
+   * guarded fallbacks (bootstrap conventions), not crawl-verified captures.
+   * Callers with a non-modal (inline/panel) variant must follow up with their
+   * own editor-visible check and reload the route if it is still open.
+   */
+  async dismissModal() {
+    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
+      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
+      if (await x.count()) await x.click().catch(() => {});
+      else {
+        const cancel = this.modal.locator('button').filter({ hasText: /^\s*(cancel|close)\s*$/i }).first();
+        if (await cancel.count()) await cancel.click().catch(() => {});
+        else await this.page.keyboard.press('Escape').catch(() => {});
+      }
+      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
+  }
 }
 
 function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }

@@ -1,0 +1,25 @@
+{
+  "route": "ess",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess",
+  "group": "ess",
+  "recaptured": true,
+  "sectionTitles": [],
+  "buttons": [],
+  "labels": [],
+  "stats": [],
+  "tabs": [
+    "Home",
+    "AI Assistant",
+    "Dashboards",
+    "Task Management",
+    "CRM",
+    "Project",
+    "Whatsapp",
+    "Master",
+    "HRMS",
+    "My Workspace",
+    "Excel Upload",
+    "Reports"
+  ],
+  "bodySnippet": "Home AI Assistant Dashboards Task Management CRM Project Whatsapp Master HRMS My Workspace Excel Upload Reports"
+}

@@ -1,0 +1,66 @@
+{
+  "route": "leave-encashment-approval",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-encashment-approval",
+  "group": "leave",
+  "headers": [
+    "Encashment Approvals",
+    "HRMS Leave Encashment Approvals",
+    "HRMS Leave Encashment Approvals",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "Encashment Approvals"
+  ],
+  "breadcrumb": "Encashment Approvals HRMS Leave Encashment Approvals",
+  "tabs": [],
+  "buttons": [
+    "Filter"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "Employee",
+        "Leave Type",
+        "Days",
+        "Amount",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No requests."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Encashment Requests"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Encashment Approvals HRMS Leave Encashment Approvals Encashment Requests Filter SlNo Employee Leave Type Days Amount Status Action No requests."
+}

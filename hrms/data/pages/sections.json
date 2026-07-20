@@ -1,0 +1,52 @@
+{
+  "route": "sections",
+  "finalUrl": "https://hrms-erp.progbiz.in/sections",
+  "group": "core-hr",
+  "headers": [
+    "Sections HRMS Section",
+    "Sections",
+    "HRMS Section",
+    "HRMS Section",
+    "HRMS Section",
+    "HRMS",
+    "HRMS",
+    "Section"
+  ],
+  "breadcrumb": "Sections HRMS Section",
+  "tabs": [],
+  "buttons": [
+    "Save",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "Department Name",
+        "Section Name",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "sectionname"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Sections",
+    "New Section"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Sections HRMS Section Sections SlNo Department Name Section Name Action New Section Department : Choose Section Name* Save Clear"
+}

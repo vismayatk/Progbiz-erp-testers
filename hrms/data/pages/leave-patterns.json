@@ -1,0 +1,40 @@
+{
+  "route": "leave-patterns",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-patterns",
+  "group": "leave",
+  "headers": [
+    "Leave Patterns HRMS Leave Patterns",
+    "Leave Patterns",
+    "HRMS Leave Patterns",
+    "HRMS Leave Patterns",
+    "HRMS Leave Patterns",
+    "HRMS",
+    "HRMS",
+    "Leave Patterns"
+  ],
+  "breadcrumb": "Leave Patterns HRMS Leave Patterns",
+  "tabs": [],
+  "buttons": [
+    "New Leave Pattern"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Leave Pattern Name",
+        "Details",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Leave Patterns"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Patterns HRMS Leave Patterns Leave Patterns New Leave Pattern Sl.No Leave Pattern Name Details Action"
+}

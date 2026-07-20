@@ -1,0 +1,42 @@
+{
+  "route": "leave-assignment-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-assignment-list",
+  "group": "leave",
+  "headers": [
+    "Leave Assignment List HRMS Leave Assignment",
+    "Leave Assignment List",
+    "HRMS Leave Assignment",
+    "HRMS Leave Assignment",
+    "HRMS Leave Assignment",
+    "HRMS",
+    "HRMS",
+    "Leave Assignment"
+  ],
+  "breadcrumb": "Leave Assignment List HRMS Leave Assignment",
+  "tabs": [],
+  "buttons": [
+    "Filter",
+    "New Leave Assignment"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Assignment Type",
+        "Assignment Target Name",
+        "Leave Pattern",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Leave Assignment"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Assignment List HRMS Leave Assignment Leave Assignment Filter New Leave Assignment Sl.No Assignment Type Assignment Target Name Leave Pattern Action"
+}

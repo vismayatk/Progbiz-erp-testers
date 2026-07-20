@@ -1,0 +1,62 @@
+{
+  "route": "hrms/probation-report",
+  "finalUrl": "https://hrms-erp.progbiz.in/hrms/probation-report",
+  "group": "core-hr",
+  "headers": [
+    "Probation Report HRMS Probation Report",
+    "Probation Report",
+    "HRMS Probation Report",
+    "HRMS Probation Report",
+    "HRMS",
+    "HRMS",
+    "Probation",
+    "Probation",
+    "Report",
+    "Export Excel"
+  ],
+  "breadcrumb": "Probation Report HRMS Probation Report Export Excel",
+  "tabs": [],
+  "buttons": [
+    "Export Excel",
+    "Run Report"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Employee",
+        "Branch",
+        "Start",
+        "End",
+        "Outcome",
+        "Reviews",
+        "Overdue",
+        "Decision"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No probations in this range."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Details (0)"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Probation Report HRMS Probation Report Export Excel From (start date) To (start date) Branch All branches Run Report 0 Total 0 On Probation 0 Confirmed 0 Terminated 0 Awaiting Approval 0 Overdue Reviews 0% Completion Rate Details (0) Employee Branch Start End Outcome Reviews Overdue Decision No probations in this range."
+}

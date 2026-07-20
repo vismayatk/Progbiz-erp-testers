@@ -1,0 +1,41 @@
+{
+  "route": "leave-delegation",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-delegation",
+  "group": "leave",
+  "headers": [
+    "Leave Approval Delegation",
+    "HRMS Delegation",
+    "HRMS Delegation",
+    "HRMS",
+    "HRMS",
+    "Delegation"
+  ],
+  "breadcrumb": "Leave Approval Delegation HRMS Delegation",
+  "tabs": [],
+  "buttons": [],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "From",
+        "To",
+        "From Date",
+        "To Date",
+        "Active",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No delegations."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Active & Past Delegations"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Approval Delegation HRMS Delegation Active & Past Delegations SlNo From To From Date To Date Active Action No delegations."
+}

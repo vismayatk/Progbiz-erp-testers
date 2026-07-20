@@ -1,0 +1,74 @@
+'use strict';
+
+const { BasePage } = require('../BasePage');
+
+/**
+ * /leave-assignment-list — assign leave patterns to organisational targets
+ * (branch / department / employee) so employees inherit a leave policy.
+ * Grid: Sl.No | Assignment Type | Assignment Target Name | Leave Pattern |
+ * Action (captured with 0 rows). "New Leave Assignment" and "Filter" imply
+ * modal/panel interactions — no inline inputs were captured.
+ * NOTE: header wording differs from /holiday-assignment-list ("Assignment
+ * Target Name" here vs "Assigned Target Name" there) — keep selectors page-specific.
+ */
+class LeaveAssignmentListPage extends BasePage {
+  /** @param {import('@playwright/test').Page} page */
+  constructor(page) {
+    super(page, 'leave-assignment-list');
+
+    this.filterBtn        = this.button('Filter');
+    this.newAssignmentBtn = this.button('New Leave Assignment');
+  }
+
+  /**
+   * Open the create UI behind "New Leave Assignment". Nothing is ever saved.
+   * @returns {Promise<boolean>} true when a create form actually revealed
+   */
+  async openCreateModal() {
+    const before = await this._visibleControlCount();
+    await this.newAssignmentBtn.click();
+    const modalShown = await this.modal.waitFor({ state: 'visible', timeout: 8000 })
+      .then(() => true).catch(() => false);
+    await this.waitReady();
+    if (modalShown) return true;
+    if (this._currentPath() !== this.route) return true;         // routed to a create page
+    return (await this._visibleControlCount()) > before;         // inline form expanded
+  }
+
+  /** Dismiss the create UI WITHOUT saving (close/cancel button, else Escape, else reload). */
+  async closeModal() {
+    if (await this.modal.isVisible().catch(() => false)) {
+      const dismiss = this.modal
+        .locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"], button:has-text("Cancel"), button:has-text("Close")')
+        .first();
+      if (await dismiss.count()) await dismiss.click({ timeout: 5000 }).catch(() => {});
+      else await this.page.keyboard.press('Escape').catch(() => {});
+      await this.modal.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
+      await this.page.waitForTimeout(300);
+      return;
+    }
+    await this.goto();   // routed or inline create UI — reload the list to discard it
+  }
+
+  /** Toggle the filter panel via the "Filter" button (no query is applied). */
+  async toggleFilterPanel() {
+    await this.filterBtn.click();
+    await this.waitReady();
+  }
+
+  /** Current data-row count (0 is the documented baseline). */
+  rowCount() { return this.gridRows.count(); }
+
+  // ── private helpers ──────────────────────────────────────────────────────
+
+  _currentPath() {
+    return new URL(this.page.url()).pathname.replace(/^\//, '').replace(/\/$/, '');
+  }
+
+  /** Visible form-control count — probe for "did a create form appear". */
+  _visibleControlCount() {
+    return this.page.locator('input:visible, select:visible, textarea:visible').count();
+  }
+}
+
+module.exports = { LeaveAssignmentListPage };

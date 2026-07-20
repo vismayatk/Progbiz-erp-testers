@@ -1,0 +1,43 @@
+{
+  "route": "candidate-status",
+  "finalUrl": "https://hrms-erp.progbiz.in/candidate-status",
+  "group": "recruitment",
+  "headers": [
+    "Candidate Status HRMS Settings Candidate Followup Status",
+    "Candidate Status",
+    "HRMS Settings Candidate Followup Status",
+    "HRMS Settings Candidate Followup Status",
+    "HRMS",
+    "HRMS",
+    "Settings",
+    "Settings",
+    "Candidate Followup Status"
+  ],
+  "breadcrumb": "Candidate Status HRMS Settings Candidate Followup Status",
+  "tabs": [],
+  "buttons": [
+    "Add Followup Status"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl No",
+        "Status Name",
+        "Nature",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "Loading..."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Status List"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Candidate Status HRMS Settings Candidate Followup Status Status List Add Followup Status Sl No Status Name Nature Action Loading..."
+}

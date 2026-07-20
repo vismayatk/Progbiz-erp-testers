@@ -1,0 +1,50 @@
+{
+  "route": "approval-operation-report",
+  "finalUrl": "https://hrms-erp.progbiz.in/approval-operation-report",
+  "group": "attendance",
+  "headers": [
+    "Approval Operation Report HRMS Approval Operation Report",
+    "Approval Operation Report",
+    "HRMS Approval Operation Report",
+    "HRMS Approval Operation Report",
+    "HRMS Approval Operation Report",
+    "HRMS",
+    "HRMS",
+    "Approval Operation Report"
+  ],
+  "breadcrumb": "Approval Operation Report HRMS Approval Operation Report",
+  "tabs": [],
+  "buttons": [
+    "Filter"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL No",
+        "IDNumber",
+        "Employee Name",
+        "Date",
+        "Entry Time",
+        "Exit Time",
+        "Balance Hours",
+        "Fixed Hours",
+        "Fixed Date",
+        "Discount from Permission Hours",
+        "Remarks",
+        "Final Hours",
+        "Details",
+        "Delete"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Approval Operation Report"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Approval Operation Report HRMS Approval Operation Report Approval Operation Report Filter SL No IDNumber Employee Name Date Entry Time Exit Time Balance Hours Fixed Hours Fixed Date Discount from Permission Hours Remarks Final Hours Details Delete"
+}

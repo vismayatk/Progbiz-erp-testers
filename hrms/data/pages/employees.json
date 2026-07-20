@@ -1,0 +1,50 @@
+{
+  "route": "employees",
+  "finalUrl": "https://hrms-erp.progbiz.in/employees",
+  "group": "core-hr",
+  "headers": [
+    "Employees HRMS Employees",
+    "Employees",
+    "HRMS Employees",
+    "HRMS Employees",
+    "HRMS Employees",
+    "HRMS",
+    "HRMS",
+    "Employees"
+  ],
+  "breadcrumb": "Employees HRMS Employees",
+  "tabs": [],
+  "buttons": [
+    "Filter",
+    "New Employee"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Employee Code",
+        "Employee Name",
+        "Department Name",
+        "Designation",
+        "Status",
+        "Actions"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "incl-archived"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Employees"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Employees HRMS Employees Employees Include archived Filter New Employee Sl.No Employee Code Employee Name Department Name Designation Status Actions"
+}

@@ -1,0 +1,44 @@
+{
+  "route": "comp-offs",
+  "finalUrl": "https://hrms-erp.progbiz.in/comp-offs",
+  "group": "leave",
+  "headers": [
+    "Comp-Off",
+    "HRMS Leave Comp-Off",
+    "HRMS Leave Comp-Off",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "Comp-Off"
+  ],
+  "breadcrumb": "Comp-Off HRMS Leave Comp-Off",
+  "tabs": [],
+  "buttons": [
+    "Request Comp-Off"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Earned",
+        "Source",
+        "Days",
+        "Expiry",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No comp-off credits yet. Worked an off-day? Request one above."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "My Comp-Off Credits"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Comp-Off HRMS Leave Comp-Off My Comp-Off Credits Credits are earned automatically when you work an approved off-day / holiday, or you can request one below. Request Comp-Off Earned Source Days Expiry Status Action No comp-off credits yet. Worked an off-day? Request one above."
+}

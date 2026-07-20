@@ -1,0 +1,42 @@
+{
+  "route": "interview-schedules",
+  "finalUrl": "https://hrms-erp.progbiz.in/interview-schedules",
+  "group": "recruitment",
+  "headers": [
+    "Interviews Recruitment Interview Schedule",
+    "Interviews",
+    "Recruitment Interview Schedule",
+    "Recruitment Interview Schedule",
+    "Recruitment",
+    "Recruitment",
+    "Interview Schedule"
+  ],
+  "breadcrumb": "Interviews Recruitment Interview Schedule",
+  "tabs": [],
+  "buttons": [
+    "Schedule Interview"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Candidate",
+        "Round",
+        "Scheduled On",
+        "Mode",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Scheduled Interviews"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Interviews Recruitment Interview Schedule Scheduled Interviews Schedule Interview Sl.No Candidate Round Scheduled On Mode Status Action"
+}

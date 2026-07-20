@@ -1,0 +1,54 @@
+{
+  "route": "ess/attendance",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/attendance",
+  "group": "ess",
+  "headers": [
+    "My Attendance Self Service Attendance",
+    "My Attendance",
+    "Self Service Attendance",
+    "Self Service Attendance",
+    "Self Service",
+    "Self Service",
+    "Attendance"
+  ],
+  "breadcrumb": "My Attendance Self Service Attendance",
+  "tabs": [],
+  "buttons": [
+    "Show",
+    "Regularize",
+    "Raise OT"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Date",
+        "Entry",
+        "Exit",
+        "Worked (min)",
+        "OT (min)",
+        "Status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No attendance in range."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Attendance History"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Attendance Self Service Attendance Attendance History From To Show Regularize Raise OT Date Entry Exit Worked (min) OT (min) Status No attendance in range."
+}

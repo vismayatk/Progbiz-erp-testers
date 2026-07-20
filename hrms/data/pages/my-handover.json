@@ -1,0 +1,72 @@
+{
+  "route": "my-handover",
+  "finalUrl": "https://hrms-erp.progbiz.in/my-handover",
+  "group": "ess",
+  "headers": [
+    "My Duty Handover",
+    "ESS Handover",
+    "ESS Handover",
+    "ESS",
+    "ESS",
+    "Handover"
+  ],
+  "breadcrumb": "My Duty Handover ESS Handover",
+  "tabs": [],
+  "buttons": [
+    "Save",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "#",
+        "Assignee",
+        "From",
+        "To",
+        "Covers",
+        "Active",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No handovers set up."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ca"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ct"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Set Up Handover",
+    "My Handovers"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Duty Handover ESS Handover Set Up Handover While you're away, the assignee can see and act on your HRMS approvals and your assigned HRMS/recruitment tasks. Sales/CRM duties are never handed over. Assign my duties to -- Select assignee -- From To Cover my approvals Cover my HRMS tasks Note (optional) Save Clear My Handovers # Assignee From To Covers Active Action No handovers set up."
+}

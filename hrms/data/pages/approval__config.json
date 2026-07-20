@@ -1,0 +1,57 @@
+{
+  "route": "approval/config",
+  "finalUrl": "https://hrms-erp.progbiz.in/approval/config",
+  "group": "core-hr",
+  "headers": [
+    "Approval Configuration Workflow Approval Config",
+    "Approval Configuration",
+    "Workflow Approval Config",
+    "Workflow Approval Config",
+    "Workflow",
+    "Workflow",
+    "Approval Config"
+  ],
+  "breadcrumb": "Approval Configuration Workflow Approval Config",
+  "tabs": [],
+  "buttons": [
+    "+ Add level",
+    "Save Workflow"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Type",
+        "Name",
+        "Approval chain"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No workflows configured yet."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "e.g. Long Leave Approval"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "cfgDefault"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "New Workflow",
+    "Configured Workflows"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Approval Configuration Workflow Approval Config New Workflow Approval Type -- Select type -- Salary Revision Leave Request Expense Claim Policy Publish Job Requisition Offer Compensation Cycle Document Verification Benefit Enrollment Attendance Regularization Overtime Material Purchase Request Stock Transfer Supplier PO Sales Order Quotation Credit Limit Override Sales Return Profile Change Request Com Off Request Encashment Request Geo Fence Request Probation Decision Workflow Name Shown when a section (e.g. a leave pattern) picks which workflow to use. You can define several per type. Default for this type (used when a document doesn't pick a specific workflow) Approval Levels + Add level No levels = direct (auto-approve, no approval step). Add one or more levels for a chain. Save Workflow Configured Workflows Type Name Approval chain No workflows configured yet."
+}

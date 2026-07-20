@@ -1,0 +1,58 @@
+{
+  "route": "employee-salary-process",
+  "finalUrl": "https://hrms-erp.progbiz.in/employee-salary-process",
+  "group": "core-hr",
+  "headers": [
+    "Employee Salary Process HRMS Employee Salary Process",
+    "Employee Salary Process",
+    "HRMS Employee Salary Process",
+    "HRMS Employee Salary Process",
+    "HRMS Employee Salary Process",
+    "HRMS",
+    "HRMS",
+    "Employee Salary Process"
+  ],
+  "breadcrumb": "Employee Salary Process HRMS Employee Salary Process",
+  "tabs": [],
+  "buttons": [
+    "Save"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Staff Name",
+        "Basic Salary",
+        "No of Leave",
+        "Payable Amount"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No Data"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "assignedToBranch"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "name": "narration-typ"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "name": "narration-typ"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Employee Salary Process"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Employee Salary Process HRMS Employee Salary Process Employee Salary Process Branch All Salary Year : Salary Month : January February March April May June July August September October November December Staff Name Basic Salary No of Leave Payable Amount No Data Save"
+}

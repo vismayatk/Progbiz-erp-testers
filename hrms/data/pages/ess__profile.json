@@ -1,0 +1,29 @@
+{
+  "route": "ess/profile",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/profile",
+  "group": "ess",
+  "recaptured": true,
+  "sectionTitles": [
+    "My Profile",
+    "Overview",
+    "Overview",
+    "Request A Change",
+    "Request A Change"
+  ],
+  "buttons": [
+    "Submit Change Request",
+    "View My Requests"
+  ],
+  "labels": [
+    "First Name",
+    "Last Name",
+    "Email",
+    "National / ID Number",
+    "Passport No",
+    "Blood Group",
+    "Reason"
+  ],
+  "stats": [],
+  "tabs": [],
+  "bodySnippet": "My Profile Self Service Profile Overview Employee Code PB1053 Branch Main Branch Department Designation Testing Team lead Reports To Joined Confirmed Phone +919747832341 Request A Change Edits to these fields are submitted to HR for approval before they take effect. First Name Last Name Email National / ID Number Passport No Blood Group Reason Submit Change Request View My Requests"
+}

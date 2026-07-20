@@ -1,0 +1,41 @@
+{
+  "route": "offer-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/offer-list",
+  "group": "recruitment",
+  "headers": [
+    "Offers Recruitment Offer Management",
+    "Offers",
+    "Recruitment Offer Management",
+    "Recruitment Offer Management",
+    "Recruitment",
+    "Recruitment",
+    "Offer Management"
+  ],
+  "breadcrumb": "Offers Recruitment Offer Management",
+  "tabs": [],
+  "buttons": [
+    "New Offer"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Candidate",
+        "Total CTC",
+        "Joining",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Offers"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Offers Recruitment Offer Management Offers New Offer Sl.No Candidate Total CTC Joining Status Action"
+}

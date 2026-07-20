@@ -1,0 +1,48 @@
+{
+  "route": "resigned-employees",
+  "finalUrl": "https://hrms-erp.progbiz.in/resigned-employees",
+  "group": "core-hr",
+  "headers": [
+    "Resigned Employees HRMS Resigned Employees",
+    "Resigned Employees",
+    "HRMS Resigned Employees",
+    "HRMS Resigned Employees",
+    "HRMS Resigned Employees",
+    "HRMS",
+    "HRMS",
+    "Resigned Employees"
+  ],
+  "breadcrumb": "Resigned Employees HRMS Resigned Employees",
+  "tabs": [],
+  "buttons": [],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "Date",
+        "Name",
+        "Phone",
+        "Designation",
+        "Nationality"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "filter-name"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Resigned Employees"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Resigned Employees HRMS Resigned Employees Resigned Employees SlNo Date Name Phone Designation Nationality"
+}

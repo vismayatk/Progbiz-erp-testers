@@ -17,7 +17,9 @@
     "test:enquiry:headed": "playwright test erp/crm/tests/enquiry_flow.spec.js --headed",
     "report": "playwright show-report reports/html",
     "ui": "playwright test --ui",
-    "install:browsers": "playwright install chromium"
+    "install:browsers": "playwright install chromium",
+    "test:hrms": "playwright test -c hrms/playwright.config.js",
+    "test:hrms:smoke": "playwright test -c hrms/playwright.config.js hrms/tests/00_smoke"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
   "dependencies": {
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.1",
+    "docx": "^9.7.1",
     "dotenv": "^16.6.1",
     "playwright": "^1.60.0",
     "ts-node": "^10.9.2",

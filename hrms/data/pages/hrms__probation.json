@@ -1,0 +1,60 @@
+{
+  "route": "hrms/probation",
+  "finalUrl": "https://hrms-erp.progbiz.in/hrms/probation",
+  "group": "core-hr",
+  "headers": [
+    "Probation Dashboard HRMS Probation",
+    "Probation Dashboard",
+    "HRMS Probation",
+    "HRMS Probation",
+    "HRMS",
+    "HRMS",
+    "Probation",
+    "Report Templates Start Probation",
+    "Report",
+    "Templates",
+    "Start Probation"
+  ],
+  "breadcrumb": "Probation Dashboard HRMS Probation Report Templates Start Probation",
+  "tabs": [],
+  "buttons": [
+    "Report",
+    "Templates",
+    "Start Probation"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Employee",
+        "Branch",
+        "Start",
+        "End",
+        "Reviews",
+        "Next Review",
+        "Days Left",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No one on probation."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [
+    {
+      "text": "Report",
+      "href": "/hrms/probation-report"
+    },
+    {
+      "text": "Templates",
+      "href": "/hrms/probation-templates"
+    }
+  ],
+  "cards": [
+    "Employees On Probation"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Probation Dashboard HRMS Probation Report Templates Start Probation 0 On Probation 0 Reviews Due (7d) 0 Overdue Reviews 0 Ending Soon (30d) Employees On Probation Employee Branch Start End Reviews Next Review Days Left Action No one on probation."
+}

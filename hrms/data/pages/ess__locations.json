@@ -1,0 +1,73 @@
+{
+  "route": "ess/locations",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/locations",
+  "group": "ess",
+  "headers": [
+    "My Work Locations Self Service My Locations",
+    "My Work Locations",
+    "Self Service My Locations",
+    "Self Service My Locations",
+    "Self Service",
+    "Self Service",
+    "My Locations"
+  ],
+  "breadcrumb": "My Work Locations Self Service My Locations",
+  "tabs": [],
+  "buttons": [
+    "Use my location",
+    "Submit for approval"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Name",
+        "Lat",
+        "Long",
+        "Radius",
+        "Status"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "e.g. Home, Site A"
+    },
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "input",
+      "type": "number"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search an address to move the map…"
+    }
+  ],
+  "selectsNg": [],
+  "links": [
+    {
+      "text": "Leaflet",
+      "href": "https://leafletjs.com"
+    }
+  ],
+  "cards": [
+    "Add A Work Location",
+    "My Locations"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Work Locations Self Service My Locations Add A Work Location Open this on your phone and tap Use my location to capture your exact spot with GPS, or drag the pin. Locations you add here are submitted for approval and only used for check-in once approved. Location Name* Radius (m)* Latitude* Longitude* Location on map Use my location + − Leaflet | © OpenStreetMap contributors Drag the pin (or click the map) to set the exact spot. Submit for approval My Locations Sl.No Name Lat Long Radius Status"
+}

@@ -1,0 +1,84 @@
+{
+  "route": "shift-roster",
+  "finalUrl": "https://hrms-erp.progbiz.in/shift-roster",
+  "group": "attendance",
+  "headers": [
+    "Shift Roster Attendance Shift Roster",
+    "Shift Roster",
+    "Attendance Shift Roster",
+    "Attendance Shift Roster",
+    "Attendance",
+    "Attendance",
+    "Shift Roster"
+  ],
+  "breadcrumb": "Shift Roster Attendance Shift Roster",
+  "tabs": [],
+  "buttons": [
+    "Assign"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Scope",
+        "Target",
+        "Shift",
+        "From",
+        "To",
+        "Active"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search scope or shift..."
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "activeOnlyCheck"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Assign A Shift",
+    "Current Assignments"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Shift Roster Attendance Shift Roster Assign A Shift Assign Shift* -- select -- Scope* Company Branch Department Employee Target Effective From* Effective To Pick the branch, department or employee for this assignment. The most-specific assignment wins when a shift is resolved. Sub-departments inherit the parent department's shift unless they have an assignment of their own. Current Assignments Sl.No Scope Target Shift From To Active"
+}

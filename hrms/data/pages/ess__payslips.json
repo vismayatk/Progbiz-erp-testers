@@ -1,0 +1,47 @@
+{
+  "route": "ess/payslips",
+  "finalUrl": "https://hrms-erp.progbiz.in/ess/payslips",
+  "group": "ess",
+  "headers": [
+    "My Pay",
+    "Self Service Payslips",
+    "Self Service Payslips",
+    "Self Service",
+    "Self Service",
+    "Payslips"
+  ],
+  "breadcrumb": "My Pay Self Service Payslips",
+  "tabs": [],
+  "buttons": [
+    "Show"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Period",
+        "Basic",
+        "Deductions",
+        "Net",
+        "Payable",
+        "Paid"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No payslips found."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "number"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Payslips"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Pay Self Service Payslips Payslips Show Period Basic Deductions Net Payable Paid No payslips found. Payslip PDF download is not yet available — see your HR department for a stamped copy."
+}

@@ -1,0 +1,61 @@
+{
+  "route": "geofences",
+  "finalUrl": "https://hrms-erp.progbiz.in/geofences",
+  "group": "attendance",
+  "headers": [
+    "Geofence Locations Attendance Geofence Locations",
+    "Geofence Locations",
+    "Attendance Geofence Locations",
+    "Attendance Geofence Locations",
+    "Attendance",
+    "Attendance",
+    "Geofence Locations",
+    "Add Location"
+  ],
+  "breadcrumb": "Geofence Locations Attendance Geofence Locations Add Location",
+  "tabs": [],
+  "buttons": [
+    "Add Location"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Scope",
+        "Applies To",
+        "Name",
+        "Lat",
+        "Long",
+        "Radius",
+        "Status",
+        "Active"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search location or target..."
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Locations"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Geofence Locations Attendance Geofence Locations Add Location Locations Sl.No Scope Applies To Name Lat Long Radius Status Active"
+}

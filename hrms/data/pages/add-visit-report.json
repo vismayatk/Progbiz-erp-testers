@@ -1,0 +1,47 @@
+{
+  "route": "add-visit-report",
+  "finalUrl": "https://hrms-erp.progbiz.in/add-visit-report",
+  "group": "attendance",
+  "headers": [
+    "Add Vist Report HRMS Add visit report",
+    "Add Vist Report",
+    "HRMS Add visit report",
+    "HRMS Add visit report",
+    "HRMS Add visit report",
+    "HRMS",
+    "HRMS",
+    "Add visit report"
+  ],
+  "breadcrumb": "Add Vist Report HRMS Add visit report",
+  "tabs": [],
+  "buttons": [
+    "Filter"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL.No",
+        "IDNumber",
+        "Employee Name",
+        "CheckIn Time",
+        "CheckOut Time",
+        "Punch Type",
+        "Site Name",
+        "Purpose",
+        "Site Image",
+        "Mobile Location",
+        "Location"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Attendance Log"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Add Vist Report HRMS Add visit report Attendance Log Filter SL.No IDNumber Employee Name CheckIn Time CheckOut Time Punch Type Site Name Purpose Site Image Mobile Location Location"
+}

@@ -1,0 +1,30 @@
+{
+  "route": "leave-policy",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-policy",
+  "group": "leave",
+  "headers": [
+    "Leave Policy Configuration",
+    "HRMS Leave Policy",
+    "HRMS Leave Policy",
+    "HRMS",
+    "HRMS",
+    "Leave Policy"
+  ],
+  "breadcrumb": "Leave Policy Configuration HRMS Leave Policy",
+  "tabs": [],
+  "buttons": [],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Choose A Leave Pattern"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Policy Configuration HRMS Leave Policy Choose A Leave Pattern Leave Pattern Choose"
+}

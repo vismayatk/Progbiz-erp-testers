@@ -1,0 +1,82 @@
+{
+  "route": "employee-handover",
+  "finalUrl": "https://hrms-erp.progbiz.in/employee-handover",
+  "group": "leave",
+  "headers": [
+    "Employee Duty Handover",
+    "HRMS Handover",
+    "HRMS Handover",
+    "HRMS",
+    "HRMS",
+    "Handover"
+  ],
+  "breadcrumb": "Employee Duty Handover HRMS Handover",
+  "tabs": [],
+  "buttons": [
+    "Save",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "#",
+        "From",
+        "To",
+        "From Date",
+        "To Date",
+        "Covers",
+        "Active",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No handovers."
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ca"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ct"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "active"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Set Up Handover",
+    "All Handovers"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Employee Duty Handover HRMS Handover Set Up Handover Hand an away employee's HRMS approvals and HRMS/recruitment tasks to an assignee for a date window. Sales/CRM duties are never handed over. Employee going away -- Select employee -- Assign duties to -- Select assignee -- From To Cover approvals Cover HRMS tasks Active Note (optional) Save Clear All Handovers # From To From Date To Date Covers Active Action No handovers."
+}

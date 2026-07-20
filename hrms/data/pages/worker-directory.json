@@ -1,0 +1,41 @@
+{
+  "route": "worker-directory",
+  "finalUrl": "https://hrms-erp.progbiz.in/worker-directory",
+  "group": "core-hr",
+  "headers": [
+    "Worker Directory HRMS Worker Directory",
+    "Worker Directory",
+    "HRMS Worker Directory",
+    "HRMS Worker Directory",
+    "HRMS",
+    "HRMS",
+    "Worker Directory",
+    "Cards Org Chart",
+    "Cards",
+    "Org Chart"
+  ],
+  "breadcrumb": "Worker Directory HRMS Worker Directory Cards Org Chart",
+  "tabs": [],
+  "buttons": [
+    "Cards",
+    "Org Chart",
+    "Search"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Name, designation or department"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Worker Directory HRMS Worker Directory Cards Org Chart Branch -- All branches -- Search Search No employees match the current filters."
+}

@@ -1,0 +1,44 @@
+{
+  "route": "assessment-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/assessment-list",
+  "group": "recruitment",
+  "headers": [
+    "Assessments Recruitment Assessments",
+    "Assessments",
+    "Recruitment Assessments",
+    "Recruitment Assessments",
+    "Recruitment",
+    "Recruitment",
+    "Assessments"
+  ],
+  "breadcrumb": "Assessments Recruitment Assessments",
+  "tabs": [],
+  "buttons": [
+    "New Assessment"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Title",
+        "Type",
+        "Description",
+        "Max Score",
+        "Attachment",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "Loading..."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Assessment Library"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Assessments Recruitment Assessments Assessment Library New Assessment Sl.No Title Type Description Max Score Attachment Action Loading..."
+}

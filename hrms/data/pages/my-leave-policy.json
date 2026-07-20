@@ -1,0 +1,36 @@
+{
+  "route": "my-leave-policy",
+  "finalUrl": "https://hrms-erp.progbiz.in/my-leave-policy",
+  "group": "leave",
+  "headers": [
+    "My Leave Policy HRMS Leave My Policy",
+    "My Leave Policy",
+    "HRMS Leave My Policy",
+    "HRMS Leave My Policy",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "My Policy",
+    "Year Show",
+    "Year",
+    "Year"
+  ],
+  "breadcrumb": "My Leave Policy HRMS Leave My Policy Year Show",
+  "tabs": [],
+  "buttons": [
+    "Show"
+  ],
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "number"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "My Leave Policy HRMS Leave My Policy Year Show No leave policy is assigned to you yet. Once HR assigns a leave pattern, your leave types, balances and rules appear here."
+}

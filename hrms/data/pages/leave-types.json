@@ -1,0 +1,59 @@
+{
+  "route": "leave-types",
+  "finalUrl": "https://hrms-erp.progbiz.in/leave-types",
+  "group": "leave",
+  "headers": [
+    "Leave Types HRMS Leave Types",
+    "Leave Types",
+    "HRMS Leave Types",
+    "HRMS Leave Types",
+    "HRMS Leave Types",
+    "HRMS",
+    "HRMS",
+    "Leave Types"
+  ],
+  "breadcrumb": "Leave Types HRMS Leave Types",
+  "tabs": [],
+  "buttons": [
+    "Save",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SlNo",
+        "Leave Type Name",
+        "Is Support Half Day",
+        "Is Need Document",
+        "Action"
+      ],
+      "rowCount": 0,
+      "firstRow": []
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "leavetypename"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "checkebox-sb"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "checkebox-sb"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Leave Types",
+    "Add LeaveType"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Leave Types HRMS Leave Types Leave Types SlNo Leave Type Name Is Support Half Day Is Need Document Action Add LeaveType Leave Type Name* Support HalfDay Need Document Save Clear"
+}

@@ -1,0 +1,29 @@
+{
+  "route": "onboarding-templates",
+  "finalUrl": "https://hrms-erp.progbiz.in/onboarding-templates",
+  "group": "recruitment",
+  "headers": [
+    "Onboarding Templates HRMS Onboarding Templates",
+    "Onboarding Templates",
+    "HRMS Onboarding Templates",
+    "HRMS Onboarding Templates",
+    "HRMS",
+    "HRMS",
+    "Onboarding Templates",
+    "New Template"
+  ],
+  "breadcrumb": "Onboarding Templates HRMS Onboarding Templates New Template",
+  "tabs": [],
+  "buttons": [
+    "New Template"
+  ],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Templates"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Onboarding Templates HRMS Onboarding Templates New Template Templates No templates yet. Select a template or create a new one."
+}

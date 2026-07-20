@@ -1,0 +1,55 @@
+{
+  "route": "holiday-list",
+  "finalUrl": "https://hrms-erp.progbiz.in/holiday-list",
+  "group": "leave",
+  "headers": [
+    "Holiday Holiday Holidays",
+    "Holiday",
+    "Holiday Holidays",
+    "Holiday Holidays",
+    "Holiday Holidays",
+    "Holiday",
+    "Holiday",
+    "Holidays"
+  ],
+  "breadcrumb": "Holiday Holiday Holidays",
+  "tabs": [],
+  "buttons": [
+    "Calendar",
+    "Export",
+    "New Holiday"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Holiday Name",
+        "Dates",
+        "Calendar",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "1",
+        "Onam",
+        "24/08/2026",
+        "State - Kerala",
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search by Holiday Name"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Holiday Calendar — 2026"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Holiday Holiday Holidays Holiday Calendar — 2026 Calendar Export New Holiday Sl.No Holiday Name Dates Calendar Action 1 Onam 24/08/2026 State - Kerala"
+}

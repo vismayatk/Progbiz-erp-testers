@@ -1,0 +1,84 @@
+{
+  "route": "attendance-finalization",
+  "finalUrl": "https://hrms-erp.progbiz.in/attendance-finalization",
+  "group": "attendance",
+  "headers": [
+    "Attendance Finalization Attendance Finalization",
+    "Attendance Finalization",
+    "Attendance Finalization",
+    "Attendance Finalization",
+    "Attendance",
+    "Attendance",
+    "Finalization"
+  ],
+  "breadcrumb": "Attendance Finalization Attendance Finalization",
+  "tabs": [],
+  "buttons": [
+    "Finalize"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Sl.No",
+        "Period",
+        "Scope",
+        "Target",
+        "Cut-Off",
+        "Pending",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Search branch, department or employee..."
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Start / Refresh A Pay-Cycle Run",
+    "Runs"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Attendance Finalization Attendance Finalization Start / Refresh A Pay-Cycle Run Finalize Month* January February March April May June July August September October November December Year* 2023 2024 2025 2026 2027 Scope* Company Branch Department Employee Target * -- select branch -- Cut-Off* Runs Sl.No Period Scope Target Cut-Off Pending Status Action"
+}

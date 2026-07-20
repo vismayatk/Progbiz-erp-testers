@@ -1,0 +1,45 @@
+{
+  "route": "hrms/probation-templates",
+  "finalUrl": "https://hrms-erp.progbiz.in/hrms/probation-templates",
+  "group": "core-hr",
+  "headers": [
+    "Probation Templates HRMS Probation Templates",
+    "Probation Templates",
+    "HRMS Probation Templates",
+    "HRMS Probation Templates",
+    "HRMS",
+    "HRMS",
+    "Probation",
+    "Probation",
+    "Templates",
+    "New Template"
+  ],
+  "breadcrumb": "Probation Templates HRMS Probation Templates New Template",
+  "tabs": [],
+  "buttons": [
+    "New Template"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Name",
+        "Duration",
+        "Checkpoints (days)",
+        "Criteria",
+        "Default",
+        "Active",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No templates yet."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Probation Templates HRMS Probation Templates New Template Name Duration Checkpoints (days) Criteria Default Active Action No templates yet."
+}

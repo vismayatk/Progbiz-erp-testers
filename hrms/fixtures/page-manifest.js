@@ -164,7 +164,7 @@ module.exports = [
   {
     "route": "attendance-report-pack",
     "group": "attendance",
-    "title": "Attendance Report Pack",
+    "title": "Attendance",
     "buttons": [
       "Export"
     ],
@@ -334,7 +334,7 @@ module.exports = [
       "Action"
     ],
     "tabs": [
-      "Awaiting my decision (0)",
+      "Awaiting my decision",
       "My requests",
       "History"
     ]
@@ -417,7 +417,7 @@ module.exports = [
   {
     "route": "hrms/probation",
     "group": "core-hr",
-    "title": "Probation Dashboard",
+    "title": "Probation",
     "buttons": [
       "Report",
       "Templates",
@@ -476,7 +476,7 @@ module.exports = [
   {
     "route": "letters/generate",
     "group": "core-hr",
-    "title": "Generate Letter",
+    "title": "Generate",
     "buttons": [
       "Preview",
       "Generate"
@@ -554,7 +554,7 @@ module.exports = [
   {
     "route": "upload-employee",
     "group": "core-hr",
-    "title": "Employee Excel Import",
+    "title": "Employee",
     "buttons": [
       "Excel Rules",
       "Upload"
@@ -607,7 +607,7 @@ module.exports = [
   {
     "route": "ess/documents",
     "group": "ess",
-    "title": "Self Service Documents",
+    "title": "My Documents",
     "buttons": [
       "Upload"
     ],
@@ -638,7 +638,7 @@ module.exports = [
   {
     "route": "ess/letters",
     "group": "ess",
-    "title": "Self Service Letters",
+    "title": "My Letters & Certificates",
     "buttons": [],
     "columns": [
       "Letter",
@@ -669,7 +669,7 @@ module.exports = [
   {
     "route": "ess/payslips",
     "group": "ess",
-    "title": "Self Service Payslips",
+    "title": "My Pay",
     "buttons": [],
     "columns": [
       "Period",
@@ -713,7 +713,7 @@ module.exports = [
   {
     "route": "my-handover",
     "group": "ess",
-    "title": "ESS Handover",
+    "title": "My Duty Handover",
     "buttons": [
       "Save"
     ],
@@ -731,7 +731,7 @@ module.exports = [
   {
     "route": "absence-analytics",
     "group": "leave",
-    "title": "HRMS Leave Absence Analytics",
+    "title": "Absence Analytics",
     "buttons": [
       "Filter",
       "Export"
@@ -750,7 +750,7 @@ module.exports = [
   {
     "route": "comp-off-management",
     "group": "leave",
-    "title": "HRMS Leave Comp-Off Management",
+    "title": "Comp-Off Management",
     "buttons": [
       "Grant",
       "Reject"
@@ -770,7 +770,7 @@ module.exports = [
   {
     "route": "comp-offs",
     "group": "leave",
-    "title": "HRMS Leave Comp-Off",
+    "title": "Comp-Off",
     "buttons": [
       "Request Comp-Off"
     ],
@@ -787,7 +787,7 @@ module.exports = [
   {
     "route": "employee-handover",
     "group": "leave",
-    "title": "HRMS Handover",
+    "title": "Employee Duty Handover",
     "buttons": [
       "Save"
     ],
@@ -860,7 +860,7 @@ module.exports = [
   {
     "route": "leave-assignment-list",
     "group": "leave",
-    "title": "Leave Assignment List",
+    "title": "Leave Assignment",
     "buttons": [
       "Filter",
       "New Leave Assignment"
@@ -916,7 +916,7 @@ module.exports = [
   {
     "route": "leave-calendar",
     "group": "leave",
-    "title": "HRMS Leave Management Leave Calendar",
+    "title": "Leave Calendar",
     "buttons": [],
     "columns": null,
     "tabs": null
@@ -924,7 +924,7 @@ module.exports = [
   {
     "route": "leave-delegation",
     "group": "leave",
-    "title": "HRMS Delegation",
+    "title": "Leave Approval Delegation",
     "buttons": [],
     "columns": [
       "SlNo",
@@ -940,7 +940,7 @@ module.exports = [
   {
     "route": "leave-encashment",
     "group": "leave",
-    "title": "HRMS Encashment",
+    "title": "Leave Encashment",
     "buttons": [
       "Submit Request"
     ],
@@ -956,7 +956,7 @@ module.exports = [
   {
     "route": "leave-encashment-approval",
     "group": "leave",
-    "title": "HRMS Leave Encashment Approvals",
+    "title": "Encashment Approvals",
     "buttons": [
       "Filter"
     ],
@@ -1009,7 +1009,7 @@ module.exports = [
   {
     "route": "leave-policy",
     "group": "leave",
-    "title": "HRMS Leave Policy",
+    "title": "Leave Policy Configuration",
     "buttons": [],
     "columns": null,
     "tabs": null
@@ -1017,7 +1017,7 @@ module.exports = [
   {
     "route": "leave-reports",
     "group": "leave",
-    "title": "HRMS Leave Management Reports",
+    "title": "Leave Reports",
     "buttons": [
       "Register",
       "Balance",

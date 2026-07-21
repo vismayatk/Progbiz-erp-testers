@@ -62,12 +62,14 @@ test.describe('recruitment: /requisition-list (Job Requisitions)', () => {
 
 test.describe('recruitment: /vacancy-list (Hiring)', () => {
   test('tab strip switches between hiring views', async ({ page }) => {
+    // The strip is router links (probed live): Candidates → /candidates,
+    // Talent Pools → /talent-pool. Each click leaves /vacancy-list, so we
+    // return via goto() before the next tab.
     const po = new VacancyListPage(page);
-    await po.goto();
-    for (const name of ['Candidates', 'Talent Pools', 'Job Openings']) {
+    for (const [name, route] of Object.entries(VacancyListPage.TAB_ROUTES)) {
+      await po.goto();
       await po.switchTab(name);
-      await expect(po.tab(name), `tab "${name}" should stay visible after switch`).toBeVisible();
-      expect(await po.isTabActive(name), `tab "${name}" should be active`).toBeTruthy();
+      expect(page.url(), `tab "${name}" should land on /${route}`).toMatch(new RegExp(`/${route}(\\?|$)`));
     }
   });
 
@@ -125,12 +127,15 @@ test.describe('recruitment: /job-applications-list (Job Applications)', () => {
 
 test.describe('recruitment: /candidates (Candidates)', () => {
   test('Add New form exposes Candidate Name + Phone Number, then dismisses', async ({ page }) => {
+    // "Add New" navigates to the routed create form /candidate/0 (probed live).
     const po = new CandidatesPage(page);
     await po.goto();
     await po.openAddForm();
-    await expect(po.candidateNameInput, 'Candidate Name field').toBeVisible();
-    await expect(po.phoneNumberInput,   'Phone Number field').toBeVisible();
-    await po.closeAddForm();
+    expect(page.url(), 'Add New should land on /candidate/0').toMatch(/\/candidate\/0(\?|$)/);
+    await expect(po.candidateNameInput,  'Name field (#TxtCandidateName)').toBeVisible();
+    await expect(po.candidateEmailInput, 'Email field (#TxtCandidateEmail)').toBeVisible();
+    await expect(po.phoneNumberInput,    'Phone field ("Enter phone number")').toBeVisible();
+    await po.closeAddForm();                            // back to the list — nothing saved
     await expect(po.addNewBtn).toBeVisible();
   });
 

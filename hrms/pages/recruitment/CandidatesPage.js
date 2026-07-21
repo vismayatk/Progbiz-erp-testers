@@ -5,9 +5,11 @@ const { BasePage, escapeRe } = require('../BasePage');
 /**
  * Candidates (/candidates) — central candidate register.
  * Status buckets are BUTTONS with live counts ("New 0", "In Progress 0",
- * "Shortlisted 0", "Selected 0", "Rejected 0"), not links. "Add New" opens the
- * manual candidate form whose "Candidate Name" / "Phone Number" placeholder
- * inputs were captured in the crawl.
+ * "Shortlisted 0", "Selected 0", "Rejected 0"), not links. "Add New" NAVIGATES
+ * to the routed create form /candidate/0 (probed live) with fields
+ * #TxtCandidateName, #TxtCandidateEmail and an "Enter phone number" input —
+ * the "Candidate Name" / "Phone Number" placeholder inputs captured on the
+ * LIST page are its filter row, not the create form.
  *
  * Grid: Sl.No | Name | Email | Phone | Branch | Designation | Skills | Status |
  *       Added On | Action. NOTE: captured rowCount was 1 with an EMPTY first
@@ -22,12 +24,15 @@ class CandidatesPage extends BasePage {
     this.addNewBtn   = this.button('Add New');
     this.searchInput = this.main.locator('input[placeholder="Search Name/Phone"]').first();
 
-    // ── Add-candidate form fields (modal-borne — anchored on page, not main) ─
-    this.candidateNameInput = page.locator('input[placeholder="Candidate Name"]').first();
-    this.phoneNumberInput   = page.locator('input[placeholder="Phone Number"]').first();
-    // Four unlabeled selects were captured (branch/designation/status pickers,
-    // list filters + add-form). Scope to the open modal to tell them apart.
-    this.filterSelects = this.main.locator('select');
+    // ── List filter row (captured on /candidates itself) ────────────────────
+    this.filterNameInput  = this.main.locator('input[placeholder="Candidate Name"]').first();
+    this.filterPhoneInput = this.main.locator('input[placeholder="Phone Number"]').first();
+    this.filterSelects    = this.main.locator('select');
+
+    // ── Routed create form /candidate/0 (probed live) ───────────────────────
+    this.candidateNameInput  = page.locator('#TxtCandidateName');
+    this.candidateEmailInput = page.locator('#TxtCandidateEmail');
+    this.phoneNumberInput    = page.locator('input[placeholder="Enter phone number"]').first();
   }
 
   /**
@@ -54,18 +59,17 @@ class CandidatesPage extends BasePage {
     return m ? Number(m[1]) : 0;
   }
 
-  /** Open the Add-New candidate form and wait for its named fields. Nothing is saved. */
+  /** Open the Add-New candidate form (routed page /candidate/0). Nothing is saved. */
   async openAddForm() {
     await this.addNewBtn.click();
-    await this.candidateNameInput.waitFor({ state: 'visible', timeout: 10000 });
-    await this.page.waitForTimeout(300);
+    await this.page.waitForURL(/\/candidate\/0(\?|$)/, { timeout: 20000 });
+    await this.waitReady();
+    await this.candidateNameInput.waitFor({ state: 'visible', timeout: 15000 });
   }
 
-  /** Dismiss the Add-New form WITHOUT saving. */
+  /** Leave the routed Add-New form WITHOUT saving — navigate back to the list. */
   async closeAddForm() {
-    await this.dismissModal();
-    // Non-modal variant still showing the form → reload to discard it.
-    if (await this.candidateNameInput.isVisible().catch(() => false)) await this.goto();
+    await this.goto();                     // back to /candidates, draft discarded
     await this.page.waitForTimeout(300);
   }
 

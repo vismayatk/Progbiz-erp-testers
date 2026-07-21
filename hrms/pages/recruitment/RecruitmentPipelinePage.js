@@ -39,26 +39,34 @@ class RecruitmentPipelinePage extends BasePage {
     return this.autoSyncToggle.isChecked().catch(() => false);
   }
 
-  /** Open the stage-configuration UI via "Configure Stages". Nothing is saved. */
+  /**
+   * Open the stage-configuration UI via "Configure Stages". Probed live: it is
+   * an INLINE editor — rows of {order number, stage name text, select, checkbox}
+   * appear on the board itself (no modal). Nothing is saved.
+   */
   async openStageConfig() {
     await this.configureStagesBtn.click();
-    await this.modal.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await this.stageRowInputs().first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(400);
   }
 
-  /** True when the stage editor (dialog OR inline panel with Save/Submit) is on screen. */
+  /** The stage-row inputs that only exist while the inline editor is open. */
+  stageRowInputs() {
+    // Baseline board has ONLY the vacancy select + #autoSync — any visible
+    // number/text input means the stage editor is open.
+    return this.main.locator('input[type="number"], input[type="text"]');
+  }
+
+  /** True when the stage editor (inline rows or a dialog) is on screen. */
   async stageConfigVisible() {
     if (await this.modal.isVisible().catch(() => false)) return true;
-    // Inline fallback — a Save/Submit button the baseline board does not have
-    // (crawl captured only "Configure Stages" and "Score").
-    return this.main.locator('button').filter({ hasText: /^\s*(save|submit)\s*$/i }).first()
-      .isVisible().catch(() => false);
+    return this.stageRowInputs().first().isVisible().catch(() => false);
   }
 
   /** Dismiss the stage-configuration UI WITHOUT saving any stage changes. */
   async closeStageConfig() {
-    await this.dismissModal();
-    // Panel variant (non-modal) still showing the editor → reload to discard it.
+    await this.dismissModal();                     // harmless if no dialog
+    // Inline editor has no cancel affordance we can trust — reload to discard.
     if (await this.stageConfigVisible()) await this.goto();
     await this.page.waitForTimeout(300);
   }

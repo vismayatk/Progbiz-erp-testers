@@ -4,9 +4,11 @@ const { BasePage } = require('../BasePage');
 
 /**
  * Hiring — Job Openings (/vacancy-list).
- * Recruiter workspace for vacancies: tab strip (Job Openings / Candidates /
- * Talent Pools) switches views without a route change; a native select
- * filters by opening status; "0 published · 0 total" counters sit above the grid.
+ * Recruiter workspace for vacancies. The tab strip (Job Openings / Candidates /
+ * Talent Pools) is a set of ROUTER LINKS, not in-page panels — probed live:
+ * "Candidates" navigates to /candidates and "Talent Pools" to /talent-pool,
+ * where the strip no longer exists. A native select filters by opening status;
+ * "0 published · 0 total" counters sit above the grid.
  *
  * Grid: Candidates | Job Opening | Hiring Lead | Created On | Status | Action
  * (captured empty — handle 0 rows).
@@ -23,24 +25,26 @@ class VacancyListPage extends BasePage {
     // "N published · N total · Show Draft & Open" counter line
     this.publishSummary = this.main.getByText(/\d+\s*published\s*·\s*\d+\s*total/i).first();
 
-    // ── Tabs (in-page, no route change) ─────────────────────────────────────
+    // ── Tabs (router links — each navigates to its own route) ───────────────
     this.jobOpeningsTab = this.tab('Job Openings');
     this.candidatesTab  = this.tab('Candidates');
     this.talentPoolsTab = this.tab('Talent Pools');
   }
 
-  /** Click a hiring tab ("Job Openings" | "Candidates" | "Talent Pools"). */
-  async switchTab(name) {
-    await this.tab(name).click();
-    await this.waitReady();
+  /** Where each hiring tab navigates (probed live on this build). */
+  static get TAB_ROUTES() {
+    return { 'Job Openings': 'vacancy-list', 'Candidates': 'candidates', 'Talent Pools': 'talent-pool' };
   }
 
-  /** Whether a tab is marked active (class or aria-selected). */
-  async isTabActive(name) {
-    const t = this.tab(name);
-    const cls  = (await t.getAttribute('class').catch(() => '')) || '';
-    const aria = (await t.getAttribute('aria-selected').catch(() => '')) || '';
-    return /\bactive\b/.test(cls) || aria === 'true';
+  /**
+   * Click a hiring tab and wait for its route. "Job Openings" stays on
+   * /vacancy-list; the other two LEAVE this page (call goto() to come back).
+   */
+  async switchTab(name) {
+    const route = VacancyListPage.TAB_ROUTES[name];
+    await this.tab(name).click();
+    if (route) await this.page.waitForURL(new RegExp(`/${route}(\\?|$)`), { timeout: 20000 }).catch(() => {});
+    await this.waitReady();
   }
 
   /** Open the create-opening form via "Add Job Opening". Nothing is saved. */

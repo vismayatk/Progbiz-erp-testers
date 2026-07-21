@@ -15,9 +15,14 @@ class BasePage {
     this.route = route.replace(/^\//, '');
     this.baseUrl = process.env.HRMS_BASE_URL || 'https://hrms-erp.progbiz.in';
 
-    // App shell
-    this.sidebar    = page.locator('nav, aside, .sidebar, [class*="sidebar" i]').first();
-    this.main       = page.locator('main, .main-content, [class*="content-wrapper" i], [class*="page-content" i]').first();
+    // App shell — captured skeleton (hrms/data/nav.json): body > #app > .page >
+    // header.app-header + aside#sidebar.app-sidebar + div.main-content.app-content.
+    // The content region must NEVER contain the sidebar, or tab()/button()
+    // lookups leak into side-menu links; hasNot guards against wrapper matches.
+    this.sidebar    = page.locator('aside, [class*="app-sidebar" i], [class*="side-menu" i]').first();
+    this.main       = page.locator('main, .main-content, [class*="content-wrapper" i], [class*="page-content" i]')
+                          .filter({ hasNot: page.locator('aside, [class*="app-sidebar" i], [class*="side-menu" i]') })
+                          .first();
     this.pageTitle  = this.main.locator('h1, .page-title, [class*="page-header" i] h2, h2').first();
     this.breadcrumb = this.main.locator('.breadcrumb, [class*="breadcrumb" i], nav[aria-label="breadcrumb"]').first();
     // First visible data grid on the page
@@ -26,6 +31,9 @@ class BasePage {
     this.gridRows    = this.grid.locator('tbody tr');
     // Generic modal (bootstrap-style)
     this.modal      = page.locator('.modal.show, .modal[style*="display: block"], [role="dialog"]:visible').first();
+    // SweetAlert2 popup — this build raises swal validation/confirm dialogs whose
+    // backdrop (.swal2-backdrop-show) covers the page and blocks clicks beneath.
+    this.swal       = page.locator('.swal2-container');
   }
 
   /** Navigate to this page's route (or an explicit one) and wait until the SPA settles. */
@@ -103,6 +111,23 @@ class BasePage {
    * Callers with a non-modal (inline/panel) variant must follow up with their
    * own editor-visible check and reload the route if it is still open.
    */
+  /**
+   * Dismiss an open SweetAlert2 popup (OK/confirm-style validation alerts)
+   * WITHOUT accepting any destructive action: prefers the visible Cancel/close,
+   * falls back to the confirm button only for plain OK alerts, then Escape.
+   */
+  async dismissSweetAlert() {
+    if (!await this.swal.isVisible().catch(() => false)) return;
+    const cancel = this.swal.locator('.swal2-cancel:visible, .swal2-close:visible').first();
+    if (await cancel.count()) await cancel.click().catch(() => {});
+    else {
+      const ok = this.swal.locator('.swal2-confirm:visible').first();
+      if (await ok.count()) await ok.click().catch(() => {});
+      else await this.page.keyboard.press('Escape').catch(() => {});
+    }
+    await this.swal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+  }
+
   async dismissModal() {
     for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
       const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();

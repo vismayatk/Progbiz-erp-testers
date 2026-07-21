@@ -751,10 +751,7 @@ module.exports = [
     "route": "comp-off-management",
     "group": "leave",
     "title": "Comp-Off Management",
-    "buttons": [
-      "Grant",
-      "Reject"
-    ],
+    "buttons": [],
     "columns": [
       "SlNo",
       "Employee",

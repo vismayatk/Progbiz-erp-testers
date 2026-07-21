@@ -23,6 +23,9 @@ const LAZY = new Set(['ess', 'ess/probation', 'ess/profile']);
 // The 4 re-captured ESS pages have a different JSON shape (sectionTitles, no
 // headers/tables) — freeze their identity by hand from the verified screenshots.
 const OVERRIDES = {
+  // Grant/Reject are per-row actions — they vanish when no pending request rows
+  // exist, so they cannot serve as page identity.
+  'comp-off-management': { buttons: [] },
   'ess':           { title: 'My Workspace', buttons: ['Apply Leave', 'My Attendance', 'Payslips'], tabs: null },
   'ess/profile':   { title: 'My Profile', buttons: ['Submit Change Request', 'View My Requests'], tabs: null },
   'ess/probation': { title: 'My Probation', buttons: [], tabs: null },

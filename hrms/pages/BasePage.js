@@ -34,6 +34,12 @@ class BasePage {
     // SweetAlert2 popup — this build raises swal validation/confirm dialogs whose
     // backdrop (.swal2-backdrop-show) covers the page and blocks clicks beneath.
     this.swal       = page.locator('.swal2-container');
+    // Slide-out list-filter panel (probed live on /shift-roster): search boxes,
+    // date ranges and toggles on many list pages sit inside #filterOffcanvas,
+    // visibility:hidden off the right edge until its icon-only trigger
+    // (title="Filter", ri-filter-3-line) opens it.
+    this.filterPanel       = page.locator('#filterOffcanvas');
+    this.filterPanelToggle = page.locator('[data-bs-target="#filterOffcanvas"], a[title="Filter"]').first();
   }
 
   /** Navigate to this page's route (or an explicit one) and wait until the SPA settles. */
@@ -111,6 +117,34 @@ class BasePage {
    * Callers with a non-modal (inline/panel) variant must follow up with their
    * own editor-visible check and reload the route if it is still open.
    */
+  /** Open the slide-out filter panel if it is not already showing. */
+  async openFilterPanel() {
+    if (await this.filterPanel.isVisible().catch(() => false)) return;
+    await this.filterPanelToggle.click();
+    await this.filterPanel.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await this.page.waitForTimeout(300);
+  }
+
+  /**
+   * Make a filter control interactable: several list pages keep part of their
+   * filters in the closed #filterOffcanvas (visibility:hidden, off-viewport) —
+   * open it when the control is not already visible on the page body.
+   */
+  async ensureVisible(locator) {
+    if (await locator.isVisible().catch(() => false)) return;
+    await this.openFilterPanel();
+    await locator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+  }
+
+  /** Close the slide-out filter panel WITHOUT clearing anything. */
+  async closeFilterPanel() {
+    if (!await this.filterPanel.isVisible().catch(() => false)) return;
+    const x = this.filterPanel.locator('.btn-close, [data-bs-dismiss="offcanvas"]').first();
+    if (await x.count()) await x.click().catch(() => {});
+    else await this.page.keyboard.press('Escape').catch(() => {});
+    await this.filterPanel.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+  }
+
   /**
    * Dismiss an open SweetAlert2 popup (OK/confirm-style validation alerts)
    * WITHOUT accepting any destructive action: prefers the visible Cancel/close,

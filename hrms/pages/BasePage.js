@@ -34,12 +34,13 @@ class BasePage {
     // SweetAlert2 popup — this build raises swal validation/confirm dialogs whose
     // backdrop (.swal2-backdrop-show) covers the page and blocks clicks beneath.
     this.swal       = page.locator('.swal2-container');
-    // Slide-out list-filter panel (probed live on /shift-roster): search boxes,
-    // date ranges and toggles on many list pages sit inside #filterOffcanvas,
-    // visibility:hidden off the right edge until its icon-only trigger
-    // (title="Filter", ri-filter-3-line) opens it.
-    this.filterPanel       = page.locator('#filterOffcanvas');
-    this.filterPanelToggle = page.locator('[data-bs-target="#filterOffcanvas"], a[title="Filter"]').first();
+    // Slide-out list-filter panel. Probed live: many list pages keep search
+    // boxes, date ranges and toggles inside a bootstrap offcanvas that is
+    // visibility:hidden off the right edge until a toggle opens it. The
+    // offcanvas id VARIES per page (filterOffcanvas, ledgerFilterOffcanvas,
+    // syncFilterOffcanvas, leaveApprovalFilterOffcanvas, …) so match any
+    // offcanvas whose id contains "filter"; the toggle is derived from that id.
+    this.filterPanel = page.locator('.offcanvas[id*="ilter" i]').first();
   }
 
   /** Navigate to this page's route (or an explicit one) and wait until the SPA settles. */
@@ -119,8 +120,16 @@ class BasePage {
    */
   /** Open the slide-out filter panel if it is not already showing. */
   async openFilterPanel() {
-    if (await this.filterPanel.isVisible().catch(() => false)) return;
-    await this.filterPanelToggle.click();
+    if (!await this.filterPanel.count()) return;
+    const cls = (await this.filterPanel.getAttribute('class').catch(() => '')) || '';
+    if (cls.includes('show')) return;
+    // Derive the toggle from the panel's own id so we click the right button on
+    // pages that have several offcanvases; fall back to a title="Filter" icon.
+    const id = await this.filterPanel.getAttribute('id').catch(() => null);
+    const toggle = id
+      ? this.page.locator(`[data-bs-target="#${id}"], [href="#${id}"]`).first()
+      : this.page.locator('a[title="Filter"], [data-bs-target*="ilter" i]').first();
+    await toggle.click();
     await this.filterPanel.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
     await this.page.waitForTimeout(300);
   }

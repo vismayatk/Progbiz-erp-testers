@@ -16,17 +16,19 @@ class LeaveAttendanceSyncPage extends BasePage {
   constructor(page) {
     super(page, 'leave-attendance-sync');
 
+    // Probed live: "Filter" is the offcanvas TOGGLE (#syncFilterOffcanvas);
+    // the year/period/branch/department fields are resident inside it.
     this.filterBtn      = this.button('Filter');
     this.recalculateBtn = this.button('Recalculate period');   // mutating — never clicked
 
-    this.yearInput     = this.main.locator('input[type="number"]').first();
-    this.filterSelects = this.main.locator('select');          // period / branch / department
+    this.yearInput     = this.filterPanel.locator('input[type="number"]').first();
+    this.filterSelects = this.filterPanel.locator('select');   // period / branch / department
   }
 
   /** Apply the year filter and let the reconciliation grid re-render (read-only). */
   async applyYearFilter(year) {
+    await this.openFilterPanel();
     await this.yearInput.fill(String(year));
-    await this.filterBtn.click();
     await this.waitReady();
   }
 

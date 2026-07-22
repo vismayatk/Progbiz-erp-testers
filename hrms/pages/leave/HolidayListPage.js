@@ -7,8 +7,9 @@ const { BasePage } = require('../BasePage');
  * <year>"). Grid: Sl.No | Holiday Name | Dates | Calendar | Action — captured
  * with 1 live row (Onam | 24/08/2026 | State - Kerala), so tests must not
  * assume an empty grid.
- * "Calendar" toggles a calendar visualisation of the same data; "Export"
- * triggers a download (not exercised); "New Holiday" opens a create modal.
+ * "Calendar" NAVIGATES to /holiday-calendar (a separate route — probed live),
+ * a full calendar visualisation of the same data; "Export" triggers a download
+ * (not exercised); "New Holiday" opens a create modal.
  */
 class HolidayListPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
@@ -16,7 +17,7 @@ class HolidayListPage extends BasePage {
     super(page, 'holiday-list');
 
     // ── Toolbar ────────────────────────────────────────────────────────────
-    this.calendarViewBtn = this.button('Calendar');      // view toggle (read-only)
+    this.calendarViewBtn = this.button('Calendar');      // navigates to /holiday-calendar
     this.exportBtn       = this.button('Export');        // download — not exercised
     this.newHolidayBtn   = this.button('New Holiday');
 
@@ -59,9 +60,10 @@ class HolidayListPage extends BasePage {
     await this.waitReady();
   }
 
-  /** Toggle the calendar visualisation via the "Calendar" button (read-only view). */
+  /** Open the calendar visualisation — navigates to /holiday-calendar (read-only). */
   async toggleCalendarView() {
     await this.calendarViewBtn.click();
+    await this.page.waitForURL(/\/holiday-calendar(\?|$)/, { timeout: 20000 }).catch(() => {});
     await this.waitReady();
   }
 

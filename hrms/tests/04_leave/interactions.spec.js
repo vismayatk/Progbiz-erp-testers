@@ -18,6 +18,7 @@
  */
 const { test, expect } = require('@playwright/test');
 
+const { BasePage }                   = require('../../pages/BasePage');
 const { LeaveTypesPage }             = require('../../pages/leave/LeaveTypesPage');
 const { LeavePatternsPage }          = require('../../pages/leave/LeavePatternsPage');
 const { LeavePolicyPage }            = require('../../pages/leave/LeavePolicyPage');
@@ -308,18 +309,15 @@ test.describe('leave: /leave-encashment-approval (Encashment Approvals)', () => 
 
 // ── /leave-delegation ────────────────────────────────────────────────────────
 
-test.describe('leave: /leave-delegation (Leave Approval Delegation)', () => {
-  test('read-only delegation registry renders (created via /leave-approval, not here)', async ({ page }) => {
+test.describe('leave: /leave-delegation (REMOVED by role change)', () => {
+  // 2026-07 vismaya role change removed this route (Blazor not-found).
+  // Delegation still exists as the "Delegate approvals" modal on /leave-approval.
+  test('route is removed for the vismaya role', async ({ page }) => {
     const po = new LeaveDelegationPage(page);
     await po.goto();
-    expect(await po.hasDelegationsCard(), '"Active & Past Delegations" card').toBeTruthy();
-    await expect(po.grid).toBeVisible();
-    const headers = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
-    for (const col of ['From Date', 'To Date', 'Active']) {
-      expect(headers, `column "${col}"`).toContain(col.toLowerCase());
-    }
-    const emptyShown = await po.hasNoDelegations();
-    expect(emptyShown || (await po.rowCount()) > 0, 'empty state or delegation rows').toBeTruthy();
+    const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ');
+    const gone = /nothing at this address/i.test(body) || body.trim().length < 40;
+    expect(gone, `route should be removed for this role, saw: "${body.slice(0, 120)}"`).toBeTruthy();
   });
 });
 
@@ -376,23 +374,38 @@ test.describe('leave: /comp-offs (Comp-Off)', () => {
 
 // ── /comp-off-management ─────────────────────────────────────────────────────
 
-test.describe('leave: /comp-off-management (Comp-Off Management)', () => {
-  test('"Pending grant only" toggle re-renders the grid (Grant/Reject never clicked)', async ({ page }) => {
+test.describe('leave: /comp-off-management (REMOVED by role change)', () => {
+  // 2026-07 vismaya role change: this route now renders a blank body; its
+  // successor is /comp-off-approval (bulk approve/reject/delegate) below.
+  test('route is removed for the vismaya role', async ({ page }) => {
     const po = new CompOffManagementPage(page);
     await po.goto();
-    await expect(po.pendingOnlyChk, '"Pending grant only" (#reqOnly)').toBeVisible();
-    await po.togglePendingOnly();
-    await expect(po.grid).toBeVisible();
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
-    await po.togglePendingOnly();   // restore the unfiltered view
-    await expect(po.grid).toBeVisible();
+    const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ');
+    const gone = /nothing at this address/i.test(body) || body.trim().length < 40;
+    expect(gone, `route should be removed for this role, saw: "${body.slice(0, 120)}"`).toBeTruthy();
+  });
+});
+
+// ── /comp-off-approval (NEW — successor of comp-off-management) ──────────────
+
+test.describe('leave: /comp-off-approval (Comp-Off Approval)', () => {
+  test('bulk-action toolbar renders; decisions never clicked', async ({ page }) => {
+    const po = new BasePage(page, 'comp-off-approval');
+    await po.goto();
+    await expect(po.main.getByText(/Comp-Off Approval/i).first()).toBeVisible({ timeout: 25000 });
+    // Bulk buttons asserted only — Approve/Reject/Delegate are real decisions.
+    await expect(po.buttonContaining('Approve Selected')).toBeVisible();
+    await expect(po.buttonContaining('Reject Selected')).toBeVisible();
+    await expect(po.buttonContaining('Delegate Selected')).toBeVisible();
+    expect(await po.containsText('Bulk actions'), 'bulk-actions helper text').toBeTruthy();
   });
 
-  test('all-employees grid keeps its structure (live data exists — no empty assumption)', async ({ page }) => {
-    const po = new CompOffManagementPage(page);
+  test('approvals grid renders its columns', async ({ page }) => {
+    const po = new BasePage(page, 'comp-off-approval');
     await po.goto();
+    await expect(po.grid).toBeVisible();
     const headers = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
-    for (const col of ['Employee', 'Source', 'Expiry', 'Status']) {
+    for (const col of ['Employee Name', 'Worked On', 'Days', 'Leave Date', 'Status']) {
       expect(headers, `column "${col}"`).toContain(col.toLowerCase());
     }
     expect(await po.rowCount()).toBeGreaterThanOrEqual(0);

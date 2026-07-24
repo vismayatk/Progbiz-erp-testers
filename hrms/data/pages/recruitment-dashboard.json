@@ -1,0 +1,28 @@
+{
+  "route": "recruitment-dashboard",
+  "finalUrl": "https://hrms-erp.progbiz.in/recruitment-dashboard",
+  "group": "role-new",
+  "headers": [
+    "Recruitment Dashboard Recruitment Analytics",
+    "Recruitment Dashboard",
+    "Recruitment Analytics",
+    "Recruitment Analytics",
+    "Recruitment",
+    "Recruitment",
+    "Analytics",
+    "Export",
+    "Export"
+  ],
+  "breadcrumb": "Recruitment Dashboard Recruitment Analytics Export",
+  "tabs": [],
+  "buttons": [
+    "Export"
+  ],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
+  "bodySnippet": "Recruitment Dashboard Recruitment Analytics Export"
+}

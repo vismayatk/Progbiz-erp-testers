@@ -17,6 +17,7 @@
  */
 const { test, expect } = require('@playwright/test');
 
+const { BasePage }                  = require('../../pages/BasePage');
 const { RequisitionListPage }       = require('../../pages/recruitment/RequisitionListPage');
 const { VacancyListPage }           = require('../../pages/recruitment/VacancyListPage');
 const { CurrentOpeningsPage }       = require('../../pages/recruitment/CurrentOpeningsPage');
@@ -390,5 +391,47 @@ test.describe('recruitment: /onboarding-pipeline (Onboarding Pipeline)', () => {
     expect(await po.startWizardVisible(), 'Start Onboarding should open a wizard').toBeTruthy();
     await po.closeStartWizard();                         // never confirms Start
     await expect(po.startOnboardingBtn).toBeVisible();
+  });
+});
+
+// ── /recruitment-dashboard (NEW — 2026-07 role change) ───────────────────────
+
+test.describe('recruitment: /recruitment-dashboard (Recruitment Analytics)', () => {
+  test('analytics dashboard renders with its Export action', async ({ page }) => {
+    const po = new BasePage(page, 'recruitment-dashboard');
+    await po.goto();
+    await expect(po.main.getByText(/Recruitment (Dashboard|Analytics)/i).first()).toBeVisible({ timeout: 25000 });
+    await expect(po.buttonContaining('Export')).toBeVisible();   // download — asserted only
+    expect(page.url()).not.toContain('/login');
+  });
+});
+
+// ── /recruitment/approvals (NEW — 2026-07 role change) ───────────────────────
+
+test.describe('recruitment: /recruitment/approvals (Recruitment Approvals)', () => {
+  test('approvals inbox renders its three tabs and grid', async ({ page }) => {
+    const po = new BasePage(page, 'recruitment/approvals');
+    await po.goto();
+    await expect(po.main.getByText(/Recruitment Approvals/i).first()).toBeVisible({ timeout: 25000 });
+    for (const t of ['Awaiting my decision', 'My requests', 'History']) {
+      await expect(po.tab(t), `tab "${t}"`).toBeVisible();
+    }
+    await expect(po.grid).toBeVisible();
+    const headers = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
+    for (const col of ['Type', 'Details', 'Level', 'Raised']) {
+      expect(headers, `column "${col}"`).toContain(col.toLowerCase());
+    }
+    // Documented empty state on a fresh inbox — tolerated, never required.
+    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
+  });
+
+  test('tab switching keeps the inbox stable (no decisions clicked)', async ({ page }) => {
+    const po = new BasePage(page, 'recruitment/approvals');
+    await po.goto();
+    for (const t of ['My requests', 'History', 'Awaiting my decision']) {
+      await po.tab(t).click();
+      await po.waitReady();
+      expect(page.url()).not.toContain('/login');
+    }
   });
 });

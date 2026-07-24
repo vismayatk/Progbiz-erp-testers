@@ -1,0 +1,48 @@
+{
+  "route": "recruitment/approvals",
+  "finalUrl": "https://hrms-erp.progbiz.in/recruitment/approvals",
+  "group": "role-new",
+  "headers": [
+    "Recruitment Approvals Recruitment My Approvals",
+    "Recruitment Approvals",
+    "Recruitment My Approvals",
+    "Recruitment My Approvals",
+    "Recruitment",
+    "Recruitment",
+    "My Approvals",
+    "Refresh"
+  ],
+  "breadcrumb": "Recruitment Approvals Recruitment My Approvals Refresh",
+  "tabs": [
+    "Awaiting my decision (0)",
+    "My requests",
+    "History"
+  ],
+  "buttons": [
+    "Refresh"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "Type",
+        "Details",
+        "Level",
+        "As",
+        "Raised",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        "No requisitions or offers awaiting your approval."
+      ]
+    }
+  ],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Awaiting My Decision (0)"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Recruitment Approvals Recruitment My Approvals Refresh Awaiting my decision (0) My requests History Awaiting My Decision (0) Type Details Level As Raised Action No requisitions or offers awaiting your approval."
+}

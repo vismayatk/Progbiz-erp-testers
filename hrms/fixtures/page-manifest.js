@@ -1,7 +1,7 @@
 'use strict';
 /**
  * AUTO-GENERATED from hrms/data/pages/*.json by exploration/07_gen_manifest.js
- * (crawl of 80 HRMS pages). Regenerate after a re-crawl:
+ * (crawl of 84 HRMS pages). Regenerate after a re-crawl:
  *   node hrms/exploration/07_gen_manifest.js
  * Hand-edits: prefer fixing the generator, not this file.
  */
@@ -30,94 +30,22 @@ module.exports = [
     "quirk": "header misspelled \"Add Vist Report\" (build bug) — asserted as-is"
   },
   {
-    "route": "approval-absent",
-    "group": "attendance",
-    "title": "Approval Absent",
-    "buttons": [
-      "Filter"
-    ],
-    "columns": [
-      "SL NO",
-      "IDNumber",
-      "Employee Name",
-      "Branch",
-      "Department",
-      "Date",
-      "Period Name",
-      "Period Type",
-      "Hours Employee Must Work",
-      "Approval"
-    ],
-    "tabs": null
-  },
-  {
     "route": "approval-absent-report",
     "group": "attendance",
-    "title": "Approval Absent Report",
-    "buttons": [
-      "Filter"
-    ],
-    "columns": [
-      "SL No",
-      "IDNumber",
-      "Employee Name",
-      "Date",
-      "Period Name",
-      "Start Time",
-      "End Time",
-      "Balance Hours",
-      "Fixed Hours",
-      "Fixed Date",
-      "Remarks",
-      "Final Hours"
-    ],
-    "tabs": null
-  },
-  {
-    "route": "approval-operation",
-    "group": "attendance",
-    "title": "Approval Operation",
-    "buttons": [
-      "Filter"
-    ],
-    "columns": [
-      "SL No",
-      "IDNumber",
-      "Employee Name",
-      "Branch",
-      "Date",
-      "Entry Time",
-      "Exit Time",
-      "Status",
-      "Period Name",
-      "Hours Employee Must Work",
-      "Worked Hours",
-      "Over Time Hours"
-    ],
-    "tabs": null
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
   },
   {
     "route": "approval-operation-report",
     "group": "attendance",
-    "title": "Approval Operation Report",
-    "buttons": [
-      "Filter"
-    ],
-    "columns": [
-      "SL No",
-      "IDNumber",
-      "Employee Name",
-      "Date",
-      "Entry Time",
-      "Exit Time",
-      "Balance Hours",
-      "Fixed Hours",
-      "Fixed Date",
-      "Discount from Permission Hours",
-      "Remarks",
-      "Final Hours"
-    ],
-    "tabs": null
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
   },
   {
     "route": "attendance-finalization",
@@ -748,23 +676,6 @@ module.exports = [
     "tabs": null
   },
   {
-    "route": "comp-off-management",
-    "group": "leave",
-    "title": "Comp-Off Management",
-    "buttons": [],
-    "columns": [
-      "SlNo",
-      "Employee",
-      "Earned",
-      "Source",
-      "Days",
-      "Expiry",
-      "Status",
-      "Action"
-    ],
-    "tabs": null
-  },
-  {
     "route": "comp-offs",
     "group": "leave",
     "title": "Comp-Off",
@@ -916,22 +827,6 @@ module.exports = [
     "title": "Leave Calendar",
     "buttons": [],
     "columns": null,
-    "tabs": null
-  },
-  {
-    "route": "leave-delegation",
-    "group": "leave",
-    "title": "Leave Approval Delegation",
-    "buttons": [],
-    "columns": [
-      "SlNo",
-      "From",
-      "To",
-      "From Date",
-      "To Date",
-      "Active",
-      "Action"
-    ],
     "tabs": null
   },
   {
@@ -1308,6 +1203,99 @@ module.exports = [
       "Job Openings",
       "Candidates",
       "Talent Pools"
+    ]
+  },
+  {
+    "route": "approval-absent",
+    "group": "role-new",
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
+  },
+  {
+    "route": "approval-operation",
+    "group": "role-new",
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
+  },
+  {
+    "route": "comp-off-approval",
+    "group": "role-new",
+    "title": "Comp-Off Approval",
+    "buttons": [
+      "Approve Selected",
+      "Reject Selected",
+      "Delegate Selected"
+    ],
+    "columns": [
+      "SL.No",
+      "Employee Name",
+      "Worked On",
+      "Days",
+      "Leave Date",
+      "Status",
+      "Action"
+    ],
+    "tabs": null
+  },
+  {
+    "route": "comp-off-management",
+    "group": "role-new",
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
+  },
+  {
+    "route": "hrms/reminder-rules",
+    "group": "role-new",
+    "title": "HR Reminders",
+    "buttons": [],
+    "columns": null,
+    "tabs": null
+  },
+  {
+    "route": "leave-delegation",
+    "group": "role-new",
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
+  },
+  {
+    "route": "recruitment-dashboard",
+    "group": "role-new",
+    "title": "Recruitment Dashboard",
+    "buttons": [
+      "Export"
+    ],
+    "columns": null,
+    "tabs": null
+  },
+  {
+    "route": "recruitment/approvals",
+    "group": "role-new",
+    "title": "Recruitment Approvals",
+    "buttons": [],
+    "columns": [
+      "Type",
+      "Details",
+      "Level",
+      "As",
+      "Raised",
+      "Action"
+    ],
+    "tabs": [
+      "Awaiting my decision",
+      "My requests",
+      "History"
     ]
   }
 ];

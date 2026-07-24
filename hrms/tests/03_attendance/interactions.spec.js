@@ -30,10 +30,19 @@ const { AttendanceFinalizationPage }  = require('../../pages/attendance/Attendan
 const { GeofencesPage }               = require('../../pages/attendance/GeofencesPage');
 const { TimesheetPage }               = require('../../pages/attendance/TimesheetPage');
 const { AttendanceReportPackPage }    = require('../../pages/attendance/AttendanceReportPackPage');
-const { ApprovalOperationPage }       = require('../../pages/attendance/ApprovalOperationPage');
-const { ApprovalOperationReportPage } = require('../../pages/attendance/ApprovalOperationReportPage');
-const { ApprovalAbsentPage }          = require('../../pages/attendance/ApprovalAbsentPage');
-const { ApprovalAbsentReportPage }    = require('../../pages/attendance/ApprovalAbsentReportPage');
+// The four approval pages were REMOVED by the 2026-07 vismaya role change —
+// their POMs stay on disk for when a role regains them; the tests below assert
+// the removed state instead.
+const { BasePage } = require('../../pages/BasePage');
+
+/** Assert a route renders the role-removed state (Blazor not-found or blank). */
+async function expectRouteRemoved(page, route) {
+  const po = new BasePage(page, route);
+  await po.goto();
+  const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ');
+  const gone = /nothing at this address/i.test(body) || body.trim().length < 40;
+  return { gone, body: body.slice(0, 120) };
+}
 
 // ── /shifts ──────────────────────────────────────────────────────────────────
 
@@ -366,98 +375,36 @@ test.describe('attendance: /attendance-report-pack (Attendance Report Pack)', ()
 
 // ── /approval-operation ──────────────────────────────────────────────────────
 
-test.describe('attendance: /approval-operation (Approval Operation)', () => {
-  test('queue grid keeps its misspelled minute columns (0 rows until Filter)', async ({ page }) => {
-    const po = new ApprovalOperationPage(page);
-    await po.goto();
-    await expect(po.grid).toBeVisible();
-    const headers = await po.gridHeaderTexts();
-    // Build typos asserted VERBATIM per the manifest — "Miutes", not "Minutes".
-    expect(headers, 'typo column "Entry Late Miutes"').toContain('Entry Late Miutes');
-    expect(headers, 'typo column "Exit Early Miutes"').toContain('Exit Early Miutes');
-    expect(headers, 'decision column "Approval" (never clicked)').toContain('Approval');
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);   // pre-filter baseline is empty
-  });
-
-  test('Filter dialog opens and dismisses without approving anything', async ({ page }) => {
-    const po = new ApprovalOperationPage(page);
-    await po.goto();
-    const opened = await po.openFilterDialog();
-    expect(opened, '"Filter" should reveal the criteria dialog').toBeTruthy();
-    await po.closeFilterDialog();
-    await expect(po.filterBtn).toBeVisible();
+test.describe('attendance: /approval-operation (REMOVED by role change)', () => {
+  test('route is removed for the vismaya role', async ({ page }) => {
+    const { gone, body } = await expectRouteRemoved(page, 'approval-operation');
+    expect(gone, `route should be removed for this role, saw: "${body}"`).toBeTruthy();
   });
 });
 
 // ── /approval-operation-report ───────────────────────────────────────────────
 
-test.describe('attendance: /approval-operation-report (Approval Operation Report)', () => {
-  test('register grid renders its Details/Delete columns (0 rows until Filter)', async ({ page }) => {
-    const po = new ApprovalOperationReportPage(page);
-    await po.goto();
-    await expect(po.grid).toBeVisible();
-    const headers = await po.gridHeaderTexts();
-    for (const col of ['Discount from Permission Hours', 'Final Hours', 'Details', 'Delete']) {
-      expect(headers, `column "${col}"`).toContain(col);
-    }
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);   // pre-filter baseline is empty
-  });
-
-  test('Filter dialog opens and dismisses without applying', async ({ page }) => {
-    const po = new ApprovalOperationReportPage(page);
-    await po.goto();
-    const opened = await po.openFilterDialog();
-    expect(opened, '"Filter" should reveal the criteria dialog').toBeTruthy();
-    await po.closeFilterDialog();
-    await expect(po.filterBtn).toBeVisible();
+test.describe('attendance: /approval-operation-report (REMOVED by role change)', () => {
+  test('route is removed for the vismaya role', async ({ page }) => {
+    const { gone, body } = await expectRouteRemoved(page, 'approval-operation-report');
+    expect(gone, `route should be removed for this role, saw: "${body}"`).toBeTruthy();
   });
 });
 
 // ── /approval-absent ─────────────────────────────────────────────────────────
 
-test.describe('attendance: /approval-absent (Approval Absent)', () => {
-  test('absent queue renders its columns (note the "SL NO" casing)', async ({ page }) => {
-    const po = new ApprovalAbsentPage(page);
-    await po.goto();
-    await expect(po.grid).toBeVisible();
-    // Header casing differs from sibling pages — normalise case-insensitively.
-    const lower = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
-    for (const col of ['sl no', 'period type', 'hours employee must work', 'approval']) {
-      expect(lower, `column "${col}" (case-insensitive)`).toContain(col);
-    }
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);   // pre-filter baseline is empty
-  });
-
-  test('Filter dialog opens and dismisses without approving anything', async ({ page }) => {
-    const po = new ApprovalAbsentPage(page);
-    await po.goto();
-    const opened = await po.openFilterDialog();
-    expect(opened, '"Filter" should reveal the criteria dialog').toBeTruthy();
-    await po.closeFilterDialog();
-    await expect(po.filterBtn).toBeVisible();
+test.describe('attendance: /approval-absent (REMOVED by role change)', () => {
+  test('route is removed for the vismaya role', async ({ page }) => {
+    const { gone, body } = await expectRouteRemoved(page, 'approval-absent');
+    expect(gone, `route should be removed for this role, saw: "${body}"`).toBeTruthy();
   });
 });
 
 // ── /approval-absent-report ──────────────────────────────────────────────────
 
-test.describe('attendance: /approval-absent-report (Approval Absent Report)', () => {
-  test('register grid renders Start/End Time columns (0 rows until Filter)', async ({ page }) => {
-    const po = new ApprovalAbsentReportPage(page);
-    await po.goto();
-    await expect(po.grid).toBeVisible();
-    const headers = await po.gridHeaderTexts();
-    for (const col of ['Start Time', 'End Time', 'Final Hours', 'Details', 'Delete']) {
-      expect(headers, `column "${col}"`).toContain(col);
-    }
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);   // pre-filter baseline is empty
-  });
-
-  test('Filter dialog opens and dismisses without applying', async ({ page }) => {
-    const po = new ApprovalAbsentReportPage(page);
-    await po.goto();
-    const opened = await po.openFilterDialog();
-    expect(opened, '"Filter" should reveal the criteria dialog').toBeTruthy();
-    await po.closeFilterDialog();
-    await expect(po.filterBtn).toBeVisible();
+test.describe('attendance: /approval-absent-report (REMOVED by role change)', () => {
+  test('route is removed for the vismaya role', async ({ page }) => {
+    const { gone, body } = await expectRouteRemoved(page, 'approval-absent-report');
+    expect(gone, `route should be removed for this role, saw: "${body}"`).toBeTruthy();
   });
 });

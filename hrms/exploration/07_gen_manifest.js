@@ -20,6 +20,15 @@ const QUIRKS = {
 };
 // Lazy pages that show a Loading placeholder first.
 const LAZY = new Set(['ess', 'ess/probation', 'ess/profile']);
+// Routes REMOVED for the vismaya role (2026-07 role change, probed live):
+// three show Blazor's "Sorry, there's nothing at this address.", the rest
+// render a fully blank body. The smoke suite asserts THAT state so an
+// accidental restoration (or a role fix) is flagged.
+const ROLE_REMOVED = new Set([
+  'approval-operation', 'approval-operation-report',
+  'approval-absent', 'approval-absent-report',
+  'leave-delegation', 'comp-off-management',
+]);
 // The 4 re-captured ESS pages have a different JSON shape (sectionTitles, no
 // headers/tables) — freeze their identity by hand from the verified screenshots.
 const OVERRIDES = {
@@ -73,6 +82,10 @@ for (const f of files) {
     .map(t => t.replace(/\s+\d+$/, '').replace(/\s*\(\d+\)$/, '').trim())
     .filter((t, i, a) => t && a.indexOf(t) === i).slice(0, 6);
 
+  if (ROLE_REMOVED.has(d.route)) {
+    entries.push({ route: d.route, group: d.group, title: '', buttons: [], columns: null, tabs: null, removed: true });
+    continue;
+  }
   const ov = OVERRIDES[d.route] || {};
   entries.push({
     route: d.route,

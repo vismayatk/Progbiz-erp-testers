@@ -1,0 +1,53 @@
+{
+  "route": "comp-off-approval",
+  "finalUrl": "https://hrms-erp.progbiz.in/comp-off-approval",
+  "group": "role-new",
+  "headers": [
+    "Comp-Off Approval",
+    "HRMS Leave Comp-Off Approval",
+    "HRMS Leave Comp-Off Approval",
+    "HRMS",
+    "HRMS",
+    "Leave",
+    "Leave",
+    "Comp-Off Approval"
+  ],
+  "breadcrumb": "Comp-Off Approval HRMS Leave Comp-Off Approval",
+  "tabs": [],
+  "buttons": [
+    "Approve Selected",
+    "Reject Selected",
+    "Delegate Selected",
+    "Clear"
+  ],
+  "tables": [
+    {
+      "headers": [
+        "SL.No",
+        "Employee Name",
+        "Worked On",
+        "Days",
+        "Leave Date",
+        "Status",
+        "Action"
+      ],
+      "rowCount": 1,
+      "firstRow": [
+        ""
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "checkbox"
+    }
+  ],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Comp-Off Approvals"
+  ],
+  "emptyState": "",
+  "bodySnippet": "Comp-Off Approval HRMS Leave Comp-Off Approval Comp-Off Approvals Bulk actions— tick the rows you want, then act on them together Approve Selected Reject Selected Delegate Selected Clear SL.No Employee Name Worked On Days Leave Date Status Action"
+}

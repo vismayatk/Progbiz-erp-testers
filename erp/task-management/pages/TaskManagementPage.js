@@ -103,11 +103,21 @@ class TaskManagementPage {
       await this.createNewBtn.click().catch(() => {});
       await this.page.waitForTimeout(600);
     }
-    return this.page.evaluate(() =>
-      ['new-task-item', 'new-enquiry-item', 'new-quotation-item']
-        .map(id => document.getElementById(id))
-        .filter(Boolean)
-        .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim()));
+    // The redesigned home kept #new-task-item but dropped the ids on the
+    // Enquiry/Quotation entries (plain hrefs now) — read every item of the
+    // dropdown CONTAINING #new-task-item instead of relying on per-item ids.
+    return this.page.evaluate(() => {
+      const anchor = document.getElementById('new-task-item');
+      const menu = anchor && anchor.closest('.dropdown-menu, ul');
+      if (!menu) {
+        return ['new-task-item', 'new-enquiry-item', 'new-quotation-item']
+          .map(id => document.getElementById(id)).filter(Boolean)
+          .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim());
+      }
+      return [...menu.querySelectorAll('a, button')]
+        .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter(t => t && t.length < 30);
+    });
   }
 
   /** Robustly open the Add-Task modal (TC_TASK_002). The Create-New dropdown is a
@@ -535,8 +545,13 @@ class TaskManagementPage {
       hold:   document.querySelectorAll('.ri-pause-fill').length,
       end:    document.querySelectorAll('.ri-stop-fill').length,
       timers: (document.body.innerText.match(/\d\d:\d\d:\d\d/g) || []).length,
-      sections: ["Today's Schedule", 'Running Tasks', 'On Hold']
+      // Redesigned home renamed the sections (New Leads/Followups/Delayed/
+      // Completed cards) — count both generations as valid task sections.
+      sections: ["Today's Schedule", 'Running Tasks', 'On Hold', 'Delayed', 'Completed', 'Followups']
         .filter(s => new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(document.body.innerText)),
+      // Lifecycle controls only render when a task is scheduled/running —
+      // an empty schedule legitimises their absence.
+      emptySchedule: /no scheduled task/i.test(document.body.innerText),
     }));
   }
 
@@ -607,6 +622,19 @@ class TaskManagementPage {
   async openFirstOpenableTask(preferStatus) {
     await this.gotoMyTasks();
     await this.page.waitForTimeout(2500);
+    // Fast bail-out: the redesigned My Tasks shows bucket counters
+    // ("Today 0 Delayed 0 Upcoming 0 …"). When every counter is 0 there is
+    // nothing to open — return immediately instead of scanning six tabs
+    // (the scan previously ate the whole test budget on an empty tenant).
+    const counters = await this.page.evaluate(() => {
+      const m = (document.body.innerText.replace(/\s+/g, ' ')
+        .match(/\b(Today|Delayed|Upcoming|Unscheduled|Completed)\s+(\d+)/gi) || []);
+      return m.map(s => Number(s.match(/\d+$/)[0]));
+    }).catch(() => []);
+    if (counters.length >= 3 && counters.every(n => n === 0)) {
+      console.log('  ⚡ My Tasks bucket counters are all 0 — no openable task, bailing fast');
+      return null;
+    }
     // When a status is preferred (e.g. 'Running' for the lifecycle test), scan the whole
     // list for a row in that state first; fall back to the first openable row otherwise.
     for (const tab of ['default', 'Today', 'Delayed', 'Completed', 'Upcoming', 'Unscheduled']) {

@@ -55,6 +55,20 @@ async function arriveWithTask(page, label, preferStatus) {
   // `preferStatus` lets the lifecycle test target a Running task.
   let name = preferStatus ? await tm.openFirstOpenableTask(preferStatus) : null;
   if (!name) name = await tm.openFirstOpenableTask();
+  if (!name) {
+    // Empty tenant (all My Tasks buckets 0) — self-seed an instant task and
+    // retry once. On builds that delegate it away this still comes back null
+    // and the caller skips; on builds where it lands, the panel tests run.
+    console.log(`  🌱 no existing openable task — self-seeding one for "${label}"`);
+    try {
+      await tm.createViaModal(`Detail seed ${Date.now()}`, { type: 'Call', description: 'detail-panel seed' });
+      await page.waitForTimeout(2000);
+      name = await tm.openFirstOpenableTask(preferStatus);
+      if (!name) name = await tm.openFirstOpenableTask();
+    } catch (e) {
+      console.log(`  ⚠️ self-seed failed: ${e.message.split('\n')[0]}`);
+    }
+  }
   if (!name) console.log(`  ℹ️  no openable task available for the "${label}" detail-panel test`);
   return { tm, name: name || label, opened: !!name };
 }

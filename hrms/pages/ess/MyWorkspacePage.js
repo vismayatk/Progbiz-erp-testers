@@ -17,20 +17,27 @@ class MyWorkspacePage extends BasePage {
   constructor(page) {
     super(page, 'ess');
 
-    // ── "Quick Actions" deep-links (first three crawl-verified) ────────────
+    // ── "Quick Actions" deep-links (crawl-verified via page-manifest.js) ───
     this.applyLeaveBtn   = this.button('Apply Leave');     // → /ess/leave
     this.myAttendanceBtn = this.button('My Attendance');   // → /ess/attendance
     this.payslipsBtn     = this.button('Payslips');        // → /ess/payslips
-    // Documented (05_ESS doc) but not captured as buttons by the crawl:
-    this.documentsBtn    = this.button('Documents');       // → /ess/documents
-    this.lettersBtn      = this.button('Letters');         // → /ess/letters
-    this.profileBtn      = this.button('Profile');         // → /ess/profile
+    // Documents / Letters / Profile Quick Actions were documented in 05_ESS
+    // but trace to NO crawl data (ess.json buttons:[] — nav-only recapture);
+    // locators removed until a re-crawl of /ess verifies their accessible names.
   }
 
-  /** True when the named KPI tile label is showing (e.g. "Leave Available"). */
+  /**
+   * True when the named KPI tile label is showing (e.g. "Leave Available").
+   * DOC-SOURCED, crawl-UNVERIFIED (ess.json recapture caught only the global
+   * nav) — assert softly until a re-crawl confirms the tile labels.
+   */
   hasKpiTile(label) { return this.containsText(label); }
 
-  /** True when the "My Profile" card rendered (it carries the Employee Code). */
+  /**
+   * True when the "My Profile" card rendered (it carries the Employee Code).
+   * DOC-SOURCED, crawl-UNVERIFIED (ess.json recapture caught only the global
+   * nav) — assert softly until a re-crawl confirms the card text.
+   */
   hasProfileCard() { return this.containsText('Employee Code'); }
 
   /** Click a Quick Action by its crawled name (pure navigation — no data touched). */

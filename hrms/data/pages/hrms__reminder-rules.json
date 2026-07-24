@@ -1,0 +1,26 @@
+{
+  "route": "hrms/reminder-rules",
+  "finalUrl": "https://hrms-erp.progbiz.in/hrms/reminder-rules",
+  "group": "role-new",
+  "headers": [
+    "HR Reminders HRMS Reminders",
+    "HR Reminders",
+    "HRMS Reminders",
+    "HRMS Reminders",
+    "HRMS",
+    "HRMS",
+    "Reminders"
+  ],
+  "breadcrumb": "HR Reminders HRMS Reminders",
+  "tabs": [],
+  "buttons": [],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Reminder Rules"
+  ],
+  "emptyState": "",
+  "bodySnippet": "HR Reminders HRMS Reminders Reminder Rules The nightly scan raises these alerts automatically. A reminder left as Default notifies the employee and their reporting manager using the built-in day offsets — save a row to take control of it. Loading…"
+}

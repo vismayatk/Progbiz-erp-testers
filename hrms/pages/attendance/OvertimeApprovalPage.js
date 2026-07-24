@@ -27,12 +27,14 @@ class OvertimeApprovalPage extends BasePage {
 
   /** Type into "Search employee or shift..." and let the queue refresh. Read-only. */
   async search(term) {
+    await this.ensureVisible(this.searchInput);   // may live in #filterOffcanvas
     await this.searchInput.fill(term);
     await this.waitReady();
   }
 
   /** Bound the queue with the from/to date pair (read-only filter). */
   async filterByDateRange(from, to) {
+    await this.ensureVisible(this.fromDateFilter);  // may live in #filterOffcanvas
     if (from) await this.fromDateFilter.fill(from);
     if (to)   await this.toDateFilter.fill(to);
     await this.waitReady();

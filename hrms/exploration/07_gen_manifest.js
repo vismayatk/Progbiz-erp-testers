@@ -20,14 +20,39 @@ const QUIRKS = {
 };
 // Lazy pages that show a Loading placeholder first.
 const LAZY = new Set(['ess', 'ess/probation', 'ess/profile']);
+// Routes REMOVED for the vismaya role (2026-07 role change, probed live):
+// three show Blazor's "Sorry, there's nothing at this address.", the rest
+// render a fully blank body. The smoke suite asserts THAT state so an
+// accidental restoration (or a role fix) is flagged.
+const ROLE_REMOVED = new Set([
+  'approval-operation', 'approval-operation-report',
+  'approval-absent', 'approval-absent-report',
+  'leave-delegation', 'comp-off-management',
+]);
 // The 4 re-captured ESS pages have a different JSON shape (sectionTitles, no
 // headers/tables) — freeze their identity by hand from the verified screenshots.
 const OVERRIDES = {
+  // Grant/Reject are per-row actions — they vanish when no pending request rows
+  // exist, so they cannot serve as page identity.
+  'comp-off-management': { buttons: [] },
   'ess':           { title: 'My Workspace', buttons: ['Apply Leave', 'My Attendance', 'Payslips'], tabs: null },
   'ess/profile':   { title: 'My Profile', buttons: ['Submit Change Request', 'View My Requests'], tabs: null },
   'ess/probation': { title: 'My Probation', buttons: [], tabs: null },
   'ess/requests':  { title: 'My Requests', buttons: [], tabs: null },
 };
+
+function deriveTitle(headers) {
+  const h0 = (headers[0] || '').trim();
+  if (!h0) return '';
+  const words = h0.split(/\s+/);
+  for (let n = Math.floor(words.length / 2); n >= 1; n--) {
+    const p = words.slice(0, n).join(' ');
+    if (h0.length > p.length && h0.endsWith(p)) return p;   // "<h1> <crumb…<h1>>" echo
+  }
+  const h1 = (headers[1] || '').trim();
+  if (h1 && h0.startsWith(h1)) return h1;
+  return h0;
+}
 
 const files = fs.readdirSync(DATA).filter(f => f.endsWith('.json'));
 const entries = [];
@@ -36,13 +61,15 @@ for (const f of files) {
   const d = JSON.parse(fs.readFileSync(path.join(DATA, f), 'utf8'));
   if (d.error) continue;
 
-  // Title: first header line, trimmed of the duplicated breadcrumb echo.
-  let title = (d.headers && d.headers[1]) || (d.headers && d.headers[0]) || '';
-  if (!title || title.length > 60) title = ((d.headers && d.headers[0]) || '').split(/\s{2,}|\|/)[0];
+  // Title: the visible H1. headers[0] is the innerText of the page-header wrapper,
+  // which on this build is often "<h1> <crumb echo>" (e.g. "Employees HRMS Employees").
+  // Derivation: (a) longest word-prefix the string also ends with (the echoed h1);
+  // (b) else headers[1] when headers[0] starts with it; (c) else headers[0] as-is.
+  const title = deriveTitle(d.headers || []);
 
   // Identity buttons: first few stable, non-generic buttons.
   const buttons = (d.buttons || [])
-    .map(b => b.replace(/\s+\d+$/, '').trim())          // "New 0" → "New"
+    .map(b => b.replace(/\s+\d+$/, '').replace(/\s*\(\d+\)$/, '').trim())  // "New 0" / "Inbox (0)" → base name
     .filter(b => b && b.length > 1 && b.length < 40 && !SKIP_BUTTONS.has(b))
     .filter((b, i, a) => a.indexOf(b) === i)
     .slice(0, 4);
@@ -51,8 +78,14 @@ for (const f of files) {
   const table = (d.tables || [])[0];
   const columns = table && table.headers && table.headers.length ? table.headers.slice(0, 12) : null;
 
-  const tabs = (d.tabs || []).map(t => t.replace(/\s+\d+$/, '').trim()).filter((t, i, a) => t && a.indexOf(t) === i).slice(0, 6);
+  const tabs = (d.tabs || [])
+    .map(t => t.replace(/\s+\d+$/, '').replace(/\s*\(\d+\)$/, '').trim())
+    .filter((t, i, a) => t && a.indexOf(t) === i).slice(0, 6);
 
+  if (ROLE_REMOVED.has(d.route)) {
+    entries.push({ route: d.route, group: d.group, title: '', buttons: [], columns: null, tabs: null, removed: true });
+    continue;
+  }
   const ov = OVERRIDES[d.route] || {};
   entries.push({
     route: d.route,

@@ -29,18 +29,6 @@
       "text": "",
       "href": "javascript:void(0);",
       "nav": false,
-      "cls": "header-link dropdown-toggle"
-    },
-    {
-      "text": "Go to Chat",
-      "href": null,
-      "nav": true,
-      "cls": "link-primary text-decoration-underline"
-    },
-    {
-      "text": "",
-      "href": "javascript:void(0);",
-      "nav": false,
       "cls": "header-link"
     },
     {
@@ -118,6 +106,12 @@
     {
       "text": "Task",
       "href": "task-dashboard",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Project Management",
+      "href": "project-management-dashboard",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -236,6 +230,66 @@
       "cls": "side-menu__item"
     },
     {
+      "text": "Lead Transfer",
+      "href": "bulk-lead-transfer",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Settings",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Items",
+      "href": "crm-items",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Item Categories",
+      "href": "crm-item-categories",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Lead Status",
+      "href": "lead-status",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Lead Sources",
+      "href": "lead-sources",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Automation Master",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Automations",
+      "href": "automation-master",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Automation History",
+      "href": "automation-history",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Email Templates",
+      "href": "email-templates",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
       "text": "Project",
       "href": "javascript:void(0);",
       "nav": true,
@@ -278,50 +332,44 @@
       "cls": "side-menu__item"
     },
     {
-      "text": "Whatsapp",
+      "text": "Expenses",
+      "href": "project-expenses",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Collections",
+      "href": "project-incomes",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Maintenance Schedules",
+      "href": "maintenance-schedules",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Project Collection Pendings",
+      "href": "project-collection-pending",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Master",
       "href": "javascript:void(0);",
       "nav": true,
       "cls": "side-menu__item"
     },
     {
-      "text": "Whatsapp",
-      "href": "javascript:void(0)",
-      "nav": true,
-      "cls": ""
-    },
-    {
-      "text": "Chat Bots",
-      "href": "chatbots",
+      "text": "Project Types",
+      "href": "project-types",
       "nav": true,
       "cls": "side-menu__item"
     },
     {
-      "text": "Whatsapp Accounts",
-      "href": "whatsapp-accounts",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Templates",
-      "href": "whatsapp-templates",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Broadcasts",
-      "href": "broadcasts",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Customer Broadcast",
-      "href": "customer-broadcast",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Chat",
-      "href": "chat",
+      "text": "Cost Types",
+      "href": "cost-centers",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -344,8 +392,32 @@
       "cls": "side-menu__item"
     },
     {
+      "text": "Users",
+      "href": "users",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "User Locations",
+      "href": "user-locations",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
       "text": "Reset Password",
       "href": "change-user-password",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Branch",
+      "href": "branches",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "User Role Groups",
+      "href": "user-role-groups",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -356,8 +428,56 @@
       "cls": "side-menu__item"
     },
     {
+      "text": "Groups",
+      "href": "groups",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "State",
+      "href": "country-state",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "City",
+      "href": "country-city",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Tenant Settings",
+      "href": "client-setting",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
       "text": "AI Tokens",
       "href": "token-wallet",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Custom Fields",
+      "href": "dynamic-fields",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Dynamic Reports",
+      "href": "dynamic-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Field Mapping",
+      "href": "field-map-tags",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Dynamic Dashboards",
+      "href": "dynamic-dashboards",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -370,6 +490,18 @@
     {
       "text": "Credential Sources",
       "href": "credential-sources",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Document Types",
+      "href": "document-types",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Document Authorities",
+      "href": "document-authorities",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -466,6 +598,18 @@
     {
       "text": "Resigned Employees",
       "href": "resigned-employees",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Document Compliance",
+      "href": "document-compliance",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "HR Reminders",
+      "href": "hrms/reminder-rules",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -580,6 +724,18 @@
     {
       "text": "Offers",
       "href": "offer-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Approvals",
+      "href": "recruitment/approvals",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Recruitment Dashboard",
+      "href": "recruitment-dashboard",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -716,37 +872,13 @@
       "cls": "side-menu__item"
     },
     {
-      "text": "Approvals",
+      "text": "Leave Management",
       "href": "javascript:void(0);",
       "nav": true,
       "cls": "side-menu__item"
     },
     {
-      "text": "Approval Operation",
-      "href": "approval-operation",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Approval Operation Report",
-      "href": "approval-operation-report",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Approval Absent",
-      "href": "approval-absent",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Approval Absent Report",
-      "href": "approval-absent-report",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Leave Management",
+      "text": "Setup",
       "href": "javascript:void(0);",
       "nav": true,
       "cls": "side-menu__item"
@@ -776,8 +908,50 @@
       "cls": "side-menu__item"
     },
     {
+      "text": "Holidays",
+      "href": "holiday-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Holiday Assignment",
+      "href": "holiday-assignment-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Leave",
+      "href": "javascript:void(0);",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
       "text": "Leave Request",
       "href": "leave-request-list",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "My Leave Policy",
+      "href": "my-leave-policy",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Leave Encashment",
+      "href": "leave-encashment",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Comp-Offs",
+      "href": "comp-offs",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Approvals",
+      "href": "javascript:void(0);",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -788,8 +962,20 @@
       "cls": "side-menu__item"
     },
     {
-      "text": "My Leave Policy",
-      "href": "my-leave-policy",
+      "text": "Comp-Off Approval",
+      "href": "comp-off-approval",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Encashment Approval",
+      "href": "leave-encashment-approval",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
+      "text": "Records & Oversight",
+      "href": "javascript:void(0);",
       "nav": true,
       "cls": "side-menu__item"
     },
@@ -812,55 +998,13 @@
       "cls": "side-menu__item"
     },
     {
-      "text": "Leave Encashment",
-      "href": "leave-encashment",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Encashment Approval",
-      "href": "leave-encashment-approval",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Leave Delegation",
-      "href": "leave-delegation",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Employee Handover",
+      "text": "Duty Handover",
       "href": "employee-handover",
       "nav": true,
       "cls": "side-menu__item"
     },
     {
-      "text": "Comp-Offs",
-      "href": "comp-offs",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Comp-Off Management",
-      "href": "comp-off-management",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Holidays",
-      "href": "holiday-list",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Holiday Assignment",
-      "href": "holiday-assignment-list",
-      "nav": true,
-      "cls": "side-menu__item"
-    },
-    {
-      "text": "Leave Analytics",
+      "text": "Analytics",
       "href": "javascript:void(0);",
       "nav": true,
       "cls": "side-menu__item"
@@ -998,6 +1142,12 @@
       "cls": "side-menu__item"
     },
     {
+      "text": "Item Upload",
+      "href": "crm-item-upload",
+      "nav": true,
+      "cls": "side-menu__item"
+    },
+    {
       "text": "Reports",
       "href": "reports",
       "nav": true,
@@ -1058,7 +1208,7 @@
       "cls": "btn btn-danger m-1 w-100"
     }
   ],
-  "navText": "Home\nAI Assistant\nDashboards\nTask Management\nCRM\nProject\nWhatsapp\nMaster\nHRMS\nMy Workspace\nExcel Upload\nIndividual Customer\nBusiness Customer\nEnquiry Upload\nProject Upload\nReports",
+  "navText": "Home\nAI Assistant\nDashboards\nTask Management\nCRM\nProject\nMaster\nHRMS\nMy Workspace\nExcel Upload\nIndividual Customer\nBusiness Customer\nEnquiry Upload\nProject Upload\nItem Upload\nReports",
   "shell": {
     "tag": "body",
     "children": [
@@ -1326,14 +1476,6 @@
       },
       {
         "tag": "script",
-        "children": []
-      },
-      {
-        "tag": "script",
-        "children": []
-      },
-      {
-        "tag": "link",
         "children": []
       },
       {

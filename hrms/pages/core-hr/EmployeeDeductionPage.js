@@ -36,6 +36,9 @@ class EmployeeDeductionPage extends BasePage {
 
   /** Discard the unsaved entry via "Cancel". */
   async cancel() {
+    // Typing into the form can raise a swal2 validation alert whose backdrop
+    // covers the whole page — clear it or the Cancel click times out.
+    await this.dismissSweetAlert();
     await this.cancelBtn.click();
     await this.waitReady();
   }

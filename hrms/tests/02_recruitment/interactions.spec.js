@@ -17,6 +17,7 @@
  */
 const { test, expect } = require('@playwright/test');
 
+const { BasePage }                  = require('../../pages/BasePage');
 const { RequisitionListPage }       = require('../../pages/recruitment/RequisitionListPage');
 const { VacancyListPage }           = require('../../pages/recruitment/VacancyListPage');
 const { CurrentOpeningsPage }       = require('../../pages/recruitment/CurrentOpeningsPage');
@@ -62,12 +63,14 @@ test.describe('recruitment: /requisition-list (Job Requisitions)', () => {
 
 test.describe('recruitment: /vacancy-list (Hiring)', () => {
   test('tab strip switches between hiring views', async ({ page }) => {
+    // The strip is router links (probed live): Candidates → /candidates,
+    // Talent Pools → /talent-pool. Each click leaves /vacancy-list, so we
+    // return via goto() before the next tab.
     const po = new VacancyListPage(page);
-    await po.goto();
-    for (const name of ['Candidates', 'Talent Pools', 'Job Openings']) {
+    for (const [name, route] of Object.entries(VacancyListPage.TAB_ROUTES)) {
+      await po.goto();
       await po.switchTab(name);
-      await expect(po.tab(name), `tab "${name}" should stay visible after switch`).toBeVisible();
-      expect(await po.isTabActive(name), `tab "${name}" should be active`).toBeTruthy();
+      expect(page.url(), `tab "${name}" should land on /${route}`).toMatch(new RegExp(`/${route}(\\?|$)`));
     }
   });
 
@@ -125,12 +128,15 @@ test.describe('recruitment: /job-applications-list (Job Applications)', () => {
 
 test.describe('recruitment: /candidates (Candidates)', () => {
   test('Add New form exposes Candidate Name + Phone Number, then dismisses', async ({ page }) => {
+    // "Add New" navigates to the routed create form /candidate/0 (probed live).
     const po = new CandidatesPage(page);
     await po.goto();
     await po.openAddForm();
-    await expect(po.candidateNameInput, 'Candidate Name field').toBeVisible();
-    await expect(po.phoneNumberInput,   'Phone Number field').toBeVisible();
-    await po.closeAddForm();
+    expect(page.url(), 'Add New should land on /candidate/0').toMatch(/\/candidate\/0(\?|$)/);
+    await expect(po.candidateNameInput,  'Name field (#TxtCandidateName)').toBeVisible();
+    await expect(po.candidateEmailInput, 'Email field (#TxtCandidateEmail)').toBeVisible();
+    await expect(po.phoneNumberInput,    'Phone field ("Enter phone number")').toBeVisible();
+    await po.closeAddForm();                            // back to the list — nothing saved
     await expect(po.addNewBtn).toBeVisible();
   });
 
@@ -239,6 +245,7 @@ test.describe('recruitment: /recruitment-pipeline (Kanban)', () => {
     const po = new RecruitmentPipelinePage(page);
     await po.goto();
     await po.openStageConfig();
+    expect(await po.stageConfigVisible(), 'Configure Stages should open the stage editor').toBeTruthy();
     await po.closeStageConfig();                        // dismissed WITHOUT saving stages
     await expect(po.configureStagesBtn).toBeVisible();  // back on the board baseline
   });
@@ -384,5 +391,47 @@ test.describe('recruitment: /onboarding-pipeline (Onboarding Pipeline)', () => {
     expect(await po.startWizardVisible(), 'Start Onboarding should open a wizard').toBeTruthy();
     await po.closeStartWizard();                         // never confirms Start
     await expect(po.startOnboardingBtn).toBeVisible();
+  });
+});
+
+// ── /recruitment-dashboard (NEW — 2026-07 role change) ───────────────────────
+
+test.describe('recruitment: /recruitment-dashboard (Recruitment Analytics)', () => {
+  test('analytics dashboard renders with its Export action', async ({ page }) => {
+    const po = new BasePage(page, 'recruitment-dashboard');
+    await po.goto();
+    await expect(po.main.getByText(/Recruitment (Dashboard|Analytics)/i).first()).toBeVisible({ timeout: 25000 });
+    await expect(po.buttonContaining('Export')).toBeVisible();   // download — asserted only
+    expect(page.url()).not.toContain('/login');
+  });
+});
+
+// ── /recruitment/approvals (NEW — 2026-07 role change) ───────────────────────
+
+test.describe('recruitment: /recruitment/approvals (Recruitment Approvals)', () => {
+  test('approvals inbox renders its three tabs and grid', async ({ page }) => {
+    const po = new BasePage(page, 'recruitment/approvals');
+    await po.goto();
+    await expect(po.main.getByText(/Recruitment Approvals/i).first()).toBeVisible({ timeout: 25000 });
+    for (const t of ['Awaiting my decision', 'My requests', 'History']) {
+      await expect(po.tab(t), `tab "${t}"`).toBeVisible();
+    }
+    await expect(po.grid).toBeVisible();
+    const headers = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
+    for (const col of ['Type', 'Details', 'Level', 'Raised']) {
+      expect(headers, `column "${col}"`).toContain(col.toLowerCase());
+    }
+    // Documented empty state on a fresh inbox — tolerated, never required.
+    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
+  });
+
+  test('tab switching keeps the inbox stable (no decisions clicked)', async ({ page }) => {
+    const po = new BasePage(page, 'recruitment/approvals');
+    await po.goto();
+    for (const t of ['My requests', 'History', 'Awaiting my decision']) {
+      await po.tab(t).click();
+      await po.waitReady();
+      expect(page.url()).not.toContain('/login');
+    }
   });
 });

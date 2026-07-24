@@ -1,52 +1,16 @@
 {
   "route": "approval-operation",
   "finalUrl": "https://hrms-erp.progbiz.in/approval-operation",
-  "group": "attendance",
-  "headers": [
-    "Approval Operation HRMS Approval Operation",
-    "Approval Operation",
-    "HRMS Approval Operation",
-    "HRMS Approval Operation",
-    "HRMS Approval Operation",
-    "HRMS",
-    "HRMS",
-    "Approval Operation"
-  ],
-  "breadcrumb": "Approval Operation HRMS Approval Operation",
+  "group": "role-new",
+  "headers": [],
+  "breadcrumb": "",
   "tabs": [],
-  "buttons": [
-    "Filter"
-  ],
-  "tables": [
-    {
-      "headers": [
-        "SL No",
-        "IDNumber",
-        "Employee Name",
-        "Branch",
-        "Date",
-        "Entry Time",
-        "Exit Time",
-        "Status",
-        "Period Name",
-        "Hours Employee Must Work",
-        "Worked Hours",
-        "Over Time Hours",
-        "Balance Hours",
-        "Entry Late Miutes",
-        "Exit Early Miutes",
-        "Approval"
-      ],
-      "rowCount": 0,
-      "firstRow": []
-    }
-  ],
+  "buttons": [],
+  "tables": [],
   "inputs": [],
   "selectsNg": [],
   "links": [],
-  "cards": [
-    "Attendance Log"
-  ],
+  "cards": [],
   "emptyState": "",
-  "bodySnippet": "Approval Operation HRMS Approval Operation Attendance Log Filter SL No IDNumber Employee Name Branch Date Entry Time Exit Time Status Period Name Hours Employee Must Work Worked Hours Over Time Hours Balance Hours Entry Late Miutes Exit Early Miutes Approval"
+  "bodySnippet": "Sorry, there's nothing at this address."
 }

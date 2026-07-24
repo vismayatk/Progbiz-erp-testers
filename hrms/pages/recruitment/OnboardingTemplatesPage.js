@@ -48,12 +48,7 @@ class OnboardingTemplatesPage extends BasePage {
 
   /** Discard the unsaved editor WITHOUT saving: dismiss modal, else reload the route. */
   async closeCreateEditor() {
-    if (await this.modal.isVisible().catch(() => false)) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else await this.page.keyboard.press('Escape').catch(() => {});
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
+    await this.dismissModal();
     // Inline editor (or stubborn modal): nothing was saved — reload to discard.
     if (await this.modal.isVisible().catch(() => false) || !(await this.newTemplateBtn.isVisible().catch(() => false))) {
       await this.goto();

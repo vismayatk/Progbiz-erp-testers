@@ -40,17 +40,9 @@ class OnboardingPipelinePage extends BasePage {
 
   /** Dismiss the start wizard WITHOUT confirming (close X / Cancel / Escape / reload). */
   async closeStartWizard() {
-    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else {
-        const cancel = this.modal.locator('button').filter({ hasText: /^\s*(cancel|close)\s*$/i }).first();
-        if (await cancel.count()) await cancel.click().catch(() => {});
-        else await this.page.keyboard.press('Escape').catch(() => {});
-      }
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
-    if (await this.modal.isVisible().catch(() => false)) await this.goto();
+    await this.dismissModal();
+    // Inline (non-modal) wizard still on screen → reload the route to discard it.
+    if (await this.startWizardVisible()) await this.goto();
     await this.page.waitForTimeout(300);
   }
 }

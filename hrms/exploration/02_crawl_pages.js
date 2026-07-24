@@ -17,6 +17,10 @@ const DATA = path.join(__dirname, '..', 'data', 'pages');
 const SHOTS = path.join(__dirname, '..', 'screenshots');
 
 const GROUPS = {
+  'role-new': [
+    'comp-off-approval', 'recruitment-dashboard', 'recruitment/approvals', 'hrms/reminder-rules',
+    'approval-operation', 'approval-absent', 'leave-delegation', 'comp-off-management',
+  ],
   'core-hr': [
     'employees', 'sections', 'worker-directory', 'salary-revisions',
     'employee-salary-process', 'employee-deduction', 'employee-remark',

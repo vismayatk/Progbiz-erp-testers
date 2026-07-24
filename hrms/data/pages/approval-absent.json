@@ -1,46 +1,16 @@
 {
   "route": "approval-absent",
   "finalUrl": "https://hrms-erp.progbiz.in/approval-absent",
-  "group": "attendance",
-  "headers": [
-    "Approval Absent HRMS Approval Absent",
-    "Approval Absent",
-    "HRMS Approval Absent",
-    "HRMS Approval Absent",
-    "HRMS Approval Absent",
-    "HRMS",
-    "HRMS",
-    "Approval Absent"
-  ],
-  "breadcrumb": "Approval Absent HRMS Approval Absent",
+  "group": "role-new",
+  "headers": [],
+  "breadcrumb": "",
   "tabs": [],
-  "buttons": [
-    "Filter"
-  ],
-  "tables": [
-    {
-      "headers": [
-        "SL NO",
-        "IDNumber",
-        "Employee Name",
-        "Branch",
-        "Department",
-        "Date",
-        "Period Name",
-        "Period Type",
-        "Hours Employee Must Work",
-        "Approval"
-      ],
-      "rowCount": 0,
-      "firstRow": []
-    }
-  ],
+  "buttons": [],
+  "tables": [],
   "inputs": [],
   "selectsNg": [],
   "links": [],
-  "cards": [
-    "Approval Absent"
-  ],
+  "cards": [],
   "emptyState": "",
-  "bodySnippet": "Approval Absent HRMS Approval Absent Approval Absent Filter SL NO IDNumber Employee Name Branch Department Date Period Name Period Type Hours Employee Must Work Approval"
+  "bodySnippet": "Sorry, there's nothing at this address."
 }

@@ -14,6 +14,7 @@
  */
 const { test, expect } = require('@playwright/test');
 
+const { BasePage }                    = require('../../pages/BasePage');
 const { EmployeesPage }               = require('../../pages/core-hr/EmployeesPage');
 const { SectionsPage }                = require('../../pages/core-hr/SectionsPage');
 const { WorkerDirectoryPage }         = require('../../pages/core-hr/WorkerDirectoryPage');
@@ -442,6 +443,19 @@ test.describe('Employee Remark Reports (/employee-remark-report)', () => {
     await po.viewReport();                                // read-only query
     expect(page.url()).toContain('employee-remark-report');
     expect(await po.gridRows.count()).toBeGreaterThanOrEqual(0);
+    expect(page.url()).not.toContain('/login');
+  });
+});
+
+// ── /hrms/reminder-rules (NEW — 2026-07 role change) ─────────────────────────
+
+test.describe('core-hr: /hrms/reminder-rules (HR Reminders)', () => {
+  test('reminder rules page renders its nightly-scan explainer', async ({ page }) => {
+    const po = new BasePage(page, 'hrms/reminder-rules');
+    await po.goto();
+    await expect(po.main.getByText(/HR Reminders/i).first()).toBeVisible({ timeout: 25000 });
+    expect(await po.containsText('Reminder Rules'), '"Reminder Rules" card').toBeTruthy();
+    expect(await po.containsText('nightly scan'), 'nightly-scan explainer text').toBeTruthy();
     expect(page.url()).not.toContain('/login');
   });
 });

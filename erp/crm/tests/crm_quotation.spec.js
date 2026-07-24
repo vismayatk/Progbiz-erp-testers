@@ -116,9 +116,15 @@ test.describe('CRM — Quotation', () => {
   test('QT-001 | Create New → Quotation page (QT-001,002,009)', async ({ page }) => {
     const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
     await page.waitForTimeout(1500);
-    // Create New → Quotation
-    const item = page.locator('#new-quotation-item');
-    for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await page.locator('#new-task').click().catch(() => {}); await page.waitForTimeout(600); }
+    // Create New → Quotation. The redesigned home removed #new-quotation-item's
+    // id (the entry is a plain "Quotation" link now) — target the menu item by
+    // id OR text within the dropdown that contains #new-task-item.
+    const taskItem = page.locator('#new-task-item');
+    for (let i = 0; i < 6 && !(await taskItem.isVisible().catch(() => false)); i++) { await page.locator('#new-task, #new-lead-type').first().click().catch(() => {}); await page.waitForTimeout(600); }
+    const menu = page.locator('.dropdown-menu, ul').filter({ has: page.locator('#new-task-item') }).first();
+    const item = page.locator('#new-quotation-item')
+      .or(menu.locator('a, button').filter({ hasText: /^\s*Quotation\s*$/i }))
+      .first();
     // No direct-goto fallback: the Create-New → Quotation menu path itself is under test,
     // so a broken menu must fail rather than be masked by a forced page.goto('/quotation').
     await item.click();

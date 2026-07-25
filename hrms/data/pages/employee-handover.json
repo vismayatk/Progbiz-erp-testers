@@ -28,9 +28,16 @@
         "Active",
         "Action"
       ],
-      "rowCount": 1,
+      "rowCount": 4,
       "firstRow": [
-        "No handovers."
+        "1",
+        "Raashiq Yusuf #7",
+        "Rashid #5",
+        "21-Jul-2026",
+        "02-Aug-2026",
+        "Approvals, Tasks",
+        "Yes",
+        ""
       ]
     }
   ],
@@ -78,5 +85,5 @@
     "All Handovers"
   ],
   "emptyState": "",
-  "bodySnippet": "Employee Duty Handover HRMS Handover Set Up Handover Hand an away employee's HRMS approvals and HRMS/recruitment tasks to an assignee for a date window. Sales/CRM duties are never handed over. Employee going away -- Select employee -- Assign duties to -- Select assignee -- From To Cover approvals Cover HRMS tasks Active Note (optional) Save Clear All Handovers # From To From Date To Date Covers Active Action No handovers."
+  "bodySnippet": "Employee Duty Handover HRMS Handover Set Up Handover Hand an away employee's HRMS approvals and HRMS/recruitment tasks to an assignee for a date window. Sales/CRM duties are never handed over. Employee going away -- Select employee -- Murshid Rashid Ajmal SM Raashiq Yusuf Vismaya Jasin Aswathi Fayis Tc Shaadina Amnah Musthafa Dinsha Ashique Ajmal Anulakshmi Aswin Vishnuprasad K V Muhammed Shammas Asjad Rahman Jijo Jose Sarang K K Muhammad Nafis C Abhinav T P Athul Muhammed Safwan T Sameel Sathar Swathi K Sinan Sankeerth Akash k Akash MDK Nayana Prajil Nasheeda Jayakrishnan Vishnu Unnikrishnan Muhammed Riyan Adithya Athul Krishnan CP Shoukath Arjun Pradeep Adithya kp Anjala Kader shifa Abhilash N K Rinsha Vishnu Anoth Musammil anusree Nandana Thabsheera Amal Chandran Favaz Farsana TS Rajalakshmi K V Mohamed Sahal Mohammed Nazim Abdun Nazir Minhaj K Harikrishnan Mohanan Nandana K Mohammed "
 }

@@ -21,7 +21,9 @@
   "inputs": [],
   "selectsNg": [],
   "links": [],
-  "cards": [],
+  "cards": [
+    "Exit"
+  ],
   "emptyState": "",
-  "bodySnippet": "Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding No active onboardings."
+  "bodySnippet": "Onboarding Pipeline HRMS Onboarding Pipeline Start Onboarding Exit 3 Amalraj Exit Check List Task 0/4 tasks Shikina Exit Check List Task 0/4 tasks Jinil Exit Check List Task 2/4 tasks"
 }

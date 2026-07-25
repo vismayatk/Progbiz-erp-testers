@@ -9,27 +9,28 @@
     "Self Service Leave",
     "Self Service",
     "Self Service",
-    "Leave"
+    "Leave",
+    "Year",
+    "Year"
   ],
-  "breadcrumb": "My Leave Self Service Leave",
-  "tabs": [],
+  "breadcrumb": "My Leave Self Service Leave Year",
+  "tabs": [
+    "Overview",
+    "Apply",
+    "Comp-Off",
+    "Encashment",
+    "History",
+    "Policy"
+  ],
   "buttons": [
-    "Show",
-    "Submit Request"
+    "Overview",
+    "Apply",
+    "Comp-Off",
+    "Encashment",
+    "History",
+    "Policy"
   ],
   "tables": [
-    {
-      "headers": [
-        "Leave Type",
-        "Balance",
-        "Reserved",
-        "Available"
-      ],
-      "rowCount": 1,
-      "firstRow": [
-        "No balances."
-      ]
-    },
     {
       "headers": [
         "Type",
@@ -48,36 +49,13 @@
     {
       "tag": "input",
       "type": "number"
-    },
-    {
-      "tag": "select",
-      "type": "select-one"
-    },
-    {
-      "tag": "input",
-      "type": "date"
-    },
-    {
-      "tag": "input",
-      "type": "date"
-    },
-    {
-      "tag": "input",
-      "type": "checkbox",
-      "id": "halfday"
-    },
-    {
-      "tag": "textarea",
-      "type": "textarea"
     }
   ],
   "selectsNg": [],
   "links": [],
   "cards": [
-    "Balances 2026",
-    "My Leave Requests 2026",
-    "Apply For Leave"
+    "My Leave Requests 2026"
   ],
   "emptyState": "",
-  "bodySnippet": "My Leave Self Service Leave Balances 2026 Show Leave Type Balance Reserved Available No balances. My Leave Requests 2026 Type From To Days Status No leave requests. Apply For Leave Leave Type -- Select -- Start Date End Date Half Day Reason Submit Request"
+  "bodySnippet": "My Leave Self Service Leave Year Overview Apply Comp-Off Encashment History Policy No leave balances for 2026. My Leave Requests 2026 Type From To Days Status No leave requests."
 }

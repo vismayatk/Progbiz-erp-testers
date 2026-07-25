@@ -27,7 +27,11 @@
       ],
       "rowCount": 1,
       "firstRow": [
-        "Loading..."
+        "1",
+        "Test",
+        "Interview",
+        "Interview rules",
+        ""
       ]
     }
   ],
@@ -38,5 +42,5 @@
     "Templates"
   ],
   "emptyState": "",
-  "bodySnippet": "Candidate Communication Recruitment Communication Templates Templates New Template Sl.No Name Type Subject Action Loading..."
+  "bodySnippet": "Candidate Communication Recruitment Communication Templates Templates New Template Sl.No Name Type Subject Action 1 Test Interview Interview rules"
 }

@@ -34,9 +34,16 @@
         "Balance after",
         "Posted by"
       ],
-      "rowCount": 1,
+      "rowCount": 10,
       "firstRow": [
-        "No transactions."
+        "25/07/2026",
+        "Dinsha",
+        "Casual leave",
+        "Used",
+        "-1",
+        "Leave request #50",
+        "7.32",
+        "Ashique"
       ]
     }
   ],
@@ -57,11 +64,16 @@
     {
       "tag": "input",
       "type": "date"
+    },
+    {
+      "tag": "select",
+      "type": "select-one",
+      "id": "page_size"
     }
   ],
   "selectsNg": [],
   "links": [],
   "cards": [],
   "emptyState": "",
-  "bodySnippet": "Leave Ledger HRMS Leave Ledger Filter Export Append-only — rows are never edited or deleted. Corrections post a new Adjust or Reverse entry referencing the original. Date Employee Leave Type Txn Days Source Ref Balance after Posted by No transactions."
+  "bodySnippet": "Leave Ledger HRMS Leave Ledger Filter Export Append-only — rows are never edited or deleted. Corrections post a new Adjust or Reverse entry referencing the original. Date Employee Leave Type Txn Days Source Ref Balance after Posted by 25/07/2026 Dinsha Casual leave Used -1 Leave request #50 7.32 Ashique 24/07/2026 Favaz Medical leave Accrual +1 Accrual 2026-07 7 System 24/07/2026 Favaz Casual leave Accrual +1 Accrual 2026-07 11 System 23/07/2026 Favaz Earned leave Adjust +6 Opening entitlement · 2026 6 anusree 23/07/2026 Favaz Medical leave Adjust +6 Opening entitlement · 2026 6 anusree 23/07/2026 Favaz Casual leave Adjust +10 Opening entitlement · 2026 10 anusree 23/07/2026 Akshay Casual leave Used -2 Leave request #51 0 Ashique 23/07/2026 Akshay Earned leave Encash -1 Encashment #3 4 anusree 23/07/2026 Dinsha Casual leave Encash -1 Encashment #4 8.32 anusree 23/07/2026 Dinsha Medical l"
 }

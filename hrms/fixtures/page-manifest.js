@@ -504,11 +504,9 @@ module.exports = [
   {
     "route": "ess",
     "group": "ess",
-    "title": "My Workspace",
+    "title": "",
     "buttons": [
-      "Apply Leave",
-      "My Attendance",
-      "Payslips"
+      "Apply Leave"
     ],
     "columns": null,
     "tabs": null,
@@ -526,8 +524,8 @@ module.exports = [
       "Date",
       "Entry",
       "Exit",
-      "Worked (min)",
-      "OT (min)",
+      "Worked",
+      "OT",
       "Status"
     ],
     "tabs": null
@@ -553,21 +551,34 @@ module.exports = [
     "group": "ess",
     "title": "My Leave",
     "buttons": [
-      "Submit Request"
+      "Overview",
+      "Apply",
+      "Comp-Off",
+      "Encashment"
     ],
     "columns": [
-      "Leave Type",
-      "Balance",
-      "Reserved",
-      "Available"
+      "Type",
+      "From",
+      "To",
+      "Days",
+      "Status"
     ],
-    "tabs": null
+    "tabs": [
+      "Overview",
+      "Apply",
+      "Comp-Off",
+      "Encashment",
+      "History",
+      "Policy"
+    ]
   },
   {
     "route": "ess/letters",
     "group": "ess",
     "title": "My Letters & Certificates",
-    "buttons": [],
+    "buttons": [
+      "Generate"
+    ],
     "columns": [
       "Letter",
       "Type",
@@ -584,14 +595,7 @@ module.exports = [
       "Use my location",
       "Submit for approval"
     ],
-    "columns": [
-      "Sl.No",
-      "Name",
-      "Lat",
-      "Long",
-      "Radius",
-      "Status"
-    ],
+    "columns": null,
     "tabs": null
   },
   {
@@ -676,6 +680,15 @@ module.exports = [
     "tabs": null
   },
   {
+    "route": "comp-off-management",
+    "group": "leave",
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
+  },
+  {
     "route": "comp-offs",
     "group": "leave",
     "title": "Comp-Off",
@@ -750,10 +763,10 @@ module.exports = [
     "group": "leave",
     "title": "Leave Approval",
     "buttons": [
-      "Delegate approvals",
       "Filter",
       "Approve Selected",
-      "Reject Selected"
+      "Reject Selected",
+      "Delegate Selected"
     ],
     "columns": [
       "SL.No",
@@ -778,6 +791,7 @@ module.exports = [
       "Assignment Type",
       "Assignment Target Name",
       "Leave Pattern",
+      "Status",
       "Action"
     ],
     "tabs": null
@@ -828,6 +842,15 @@ module.exports = [
     "buttons": [],
     "columns": null,
     "tabs": null
+  },
+  {
+    "route": "leave-delegation",
+    "group": "leave",
+    "title": "",
+    "buttons": [],
+    "columns": null,
+    "tabs": null,
+    "removed": true
   },
   {
     "route": "leave-encashment",
@@ -966,18 +989,24 @@ module.exports = [
     "group": "recruitment",
     "title": "Assessments",
     "buttons": [
-      "New Assessment"
+      "New Assignment",
+      "Take-home Assignments",
+      "Interview Scorecards"
     ],
     "columns": [
       "Sl.No",
       "Title",
-      "Type",
       "Description",
       "Max Score",
+      "Due In",
       "Attachment",
+      "Candidates",
       "Action"
     ],
-    "tabs": null
+    "tabs": [
+      "Take-home Assignments",
+      "Interview Scorecards"
+    ]
   },
   {
     "route": "candidate-status",
@@ -1057,6 +1086,7 @@ module.exports = [
     ],
     "columns": [
       "Sl No",
+      "Designation",
       "Round Name",
       "Order",
       "Action"
@@ -1087,15 +1117,12 @@ module.exports = [
     "title": "Job Applications",
     "buttons": [],
     "columns": [
-      "Sl.No",
-      "Name",
+      "#",
+      "Candidate",
       "Position Applied For",
       "Phone",
-      "Email",
-      "Details",
       "Status",
-      "Schedule Interview",
-      "Reject"
+      "Actions"
     ],
     "tabs": null
   },
@@ -1171,15 +1198,19 @@ module.exports = [
     "route": "talent-pool",
     "group": "recruitment",
     "title": "Talent Pool",
-    "buttons": [],
+    "buttons": [
+      "Talent pool",
+      "Active",
+      "All"
+    ],
     "columns": [
-      "Sl.No",
-      "Name",
-      "Designation",
+      "Candidate",
+      "Applied for",
       "Skills",
       "Tags",
+      "Activity",
+      "Rating",
       "Status",
-      "Score",
       "Action"
     ],
     "tabs": null
@@ -1244,30 +1275,12 @@ module.exports = [
     "tabs": null
   },
   {
-    "route": "comp-off-management",
-    "group": "role-new",
-    "title": "",
-    "buttons": [],
-    "columns": null,
-    "tabs": null,
-    "removed": true
-  },
-  {
     "route": "hrms/reminder-rules",
     "group": "role-new",
     "title": "HR Reminders",
     "buttons": [],
     "columns": null,
     "tabs": null
-  },
-  {
-    "route": "leave-delegation",
-    "group": "role-new",
-    "title": "",
-    "buttons": [],
-    "columns": null,
-    "tabs": null,
-    "removed": true
   },
   {
     "route": "recruitment-dashboard",

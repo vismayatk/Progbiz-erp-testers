@@ -2,24 +2,88 @@
   "route": "ess",
   "finalUrl": "https://hrms-erp.progbiz.in/ess",
   "group": "ess",
-  "recaptured": true,
-  "sectionTitles": [],
-  "buttons": [],
-  "labels": [],
-  "stats": [],
-  "tabs": [
-    "Home",
-    "AI Assistant",
-    "Dashboards",
-    "Task Management",
-    "CRM",
-    "Project",
-    "Whatsapp",
-    "Master",
-    "HRMS",
-    "My Workspace",
-    "Excel Upload",
-    "Reports"
+  "headers": [
+    "Good morning, Vismaya! 👋",
+    "0 days",
+    "—",
+    "0",
+    "0"
   ],
-  "bodySnippet": "Home AI Assistant Dashboards Task Management CRM Project Whatsapp Master HRMS My Workspace Excel Upload Reports"
+  "breadcrumb": "",
+  "tabs": [],
+  "buttons": [
+    "Web Check-in",
+    "Apply Leave",
+    "View / Edit Profile"
+  ],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [
+    {
+      "text": "Web Check-in",
+      "href": "/ess/attendance"
+    },
+    {
+      "text": "Apply Leave",
+      "href": "/ess/leave"
+    },
+    {
+      "text": "Manage leave",
+      "href": "/ess/leave"
+    },
+    {
+      "text": "My attendance",
+      "href": "/ess/attendance"
+    },
+    {
+      "text": "View requests",
+      "href": "/ess/requests"
+    },
+    {
+      "text": "Open letters",
+      "href": "/ess/letters"
+    },
+    {
+      "text": "Apply Leave",
+      "href": "/ess/leave"
+    },
+    {
+      "text": "View / Edit Profile",
+      "href": "/ess/profile"
+    },
+    {
+      "text": "Leave",
+      "href": "/ess/leave"
+    },
+    {
+      "text": "Attendance",
+      "href": "/ess/attendance"
+    },
+    {
+      "text": "Payslips",
+      "href": "/ess/payslips"
+    },
+    {
+      "text": "Documents",
+      "href": "/ess/documents"
+    },
+    {
+      "text": "Letters",
+      "href": "/ess/letters"
+    },
+    {
+      "text": "Requests",
+      "href": "/ess/requests"
+    }
+  ],
+  "cards": [
+    "My Leave Balances 2026",
+    "Who's Out Today",
+    "Quick Actions",
+    "Upcoming Holidays",
+    "Celebrations This Week"
+  ],
+  "emptyState": "",
+  "bodySnippet": "V Good morning, Vismaya! 👋 Testing Team lead Saturday, 25 Jul 2026 10:55:39 AM Not checked in yet Web Check-in Apply Leave LEAVE AVAILABLE 0 days Manage leave TODAY'S ATTENDANCE — Not marked yet My attendance PENDING REQUESTS 0 Profile change requests View requests LETTERS TO ACKNOWLEDGE 0 Documents & letters Open letters My Leave Balances 2026 Apply Leave No leave balances configured for this year. Who's Out Today Everyone's in today. V Vismaya PB1053 · Main Branch Reports to — Email vismaya182001@gmail.com Phone +919747832341 Joined — View / Edit Profile Quick Actions Leave Attendance Payslips Documents Letters Requests Upcoming Holidays 13 Aug Vishu Thursday in 19 days 24 Aug Onam Monday in 30 days 02 Oct Gandhi Jayanthi Friday in 69 days Celebrations This Week S Shana Birthday 25 Jul"
 }

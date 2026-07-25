@@ -1,7 +1,7 @@
 {
   "route": "leave-delegation",
   "finalUrl": "https://hrms-erp.progbiz.in/leave-delegation",
-  "group": "role-new",
+  "group": "leave",
   "headers": [],
   "breadcrumb": "",
   "tabs": [],

@@ -35,10 +35,17 @@ const OVERRIDES = {
   // Grant/Reject are per-row actions — they vanish when no pending request rows
   // exist, so they cannot serve as page identity.
   'comp-off-management': { buttons: [] },
-  'ess':           { title: 'My Workspace', buttons: ['Apply Leave', 'My Attendance', 'Payslips'], tabs: null },
+  // /ess dashboard was REDESIGNED (2026-07): greeting header (time/name-based,
+  // not assertable) + quick-action buttons. Identify by the stable "Apply Leave"
+  // action; the greeting/title text is intentionally not asserted.
+  'ess':           { title: '', buttons: ['Apply Leave'], tabs: null },
   'ess/profile':   { title: 'My Profile', buttons: ['Submit Change Request', 'View My Requests'], tabs: null },
   'ess/probation': { title: 'My Probation', buttons: [], tabs: null },
   'ess/requests':  { title: 'My Requests', buttons: [], tabs: null },
+  // /ess/locations grid sits below a Google map and paints late — the smoke
+  // capture intermittently sees no table. Its columns are asserted robustly by
+  // the ESS interaction suite (settleGrid), so skip the column check in smoke.
+  'ess/locations': { columns: null },
 };
 
 function deriveTitle(headers) {
@@ -92,7 +99,7 @@ for (const f of files) {
     group: d.group,
     title: (ov.title !== undefined ? ov.title : title).trim(),
     buttons: ov.buttons !== undefined ? ov.buttons : buttons,
-    columns,
+    columns: ov.columns !== undefined ? ov.columns : columns,
     tabs: ov.tabs !== undefined ? ov.tabs : (tabs.length ? tabs : null),
     lazy: LAZY.has(d.route) || undefined,
     quirk: QUIRKS[d.route] || undefined,

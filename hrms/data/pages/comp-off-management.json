@@ -1,7 +1,7 @@
 {
   "route": "comp-off-management",
   "finalUrl": "https://hrms-erp.progbiz.in/comp-off-management",
-  "group": "role-new",
+  "group": "leave",
   "headers": [],
   "breadcrumb": "",
   "tabs": [],
@@ -12,5 +12,5 @@
   "links": [],
   "cards": [],
   "emptyState": "",
-  "bodySnippet": ""
+  "bodySnippet": "Sorry, there's nothing at this address."
 }

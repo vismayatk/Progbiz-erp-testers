@@ -19,7 +19,7 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.utils import get_column_letter
 import os
 
-REPO = os.path.join(os.path.dirname(__file__), "..", "docs", "excel", "WBS_HRMS.xlsx")
+REPO = os.path.join(os.path.dirname(__file__), "..", "hrms", "docs", "WBS_HRMS.xlsx")
 
 P = "Progbiz ERP"
 M = "HRMS"

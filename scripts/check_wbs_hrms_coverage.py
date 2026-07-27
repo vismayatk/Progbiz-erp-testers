@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Verify the HRMS WBS covers every crawled HRMS route.
 
-Cross-checks docs/excel/WBS_HRMS.xlsx against the 80 routes captured in
+Cross-checks hrms/docs/WBS_HRMS.xlsx against the 80 routes captured in
 hrms/data/pages/*.json, so the estimate can't silently miss a page.
 """
 import openpyxl, json, os, re
 
 HERE = os.path.dirname(__file__)
-XLSX = os.path.join(HERE, "..", "docs", "excel", "WBS_HRMS.xlsx")
+XLSX = os.path.join(HERE, "..", "hrms", "docs", "WBS_HRMS.xlsx")
 PAGES = os.path.join(HERE, "..", "hrms", "data", "pages")
 
 routes = set()

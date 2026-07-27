@@ -1,7 +1,7 @@
 # HRMS — Work Breakdown Structure (WBS) & Effort Estimate
 
 > **Project:** Progbiz ERP · **Module:** HRMS · **App:** https://hrms-erp.progbiz.in (tenant `Hrms`)
-> **Tracker:** [`docs/excel/WBS_HRMS.xlsx`](../../docs/excel/WBS_HRMS.xlsx) — the live file for daily actuals
+> **Tracker:** [`hrms/docs/WBS_HRMS.xlsx`](WBS_HRMS.xlsx) — the live file for daily actuals
 > **Generator:** [`scripts/gen_wbs_hrms_xlsx.py`](../../scripts/gen_wbs_hrms_xlsx.py) · **Coverage check:** [`scripts/check_wbs_hrms_coverage.py`](../../scripts/check_wbs_hrms_coverage.py)
 > **Basis:** the live study in [`hrms/docs/`](.) (all 80 pages crawled) plus the actual Playwright automation of those pages
 

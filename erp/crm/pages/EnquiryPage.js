@@ -25,8 +25,9 @@ class EnquiryPage {
     this.businessValueInput= page.locator('#business-value');
     this.noFollowupChk     = page.locator('#no-next-followup-enquiry');
     this.descriptionInput  = page.locator('#enquiry-description');
-    this.itemSearchInput   = page.locator('#item-search-input');
+    this.itemSearchInput   = page.locator('#item-search-input');   // <select> since the Aug-2026 build
     this.quantityInput     = page.locator('#new-item-quantity');
+    this.addItemBtn        = page.locator('#btn-add-item');
 
     this.saveBtn   = page.locator('#btn-save-enquiry');
     this.cancelBtn = page.locator('#btn-cancel-enquiry');
@@ -222,58 +223,53 @@ class EnquiryPage {
   }
 
   /**
-   * Add a line item to the enquiry via the "Search Results" modal.
-   * Opens #searchItemModal, searches by name, clicks the first result row,
-   * then sets the quantity. The item is required for the enquiry to save.
+   * Add a line item to the enquiry.
+   *
+   * The item picker changed shape in the Aug-2026 build: #item-search-input
+   * used to be a text input with a magnifier that opened #searchItemModal.
+   * It is now a plain <select> of the tenant's items, committed with
+   * #btn-add-item. (#searchItemModal still exists in the DOM but is an empty
+   * shell — #item-search-modal-input is gone, so the old flow can't work.)
+   *
+   * Flow: choose option -> set quantity -> click add -> confirm the row landed.
+   * The item is required for the enquiry to save, so this THROWS on failure
+   * rather than logging and continuing — a silent miss here used to surface
+   * as an unrelated assertion failure several steps later.
    */
   async addItem(itemName, quantity) {
-    const page = this.page;
     console.log(`  📦 Adding item "${itemName}" x${quantity}`);
-    try {
-      // Open the item-search modal via the magnifier (ri-search-line) INSIDE
-      // the item search input-group. (The "+"/ri-add-fill opens a different
-      // "add CRM item" modal; the magnifier opens #searchItemModal to pick an
-      // existing inventory item.)
-      await page.locator('#item-search-input').scrollIntoViewIfNeeded();
-      const itemGrp = page.locator('#item-search-input')
-        .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
-      await itemGrp.locator('i.ri-search-line').first().click({ timeout: 8000 });
 
-      const modal = page.locator('#searchItemModal');
-      await modal.waitFor({ state: 'visible', timeout: 10000 });
+    await this.itemSearchInput.waitFor({ state: 'visible', timeout: 20000 });
+    await this.itemSearchInput.scrollIntoViewIfNeeded();
 
-      await page.locator('#item-search-modal-input').fill(itemName);
-      // Trigger the modal search (search icon inside the modal)
-      await modal.locator('i.ri-search-line').first().click().catch(() => {});
+    // Resolve the option: exact label, else first containing the name, else
+    // the first real entry (value "0" is the "-- Select Item --" placeholder).
+    const choice = await this.itemSearchInput.evaluate((sel, wanted) => {
+      const opts = [...sel.options].filter((o) => o.value && o.value !== '0');
+      if (!opts.length) return null;
+      const norm = (s) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+      const target = norm(wanted || '');
+      const hit =
+        opts.find((o) => norm(o.text) === target) ||
+        opts.find((o) => norm(o.text).includes(target)) ||
+        opts[0];
+      return { value: hit.value, text: hit.text.replace(/\s+/g, ' ').trim() };
+    }, itemName);
 
-      // Wait for a result row; if the term matched nothing, fall back to
-      // listing all items (empty search) and take the first.
-      const firstRow = modal.locator('table tbody tr').first();
-      try {
-        await firstRow.waitFor({ state: 'visible', timeout: 6000 });
-      } catch {
-        console.log(`  ↩️  "${itemName}" matched no item — listing all`);
-        await page.locator('#item-search-modal-input').fill('');
-        await modal.locator('i.ri-search-line').first().click().catch(() => {});
-        await firstRow.waitFor({ state: 'visible', timeout: 8000 });
-      }
-      const rowBtn = firstRow.locator('button, a, i.ri-add-fill, [class*="add"]').first();
-      if (await rowBtn.count() > 0) { await rowBtn.click(); }
-      else { await firstRow.click(); }
-
-      // Close the modal if it is still open
-      if (await modal.isVisible().catch(() => false)) {
-        await modal.locator('.btn-close').first().click().catch(() => {});
-      }
-      await page.waitForTimeout(800);
-
-      // Set quantity on the added line
-      const qty = this.quantityInput;
-      if (await qty.count() > 0) { await qty.fill(String(quantity)); }
-      console.log('  ✅ Item added');
-    } catch (e) {
-      console.log(`  ⚠️  addItem failed: ${e.message}`);
+    if (!choice) throw new Error('item picker (#item-search-input) has no selectable items');
+    if (choice.text.toLowerCase() !== String(itemName).toLowerCase()) {
+      console.log(`  ↩️  "${itemName}" not in this tenant's list — using "${choice.text}"`);
     }
+
+    await this.itemSearchInput.selectOption(choice.value);
+    await this.quantityInput.fill(String(quantity));
+    await this.addItemBtn.click({ timeout: 15000 });
+
+    // Confirm the line actually landed in the grid before moving on.
+    const row = this.page.locator('table tbody tr').filter({ hasText: choice.text }).first();
+    await row.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`  ✅ Item added: ${choice.text} x${quantity}`);
+    return choice;
   }
 
   /**

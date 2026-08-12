@@ -115,28 +115,20 @@ test.describe('CRM — Enquiry', () => {
     test.setTimeout(300_000);
     const enq = await arrive(page);
     await enq.openAddForm();
-    // ENQ-16 — the item picker (#searchItemModal) opens slowly on this tenant; retry
-    // instead of swallowing the failure (a swallowed add made the old test vacuous).
+    // addItem() now throws on a real failure (it used to swallow, which made
+    // this test vacuous), so this retry is meaningful.
     let added = false;
     for (let i = 0; i < 3 && !added; i++) {
       added = await enq.addItem('Inverter', '2').then(() => true).catch(() => false);
       if (!added) { console.log(`  ⏳ item picker retry ${i + 1}`); await page.waitForTimeout(2500); }
     }
-    expect(added, 'item picker never opened — could not add "Inverter"').toBeTruthy();
+    expect(added, 'item picker failed — could not add "Inverter"').toBeTruthy();
     await screenshot(page, 'enq16_items');
-    // Data round-trip: the item name lands in an Enquired-For LINE input.
-    // EXCLUDE the #searchItemModal search box — it keeps the typed 'Inverter' value even
-    // when the row-add is a no-op, which would make this pass on a broken picker.
-    const shown = await page.evaluate(() => {
-      const modal = document.querySelector('#searchItemModal');
-      const inputVals = [...document.querySelectorAll('input')]
-        .filter(i => !modal || !modal.contains(i))
-        .map(i => i.value || '').join(' | ');
-      return { inputVals, hasInverter: /Inverter/i.test(inputVals) };
-    });
-    console.log('  📦 line-item input values:', shown.inputVals.slice(0, 120));
-    expect(shown.hasInverter, 'added item "Inverter" not present in an Enquired-For line input (excluding the search box)').toBeTruthy();
-    console.log('  ✅ ASSERT: item "Inverter" landed in an Enquired-For line input');
+    // Data round-trip. Since the Aug-2026 build the chosen item renders as TEXT
+    // in an Enquired-For grid row, not as an <input> value, so assert on the row.
+    const itemRow = page.locator('table tbody tr').filter({ hasText: /Inverter/i });
+    await expect(itemRow.first(), 'added item "Inverter" not present in an Enquired-For grid row').toBeVisible();
+    console.log(`  ✅ ASSERT: item "Inverter" landed in an Enquired-For grid row (${await itemRow.count()} matching row(s))`);
   });
 
   test('ENQ-05 | Customer search picker (ENQ-05)', async ({ page }) => {

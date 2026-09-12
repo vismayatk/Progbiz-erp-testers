@@ -32,9 +32,11 @@ class HrmsLoginPage {
    * HRMS_COMPANY_CODE / HRMS_USERNAME / HRMS_PASSWORD.
    */
   async login(
-    company  = process.env.HRMS_COMPANY_CODE || 'Hrms',
-    username = process.env.HRMS_USERNAME     || 'vismaya',
-    password = process.env.HRMS_PASSWORD     || '123',
+    // Prefer the HRMS_* vars; fall back to the shared CRM vars (COMPANY_CODE /
+    // CRM_USERNAME / PASSWORD) so a single .env credential set works for both.
+    company  = process.env.HRMS_COMPANY_CODE || process.env.COMPANY_CODE || 'Hrms',
+    username = process.env.HRMS_USERNAME     || process.env.CRM_USERNAME  || 'vismaya',
+    password = process.env.HRMS_PASSWORD     || process.env.PASSWORD      || '123',
   ) {
     console.log(`\n  🔐 HrmsLoginPage: logging in "${username}" @ "${company}"`);
     let lastErr;

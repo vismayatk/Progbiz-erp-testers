@@ -87,9 +87,37 @@ class EnquiryPage {
     await this.page.waitForTimeout(900);
   }
 
-  /** Whether the Lead Quality (Cold/Warm/Hot) field is visible (appears only for In-Followup). */
+  /**
+   * Whether the Lead Quality (Cold/Warm/Hot) field is visible (appears only
+   * for In-Followup statuses; conditionally rendered, not just css-hidden —
+   * it's absent from the DOM entirely for New Enquiry).
+   *
+   * Was `'#lead-quality, [id*="quality" i]'` — that broad fallback meant
+   * once #lead-quality stopped existing in the DOM, `.first()` fell through
+   * to whatever ELSE on the page happened to have "quality" in its id, which
+   * is how this started reporting Lead Quality as visible for New Enquiry
+   * (2026-09-18 re-audit). #lead-quality is the field; if it isn't there,
+   * it isn't visible — no substring fallback needed.
+   */
   leadQualityVisible() {
-    return this.page.locator('#lead-quality, [id*="quality" i]').first().isVisible().catch(() => false);
+    const lq = this.page.locator('#lead-quality');
+    return lq.count().then((n) => n > 0 && lq.first().isVisible()).catch(() => false);
+  }
+
+  /**
+   * Whether Lead Quality is currently REQUIRED (label "Lead Quality*" or the
+   * control's own `required`). As of the 2026-09-18 re-audit the field is
+   * always rendered and visible; what the Followup Status changes is whether
+   * it's mandatory — optional for "New Enquiry", required for In-Followup
+   * statuses such as "Interested".
+   */
+  leadQualityRequired() {
+    return this.page.evaluate(() => {
+      const e = document.querySelector('#lead-quality');
+      if (!e) return false;
+      const label = e.closest('.form-group,.mb-3,.col,.col-md-3,.col-md-4,.col-md-6,div')?.querySelector('label')?.innerText || '';
+      return e.required || /\*/.test(label);
+    }).catch(() => false);
   }
 
   /** Lead Quality option labels (when visible). */
@@ -402,13 +430,32 @@ class EnquiryPage {
    * "Create Quotation" header button, which navigates to /quotation/0/{id}
    * (prefilled) where it is saved via #btn-save-quotation.
    */
+  /**
+   * "Create Quotation" is NOT a top-level button on this build — it's
+   * `<a id="btn-create-quotation" class="dropdown-item">` inside the
+   * #btn-enquiry-actions menu (alongside Edit Enquiry, Transfer To Branch,
+   * Merge Duplicate), so it stays `hidden` until that dropdown is opened.
+   * Waiting on #btn-create-quotation directly times out — "resolved to
+   * hidden" — every time (2026-09-18 re-audit: crm_enquiry.spec.js ENQ-28).
+   * crm_chain.spec.js's CH-06 already opens the dropdown first; this gives
+   * both page-object methods below the same fix so every caller gets it.
+   */
+  async _openCreateQuotationMenuItem() {
+    await this.page.locator('#btn-enquiry-actions').click({ timeout: 10000 });
+    await this.page.waitForTimeout(2200);
+    const item = this.page.locator('.dropdown-menu.show a, .dropdown-menu.show button')
+      .filter({ hasText: /create quotation/i }).first();
+    await item.waitFor({ state: 'visible', timeout: 10000 });
+    return item;
+  }
+
   /** Click "Create Quotation" and land on the prefilled /quotation/0/{id} form
    *  WITHOUT saving (so the form can be inspected/edited first). */
   async openQuotationForm() {
     console.log('  🔄 Opening Quotation form from enquiry');
     await waitOverviewReady(this.page);
-    await this.page.locator('#btn-create-quotation').waitFor({ state: 'visible', timeout: 15000 });
-    await this.page.locator('#btn-create-quotation').click();
+    const item = await this._openCreateQuotationMenuItem();
+    await item.click();
     await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
     await this.page.locator('#btn-save-quotation').waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
     await this.page.waitForTimeout(1500);
@@ -417,8 +464,8 @@ class EnquiryPage {
   async convertToQuotation() {
     console.log('  🔄 Clicking "Create Quotation"');
     await waitOverviewReady(this.page);
-    await this.page.locator('#btn-create-quotation').waitFor({ state: 'visible', timeout: 15000 });
-    await this.page.locator('#btn-create-quotation').click();
+    const item = await this._openCreateQuotationMenuItem();
+    await item.click();
     await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1500);
 

@@ -24,6 +24,7 @@ const { QuotationPage }= require('../pages/QuotationPage');
 const { LeadTransferPage } = require('../pages/LeadTransferPage');
 const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
 const { LeadStatusPage }   = require('../pages/LeadStatusPage');
+const { CrmChainPage }     = require('../pages/CrmChainPage');
 const { ItemCategoryPage } = require('../../item/pages/ItemCategoryPage');
 const { ItemPage }         = require('../../item/pages/ItemPage');
 const { screenshot }   = require('../../common/helpers');
@@ -374,23 +375,20 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     console.log('═══════════════════════════════════════');
 
     const loginPage   = new LoginPage(page);
-    const enquiryPage = new EnquiryPage(page);
 
     await loginPage.goto();
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
-    await enquiryPage.gotoList();
 
     // /leads is always pre-populated, so count>0 proved nothing about this run. Require the
     // specific enquiry created in TC-02 (unique "Test Customer <ts>") to be listed.
-    // The table AJAX-loads several seconds after domcontentloaded — poll for it.
+    // /leads is tab-scoped (New / In Follow Up / Won / Lost) and pages at 10 rows; by
+    // the time TC-11 runs, TC-03..10 have created newer enquiries that push TC-02's off
+    // page 1 of the default tab (2026-09-18 re-audit: "listed in /leads: false"). Search
+    // every tab at page size 100 — the same helper crm_chain.spec.js CH-02 uses.
     const wanted = testData.enquiry.customerName;
-    let found = false;
-    for (let i = 0; i < 8 && !found; i++) {
-      found = await page.evaluate((name) =>
-        [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
-      if (!found) await page.waitForTimeout(1500);
-    }
-    console.log(`  🔎 "${wanted}" listed in /leads: ${found}`);
+    const hit = await new CrmChainPage(page).findAcrossTabs('/leads', wanted);
+    const found = !!hit;
+    console.log(`  🔎 "${wanted}" listed in /leads: ${found}${hit ? ` (tab "${hit.tab}")` : ''}`);
     expect(found, `Enquiry for "${wanted}" (created in TC-02) not visible in /leads listing`).toBeTruthy();
     console.log('  ✅ ASSERT: created enquiry is visible in the /leads listing');
 

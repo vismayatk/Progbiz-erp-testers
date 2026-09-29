@@ -42,8 +42,12 @@ them once under *Known quirks confirmed still present*.
 ## 3. Sweep
 
 ```bash
-node scripts/qa/qa-explore.js --module hrms
+QA_ALLOW_HOSTS=hrms-erp.progbiz.in node scripts/qa/qa-explore.js --module hrms
 ```
+
+The prober blocks `hrms-erp.progbiz.in` by default — it holds real employee
+records, so it is not treated as a throwaway environment. The opt-in above is
+deliberate; do not add it to `.env` where it would apply silently to every run.
 
 All 80 pages; this takes a while. To work one area at a time:
 

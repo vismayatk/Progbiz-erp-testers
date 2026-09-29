@@ -15,6 +15,7 @@ require('dotenv').config();
 const { test, expect } = require('@playwright/test');
 const { LoginPage } = require('../../common/LoginPage');
 const { EnquiryPage } = require('../pages/EnquiryPage');
+const { dismissRateLimit } = require('../../common/helpers');
 const { screenshot } = require('../../common/helpers');
 
 const C = {
@@ -73,13 +74,21 @@ test.describe('CRM — Enquiry', () => {
     console.log('  ✅ Followup Status options present');
   });
 
-  test('ENQ-09 | Lead Quality appears for In-Followup, hidden for New (ENQ-09,12)', async ({ page }) => {
+  test('ENQ-09 | Lead Quality optional for New, required for In-Followup (ENQ-09,12)', async ({ page }) => {
+    // Behaviour changed in the Sep-2026 build (confirmed live 2026-09-18):
+    // Lead Quality used to be hidden for "New Enquiry" and appear for
+    // In-Followup statuses. It is now ALWAYS visible; the status decides
+    // whether it is mandatory — "Lead Quality" (optional) for New Enquiry,
+    // "Lead Quality*" (required) for Interested. The test asserts the new
+    // contract rather than the retired show/hide one.
     const enq = await arrive(page);
     await enq.openAddForm();
     await enq.selectFollowup('New Enquiry');
-    expect(await enq.leadQualityVisible(), 'Lead Quality should be hidden for New').toBeFalsy();   // ENQ-12
+    expect(await enq.leadQualityVisible(), 'Lead Quality should be rendered for New').toBeTruthy();
+    expect(await enq.leadQualityRequired(), 'Lead Quality should be OPTIONAL for New').toBeFalsy();     // ENQ-12
     await enq.selectFollowup('Interested');
-    expect(await enq.leadQualityVisible(), 'Lead Quality should appear for In-Followup').toBeTruthy(); // ENQ-09
+    expect(await enq.leadQualityVisible(), 'Lead Quality should be rendered for In-Followup').toBeTruthy();
+    expect(await enq.leadQualityRequired(), 'Lead Quality should be REQUIRED for In-Followup').toBeTruthy(); // ENQ-09
     const lq = (await enq.leadQualityOptions()).map(s => s.trim());
     console.log('  🎯 lead quality options:', JSON.stringify(lq));
     expect(lq.join(' ')).toMatch(/Cold/); expect(lq.join(' ')).toMatch(/Warm/); expect(lq.join(' ')).toMatch(/Hot/);
@@ -117,10 +126,19 @@ test.describe('CRM — Enquiry', () => {
     await enq.openAddForm();
     // addItem() now throws on a real failure (it used to swallow, which made
     // this test vacuous), so this retry is meaningful.
+    // Seen live 2026-09-21: a tight retry loop here can itself walk into the
+    // app's "Too many requests" throttle (several add-item POSTs in a few
+    // seconds). Check for and dismiss that dialog between attempts and back
+    // off longer than the normal 2.5s gap when it fires — retrying at the
+    // same cadence that triggered it just re-triggers it.
     let added = false;
     for (let i = 0; i < 3 && !added; i++) {
       added = await enq.addItem('Inverter', '2').then(() => true).catch(() => false);
-      if (!added) { console.log(`  ⏳ item picker retry ${i + 1}`); await page.waitForTimeout(2500); }
+      if (!added) {
+        const throttled = await dismissRateLimit(page);
+        console.log(`  ⏳ item picker retry ${i + 1}${throttled ? ' (was rate-limited)' : ''}`);
+        await page.waitForTimeout(throttled ? 8000 : 2500);
+      }
     }
     expect(added, 'item picker failed — could not add "Inverter"').toBeTruthy();
     await screenshot(page, 'enq16_items');

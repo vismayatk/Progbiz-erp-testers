@@ -1,10 +1,27 @@
 'use strict';
 
 /**
- * Project Management module — smoke coverage.
- *   PM-01  Projects listing loads with the expected columns
- *   PM-02  Add New Project page loads
- *   PM-03  Project sub-pages (Notes / Attachments / Expenses / Collections) reachable
+ * Project Management module — RETIRED, confirmed by the 2026-09-18 re-audit.
+ *
+ * The classic flat-route module this file exercised (/project, /project-notes,
+ * /project-attachments, /project-expenses, /project-incomes) has been replaced
+ * by the GUID-scoped Work Flow module — the same migration the user flagged
+ * earlier in this project ("the project management module changes to work
+ * flow, customise the project — check project flow"). Confirmed on lesol_test:
+ *   - /project, /project-notes, ... now render a 404/"not found" page.
+ *   - /projects (the listing) loads but is an empty shell — no table, no
+ *     columns, no buttons — not the "Project Name / Project Type / Status"
+ *     grid this suite used to check.
+ *   - The Work Flow equivalent (/workflow/<guid>, /workflow-notes/module/<guid>,
+ *     etc.) is live, has real content, and is fully covered by
+ *     erp/workflow/tests/workflow_project_flow.spec.js (WF-01..WF-07), which
+ *     passes end to end: create a project, phases/tasks instantiate from the
+ *     template, dashboard and status report both reflect it.
+ *
+ * These three tests are skipped rather than deleted, so the migration stays
+ * documented and visible in the report instead of showing as three red,
+ * unexplained failures every run. If this module comes back, replace the
+ * skip with real assertions against whatever the routes serve then.
  *
  * Run:  npx playwright test erp/project-management
  */
@@ -20,6 +37,9 @@ const C = {
   password: process.env.PASSWORD     || '123',
 };
 
+const RETIRED = 'Project Management was replaced by the Work Flow module (2026-09-18 re-audit) '
+  + '— see erp/workflow/tests/workflow_project_flow.spec.js for the current coverage.';
+
 async function arrive(page) {
   const lp = new LoginPage(page);
   await lp.goto();
@@ -27,10 +47,11 @@ async function arrive(page) {
   return new ProjectPage(page);
 }
 
-test.describe('Project Management', () => {
+test.describe('Project Management (retired — superseded by Work Flow)', () => {
   test.describe.configure({ timeout: 150_000 });
 
   test('PM-01 | Projects listing loads with columns', async ({ page }) => {
+    test.skip(true, RETIRED);
     const pm = await arrive(page);
     await pm.gotoProjects();
     expect(page.url()).toContain('/projects');
@@ -44,6 +65,7 @@ test.describe('Project Management', () => {
   });
 
   test('PM-02 | Add New Project page loads', async ({ page }) => {
+    test.skip(true, RETIRED);
     const pm = await arrive(page);
     await pm.gotoAddProject();
     expect(page.url()).toContain('/project');
@@ -59,6 +81,7 @@ test.describe('Project Management', () => {
   });
 
   test('PM-03 | Project sub-pages reachable', async ({ page }) => {
+    test.skip(true, RETIRED);
     const pm = await arrive(page);
     const pages = [
       ['Notes', () => pm.gotoNotes(), 'project-notes'],

@@ -39,6 +39,30 @@ class QuotationPage {
   /** Whether we're on the create-quotation form. */
   onForm() { return /\/quotation\//.test(this.page.url()); }
 
+  /**
+   * A value from the quotation's totals, by label.
+   *
+   * Older builds rendered totals as inputs (#gross-total / #payable-total).
+   * The Sep-2026 build (2026-09-18 re-audit) replaced them with an id-less
+   * "Total Summary" card — label and value as sibling text elements:
+   *   Gross Amount    0.00
+   *   Total Payable   INR (₹) 0.00
+   * so `inputValue()` on the old ids returned "" and QT-010 read the totals
+   * as missing. Prefer the legacy input if it exists, else read the card.
+   */
+  async _summaryValue(label, legacy) {
+    if (await legacy.count().catch(() => 0)) return (await legacy.inputValue().catch(() => '')) || '';
+    return this.page.evaluate((label) => {
+      const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const lab = [...document.querySelectorAll('span, div, p, label, td, th')]
+        .find((e) => e.children.length === 0 && clean(e.textContent) === label);
+      if (!lab) return '';
+      const v = lab.nextElementSibling
+        || [...(lab.parentElement?.children || [])].find((c) => c !== lab);
+      return v ? clean(v.textContent) : '';
+    }, label).catch(() => '');
+  }
+
   /** Snapshot of auto-fill state (QT-010): which fields are prefilled vs empty. */
   async autoFillState() {
     const val = async (loc) => (await loc.inputValue().catch(() => '')) || '';
@@ -48,8 +72,8 @@ class QuotationPage {
       date:      await val(this.qDate),
       validUpto: await val(this.qValidUpto),
       itemRows:  await this.qItemRows.count().catch(() => 0),
-      gross:     await val(this.qGross),
-      payable:   await val(this.qPayable),
+      gross:     await this._summaryValue('Gross Amount', this.qGross),
+      payable:   await this._summaryValue('Total Payable', this.qPayable),
     };
   }
 

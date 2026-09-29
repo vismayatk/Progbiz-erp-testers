@@ -48,13 +48,28 @@ async function arriveWithTask(page, label, preferStatus) {
   const tm = new TaskManagementPage(page);
   await login.goto();
   await login.login(CREDS.company, CREDS.username, CREDS.password);
-  // Open the first openable task and drive the detail-panel operations against it.
-  // (Creating a task here is pointless on the DEV build — the mandatory party
-  // delegates it to another owner, so it never lands in the creator's openable
-  // My Tasks. Task creation itself is covered by TM-02/04/06/10/11.)
+  // Open a task and drive the detail-panel operations against it.
   // `preferStatus` lets the lifecycle test target a Running task.
   let name = preferStatus ? await tm.openFirstOpenableTask(preferStatus) : null;
   if (!name) name = await tm.openFirstOpenableTask();
+
+  // Nothing eligible? Create one. openFirstOpenableTask only accepts
+  // machine-made tasks (these tests rename/reschedule/start what they open, so
+  // a colleague's real task must never be used), and My Tasks' buckets are
+  // day-scoped — on a quiet day every tab is legitimately empty, which used to
+  // skip TM-24..28 entirely. Creating a QA_ task keeps them running against a
+  // record this run owns.
+  if (!name) {
+    const fresh = `QA_TMDETAIL_${Date.now()}`;
+    console.log(`  ➕ no eligible existing task — creating "${fresh}" for the "${label}" test`);
+    try {
+      await tm.createTask(fresh, {});
+      await page.waitForTimeout(2500);
+      if (await tm.openTaskDetails(fresh)) name = fresh;
+    } catch (e) {
+      console.log(`  ⚠️  could not create a task: ${e.message.split('\n')[0].slice(0, 90)}`);
+    }
+  }
   if (!name) console.log(`  ℹ️  no openable task available for the "${label}" detail-panel test`);
   return { tm, name: name || label, opened: !!name };
 }
@@ -143,27 +158,52 @@ test.describe('Task Management — Task Details, Notes, Lifecycle', () => {
     // Read status from the OPEN modal (not by re-finding the row by a long/truncated
     // name, which is unreliable). Lifecycle needs a RUNNING task; the arbitrary opened
     // task may be Scheduled/Completed → skip rather than false-fail.
-    const before = (await tm.detailsStatuses()).join(' ');
+    let before = (await tm.detailsStatuses()).join(' ');
     console.log('  ▶ statuses before:', JSON.stringify(before));
+
+    // A previous lifecycle run leaves its task ON HOLD, and that same task is
+    // usually the only machine-made (safe-to-drive) one on the tenant — so the
+    // whole test used to skip on every second run. Resume it first: it is the
+    // very Resume control this test asserts later, and it restores the Running
+    // state the Hold→Resume→End flow needs.
+    if (/hold|paused/i.test(before)) {
+      console.log('  ⏵ opened task is on Hold — resuming it to reach a Running state');
+      const pre = await tm.resumeTask();
+      if (pre) console.log(`  ⏵ resume (pre-step) message: ${pre}`);
+      const preStatus = await tm.rowStatus(name);
+      console.log('  ⏵ row status after pre-resume:', JSON.stringify(preStatus));
+      expect(String(preStatus), 'A held task should be Running after Resume').toMatch(/running/i);
+      expect(await tm.openTaskDetails(name), 'could not re-open the task after the pre-resume').toBe(true);
+      before = (await tm.detailsStatuses()).join(' ');
+      console.log('  ▶ statuses after pre-resume:', JSON.stringify(before));
+    }
+
     const hasHold = await tm.detailsModal.locator('.btn-warning-light').first().isVisible().catch(() => false);
     test.skip(!/running|not started/i.test(before) || !hasHold,
       `Opened task is not in a holdable (Running) state — lifecycle needs a Running task. Status: "${before}"`);
 
-    // HOLD → confirm "Hold Task" modal. Verify the modal's status badge becomes "Hold".
+    // HOLD → confirm the "Hold Task" modal (pre-filled "Hold Time *" + Confirm).
+    // Confirming CLOSES the Task Details panel, so the status must be read from
+    // the listing row — reading the hidden panel returns its last-rendered text
+    // ("Running") and used to fail a hold that had actually succeeded
+    // (POST /api/app/v1/hold-task → 200). Verified live 2026-09-21.
     const hold = await tm.holdTask();
     expect(hold, `Hold should not error, got "${hold}"`).toBeFalsy();
-    const afterHold = (await tm.detailsStatuses()).join(' ');
-    console.log('  ⏸ statuses after Hold:', JSON.stringify(afterHold));
-    expect(afterHold, 'Task should show On Hold after Hold').toMatch(/hold|paused/i);
+    const afterHold = await tm.rowStatus(name);
+    console.log('  ⏸ row status after Hold:', JSON.stringify(afterHold));
+    expect(String(afterHold), 'Task should show Hold in the listing after Hold').toMatch(/hold|paused/i);
 
-    // RESUME → control reappears once held; success returns falsy and the modal status
-    // returns to Running.
+    // RESUME → re-open the panel (Hold closed it), then resume.
+    expect(await tm.openTaskDetails(name), 'could not re-open the task after Hold').toBe(true);
     const resume = await tm.resumeTask();
     console.log('  ▶ resume result:', resume);
     expect(resume, `Resume should not error, got "${resume}"`).toBeFalsy();
-    const afterResume = (await tm.detailsStatuses()).join(' ');
-    console.log('  ▶ statuses after Resume:', JSON.stringify(afterResume));
-    expect(afterResume, 'Task should be Running after Resume').toMatch(/running/i);
+    const afterResume = await tm.rowStatus(name);
+    console.log('  ▶ row status after Resume:', JSON.stringify(afterResume));
+    expect(String(afterResume), 'Task should be Running after Resume').toMatch(/running/i);
+
+    // END → re-open the panel again before ending.
+    expect(await tm.openTaskDetails(name), 'could not re-open the task after Resume').toBe(true);
 
     // END → confirm "End Task" modal. The end-time window is minute-granular and can be
     // too tight right after a resume, so END may legitimately return a time-window
@@ -172,10 +212,11 @@ test.describe('Task Management — Task Details, Notes, Lifecycle', () => {
     await screenshot(page, 'tm28_lifecycle');
     console.log('  ⏹ End result:', end === null ? 'ended' : `(msg) ${end}`);
     if (end === null) {
-      const afterEnd = (await tm.detailsStatuses()).join(' ');
-      console.log('  ⏹ statuses after End:', JSON.stringify(afterEnd));
-      // a clean end shows Completed/Ended (modal may also close — accept an empty read)
-      if (afterEnd) expect(afterEnd, 'Ended task should be Completed').toMatch(/complet|ended/i);
+      const afterEnd = await tm.rowStatus(name);
+      console.log('  ⏹ row status after End:', JSON.stringify(afterEnd));
+      // A clean end shows Completed/Ended. 'row-found' means the row is there
+      // but carries no recognised badge — accept it rather than false-fail.
+      if (afterEnd && afterEnd !== 'row-found') expect(afterEnd, 'Ended task should be Completed').toMatch(/complet|ended|finish/i);
     } else {
       expect(/time|start/i.test(String(end)), `Unexpected End error: ${end}`).toBeTruthy();
     }

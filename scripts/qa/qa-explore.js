@@ -50,6 +50,7 @@ const MODULE = (arg('module') || 'crm').toLowerCase();
 const ONLY_GROUP = arg('group');
 const ONLY_ROUTES = arg('routes');
 const NAV_GROUP = arg('nav-group');   // e.g. --nav-group CRM
+const ROUTES_FILE = arg('routes-file'); // newline-separated routes; # comments ok
 const HEADED = flag('headed') || !!process.env.HEADED;
 
 /**
@@ -76,13 +77,42 @@ function routesFromDiscovery(groupName) {
 }
 
 // ── Guard: never point this at production ───────────────────────────────────
-const PROD_MARKERS = [/^https?:\/\/(www\.)?erp\.progbiz\.in/i, /prod/i, /live/i];
+// Allow-list rather than blocklist. The old version named erp.progbiz.in
+// explicitly and would have waved through https://erp.progbiz.io — a real host
+// reached in this project that the guard existed to stop.
+//
+// A host is considered safe when its FIRST DNS label carries a non-production
+// marker (dev.erp…, test.erp…, devtest…, qa-erp…), or when it is named
+// explicitly in QA_ALLOW_HOSTS. Everything else is treated as production.
+// The env override matters: a guard that blocks legitimate work gets disabled,
+// and a disabled guard protects nothing.
+const SAFE_LABEL = /(dev|test|staging|stage|qa|uat|sandbox|local)/i;
+const PROD_WORDS = [/\bprod(uction)?\b/i, /\blive\b/i];
+
+function looksLikeProduction(url) {
+  let host;
+  try { host = new URL(url).hostname; } catch { return true; }
+  if (/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(host)) return false;
+
+  // Explicit opt-in, comma separated: QA_ALLOW_HOSTS=hrms-erp.progbiz.in,...
+  const allowed = (process.env.QA_ALLOW_HOSTS || '')
+    .split(',').map((h) => h.trim().toLowerCase()).filter(Boolean);
+  if (allowed.includes(host.toLowerCase())) return false;
+
+  if (PROD_WORDS.some((re) => re.test(host))) return true;
+  return !SAFE_LABEL.test(host.split('.')[0]);
+}
+
 function assertNotProduction(url) {
-  if (PROD_MARKERS.some((re) => re.test(url))) {
+  if (looksLikeProduction(url)) {
+    let host = url; try { host = new URL(url).hostname; } catch {}
     console.error(
-      `\n✋ Refusing to run against "${url}" — it looks like production.\n` +
-      `   This prober clicks around a live app with an admin session. Point it at\n` +
-      `   a test tenant (devtest / erptest / hrms-erp) via BASE_URL in .env.\n`
+      `\n✋ Refusing to run against "${url}".\n` +
+      `   "${host}" has no dev/test/staging marker in its first label, so it is\n` +
+      `   treated as production. This prober drives a live app with an admin\n` +
+      `   session.\n\n` +
+      `   If this host really is safe, opt in explicitly:\n` +
+      `     QA_ALLOW_HOSTS=${host} node scripts/qa/qa-explore.js ...\n`
     );
     process.exit(2);
   }
@@ -96,6 +126,9 @@ const CRM_ROUTES = [
   '/bulk-lead-transfer', '/dealers', '/customers', '/solar-orders',
   '/add-multiple-lead-tasks', '/lead-expenses', '/lead-source-commissions',
   '/sales-targets', '/call-analysis', '/enquiry-upload',
+  // added 2026-09-18 re-audit — new since the 2026-09-07 nav crawl
+  '/b2b-dashboard', '/repeat-accounts',
+  '/complaints', '/add-complaint', '/complaint-types', '/complaint-dashboard',
 ];
 
 const TASK_ROUTES = [
@@ -103,6 +136,7 @@ const TASK_ROUTES = [
   '/unscheduled-tasks', '/todo-list', '/daily-activity-report',
   '/task-dashboard', '/predefined-task-add', '/calendar',
   '/redirect/task-timeline',
+  '/screen-tracker', // added 2026-09-18 re-audit
 ];
 
 function hrmsRoutes() {
@@ -123,6 +157,13 @@ function moduleSpec() {
     };
   }
   const base = process.env.BASE_URL || 'https://devtest.progbiz.in';
+  if (ROUTES_FILE) {
+    // Long GUID-bearing workflow routes make a --routes CLI arg unwieldy, and
+    // a checked-in list makes a full-project sweep reproducible.
+    const lines = fs.readFileSync(ROUTES_FILE, 'utf8').split('\n')
+      .map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
+    return { base, pages: lines.map((r) => ({ route: r, baseline: null })), login: 'erp' };
+  }
   if (NAV_GROUP) return { base, pages: routesFromDiscovery(NAV_GROUP), login: 'erp' };
   const list = MODULE === 'task' ? TASK_ROUTES : CRM_ROUTES;
   return { base, pages: list.map((r) => ({ route: r, baseline: null })), login: 'erp' };

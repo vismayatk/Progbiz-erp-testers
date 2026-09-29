@@ -47,7 +47,7 @@ test.describe('CRM — Homepage', () => {
     expect(page.url()).toMatch(/home|dashboard/i);                          // Home_01
     const body = (await page.locator('body').textContent()) || '';
     expect(body).toMatch(/Hey,?\s*\w+/i);                                   // Home_02 (welcome + name)
-    await expect(page.locator('#new-task, :text("Create New")').first()).toBeVisible(); // Home_24
+    await expect(page.locator('#new-task, #new-lead-type, :text("Create New")').first()).toBeVisible(); // Home_24
     await screenshot(page, 'home01_loaded');
     console.log('  ✅ Homepage loads with welcome + Create New');
   });
@@ -191,9 +191,19 @@ test.describe('CRM — Homepage', () => {
     await go(page, 'home');
     // open Create New and confirm Enquiry + Quotation options
     const item = page.locator('#new-task-item');
-    for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await page.locator('#new-task').click().catch(() => {}); await page.waitForTimeout(600); }
-    const opts = await page.evaluate(() => ['new-task-item', 'new-enquiry-item', 'new-quotation-item']
-      .map(id => document.getElementById(id)).filter(Boolean).map(e => (e.textContent || '').replace(/\s+/g, ' ').trim()));
+    // Toggle is #new-task on some renders, #new-lead-type on others — match either,
+    // with a short click timeout so a wrong render doesn't cost 6 × 20s.
+    const toggle = page.locator('#new-task, #new-lead-type').first();
+    for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await toggle.click({ timeout: 5000 }).catch(() => {}); await page.waitForTimeout(600); }
+    // Read the menu itself, not a fixed id list: since the Sep-2026 build only
+    // "Task" carries an id (#new-task-item); Enquiry and Quotation are still in
+    // the menu but lost #new-enquiry-item / #new-quotation-item.
+    const opts = await page.evaluate(() => {
+      const anchor = document.getElementById('new-task-item');
+      const menu = anchor && anchor.closest('.dropdown-menu');
+      if (!menu) return [];
+      return [...menu.querySelectorAll('a')].map(e => (e.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    });
     await screenshot(page, 'home25_createnew');
     console.log('  📂 Create New options:', JSON.stringify(opts));
     expect(opts.map(s => s.toLowerCase())).toEqual(expect.arrayContaining(['enquiry', 'quotation'])); // Home_25,26

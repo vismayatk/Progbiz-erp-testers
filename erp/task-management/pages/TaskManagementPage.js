@@ -23,7 +23,12 @@
  *    Delegated Tasks (/delegated-tasks), To Do List (/todo-list),
  *    Unscheduled Tasks (/unscheduled-tasks), Calendar (/calendar),
  *    Daily Activity Report (/daily-activity-report), Task Timeline.
- *  Row actions: #edit-task-{id}, #delete-task-{id}, #overview-task-{id}.
+ *  Row actions (Action column, no ids since the Sep-2026 build): a red delete
+ *    button (i.ri-delete-bin-5-fill) FIRST on deletable tasks, then the
+ *    send-plane (i.ri-send-plane-2-line) that opens #task-overview-modal — or,
+ *    for Enquiry/Quotation Followup and Complaint task types, navigates to the
+ *    source record. The old #edit-task-{id} / #delete-task-{id} /
+ *    #overview-task-{id} ids are gone. See _openRowOverview().
  *  Dashboard lifecycle controls: .ri-play-fill (start/resume),
  *    .ri-pause-fill (hold), .ri-stop-fill (end).
  */
@@ -95,7 +100,15 @@ class TaskManagementPage {
 
   // ════════════════════════ Add-Task MODAL ════════════════════════
 
-  /** Open the "Create New" dropdown and return its option labels (TC_TASK_001). */
+  /**
+   * Open the "Create New" dropdown and return its option labels (TC_TASK_001).
+   *
+   * Reads the menu that holds #new-task-item rather than a fixed id list:
+   * since the Sep-2026 build only **Task** still carries an id — Enquiry and
+   * Quotation lost `#new-enquiry-item` / `#new-quotation-item` (they are still
+   * in the menu, still labelled the same). The old id-triplet reader returned
+   * just ["Task"] and failed TM-09 on a menu that was in fact intact.
+   */
   async getCreateNewOptions() {
     if (!/\/home/.test(this.page.url())) await this.gotoHome();
     const item = this.newTaskItem;
@@ -103,11 +116,24 @@ class TaskManagementPage {
       await this.createNewBtn.click().catch(() => {});
       await this.page.waitForTimeout(600);
     }
-    return this.page.evaluate(() =>
-      ['new-task-item', 'new-enquiry-item', 'new-quotation-item']
-        .map(id => document.getElementById(id))
-        .filter(Boolean)
-        .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim()));
+    return this.page.evaluate(() => {
+      const anchor = document.getElementById('new-task-item');
+      const menu = anchor && anchor.closest('.dropdown-menu');
+      if (!menu) return [];
+      return [...menu.querySelectorAll('a')]
+        .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+    });
+  }
+
+  /** A "Create New" menu entry by label ("Task" | "Enquiry" | "Quotation").
+   *  Task keeps its id; the others are matched by label inside the same menu —
+   *  scoped with `:has(#new-task-item)` because the sidebar carries its own
+   *  hidden `.dropdown-item` links with these very labels. */
+  createNewItem(label) {
+    if (/^task$/i.test(label)) return this.newTaskItem;
+    return this.page.locator('.dropdown-menu:has(#new-task-item) a')
+      .filter({ hasText: new RegExp(`^\\s*${label}\\s*$`, 'i') }).first();
   }
 
   /** Robustly open the Add-Task modal (TC_TASK_002). The Create-New dropdown is a
@@ -515,25 +541,54 @@ class TaskManagementPage {
         .filter(Boolean));
   }
 
-  /** Distinct row-action kinds present (edit/delete/overview). */
+  /**
+   * Distinct row-action kinds present, as stable names: 'overview-task',
+   * 'delete-task', 'edit-task'. Older builds exposed them as ids
+   * (#overview-task-{id} …); the Sep-2026 build dropped the ids and renders
+   * id-less icon buttons instead (send-plane = overview, bin = delete), so
+   * read both and map the icons onto the same names — callers (TM-16, TM-18)
+   * don't need to know which build they're on.
+   */
   async rowActionKinds() {
     return this.page.evaluate(() => {
       const kinds = new Set();
       for (const e of document.querySelectorAll('[id^="edit-task-"],[id^="delete-task-"],[id^="overview-task-"]')) {
         kinds.add(e.id.replace(/-\d+$/, ''));
       }
+      const ICONS = [
+        ['overview-task', 'i.ri-send-plane-2-line'],
+        ['delete-task', 'i[class*="ri-delete-bin"]'],
+        ['edit-task', 'i.ri-pencil-line, i.ri-edit-line, i.ri-edit-2-line, i.bi-pencil-square'],
+      ];
+      for (const [kind, sel] of ICONS) {
+        if (document.querySelector(`table tbody tr :is(a, button) ${sel}`)) kinds.add(kind);
+      }
       return [...kinds];
     });
   }
 
-  /** Dashboard lifecycle controls (start/hold/end) + running-task count from timers. */
+  /**
+   * Dashboard lifecycle controls (start/hold/end) + running-task count from timers.
+   *
+   * Counts BOTH the id-based controls the dashboard rendered in the Sep-2026
+   * build (#start-task-btn-{id} / #resume-task-btn-{id} / #end-task-btn-{id})
+   * and the icon classes older builds used (.ri-play-fill etc., plus the
+   * Bootstrap-icon variants bi-play, bi-pause and bi-record), so the count
+   * doesn't silently read zero just because the markup changed.
+   *
+   * `hasPanels` says whether the Running Tasks / On Hold panels are on the
+   * page at all — these are data-driven, so on a tenant with nothing running
+   * there is legitimately nothing to control and callers should skip rather
+   * than fail.
+   */
   async dashboardLifecycle() {
     await this.gotoHome();
-    await this.page.waitForTimeout(2000);
+    await this.page.waitForTimeout(2500);
     return this.page.evaluate(() => ({
-      start:  document.querySelectorAll('.ri-play-fill').length,
-      hold:   document.querySelectorAll('.ri-pause-fill').length,
-      end:    document.querySelectorAll('.ri-stop-fill').length,
+      start:  document.querySelectorAll('.ri-play-fill, [class*="bi-play"], [id^="start-task-btn"], [id^="resume-task-btn"]').length,
+      hold:   document.querySelectorAll('.ri-pause-fill, [class*="bi-pause"], [id^="hold-task-btn"]').length,
+      end:    document.querySelectorAll('.ri-stop-fill, [class*="bi-record"], [class*="bi-stop"], [id^="end-task-btn"]').length,
+      hasPanels: /running tasks|on hold/i.test(document.body.innerText),
       timers: (document.body.innerText.match(/\d\d:\d\d:\d\d/g) || []).length,
       sections: ["Today's Schedule", 'Running Tasks', 'On Hold']
         .filter(s => new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(document.body.innerText)),
@@ -560,28 +615,50 @@ class TaskManagementPage {
 
   get detailsModal() { return this.page.locator('#task-overview-modal'); }
 
+  /**
+   * Open #task-overview-modal from ONE row, via its send-plane anchor ONLY.
+   *
+   * 2026-09-18 re-audit: the Action cell on deletable tasks is now
+   *   <a class="btn-danger-light"><i class="ri-delete-bin-5-fill"></a>   ← delete, FIRST
+   *   <a class="btn-primary-light"><i class="ri-send-plane-2-line"></a>  ← open overview
+   * The openers below used to click "every control in the cell" until the modal
+   * appeared — which now clicks delete first and raises "Are you sure you want to
+   * delete?" / "delete all remaining tasks in this series?" on a real task, then
+   * burns the test budget waiting behind that dialog (TM-24..26 timeouts).
+   *
+   * CRM/Complaint-linked task types (Enquiry Followup, Quotation Followup,
+   * Complaint) route their send-plane to the source record
+   * (/enquiry-overview, /quotation-view, /complaint-detail) instead of opening
+   * the overview. If a click navigates, come back and report not-openable.
+   */
+  async _openRowOverview(row) {
+    const opener = row.locator('td').first().locator('a:has(i.ri-send-plane-2-line)').first();
+    if (!(await opener.count().catch(() => 0))) return false;
+    const before = this.page.url();
+    await opener.click({ timeout: 5000 }).catch(() => {});
+    const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+    if (ok) {
+      await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+      await this.page.waitForTimeout(800);
+      return true;
+    }
+    if (this.page.url() !== before) {
+      await this.page.goBack({ waitUntil: 'domcontentloaded' }).catch(() => {});
+      await this.page.waitForTimeout(2000);
+    }
+    return false;
+  }
+
   /** Open the Task Details panel (#task-overview-modal) for the task named `name`.
    *  On the DEV build a party-attached task is delegated to the party owner, so it
    *  can live under My Tasks OR Delegated Tasks and under any status tab. Scan both
-   *  pages across all tabs; the opener is the row's action-cell control (which fires
-   *  the overview modal — verify #task-overview-modal actually shows, since the same
-   *  cell can also hold a reassign/delete control). */
+   *  pages across the likely tabs; open via the send-plane anchor only (see
+   *  _openRowOverview — the same cell now holds a delete button). */
   async openTaskDetails(name) {
     const tryOpenHere = async () => {
       const row = this.page.locator('table tbody tr').filter({ hasText: name }).first();
       if (!(await row.isVisible().catch(() => false))) return false;
-      const controls = row.locator('td').first().locator('a, button, i');
-      const n = await controls.count().catch(() => 0);
-      for (let k = 0; k < Math.max(n, 1); k++) {
-        await (n ? controls.nth(k) : row.locator('a, button').first()).click().catch(() => {});
-        const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 4000 }).then(() => true).catch(() => false);
-        if (ok) {
-          await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
-          await this.page.waitForTimeout(1000);
-          return true;
-        }
-      }
-      return false;
+      return this._openRowOverview(row);
     };
     // Bounded sweep: check My Tasks default + the tabs a task realistically sits in
     // (Today/Upcoming — where a reschedule lands it), then Delegated default. Enough
@@ -603,37 +680,68 @@ class TaskManagementPage {
   /** Open the FIRST openable task in My Tasks (any populated status tab) and return
    *  its task name, or null. Used when a freshly-created task isn't reachable by its
    *  creator (DEV mandatory-party delegation) — the detail-panel operations under test
-   *  are exercised against a real existing task instead. */
+   *  are exercised against an existing task instead.
+   *
+   *  Only MACHINE-MADE tasks are eligible (a `QA_`/`TM` prefix, or a 13-digit ms
+   *  timestamp in the name — "Repeat 1789652320867", "LaterTask 1789533179909").
+   *  TM-25/26/28 rename, reschedule and start/hold/end whatever this opens; on a
+   *  shared tenant that must never be a colleague's real task (docs/qa/QA_METHOD.md:
+   *  never Save on a record you did not create). No eligible task → null → the
+   *  caller skips, which is the honest outcome.
+   *
+   *  Bounded: at most MAX_ATTEMPTS send-plane clicks across all tabs, so a tenant
+   *  full of non-openable rows ends in a clean skip, not a 200 s test timeout. */
   async openFirstOpenableTask(preferStatus) {
+    const MAX_ATTEMPTS = 4;
+    const LINKED = /enquiry followup|quotation followup|complaint/i;   // route to their source record
+    const PLAIN = /^(call|online meeting|meeting|activities)$/i;       // try these first
+    let attempts = 0;
+    // Load My Tasks ONCE and switch tabs in place: a re-goto per tab costs a
+    // page load for nothing. There is no #page_size control on this listing
+    // (checked live 2026-09-21) — selecting it blocks for the full 30 s action
+    // timeout per tab, which is what pushed TM-24 past its 200 s budget.
     await this.gotoMyTasks();
     await this.page.waitForTimeout(2500);
-    // When a status is preferred (e.g. 'Running' for the lifecycle test), scan the whole
-    // list for a row in that state first; fall back to the first openable row otherwise.
-    for (const tab of ['default', 'Today', 'Delayed', 'Completed', 'Upcoming', 'Unscheduled']) {
-      if (tab !== 'default') { await this.clickTab(tab); await this.page.waitForTimeout(1000); }
-      const filter = preferStatus ? new RegExp(preferStatus, 'i') : /\S/;
-      const rows = this.page.locator('table tbody tr').filter({ hasText: filter });
-      const count = await rows.count().catch(() => 0);
-      if (!count) continue;                         // skip empty tabs fast
-      for (let i = 0; i < Math.min(count, 3); i++) {
-        const row = rows.nth(i);
-        const nameCell = await row.locator('td').evaluateAll(tds => {
-          // the task-name cell is the longest non-date, non-status text cell
-          const texts = tds.map(td => (td.textContent || '').replace(/\s+/g, ' ').trim());
-          const cand = texts.filter(t => t.length > 4 && !/^\d/.test(t) && !/^(running|hold|scheduled|finished|completed|pending|unscheduled)$/i.test(t) && !/^\d{2}\/\d{2}\/\d{4}/.test(t));
-          return cand.sort((a, b) => b.length - a.length)[0] || '';
-        }).catch(() => '');
-        const controls = row.locator('td').first().locator('a, button, i');
-        const n = await controls.count().catch(() => 0);
-        for (let k = 0; k < Math.max(n, 1); k++) {
-          await (n ? controls.nth(k) : row.locator('a, button').first()).click().catch(() => {});
-          const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
-          if (ok) {
-            await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-            await this.page.waitForTimeout(1000);
-            return nameCell || 'existing task';
-          }
-        }
+    // Tab labels carry their counts ("Delayed 3", "Today 0") — skip the empty
+    // ones instead of paying a click + settle to discover they're empty. These
+    // buckets are day-scoped, so most are legitimately empty on a quiet day.
+    const counts = {};
+    for (const label of await this.page.locator('li.nav-item').allInnerTexts().catch(() => [])) {
+      const m = label.replace(/\s+/g, ' ').trim().match(/^(.*?)\s+(\d+)$/);
+      if (m) counts[m[1].toLowerCase()] = Number(m[2]);
+    }
+    for (const tab of ['Today', 'Upcoming', 'Delayed', 'Unscheduled', 'Completed']) {
+      if (attempts >= MAX_ATTEMPTS) break;
+      if (counts[tab.toLowerCase()] === 0) continue;
+      if (!/\/my-tasks/.test(this.page.url())) { await this.gotoMyTasks(); await this.page.waitForTimeout(2000); }
+      await this.clickTab(tab);
+      await this.page.waitForTimeout(1200);
+      const candidates = await this.page.evaluate(({ preferStatus, linkedSrc, plainSrc }) => {
+        const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+        const linked = new RegExp(linkedSrc, 'i'), plain = new RegExp(plainSrc, 'i');
+        const t = [...document.querySelectorAll('table')].filter((x) => x.getClientRects().length)
+          .sort((a, b) => b.querySelectorAll('thead th').length - a.querySelectorAll('thead th').length)[0];
+        if (!t) return [];
+        const hs = [...t.querySelectorAll('thead th')].map((h) => clean(h.innerText));
+        const ti = hs.findIndex((h) => /^task type$/i.test(h));
+        const si = hs.findIndex((h) => /^status$/i.test(h));
+        const ni = hs.findIndex((h) => /^task$/i.test(h));
+        return [...t.querySelectorAll('tbody tr')].map((r, i) => {
+          const c = [...r.querySelectorAll('td')].map((td) => clean(td.innerText));
+          return { i, type: c[ti] || '', status: c[si] || '', name: c[ni] || '',
+            hasOpener: !!r.querySelector('td a i.ri-send-plane-2-line') };
+        }).filter((r) => r.hasOpener && !linked.test(r.type)
+          && /(^(QA_|TM))|\d{13}/.test(r.name)                              // machine-made only
+          && (!preferStatus || new RegExp(preferStatus, 'i').test(r.status)))
+          .sort((a, b) => Number(plain.test(b.type)) - Number(plain.test(a.type)));
+      }, { preferStatus: preferStatus || '', linkedSrc: LINKED.source, plainSrc: PLAIN.source });
+
+      for (const cand of candidates) {
+        if (attempts >= MAX_ATTEMPTS) break;
+        attempts++;
+        const opened = await this._openRowOverview(this.page.locator('table tbody tr').nth(cand.i));
+        if (opened) return cand.name || 'existing task';
+        if (!/\/my-tasks/.test(this.page.url())) break;   // navigated away and couldn't recover — reload this tab loop
       }
     }
     return null;
@@ -657,19 +765,39 @@ class TaskManagementPage {
     return this._afterSave();
   }
 
-  /** Open the Task Details ⋮ menu and click an item: 'Edit Task' | 'Reschedule Task' | 'Add Lead'. */
-  async detailsMenu(item) {
-    await this.detailsModal.locator('.fe-more-vertical').first().click().catch(() => {});
-    await this.page.waitForTimeout(900);
-    await this.page.getByText(new RegExp(`^\\s*${item}\\s*$`, 'i')).first().click().catch(() => {});
-    await this.page.waitForTimeout(2800);
+  /**
+   * Open the Task Details ⋮ menu and click an item: 'Edit Task' | 'Reschedule Task' | 'Add Lead'.
+   *
+   * `expectSelector`, when given, is what the click should produce (e.g. the edit
+   * modal's `#taskName`). Verified live 2026-09-21: the menu labels are exactly
+   * right (confirmed by dumping every visible menu item), and the mechanism
+   * itself is sound — "Add Lead" passed via this same code moments after "Edit
+   * Task"/"Reschedule Task" failed against the SAME opened task in the SAME
+   * run — so the one-shot click occasionally lands before the prior modal has
+   * fully torn down. Retry the open→click once before giving up.
+   */
+  async detailsMenu(item, expectSelector) {
+    const clickItem = async () => {
+      await this.detailsModal.locator('.fe-more-vertical').first().click().catch(() => {});
+      await this.page.waitForTimeout(900);
+      await this.page.getByText(new RegExp(`^\\s*${item}\\s*$`, 'i')).first().click().catch(() => {});
+      await this.page.waitForTimeout(2800);
+    };
+    await clickItem();
+    if (expectSelector) {
+      const ok = await this.page.locator(expectSelector).first().waitFor({ state: 'visible', timeout: 6000 }).then(() => true).catch(() => false);
+      if (!ok) {
+        console.log(`  ↻ "${item}" didn't produce ${expectSelector} — retrying once`);
+        await clickItem();
+      }
+    }
   }
 
   get editModal() { return this.page.locator('#task-edit-modal'); }
 
   /** Edit an existing task's title via ⋮ → Edit Task (#task-edit-modal). Returns save result. */
   async editTaskTitle(newTitle) {
-    await this.detailsMenu('Edit Task');
+    await this.detailsMenu('Edit Task', '#task-edit-modal #taskName');
     await this.editModal.locator('#taskName').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
     await this.editModal.locator('#taskName').fill(newTitle);
     await this.editModal.locator('#taskName').blur().catch(() => {});
@@ -682,7 +810,7 @@ class TaskManagementPage {
 
   /** Reschedule a task via ⋮ → Reschedule Task. Returns save result. */
   async reschedule(dateStr, timeStr = '10:30') {
-    await this.detailsMenu('Reschedule Task');
+    await this.detailsMenu('Reschedule Task', '.modal:visible input[type="date"]:visible, [role="dialog"]:visible input[type="date"]:visible');
     const dlg = this.page.locator('.modal:visible, [role="dialog"]:visible').last();
     await dlg.locator('input[type="date"]:visible').first().fill(dateStr).catch(() => {});
     await dlg.locator('input[type="date"]:visible').first().blur().catch(() => {});
@@ -794,10 +922,20 @@ class TaskManagementPage {
     return null;
   }
   /** Read the status badges currently shown in the Task Details participant row. */
+  /**
+   * Status badges inside the OPEN Task Details panel.
+   *
+   * Returns [] when the panel isn't actually visible. Confirming Hold/End
+   * closes the panel, and the hidden modal keeps its last-rendered markup —
+   * so reading it after a lifecycle action reported the OLD status ("Running"
+   * after a successful hold), which is what made TM-28 fail against a hold
+   * that had in fact worked (POST /api/app/v1/hold-task → 200). Verify a
+   * lifecycle change with rowStatus() instead, or re-open the panel.
+   */
   async detailsStatuses() {
     return this.page.evaluate(() => {
       const m = document.querySelector('#task-overview-modal');
-      if (!m) return [];
+      if (!m || !m.classList.contains('show') || !m.getClientRects().length) return [];
       return [...m.querySelectorAll('.badge, .bg-success, .bg-warning, span')].map(e => (e.textContent || '').trim()).filter(t => /running|hold|not started|completed|paused|ended/i.test(t)).slice(0, 6);
     });
   }

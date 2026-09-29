@@ -6,7 +6,8 @@
  * (/quotation/0/{id}, prefilled). Fields: #branch · #date · #quotation-no (auto) ·
  * #customerNameInput · #agent (Sales Exec) · #quotation-quality · #currency ·
  * #expdate (Valid Upto — the only field NOT auto-filled) · #terms-and-condition ·
- * totals #gross-total/#payable-total · #btn-save-quotation.
+ * totals: "Total Summary" card (Gross Amount / Total Payable — id-less since the
+ * Sep-2026 build; older builds used #gross-total/#payable-total) · #btn-save-quotation.
  *
  * Run:  npx playwright test tests/crm_quotation.spec.js
  */
@@ -116,9 +117,18 @@ test.describe('CRM — Quotation', () => {
   test('QT-001 | Create New → Quotation page (QT-001,002,009)', async ({ page }) => {
     const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
     await page.waitForTimeout(1500);
-    // Create New → Quotation
-    const item = page.locator('#new-quotation-item');
-    for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await page.locator('#new-task').click().catch(() => {}); await page.waitForTimeout(600); }
+    // Create New → Quotation. The entry lost its id (#new-quotation-item) in the
+    // Sep-2026 build — only "Task" still has one — so match it by label, SCOPED to
+    // the Create New menu (`:has(#new-task-item)`): the sidebar holds its own hidden
+    // `.dropdown-item` labelled "Quotation", which an unscoped match picks first and
+    // then waits on forever. Open state is read from #new-task-item for the same reason.
+    const menu = page.locator('.dropdown-menu:has(#new-task-item)');
+    const item = menu.locator('a').filter({ hasText: /^\s*Quotation\s*$/i }).first();
+    // The toggle is #new-task on some renders and #new-lead-type on others — match
+    // either (clicking only #new-task burned 6 × the 20s action timeout and the menu
+    // never opened), and cap each click so a wrong render fails fast.
+    const toggle = page.locator('#new-task, #new-lead-type').first();
+    for (let i = 0; i < 6 && !(await page.locator('#new-task-item').isVisible().catch(() => false)); i++) { await toggle.click({ timeout: 5000 }).catch(() => {}); await page.waitForTimeout(600); }
     // No direct-goto fallback: the Create-New → Quotation menu path itself is under test,
     // so a broken menu must fail rather than be masked by a forced page.goto('/quotation').
     await item.click();

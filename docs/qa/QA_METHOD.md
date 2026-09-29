@@ -16,8 +16,20 @@ not bureaucratic — it is what keeps repeat runs comparable.
 - Click Delete, Remove, Deactivate, or Archive on any record.
 - Click Save, Submit, Update, or Approve on a record you did not create.
 - Change tenant settings, user permissions, roles, or passwords.
-- Run against production. The prober refuses hosts matching `erp.progbiz.in`,
-  `prod`, or `live`; do not work around that guard.
+- Run against production. The prober allow-lists hosts whose **first DNS label**
+  carries a non-production marker — `dev.erp…`, `test.erp…`, `devtest…`,
+  `qa-…`, `staging-…`, `localhost`. Everything else is refused, including
+  `erp.progbiz.io` and `erp.progbiz.in`.
+
+  A host that is genuinely safe but unmarked must be opted into explicitly:
+
+  ```bash
+  QA_ALLOW_HOSTS=hrms-erp.progbiz.in node scripts/qa/qa-explore.js --module hrms
+  ```
+
+  `hrms-erp.progbiz.in` is blocked by default deliberately: it holds real
+  employee records. Opt in only when you mean to, and never add a production
+  host to that variable.
 
 **Safe, and encouraged:**
 - Navigate to any page.

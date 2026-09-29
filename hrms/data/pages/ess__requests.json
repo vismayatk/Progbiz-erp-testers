@@ -2,24 +2,24 @@
   "route": "ess/requests",
   "finalUrl": "https://hrms-erp.progbiz.in/ess/requests",
   "group": "ess",
-  "recaptured": true,
-  "sectionTitles": [],
-  "buttons": [],
-  "labels": [],
-  "stats": [],
-  "tabs": [
-    "Home",
-    "AI Assistant",
-    "Dashboards",
-    "Task Management",
-    "CRM",
-    "Project",
-    "Whatsapp",
-    "Master",
-    "HRMS",
-    "My Workspace",
-    "Excel Upload",
-    "Reports"
+  "headers": [
+    "My Requests",
+    "Self Service Requests",
+    "Self Service Requests",
+    "Self Service",
+    "Self Service",
+    "Requests"
   ],
-  "bodySnippet": "Home AI Assistant Dashboards Task Management CRM Project Whatsapp Master HRMS My Workspace Excel Upload Reports"
+  "breadcrumb": "My Requests Self Service Requests",
+  "tabs": [],
+  "buttons": [],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [
+    "Profile Change Requests"
+  ],
+  "emptyState": "",
+  "bodySnippet": "My Requests Self Service Requests Profile Change Requests You have no change requests."
 }

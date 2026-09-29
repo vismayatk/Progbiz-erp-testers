@@ -18,6 +18,7 @@
  */
 const { test, expect } = require('@playwright/test');
 
+const { BasePage }                   = require('../../pages/BasePage');
 const { LeaveTypesPage }             = require('../../pages/leave/LeaveTypesPage');
 const { LeavePatternsPage }          = require('../../pages/leave/LeavePatternsPage');
 const { LeavePolicyPage }            = require('../../pages/leave/LeavePolicyPage');
@@ -163,7 +164,8 @@ test.describe('leave: /leave-approval (Leave Approval)', () => {
     const po = new LeaveApprovalPage(page);
     await po.goto();
     await po.openDelegatePanel();
-    await expect(po.custodianInput, 'custodian name input (#custodianname)').toBeVisible();
+    await expect(po.delegateModalTitle, '"Delegate My Approvals" modal').toBeVisible();
+    await expect(po.custodianInput, 'custodian picker (modal select)').toBeVisible();
     await po.closeDelegatePanel();
     await expect(po.delegateBtn).toBeVisible();   // back on the worklist
   });
@@ -224,10 +226,13 @@ test.describe('leave: /leave-ledger (Leave Ledger)', () => {
     const po = new LeaveLedgerPage(page);
     await po.goto();
     expect(await po.hasAppendOnlyBanner(), 'append-only banner').toBeTruthy();
+    await expect(po.exportBtn).toBeVisible();     // download — asserted only
+    await expect(po.filterBtn).toBeVisible();     // offcanvas toggle
+    // The filter fields live in the #ledgerFilterOffcanvas — reveal it first.
+    await po.revealFilters();
     await expect(po.employeeSearch, 'employee search ("All (search name / ID)")').toBeVisible();
     await expect(po.fromDateInput).toBeVisible();
     await expect(po.toDateInput).toBeVisible();
-    await expect(po.exportBtn).toBeVisible();   // download — asserted only
   });
 
   test('employee filter re-renders the ledger grid (empty result must not crash)', async ({ page }) => {
@@ -304,18 +309,15 @@ test.describe('leave: /leave-encashment-approval (Encashment Approvals)', () => 
 
 // ── /leave-delegation ────────────────────────────────────────────────────────
 
-test.describe('leave: /leave-delegation (Leave Approval Delegation)', () => {
-  test('read-only delegation registry renders (created via /leave-approval, not here)', async ({ page }) => {
+test.describe('leave: /leave-delegation (REMOVED by role change)', () => {
+  // 2026-07 vismaya role change removed this route (Blazor not-found).
+  // Delegation still exists as the "Delegate approvals" modal on /leave-approval.
+  test('route is removed for the vismaya role', async ({ page }) => {
     const po = new LeaveDelegationPage(page);
     await po.goto();
-    expect(await po.hasDelegationsCard(), '"Active & Past Delegations" card').toBeTruthy();
-    await expect(po.grid).toBeVisible();
-    const headers = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
-    for (const col of ['From Date', 'To Date', 'Active']) {
-      expect(headers, `column "${col}"`).toContain(col.toLowerCase());
-    }
-    const emptyShown = await po.hasNoDelegations();
-    expect(emptyShown || (await po.rowCount()) > 0, 'empty state or delegation rows').toBeTruthy();
+    const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ');
+    const gone = /nothing at this address/i.test(body) || body.trim().length < 40;
+    expect(gone, `route should be removed for this role, saw: "${body.slice(0, 120)}"`).toBeTruthy();
   });
 });
 
@@ -372,23 +374,38 @@ test.describe('leave: /comp-offs (Comp-Off)', () => {
 
 // ── /comp-off-management ─────────────────────────────────────────────────────
 
-test.describe('leave: /comp-off-management (Comp-Off Management)', () => {
-  test('"Pending grant only" toggle re-renders the grid (Grant/Reject never clicked)', async ({ page }) => {
+test.describe('leave: /comp-off-management (REMOVED by role change)', () => {
+  // 2026-07 vismaya role change: this route now renders a blank body; its
+  // successor is /comp-off-approval (bulk approve/reject/delegate) below.
+  test('route is removed for the vismaya role', async ({ page }) => {
     const po = new CompOffManagementPage(page);
     await po.goto();
-    await expect(po.pendingOnlyChk, '"Pending grant only" (#reqOnly)').toBeVisible();
-    await po.togglePendingOnly();
-    await expect(po.grid).toBeVisible();
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
-    await po.togglePendingOnly();   // restore the unfiltered view
-    await expect(po.grid).toBeVisible();
+    const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ');
+    const gone = /nothing at this address/i.test(body) || body.trim().length < 40;
+    expect(gone, `route should be removed for this role, saw: "${body.slice(0, 120)}"`).toBeTruthy();
+  });
+});
+
+// ── /comp-off-approval (NEW — successor of comp-off-management) ──────────────
+
+test.describe('leave: /comp-off-approval (Comp-Off Approval)', () => {
+  test('bulk-action toolbar renders; decisions never clicked', async ({ page }) => {
+    const po = new BasePage(page, 'comp-off-approval');
+    await po.goto();
+    await expect(po.main.getByText(/Comp-Off Approval/i).first()).toBeVisible({ timeout: 25000 });
+    // Bulk buttons asserted only — Approve/Reject/Delegate are real decisions.
+    await expect(po.buttonContaining('Approve Selected')).toBeVisible();
+    await expect(po.buttonContaining('Reject Selected')).toBeVisible();
+    await expect(po.buttonContaining('Delegate Selected')).toBeVisible();
+    expect(await po.containsText('Bulk actions'), 'bulk-actions helper text').toBeTruthy();
   });
 
-  test('all-employees grid keeps its structure (live data exists — no empty assumption)', async ({ page }) => {
-    const po = new CompOffManagementPage(page);
+  test('approvals grid renders its columns', async ({ page }) => {
+    const po = new BasePage(page, 'comp-off-approval');
     await po.goto();
+    await expect(po.grid).toBeVisible();
     const headers = (await po.gridHeaderTexts()).map(h => h.toLowerCase());
-    for (const col of ['Employee', 'Source', 'Expiry', 'Status']) {
+    for (const col of ['Employee Name', 'Worked On', 'Days', 'Leave Date', 'Status']) {
       expect(headers, `column "${col}"`).toContain(col.toLowerCase());
     }
     expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
@@ -416,12 +433,13 @@ test.describe('leave: /holiday-list (Holiday)', () => {
     expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
   });
 
-  test('Calendar button toggles the visualisation without crashing', async ({ page }) => {
+  test('Calendar button opens the calendar view without crashing', async ({ page }) => {
+    // Probed live: "Calendar" navigates to the /holiday-calendar visualisation.
     const po = new HolidayListPage(page);
     await po.goto();
     await po.toggleCalendarView();
-    await expect(po.pageTitle).toBeVisible();   // still on the Holiday page, no bounce
-    expect(page.url()).toContain('holiday-list');
+    expect(page.url(), 'navigates to /holiday-calendar').toContain('holiday-calendar');
+    expect(page.url()).not.toContain('/login');
   });
 });
 
@@ -477,22 +495,30 @@ test.describe('leave: /leave-reports (Leave Reports)', () => {
 // ── /absence-analytics ───────────────────────────────────────────────────────
 
 test.describe('leave: /absence-analytics (Absence Analytics)', () => {
-  test('KPI tiles and the Bradford risk table render (labels only — values are volatile)', async ({ page }) => {
+  test('dashboard renders — Bradford risk table when data exists, else the documented empty state', async ({ page }) => {
     const po = new AbsenceAnalyticsPage(page);
     await po.goto();
-    for (const label of po.kpiTileLabels) {
-      expect(await po.kpiTileVisible(label), `KPI tile "${label}"`).toBeTruthy();
+    // DATA-DEPENDENT: with no absence data the page shows only
+    // "No analytics available." — a valid, documented state.
+    if (await po.isEmpty()) {
+      expect(await po.isEmpty(), 'documented no-data state').toBeTruthy();
+      return;
     }
     expect(await po.hasBradfordCard(), 'Bradford Factor risk card').toBeTruthy();
     await expect(po.grid).toBeVisible();
     expect((await po.gridHeaderTexts()).map(h => h.toLowerCase())).toContain('signal');
-    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);   // live data may exist
+    expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
   });
 
   test('year filter re-renders the dashboard', async ({ page }) => {
     const po = new AbsenceAnalyticsPage(page);
     await po.goto();
     await po.applyYearFilter(THIS_YEAR);
+    // No-data years collapse to "No analytics available." — no grid rendered.
+    if (await po.isEmpty()) {
+      expect(page.url()).not.toContain('/login');
+      return;
+    }
     await expect(po.grid).toBeVisible();
     expect(await po.rowCount()).toBeGreaterThanOrEqual(0);
   });

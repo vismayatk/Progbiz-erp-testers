@@ -48,7 +48,8 @@ test.describe('CRM — Login Page', () => {
     expect(page.url(), 'mapped company should land on its tenant dashboard/home').toMatch(/home|dashboard/i);
     // authenticated-shell marker: the home "Create New" control (visible text like
     // "logout"/"profile" lives behind the avatar menu on some builds)
-    const authed = await page.locator('#new-task').first().isVisible().catch(() => false)
+    // #new-task on older renders; #new-lead-type on the redesigned DEV home.
+    const authed = await page.locator('#new-task, #new-lead-type').first().isVisible().catch(() => false)
       || await page.locator('text=/logout|dashboard|profile/i').first().isVisible().catch(() => false);
     expect(authed, 'expected an authenticated area for the mapped company').toBeTruthy();
     console.log('  ✅ Mapped company login succeeded');

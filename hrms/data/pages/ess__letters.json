@@ -12,7 +12,9 @@
   ],
   "breadcrumb": "My Letters & Certificates Self Service Letters",
   "tabs": [],
-  "buttons": [],
+  "buttons": [
+    "Generate"
+  ],
   "tables": [
     {
       "headers": [
@@ -27,7 +29,12 @@
       ]
     }
   ],
-  "inputs": [],
+  "inputs": [
+    {
+      "tag": "select",
+      "type": "select-one"
+    }
+  ],
   "selectsNg": [],
   "links": [],
   "cards": [
@@ -35,5 +42,5 @@
     "Published Letters"
   ],
   "emptyState": "",
-  "bodySnippet": "My Letters & Certificates Self Service Letters Request A Letter / Certificate No self-service letter types are available. Published Letters Letter Type Issued Acknowledged No letters published to you."
+  "bodySnippet": "My Letters & Certificates Self Service Letters Request A Letter / Certificate Letter Type -- Select -- Address Proof Letter Experience Certificate Generate Published Letters Letter Type Issued Acknowledged No letters published to you."
 }

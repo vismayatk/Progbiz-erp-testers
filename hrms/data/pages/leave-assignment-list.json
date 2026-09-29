@@ -25,6 +25,7 @@
         "Assignment Type",
         "Assignment Target Name",
         "Leave Pattern",
+        "Status",
         "Action"
       ],
       "rowCount": 0,
@@ -38,5 +39,5 @@
     "Leave Assignment"
   ],
   "emptyState": "",
-  "bodySnippet": "Leave Assignment List HRMS Leave Assignment Leave Assignment Filter New Leave Assignment Sl.No Assignment Type Assignment Target Name Leave Pattern Action"
+  "bodySnippet": "Leave Assignment List HRMS Leave Assignment Leave Assignment Filter New Leave Assignment Sl.No Assignment Type Assignment Target Name Leave Pattern Status Action"
 }

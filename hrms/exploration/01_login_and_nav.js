@@ -23,7 +23,7 @@ const SHOTS = path.join(__dirname, '..', 'screenshots');
   console.log('→ opening login page');
   await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForTimeout(3000);
-  await page.screenshot({ path: path.join(SHOTS, '00_login.png'), fullPage: true });
+  await page.screenshot({ path: path.join(SHOTS, "00_login.png"), fullPage: true }).catch(() => {});
 
   // login form — same pattern as erptest build (#companycode, #signin-username, #signin-password)
   const company = page.locator('#companycode, input[name="company_code"], input[id*="company" i], input[placeholder*="company" i]').first();
@@ -40,7 +40,7 @@ const SHOTS = path.join(__dirname, '..', 'screenshots');
 
   const landing = page.url();
   console.log('✅ logged in, landing:', landing);
-  await page.screenshot({ path: path.join(SHOTS, '01_landing.png'), fullPage: true });
+  await page.screenshot({ path: path.join(SHOTS, "01_landing.png"), fullPage: true }).catch(() => {});
 
   // Try to expand every collapsible menu group (common patterns)
   const expanders = page.locator('nav [data-bs-toggle], nav .has-sub > a, aside [data-bs-toggle], .sidebar [data-bs-toggle="collapse"], .sidebar .menu-item.has-children > a');
@@ -50,7 +50,7 @@ const SHOTS = path.join(__dirname, '..', 'screenshots');
     await expanders.nth(i).click({ timeout: 2000 }).catch(() => {});
     await page.waitForTimeout(250);
   }
-  await page.screenshot({ path: path.join(SHOTS, '02_menu_expanded.png'), fullPage: true });
+  await page.screenshot({ path: path.join(SHOTS, "02_menu_expanded.png"), fullPage: true }).catch(() => {});
 
   // Dump every anchor on the page with its text, href and rough location (sidebar vs elsewhere)
   const anchors = await page.evaluate(() => {

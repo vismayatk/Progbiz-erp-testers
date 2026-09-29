@@ -34,16 +34,8 @@ class InterviewSchedulesPage extends BasePage {
 
   /** Dismiss the scheduling form WITHOUT saving (close X / Cancel / Escape / reload). */
   async closeScheduleForm() {
-    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else {
-        const cancel = this.modal.locator('button').filter({ hasText: /^\s*(cancel|close)\s*$/i }).first();
-        if (await cancel.count()) await cancel.click().catch(() => {});
-        else await this.page.keyboard.press('Escape').catch(() => {});
-      }
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
+    await this.dismissModal();
+    // Inline (non-modal) form still open → reload the route to discard it.
     if (await this.scheduleFormVisible()) await this.goto();
     await this.page.waitForTimeout(300);
   }

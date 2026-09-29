@@ -30,7 +30,7 @@
       ],
       "rowCount": 1,
       "firstRow": [
-        "No requests."
+        "No encashment requests."
       ]
     }
   ],
@@ -62,5 +62,5 @@
     "Encashment Requests"
   ],
   "emptyState": "",
-  "bodySnippet": "Encashment Approvals HRMS Leave Encashment Approvals Encashment Requests Filter SlNo Employee Leave Type Days Amount Status Action No requests."
+  "bodySnippet": "Encashment Approvals HRMS Leave Encashment Approvals Encashment Requests Filter SlNo Employee Leave Type Days Amount Status Action No encashment requests."
 }

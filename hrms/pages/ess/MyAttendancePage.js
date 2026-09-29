@@ -10,6 +10,12 @@ const { BasePage } = require('../BasePage');
  * range."). "Regularize" and "Raise OT" open request flows whose results land
  * in the admin approval queues (/regularization, /overtime-approval) — the
  * dialogs are only ever opened and dismissed WITHOUT submitting.
+ *
+ * NOTE: the crawl (ess__attendance.json) captured ONLY the two buttons — no
+ * dialog markup. That a dialog/form actually reveals (vs. requiring a selected
+ * row, or routing elsewhere) is crawl-UNVERIFIED; the openers therefore probe
+ * modal / route-change / inline-form and the spec asserts the result softly
+ * until the behavior is confirmed on a live run.
  */
 class MyAttendancePage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
@@ -46,7 +52,12 @@ class MyAttendancePage extends BasePage {
    */
   openRaiseOtDialog() { return this._openDialog(this.raiseOtBtn); }
 
-  /** Dismiss an open request dialog WITHOUT submitting (close/cancel, else Escape). */
+  /**
+   * Dismiss an open request dialog WITHOUT submitting (close/cancel, else Escape).
+   * The dismiss selectors are GENERIC best-effort fallbacks — no dialog markup
+   * exists in ess__attendance.json to verify them against — so every step is
+   * non-fatal and Escape backstops a failed/absent close control.
+   */
   async closeDialog() {
     if (await this.modal.isVisible().catch(() => false)) {
       const dismiss = this.modal
@@ -54,6 +65,9 @@ class MyAttendancePage extends BasePage {
         .first();
       if (await dismiss.count()) await dismiss.click({ timeout: 5000 }).catch(() => {});
       else await this.page.keyboard.press('Escape').catch(() => {});
+      if (await this.modal.isVisible().catch(() => false)) {
+        await this.page.keyboard.press('Escape').catch(() => {});   // click missed — backstop
+      }
       await this.modal.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
     } else if (this._currentPath() !== this.route) {
       await this.goto();   // the button routed away — return to the history page

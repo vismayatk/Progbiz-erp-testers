@@ -390,6 +390,20 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
         [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
       if (!found) await page.waitForTimeout(1500);
     }
+    if (!found) {
+      // The listing paginates (10 rows/page) and the DEV build buckets new
+      // enquiries with a followup status under "In Follow Up" — use the list's
+      // search box instead of relying on page 1 of the default tab.
+      console.log('  🔍 not on page 1 — searching the listing by customer name');
+      const search = page.locator('#filter-name, input[placeholder="Search here"]').first();
+      await search.fill(wanted).catch(() => {});
+      await search.press('Enter').catch(() => {});
+      for (let i = 0; i < 6 && !found; i++) {
+        await page.waitForTimeout(1500);
+        found = await page.evaluate((name) =>
+          [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
+      }
+    }
     console.log(`  🔎 "${wanted}" listed in /leads: ${found}`);
     expect(found, `Enquiry for "${wanted}" (created in TC-02) not visible in /leads listing`).toBeTruthy();
     console.log('  ✅ ASSERT: created enquiry is visible in the /leads listing');

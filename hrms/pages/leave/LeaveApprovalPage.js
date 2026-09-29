@@ -8,7 +8,10 @@ const { BasePage } = require('../BasePage');
  * Grid: SL.No | Employee Name | Leave Type | Details | Leave Status | Action,
  * plus per-row checkboxes for bulk actions (captured with 0 rows).
  * QUIRKS: the three filter selects ALL share id "selectbox" — address by nth();
- * #custodianname is the stable id of the "Delegate approvals" input.
+ * "Delegate approvals" opens a MODAL titled "Delegate My Approvals" whose
+ * custodian field is an UNLABELLED <select> (no id/name — probed live), with
+ * two date inputs, a reason textarea and Cancel/Delegate buttons. (The
+ * #custodianname id belongs to the filter offcanvas, a different feature.)
  * Breadcrumb group here is "Leave" (not "HRMS" like most sibling pages).
  */
 class LeaveApprovalPage extends BasePage {
@@ -27,30 +30,24 @@ class LeaveApprovalPage extends BasePage {
     // ── Filters / selection ────────────────────────────────────────────────
     this.filterSelects  = this.main.locator('select#selectbox');           // ×3, shared id
     this.selectAllChk   = this.grid.locator('thead input[type="checkbox"]').first();
-    this.custodianInput = page.locator('#custodianname');                  // delegation name
+    // Delegate modal fields (scoped to the open modal — probed live: no ids).
+    this.delegateModalTitle = page.locator('.modal.show').getByText(/Delegate My Approvals/i).first();
+    this.custodianInput     = page.locator('.modal.show select').first();  // custodian picker
+    this.delegateConfirmBtn = page.locator('.modal.show').getByRole('button', { name: /^\s*Delegate\s*$/i }).first();
   }
 
-  /** Open the "Delegate approvals" panel/dialog (reveals #custodianname). Nothing is saved. */
+  /** Open the "Delegate approvals" modal ("Delegate My Approvals"). Nothing is saved. */
   async openDelegatePanel() {
     await this.delegateBtn.click();
-    await this.custodianInput.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    await this.modal.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
     await this.page.waitForTimeout(300);
   }
 
-  /** Dismiss the delegate panel WITHOUT confirming a delegation. */
+  /** Dismiss the delegate modal WITHOUT confirming a delegation. */
   async closeDelegatePanel() {
-    if (await this.modal.isVisible().catch(() => false)) {
-      const dismiss = this.modal
-        .locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"], button:has-text("Cancel"), button:has-text("Close")')
-        .first();
-      if (await dismiss.count()) await dismiss.click({ timeout: 5000 }).catch(() => {});
-      else await this.page.keyboard.press('Escape').catch(() => {});
-      await this.modal.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
-      await this.page.waitForTimeout(300);
-      return;
-    }
-    // Inline panel — reload the worklist to discard the unsaved delegation.
-    if (await this.custodianInput.isVisible().catch(() => false)) await this.goto();
+    await this.dismissModal();
+    // Safety net — reload the worklist if the modal somehow persists.
+    if (await this.modal.isVisible().catch(() => false)) await this.goto();
   }
 
   /** Toggle the filter panel via "Filter" (no approval/rejection is ever fired). */

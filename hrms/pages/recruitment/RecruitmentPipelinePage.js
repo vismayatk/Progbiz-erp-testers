@@ -39,27 +39,35 @@ class RecruitmentPipelinePage extends BasePage {
     return this.autoSyncToggle.isChecked().catch(() => false);
   }
 
-  /** Open the stage-configuration UI via "Configure Stages". Nothing is saved. */
+  /**
+   * Open the stage-configuration UI via "Configure Stages". Probed live: it is
+   * an INLINE editor — rows of {order number, stage name text, select, checkbox}
+   * appear on the board itself (no modal). Nothing is saved.
+   */
   async openStageConfig() {
     await this.configureStagesBtn.click();
-    await this.modal.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await this.stageRowInputs().first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(400);
+  }
+
+  /** The stage-row inputs that only exist while the inline editor is open. */
+  stageRowInputs() {
+    // Baseline board has ONLY the vacancy select + #autoSync — any visible
+    // number/text input means the stage editor is open.
+    return this.main.locator('input[type="number"], input[type="text"]');
+  }
+
+  /** True when the stage editor (inline rows or a dialog) is on screen. */
+  async stageConfigVisible() {
+    if (await this.modal.isVisible().catch(() => false)) return true;
+    return this.stageRowInputs().first().isVisible().catch(() => false);
   }
 
   /** Dismiss the stage-configuration UI WITHOUT saving any stage changes. */
   async closeStageConfig() {
-    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else {
-        const cancel = this.modal.locator('button').filter({ hasText: /^\s*(cancel|close)\s*$/i }).first();
-        if (await cancel.count()) await cancel.click().catch(() => {});
-        else await this.page.keyboard.press('Escape').catch(() => {});
-      }
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
-    // Panel variant (non-modal) → reload the route to discard the editor.
-    if (await this.modal.isVisible().catch(() => false)) await this.goto();
+    await this.dismissModal();                     // harmless if no dialog
+    // Inline editor has no cancel affordance we can trust — reload to discard.
+    if (await this.stageConfigVisible()) await this.goto();
     await this.page.waitForTimeout(300);
   }
 }

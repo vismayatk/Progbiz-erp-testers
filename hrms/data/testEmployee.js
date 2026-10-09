@@ -15,6 +15,8 @@
  * Names must be letters only (the form rejects digits); phone / email /
  * username must be unique on the tenant — forRun() guarantees both.
  */
+const { person } = require('./naming');
+
 const details = {
   firstBase:      'Meera',          // first name = this + 5 random letters, e.g. "MeeraQxvbz"
   last:           'Nair',
@@ -33,28 +35,38 @@ const details = {
   country:        'India',
   canLogin:       true,
   allBranches:    true,
+
+  // ── Extra profile fields filled AFTER creation, via the employee Edit form ──
+  // (the create form can't set these; the profile view is read-only, so they are
+  //  set on /employee/<id>). All non-sensitive — no bank/ID numbers here.
+  department:     'Testing',           // matched loosely against the Department options
+  bloodGroup:     'O+',
+  nationality:    'India',
+  honorific:      'Ms',
+  addressLine1:   '2nd Floor, QA Towers',
+  addressLine2:   'MG Road',
+  presentPincode: '682016',
 };
 
 /**
- * Build the profile for ONE run: a new first name / display name (letters
- * only) plus a unique username, email and phone (time-stamped so no two runs
- * collide). Everything else comes from `details`.
+ * Build the profile for ONE employee: a realistic person (company naming standard — see
+ * data/naming.js), e.g. "Rohan Varghese", with a unique username, e-mail and phone. Each
+ * call returns a different person. Names may repeat across runs, so later steps must find
+ * the employee by e-mail or employee CODE, never by name. Everything else comes from `details`.
  */
 function forRun() {
-  const now     = Date.now();
-  const stamp   = String(now).slice(-6);
-  const abc     = 'abcdefghijklmnopqrstuvwxyz';
-  const tag     = Array.from({ length: 5 }, () => abc[Math.floor(Math.random() * 26)]).join('');
-  const first   = details.firstBase + tag[0].toUpperCase() + tag.slice(1);   // e.g. "MeeraQxvbz"
-  const handle  = `${first}${stamp}`.toLowerCase();                            // e.g. "meeraqxvbz563514"
+  const who = person();
   const { firstBase, ...rest } = details;
   return {
     ...rest,
-    first,
-    display:  `${first} ${details.last}`,
-    username: handle,
-    email:    `${handle}@example.com`,
-    phone:    '9' + String(now).slice(-9),            // 10 digits, unique per run
+    first:     who.first,
+    last:      who.last,
+    display:   who.full,
+    gender:    who.gender,
+    honorific: who.gender === 'Female' ? 'Ms' : 'Mr',
+    username:  who.username,
+    email:     who.email,
+    phone:     '9' + String(Date.now()).slice(-9),    // 10 digits, unique per call
   };
 }
 

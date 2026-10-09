@@ -53,6 +53,10 @@ class EmployeesPage extends BasePage {
     this.branchSelect      = page.locator('#emp-branch');               // Main Branch / Kannur
     this.statusSelect      = page.locator('#emp-status');               // Active / Pre-Employee
 
+    // Edit-form extras (present on /employee/<id>, NOT on the create form).
+    this.departmentDropdown = page.locator('#emp-department-dropdown'); // Department (only fillable after the employee exists)
+    this.nationalitySelect  = page.locator('#emp-nationality');         // Nationality
+
     // Legacy option-anchored selects (tenant-specific option text; kept for older specs).
     this.workTypeSelect    = page.locator('select').filter({ has: page.locator('option', { hasText: 'ClientSite' }) }).first();
     this.designationSelect = page.locator('select').filter({ has: page.locator('option', { hasText: '.Net Developer' }) }).first();
@@ -357,10 +361,20 @@ class EmployeesPage extends BasePage {
     // Identity / role
     await this._selectByAnchor('Staff',  d.roleGroup, 'Role Group');
     await this._selectById(this.userLevelSelect, d.userLevel, 'User Level');
-    await test.step(`Select "Reports To" = ${d.reportsTo}`, async () => {
+    let pickedReportsTo = d.reportsTo;   // the manager actually selected (tenant labels drift, e.g. "Amit Kumar [progbiz0017]" → "Amit Kumar Shaji")
+    await test.step(`Select "Reports To" ≈ ${d.reportsTo}`, async () => {
       await expect(this.reportsToSelect, '"Reports To" should appear for a Staff / Team Member').toBeVisible({ timeout: 10000 });
-      await this.reportsToSelect.selectOption({ label: d.reportsTo });
-      expect(await this._picked(this.reportsToSelect), '"Reports To" should be set').toContain(d.reportsTo.split(' [')[0]);
+      // The manager list loads asynchronously after Role Group + User Level — poll until it is populated.
+      await expect.poll(async () => this.reportsToSelect.locator('option').count(),
+        { timeout: 15000, message: '"Reports To" options should load after choosing Role Group + User Level' }).toBeGreaterThan(1);
+      // Prefer the exact requested label; else fall back to the bare name (suffix/display can differ on the tenant).
+      const wantName = d.reportsTo.split(' [')[0];
+      const opts  = (await this.reportsToSelect.locator('option').allTextContents()).map(t => t.trim());
+      const label = opts.find(o => o === d.reportsTo) || await this._optionMatching(this.reportsToSelect, wantName);
+      expect(label, `a "Reports To" option matching "${wantName}" should exist`).toBeTruthy();
+      await this.reportsToSelect.selectOption({ label });
+      pickedReportsTo = await this._picked(this.reportsToSelect);   // record what was really chosen
+      expect(pickedReportsTo, '"Reports To" should now be set').toMatch(new RegExp(wantName, 'i'));
     });
     await this._selectByAnchor('Business Analyst', d.designation, 'Designation');
     await this._selectById(this.branchSelect, d.branch, 'Branch');
@@ -423,9 +437,95 @@ class EmployeesPage extends BasePage {
       return ok;
     });
 
-    const created = { ...d, code: codeBefore, confirmedVia: how };
+    const created = { ...d, reportsTo: pickedReportsTo, code: codeBefore, confirmedVia: how };
     console.log(`  ✅ Employee created (${how}) — "${d.display}", user=${d.username}, phone=${d.phone}${codeBefore ? `, code=${codeBefore}` : ''}`);
     return created;
+  }
+
+  /**
+   * Open the EDIT form for an already-saved employee. `profileHref` is the
+   * "/employee-view/<guid>" link from the register/Worker Directory; the edit
+   * route is the same guid under "/employee/<guid>".
+   */
+  async openEditForm(profileHref) {
+    const editPath = profileHref.replace('/employee-view/', '/employee/');   // keeps its leading "/"
+    await this.page.goto(`${this.baseUrl}${editPath}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await this.firstNameInput.waitFor({ state: 'visible', timeout: 30000 });
+    await this.waitReady();
+    return editPath;
+  }
+
+  /**
+   * Fill the profile fields that the CREATE form can't set — Department, Blood
+   * Group, Nationality, Honorific and the Present address (lines + pincode) —
+   * on the employee Edit form, then Save once and confirm. Values come from the
+   * profile object (see data/testEmployee.js). Nothing sensitive (no bank/ID).
+   *
+   * @param {object} profile  the run employee, must carry `profileHref`
+   */
+  async completeProfile(profile) {
+    const page = this.page;
+    expect(profile.profileHref, 'completeProfile needs the employee profile link').toBeTruthy();
+
+    await test.step('Open the employee Edit form', async () => {
+      const editPath = await this.openEditForm(profile.profileHref);
+      expect(editPath, 'should navigate to the /employee/<id> edit route').toMatch(/\/employee\/[0-9a-f-]{36}$/i);
+      await expect(this.firstNameInput, 'the Edit form should render (#firstname visible)').toBeVisible();
+      await expect(this.firstNameInput, 'the Edit form should be pre-filled with the first name').toHaveValue(profile.first);
+    });
+
+    if (profile.department) {
+      await test.step(`Set Department ≈ "${profile.department}"`, async () => {
+        await expect(this.departmentDropdown, 'the Department dropdown should be present on the Edit form').toBeVisible();
+        const label = await this._optionMatching(this.departmentDropdown, profile.department);
+        expect(label, `a Department option matching "${profile.department}" should exist`).toBeTruthy();
+        await this.departmentDropdown.selectOption({ label });
+        expect(await this._picked(this.departmentDropdown), 'Department should be set').toMatch(new RegExp(profile.department, 'i'));
+      });
+    }
+    if (profile.honorific)   await this._selectById(this.honorificInput,    profile.honorific,   'Honorific');
+    if (profile.nationality) await this._selectById(this.nationalitySelect, profile.nationality, 'Nationality');
+    if (profile.bloodGroup)  await this._selectByAnchor('A+', profile.bloodGroup, 'Blood Group');
+
+    if (profile.addressLine1 || profile.addressLine2 || profile.presentPincode) {
+      await test.step('Fill the Present address (lines + pincode)', async () => {
+        if (profile.presentPincode) await this.fillAndBlur(this.presentPincode, profile.presentPincode);
+        // The two present address-line inputs render right after #present-pincode.
+        const line1 = this.presentPincode.locator('xpath=following::input[@type="text"][1]');
+        const line2 = this.presentPincode.locator('xpath=following::input[@type="text"][2]');
+        if (profile.addressLine1) await this.fillAndBlur(line1, profile.addressLine1);
+        if (profile.addressLine2) await this.fillAndBlur(line2, profile.addressLine2);
+        if (profile.presentPincode) await expect(this.presentPincode, 'Pincode should hold the value entered').toHaveValue(String(profile.presentPincode));
+      });
+    }
+
+    await test.step('Save the completed profile', async () => {
+      await expect(this.employeeSaveBtn, 'the Edit-form Save button should be visible').toBeVisible();
+      await this.employeeSaveBtn.scrollIntoViewIfNeeded().catch(() => {});
+      await this.employeeSaveBtn.click();
+    });
+
+    const how = await test.step('Confirm the profile update was saved', async () => {
+      const ok = await Promise.race([
+        page.waitForURL(/\/employee(s|-view)\b/, { timeout: 30000 }).then(() => 'redirected').catch(() => null),
+        page.getByText(/success|updated|saved|added/i).first().waitFor({ state: 'visible', timeout: 30000 }).then(() => 'toast').catch(() => null),
+      ]);
+      if (!ok) {
+        const errs = await this.visibleErrorText();
+        throw new Error(`Profile save did not confirm. Visible validation/errors: ${errs || '(none captured)'}`);
+      }
+      return ok;
+    });
+    console.log(`  ✅ Profile completed (${how}) — dept≈${profile.department}, blood=${profile.bloodGroup}, nationality=${profile.nationality}`);
+    return { ...profile, profileCompletedVia: how };
+  }
+
+  /** The exact option label of `sel` whose text matches `term` (case-insensitive substring), or ''. */
+  async _optionMatching(sel, term) {
+    const labels = await sel.locator('option').allTextContents();
+    const re = new RegExp(term, 'i');
+    const hit = labels.map(t => t.trim()).find(t => re.test(t) && !/^choose$/i.test(t));
+    return hit || '';
   }
 
   // ── private helpers ────────────────────────────────────────────────────────

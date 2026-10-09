@@ -138,7 +138,7 @@ class WorkerDirectoryPage extends BasePage {
 
   /**
    * Read one worker card into a plain object:
-   * { name, designation, code, branch, reportsTo, phone, email, profileHref }.
+   * { name, designation, code, department, branch, reportsTo, phone, email, profileHref }.
    */
   async readCard(card) {
     return card.evaluate(el => {
@@ -149,17 +149,29 @@ class WorkerDirectoryPage extends BasePage {
       const mail   = q('a[href^="mailto:"]');
       const after  = lines.slice(1);                                    // lines after the name row
       const reports = after.find(t => /^Reports To:/i.test(t)) || '';
+      // The card shows "Department | Branch" on one line (e.g. "Testing | Main Branch");
+      // older builds showed the branch alone.
+      const place  = (after[2] || '').split('|').map(s => s.trim());
       return {
         name:        nameA ? nameA.innerText.trim() : (lines[0] || ''),
         designation: after[0] || '',
         code:        after[1] || '',
-        branch:      after[2] || '',
+        department:  place.length > 1 ? place[0] : '',
+        branch:      place[place.length - 1] || '',
         reportsTo:   reports.replace(/^Reports To:\s*/i, ''),
         phone:       tel  ? (tel.getAttribute('title')  || tel.getAttribute('href').replace(/^tel:/, ''))       : '',
         email:       mail ? (mail.getAttribute('title') || mail.getAttribute('href').replace(/^mailto:/, '')) : '',
         profileHref: nameA ? nameA.getAttribute('href') : '',
       };
     });
+  }
+
+  /** Read every currently-rendered worker card (see readCard for the shape). */
+  async readAllCards() {
+    const n = await this.cards.count();
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(await this.readCard(this.cards.nth(i)));
+    return out;
   }
 
   /** Header texts of the List-view table. */

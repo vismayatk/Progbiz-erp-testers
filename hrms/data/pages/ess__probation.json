@@ -2,13 +2,22 @@
   "route": "ess/probation",
   "finalUrl": "https://hrms-erp.progbiz.in/ess/probation",
   "group": "ess",
-  "recaptured": true,
-  "sectionTitles": [
-    "My Probation"
+  "headers": [
+    "My Probation",
+    "Self Service Probation",
+    "Self Service Probation",
+    "Self Service",
+    "Self Service",
+    "Probation"
   ],
-  "buttons": [],
-  "labels": [],
-  "stats": [],
+  "breadcrumb": "My Probation Self Service Probation",
   "tabs": [],
+  "buttons": [],
+  "tables": [],
+  "inputs": [],
+  "selectsNg": [],
+  "links": [],
+  "cards": [],
+  "emptyState": "",
   "bodySnippet": "My Probation Self Service Probation You are not currently on probation."
 }

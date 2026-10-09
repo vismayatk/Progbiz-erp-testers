@@ -25,8 +25,13 @@
         "Details",
         "Action"
       ],
-      "rowCount": 0,
-      "firstRow": []
+      "rowCount": 3,
+      "firstRow": [
+        "1",
+        "Pb Pattern",
+        "",
+        ""
+      ]
     }
   ],
   "inputs": [],
@@ -36,5 +41,5 @@
     "Leave Patterns"
   ],
   "emptyState": "",
-  "bodySnippet": "Leave Patterns HRMS Leave Patterns Leave Patterns New Leave Pattern Sl.No Leave Pattern Name Details Action"
+  "bodySnippet": "Leave Patterns HRMS Leave Patterns Leave Patterns New Leave Pattern Sl.No Leave Pattern Name Details Action 1 Pb Pattern 2 Un official pattern 3 DotNet Pattern"
 }

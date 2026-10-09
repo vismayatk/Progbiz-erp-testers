@@ -28,7 +28,10 @@
       ],
       "rowCount": 1,
       "firstRow": [
-        "Loading..."
+        "1",
+        "Applied",
+        "InProgress",
+        ""
       ]
     }
   ],
@@ -39,5 +42,5 @@
     "Status List"
   ],
   "emptyState": "",
-  "bodySnippet": "Candidate Status HRMS Settings Candidate Followup Status Status List Add Followup Status Sl No Status Name Nature Action Loading..."
+  "bodySnippet": "Candidate Status HRMS Settings Candidate Followup Status Status List Add Followup Status Sl No Status Name Nature Action 1 Applied InProgress"
 }

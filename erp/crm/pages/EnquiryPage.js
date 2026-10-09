@@ -317,9 +317,25 @@ class EnquiryPage {
     await page.locator('#txtSearchBox').fill(query);
     await modal.locator('i.ri-search-line').first().click().catch(() => {});
 
-    const row = modal.locator('table tbody tr').first();
-    await row.waitFor({ state: 'visible', timeout: 10000 });
-    await row.click();
+    // Click the row MATCHING the query — never blindly the first row: on the
+    // updated build the result list is not (always) filtered by the search, so
+    // first-row clicks picked an unrelated customer (caught in TC-02B: the
+    // overview then showed a different customer's phone).
+    const wantDigits = query.replace(/\D/g, '');
+    const matchRow = modal.locator('table tbody tr').filter({ hasText: query }).first();
+    const matched = await matchRow.waitFor({ state: 'visible', timeout: 10000 }).then(() => true).catch(() => false);
+    if (matched) {
+      await matchRow.click();
+    } else {
+      // digit-normalised fallback (phone may render as "+91 98709 40043")
+      const clicked = await page.evaluate((digits) => {
+        const rows = [...document.querySelectorAll('#searchModal table tbody tr')];
+        const hit = rows.find(r => (r.textContent || '').replace(/\D/g, '').includes(digits));
+        if (hit) { hit.click(); return true; }
+        return false;
+      }, wantDigits);
+      if (!clicked) throw new Error(`No #searchModal result matches "${query}" — cannot select existing customer`);
+    }
     await modal.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
 
     // Confirm the form's customer name populated
@@ -328,6 +344,15 @@ class EnquiryPage {
       { timeout: 8000 }
     ).catch(() => {});
     const name = await this.customerNameInput.inputValue().catch(() => '');
+    // Verify the CHOSEN customer landed in the form (phone digits when the
+    // query was a phone) — selecting the wrong customer must fail loudly here,
+    // not three assertions later on the overview page.
+    if (wantDigits.length >= 6) {
+      const formPhone = ((await this.mobileInput.inputValue().catch(() => '')) || '').replace(/\D/g, '');
+      if (formPhone && !formPhone.includes(wantDigits)) {
+        throw new Error(`Wrong customer selected: form phone "${formPhone}" ≠ requested "${wantDigits}"`);
+      }
+    }
     console.log(`  ✅ Existing customer selected: "${name}"`);
   }
 

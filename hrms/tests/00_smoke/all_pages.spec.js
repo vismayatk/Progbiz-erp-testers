@@ -27,10 +27,23 @@ for (const [group, entries] of Object.entries(byGroup)) {
         const po = new BasePage(page, entry.route);
         await po.goto();
 
+        // Routes REMOVED by the 2026-07 vismaya role change: assert the removed
+        // state (Blazor not-found or a blank body) so a restoration is flagged.
+        if (entry.removed) {
+          const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ');
+          const gone = /nothing at this address/i.test(body) || body.trim().length < 40;
+          expect(gone, `/${entry.route} should be removed for this role but rendered content: "${body.slice(0, 120)}"`).toBeTruthy();
+          return;
+        }
+
+        // Public/shell-less pages (e.g. /current-openings) have no <main> region —
+        // fall back to body for all content-scoped assertions.
+        const region = (await po.main.count()) ? po.main : page.locator('body');
+
         // 1. identity — title text somewhere prominent in the content area
         if (entry.title) {
           await expect(
-            po.main.getByText(new RegExp(escapeRe(entry.title), 'i')).first(),
+            region.getByText(new RegExp(escapeRe(entry.title), 'i')).first(),
             `page title "${entry.title}" should be visible on /${entry.route}`,
           ).toBeVisible({ timeout: 25000 });
         }

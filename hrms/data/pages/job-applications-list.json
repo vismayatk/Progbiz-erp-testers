@@ -3,24 +3,23 @@
   "finalUrl": "https://hrms-erp.progbiz.in/job-applications-list",
   "group": "recruitment",
   "headers": [
+    "Job Applications Track and manage all job applications, schedule interviews, and make hiring decisions",
     "Job Applications",
-    "Job Applications"
+    "Job Applications",
+    "Track and manage all job applications, schedule interviews, and make hiring decisions"
   ],
-  "breadcrumb": "Job Applications",
+  "breadcrumb": "Job Applications Track and manage all job applications, schedule interviews, and make hiring decisions",
   "tabs": [],
   "buttons": [],
   "tables": [
     {
       "headers": [
-        "Sl.No",
-        "Name",
+        "#",
+        "Candidate",
         "Position Applied For",
         "Phone",
-        "Email",
-        "Details",
         "Status",
-        "Schedule Interview",
-        "Reject"
+        "Actions"
       ],
       "rowCount": 0,
       "firstRow": []
@@ -30,8 +29,8 @@
   "selectsNg": [],
   "links": [],
   "cards": [
-    "Applicant Details"
+    "Applicant Details Manage Job Applications And Schedule Interviews 0"
   ],
   "emptyState": "",
-  "bodySnippet": "Job Applications Applicant Details Sl.No Name Position Applied For Phone Email Details Status Schedule Interview Reject"
+  "bodySnippet": "Job Applications Track and manage all job applications, schedule interviews, and make hiring decisions Applicant Details Manage Job Applications And Schedule Interviews 0 # Candidate Position Applied For Phone Status Actions No applications found Applications will appear here as candidates apply."
 }

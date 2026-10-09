@@ -7,10 +7,11 @@ const { BasePage } = require('../BasePage');
  * not Attendance). NO table markup renders in the empty state — the page shows
  * the exact text "No records." plus a pagination shell (Previous/Next,
  * "Page 1", Rows per page 50|100|250|500).
- * The filter panel (4 selects + from/to date pair + 2 more selects) hides
- * behind an UNLABELED icon-button in the "Daily Register" card header next to
- * "Export". "Export" triggers a file download and is exposed but NEVER clicked
- * by interaction tests.
+ * The filter panel (4 selects + from/to date pair + 2 more selects) is
+ * presumed to hide behind an icon-button in the "Daily Register" card header,
+ * but the crawl captured NO such button (only "Export"/"Previous"/"Next") —
+ * the toggle is UNVERIFIED until a re-crawl confirms it. "Export" triggers a
+ * file download and is exposed but NEVER clicked by interaction tests.
  */
 class AttendanceReportPackPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
@@ -22,13 +23,15 @@ class AttendanceReportPackPage extends BasePage {
     this.prevBtn   = this.button('Previous');
     this.nextBtn   = this.button('Next');
 
-    // The filter toggle is an icon-only button (no text/aria captured) in the
-    // "Daily Register" card header — matched by filter-ish hints first, then
-    // by "any non-labeled card-header button".
+    // UNVERIFIED: the crawl (attendance-report-pack.json) captured ONLY the
+    // "Export"/"Previous"/"Next" buttons — no title/aria/icon data for any
+    // filter toggle exists. Only explicitly filter-hinting attributes are
+    // matched here; the former '.card-header button' catch-all was removed
+    // because it could resolve to an arbitrary unlabeled button. Re-crawl to
+    // capture the real toggle before relying on this locator.
     this.filterToggleBtn = this.main.locator(
-      'button[title*="filter" i], button[aria-label*="filter" i], button:has(i[class*="filter" i]), ' +
-      '.card-header button, [class*="card-header" i] button'
-    ).filter({ hasNotText: /export|previous|next/i }).first();
+      'button[title*="filter" i], button[aria-label*="filter" i], button:has(i[class*="filter" i])'
+    ).first();
 
     // ── Filter panel inputs (captured: 6 selects + from/to date pair) ──────
     this.filterSelects  = this.main.locator('select');
@@ -43,11 +46,15 @@ class AttendanceReportPackPage extends BasePage {
   }
 
   /**
-   * Toggle the filter panel via the unlabeled card-header icon-button.
-   * Nothing is ever applied.
-   * @returns {Promise<boolean>} true when the visible control set changed
+   * Toggle the filter panel — clicks ONLY when a verifiably filter-hinting
+   * toggle (title/aria-label/icon class containing "filter") is present.
+   * The crawl captured no such control, so this never clicks an arbitrary
+   * unlabeled button. Nothing is ever applied.
+   * @returns {Promise<boolean|null>} null when no verified toggle exists;
+   *          otherwise true when the visible control set changed
    */
   async toggleFilterPanel() {
+    if ((await this.filterToggleBtn.count()) === 0) return null;
     const before = await this._visibleControlCount();
     await this.filterToggleBtn.click();
     await this.page.waitForTimeout(500);

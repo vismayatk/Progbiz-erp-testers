@@ -26,8 +26,13 @@
         "Assigned Target Name",
         "Action"
       ],
-      "rowCount": 0,
-      "firstRow": []
+      "rowCount": 2,
+      "firstRow": [
+        "1",
+        "Employee",
+        "Akshay",
+        ""
+      ]
     }
   ],
   "inputs": [],
@@ -37,5 +42,5 @@
     "Holiday Assignment List"
   ],
   "emptyState": "",
-  "bodySnippet": "Holiday Assignment HRMS Holiday Assignment List Holiday Assignment List Filter New Holiday Assignment Sl.No Assignment Type Assigned Target Name Action"
+  "bodySnippet": "Holiday Assignment HRMS Holiday Assignment List Holiday Assignment List Filter New Holiday Assignment Sl.No Assignment Type Assigned Target Name Action 1 Employee Akshay 2 Department Dotnet"
 }

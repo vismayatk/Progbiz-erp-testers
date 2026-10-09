@@ -2,28 +2,62 @@
   "route": "ess/profile",
   "finalUrl": "https://hrms-erp.progbiz.in/ess/profile",
   "group": "ess",
-  "recaptured": true,
-  "sectionTitles": [
+  "headers": [
     "My Profile",
-    "Overview",
-    "Overview",
-    "Request A Change",
-    "Request A Change"
+    "Self Service Profile",
+    "Self Service Profile",
+    "Self Service",
+    "Self Service",
+    "Profile"
   ],
+  "breadcrumb": "My Profile Self Service Profile",
+  "tabs": [],
   "buttons": [
     "Submit Change Request",
     "View My Requests"
   ],
-  "labels": [
-    "First Name",
-    "Last Name",
-    "Email",
-    "National / ID Number",
-    "Passport No",
-    "Blood Group",
-    "Reason"
+  "tables": [],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "input",
+      "type": "text"
+    },
+    {
+      "tag": "textarea",
+      "type": "textarea"
+    }
   ],
-  "stats": [],
-  "tabs": [],
+  "selectsNg": [],
+  "links": [
+    {
+      "text": "View My Requests",
+      "href": "/ess/requests"
+    }
+  ],
+  "cards": [
+    "Overview",
+    "Request A Change"
+  ],
+  "emptyState": "",
   "bodySnippet": "My Profile Self Service Profile Overview Employee Code PB1053 Branch Main Branch Department Designation Testing Team lead Reports To Joined Confirmed Phone +919747832341 Request A Change Edits to these fields are submitted to HR for approval before they take effect. First Name Last Name Email National / ID Number Passport No Blood Group Reason Submit Change Request View My Requests"
 }

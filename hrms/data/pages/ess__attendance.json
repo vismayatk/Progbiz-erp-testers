@@ -24,13 +24,18 @@
         "Date",
         "Entry",
         "Exit",
-        "Worked (min)",
-        "OT (min)",
+        "Worked",
+        "OT",
         "Status"
       ],
-      "rowCount": 1,
+      "rowCount": 9,
       "firstRow": [
-        "No attendance in range."
+        "24-Jul-2026 Fri",
+        "",
+        "",
+        "0m",
+        "0m",
+        "LOP"
       ]
     }
   ],
@@ -50,5 +55,5 @@
     "Attendance History"
   ],
   "emptyState": "",
-  "bodySnippet": "My Attendance Self Service Attendance Attendance History From To Show Regularize Raise OT Date Entry Exit Worked (min) OT (min) Status No attendance in range."
+  "bodySnippet": "My Attendance Self Service Attendance Attendance History From To Show Regularize Raise OT Date Entry Exit Worked OT Status 24-Jul-2026 Fri 0m 0m LOP 24-Jul-2026 Fri 0m 0m LOP 23-Jul-2026 Thu 0m 0m LOP 22-Jul-2026 Wed 0m 0m 21-Jul-2026 Tue 0m 0m 20-Jul-2026 Mon 0m 0m 18-Jul-2026 Sat 0m 0m 17-Jul-2026 Fri 0m 0m 16-Jul-2026 Thu 0m 0m"
 }

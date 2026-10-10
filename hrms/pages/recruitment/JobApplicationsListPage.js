@@ -38,12 +38,7 @@ class JobApplicationsListPage extends BasePage {
 
   /** Dismiss the details view without acting on the application. */
   async closeDetails() {
-    for (let i = 0; i < 2 && await this.modal.isVisible().catch(() => false); i++) {
-      const x = this.modal.locator('.btn-close, [aria-label="Close"], [data-bs-dismiss="modal"]').first();
-      if (await x.count()) await x.click().catch(() => {});
-      else await this.page.keyboard.press('Escape').catch(() => {});
-      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
+    await this.dismissModal();
     await this.page.waitForTimeout(300);
   }
 }

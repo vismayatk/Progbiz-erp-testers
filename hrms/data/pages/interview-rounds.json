@@ -22,13 +22,18 @@
     {
       "headers": [
         "Sl No",
+        "Designation",
         "Round Name",
         "Order",
         "Action"
       ],
-      "rowCount": 1,
+      "rowCount": 4,
       "firstRow": [
-        "Loading..."
+        "1",
+        "Junior .Net Developer",
+        "HR Round",
+        "1",
+        ""
       ]
     }
   ],
@@ -39,5 +44,5 @@
     "Interview Rounds"
   ],
   "emptyState": "",
-  "bodySnippet": "Interview Rounds HRMS Settings Interview Rounds Interview Rounds Add Round Sl No Round Name Order Action Loading..."
+  "bodySnippet": "Interview Rounds HRMS Settings Interview Rounds Interview Rounds Add Round Sl No Designation Round Name Order Action 1 Junior .Net Developer HR Round 1 2 Junior .Net Developer TechnicalRound 2 3 sales head HrRound 1 4 sales head TechnicalRound 2"
 }

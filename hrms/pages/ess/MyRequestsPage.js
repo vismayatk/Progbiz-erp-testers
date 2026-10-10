@@ -9,13 +9,18 @@ const { BasePage } = require('../BasePage');
  * "You have no change requests." The request grid only materialises once a
  * change has been submitted from /ess/profile.
  * Read-only page — no buttons, no forms, nothing to mutate.
+ *
+ * NOTE: both text anchors ("You have no change requests." and "Profile Change
+ * Requests") are DOC-SOURCED and crawl-UNVERIFIED — the ess__requests.json
+ * recapture caught only the global nav. Assert them softly / conditionally
+ * until a re-crawl of /ess/requests confirms the page body.
  */
 class MyRequestsPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     super(page, 'ess/requests');
 
-    // Documented fresh-account empty state.
+    // Documented fresh-account empty state (crawl-unverified — see class note).
     this.emptyState = this.main.locator('text=You have no change requests.').first();
   }
 

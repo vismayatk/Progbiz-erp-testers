@@ -14,23 +14,25 @@
   "breadcrumb": "Talent Pool Recruitment Talent Pool & Archive",
   "tabs": [],
   "buttons": [
-    "Search"
+    "Talent pool",
+    "Active",
+    "All"
   ],
   "tables": [
     {
       "headers": [
-        "Sl.No",
-        "Name",
-        "Designation",
+        "Candidate",
+        "Applied for",
         "Skills",
         "Tags",
+        "Activity",
+        "Rating",
         "Status",
-        "Score",
         "Action"
       ],
-      "rowCount": 1,
+      "rowCount": 5,
       "firstRow": [
-        "Loading..."
+        ""
       ]
     }
   ],
@@ -38,7 +40,15 @@
     {
       "tag": "input",
       "type": "text",
-      "placeholder": "Name or email"
+      "placeholder": "Name, email or phone"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox"
     },
     {
       "tag": "select",
@@ -47,11 +57,37 @@
     {
       "tag": "select",
       "type": "select-one"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "placeholder": "Find a skill"
+    },
+    {
+      "tag": "select",
+      "type": "select-one"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "date"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "silverOnly"
     }
   ],
   "selectsNg": [],
   "links": [],
   "cards": [],
   "emptyState": "",
-  "bodySnippet": "Talent Pool Recruitment Talent Pool & Archive Search Skill — Any — Pool Archived (talent pool) Active All Search Sl.No Name Designation Skills Tags Status Score Action Loading..."
+  "bodySnippet": "Talent Pool Recruitment Talent Pool & Archive In talent pool — Active candidates — Silver medalists — Added last 30 days — Talent pool Active All Sort Newest first Oldest first Name (A–Z) Name (Z–A) Highest rated Most applications Recent activity Recently archived Candidate Applied for Skills Tags Activity Rating Status Action"
 }

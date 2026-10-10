@@ -27,8 +27,16 @@
         "Status",
         "Action"
       ],
-      "rowCount": 0,
-      "firstRow": []
+      "rowCount": 1,
+      "firstRow": [
+        "1",
+        "Thabsheera",
+        "TechnicalRound",
+        "23-Jul-2026 12:48",
+        "In-person",
+        "Completed",
+        ""
+      ]
     }
   ],
   "inputs": [],
@@ -38,5 +46,5 @@
     "Scheduled Interviews"
   ],
   "emptyState": "",
-  "bodySnippet": "Interviews Recruitment Interview Schedule Scheduled Interviews Schedule Interview Sl.No Candidate Round Scheduled On Mode Status Action"
+  "bodySnippet": "Interviews Recruitment Interview Schedule Scheduled Interviews Schedule Interview Sl.No Candidate Round Scheduled On Mode Status Action 1 Thabsheera TechnicalRound 23-Jul-2026 12:48 In-person Completed"
 }

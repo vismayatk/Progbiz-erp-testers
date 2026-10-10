@@ -12,19 +12,25 @@
     "Assessments"
   ],
   "breadcrumb": "Assessments Recruitment Assessments",
-  "tabs": [],
+  "tabs": [
+    "Take-home Assignments 0",
+    "Interview Scorecards 0"
+  ],
   "buttons": [
-    "New Assessment"
+    "New Assignment",
+    "Take-home Assignments 0",
+    "Interview Scorecards 0"
   ],
   "tables": [
     {
       "headers": [
         "Sl.No",
         "Title",
-        "Type",
         "Description",
         "Max Score",
+        "Due In",
         "Attachment",
+        "Candidates",
         "Action"
       ],
       "rowCount": 1,
@@ -40,5 +46,5 @@
     "Assessment Library"
   ],
   "emptyState": "",
-  "bodySnippet": "Assessments Recruitment Assessments Assessment Library New Assessment Sl.No Title Type Description Max Score Attachment Action Loading..."
+  "bodySnippet": "Assessments Recruitment Assessments Assessment Library New Assignment Take-home Assignments 0 Interview Scorecards 0 Work sent to candidates to do in their own time. Distributing one emails the candidate and starts a due-date clock. Sl.No Title Description Max Score Due In Attachment Candidates Action Loading..."
 }

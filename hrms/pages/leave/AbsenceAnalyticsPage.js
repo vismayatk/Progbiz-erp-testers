@@ -11,6 +11,9 @@ const { BasePage } = require('../BasePage');
  * so tests must not assume an empty grid.
  * KPI values are volatile — assert tile LABELS, not numbers. "Export"
  * downloads the risk table (not exercised).
+ * DATA-DEPENDENT: when the tenant has no absence data the whole dashboard
+ * collapses to a single "No analytics available." message (no tiles, no card,
+ * no grid) — probed live. Tests must tolerate that empty state.
  */
 class AbsenceAnalyticsPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
@@ -35,6 +38,9 @@ class AbsenceAnalyticsPage extends BasePage {
     await this.filterBtn.click();
     await this.waitReady();
   }
+
+  /** True when the dashboard is in its documented no-data state. */
+  isEmpty() { return this.containsText('No analytics available'); }
 
   /** True when the given KPI tile label is on screen. */
   kpiTileVisible(label) { return this.containsText(label); }

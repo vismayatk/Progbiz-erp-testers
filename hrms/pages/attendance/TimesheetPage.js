@@ -25,12 +25,15 @@ class TimesheetPage extends BasePage {
 
   /** Type into "Search employee..." and let the grid refresh. Read-only. */
   async search(term) {
+    await this.ensureVisible(this.searchInput);   // may live in #filterOffcanvas
     await this.searchInput.fill(term);
     await this.waitReady();
   }
 
   /** Bound the comparison with the from/to date pair (read-only filter). */
   async filterByDateRange(from, to) {
+    // Probed live: the date pair sits inside the closed #filterOffcanvas panel.
+    await this.ensureVisible(this.fromDateFilter);
     if (from) await this.fromDateFilter.fill(from);
     if (to)   await this.toDateFilter.fill(to);
     await this.waitReady();

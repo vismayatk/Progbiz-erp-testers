@@ -53,6 +53,8 @@ class ShiftRosterPage extends BasePage {
 
   /** Toggle the #activeOnlyCheck grid filter (UI-only) and let the grid re-render. */
   async toggleActiveOnly() {
+    // Probed live: the checkbox sits inside the closed #filterOffcanvas panel.
+    await this.ensureVisible(this.activeOnlyChk);
     await this.activeOnlyChk.click();
     await this.waitReady();
   }

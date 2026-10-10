@@ -32,9 +32,14 @@
         "LOP",
         "Sync status"
       ],
-      "rowCount": 1,
+      "rowCount": 7,
       "firstRow": [
-        "No leave in this period."
+        "LR-50",
+        "Dinsha",
+        "30/07/2026",
+        "1",
+        "—",
+        "Synced"
       ]
     }
   ],
@@ -60,5 +65,5 @@
   "links": [],
   "cards": [],
   "emptyState": "",
-  "bodySnippet": "Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period Leave Ref Employee Dates Attendance rows LOP Sync status No leave in this period. LOP days carry IsLOP = 1 on the attendance row and flow to payroll at finalization. Use Recalculate period after a retroactive holiday/policy change to re-run the engine for the filtered month."
+  "bodySnippet": "Leave ↔ Attendance Sync HRMS Leave Attendance Sync Filter Recalculate period Leave Ref Employee Dates Attendance rows LOP Sync status LR-50 Dinsha 30/07/2026 1 — Synced LR-54 Dinsha 28/07/2026 0 — Pending LR-17 Akshay 28/07/2026 0 — Rejected LR-53 Dinsha 25/07/2026 0 — Pending LR-49 Dinsha 24/07/2026 1 — Synced LR-16 Akshay 22/07/2026 1 — Synced LR-24 Aswathi 21/07/2026 1 — Synced LOP days carry IsLOP = 1 on the attendance row and flow to payroll at finalization. Use Recalculate period after a retroactive holiday/policy change to re-run the engine for the filtered month."
 }

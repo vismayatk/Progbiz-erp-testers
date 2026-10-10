@@ -14,7 +14,7 @@
     "0%",
     "0%",
     "0",
-    "0.01"
+    "0"
   ],
   "breadcrumb": "Absence Analytics HRMS Leave Absence Analytics",
   "tabs": [],
@@ -35,13 +35,7 @@
       ],
       "rowCount": 1,
       "firstRow": [
-        "1",
-        "Akshay",
-        "Dotnet",
-        "1",
-        "1",
-        "1",
-        "Normal"
+        "No absence data for these filters."
       ]
     }
   ],
@@ -67,5 +61,5 @@
     "Bradford Factor — Highest Risk (S² × D)"
   ],
   "emptyState": "",
-  "bodySnippet": "Absence Analytics HRMS Leave Absence Analytics Year Branch All Branches Main Branch Chennai Department All Departments 2D DigitalMarkrting Dotnet Sales SEO Filter healthy Absence rate 0% of scheduled days watch Unplanned share 0% sick + same-day alerts Bradford alerts 0 score > 250 YTD Avg days / employee 0.01 this year (2026) Monthly Absence Trend Jan Feb Mar Apr May Jun 100% Jul Aug Sep Oct Nov Dec Jan – Dec 2026 · % of yearly total · current month highlighted Absence Rate By Department Absence rate = leave days ÷ scheduled working days (per department) 0.13% Dotnet 0% 2D 0% DigitalMarkrting 0% Sales 0% SEO Bradford Factor — Highest Risk (S² × D) Alert > 250 Monitor > 125 Normal Export SL No Employee Department Spells (S) Days (D) Score (S²·D) Signal 1 Akshay Dotnet 1 1 1 Normal"
+  "bodySnippet": "Absence Analytics HRMS Leave Absence Analytics Year Branch All Branches Main Branch Chennai Department All Departments 2D DigitalMarkrting Dotnet Sales SEO Filter healthy Absence rate 0% of scheduled days watch Unplanned share 0% sick + same-day alerts Bradford alerts 0 score > 250 YTD Avg days / employee 0 this year (2026) Monthly Absence Trend No trend data. Absence Rate By Department Absence rate = leave days ÷ scheduled working days (per department) 0% 2D 0% DigitalMarkrting 0% Dotnet 0% Sales 0% SEO Bradford Factor — Highest Risk (S² × D) Alert > 250 Monitor > 125 Normal Export SL No Employee Department Spells (S) Days (D) Score (S²·D) Signal No absence data for these filters."
 }

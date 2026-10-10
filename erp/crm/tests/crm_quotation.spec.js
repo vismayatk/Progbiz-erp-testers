@@ -145,7 +145,8 @@ test.describe('CRM — Quotation', () => {
     // `.dropdown-item` labelled "Quotation", which an unscoped match picks first and
     // then waits on forever. Open state is read from #new-task-item for the same reason.
     const menu = page.locator('.dropdown-menu:has(#new-task-item)');
-    const item = menu.locator('a').filter({ hasText: /^\s*Quotation\s*$/i }).first();
+    const item = page.locator('#new-quotation-item')                 // older builds keep the id
+      .or(menu.locator('a').filter({ hasText: /^\s*Quotation\s*$/i })).first();
     // The toggle is #new-task on some renders and #new-lead-type on others — match
     // either (clicking only #new-task burned 6 × the 20s action timeout and the menu
     // never opened), and cap each click so a wrong render fails fast.

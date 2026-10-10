@@ -204,6 +204,14 @@ test.describe('Task Management — Documented Cases', () => {
         listed = await page.evaluate((n) => document.body.innerText.includes(n), name);
         where = 'home schedule';
       }
+      if (!listed) {
+        // DEV delegates created tasks to the mandatory party's owner — the
+        // creator sees them under Delegated Tasks, not My Tasks/home.
+        await page.goto(`${process.env.BASE_URL}/delegated-tasks`, { waitUntil: 'domcontentloaded' }).catch(() => {});
+        await page.waitForTimeout(3000);
+        listed = await page.evaluate((n) => document.body.innerText.includes(n), name);
+        where = 'Delegated Tasks';
+      }
     } else {
       await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
       for (let i = 0; i < 4 && !listed; i++) {

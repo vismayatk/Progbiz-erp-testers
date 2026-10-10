@@ -1,0 +1,4 @@
+# Store binary test fixtures byte-for-byte (no line-ending conversion)
+*.pdf binary
+*.png binary
+*.webm binary

@@ -385,7 +385,21 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     // every tab at page size 100 — the same helper crm_chain.spec.js CH-02 uses.
     const wanted = testData.enquiry.customerName;
     const hit = await new CrmChainPage(page).findAcrossTabs('/leads', wanted);
-    const found = !!hit;
+    let found = !!hit;
+    if (!found) {
+      // Fallback: the listing's own search box (some builds bucket new enquiries
+      // under a tab the scan misses, or page beyond 100 rows).
+      console.log('  🔍 not found in any tab — searching the listing by customer name');
+      await new EnquiryPage(page).gotoList();
+      const search = page.locator('#filter-name, input[placeholder="Search here"]').first();
+      await search.fill(wanted).catch(() => {});
+      await search.press('Enter').catch(() => {});
+      for (let i = 0; i < 6 && !found; i++) {
+        await page.waitForTimeout(1500);
+        found = await page.evaluate((name) =>
+          [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
+      }
+    }
     console.log(`  🔎 "${wanted}" listed in /leads: ${found}${hit ? ` (tab "${hit.tab}")` : ''}`);
     expect(found, `Enquiry for "${wanted}" (created in TC-02) not visible in /leads listing`).toBeTruthy();
     console.log('  ✅ ASSERT: created enquiry is visible in the /leads listing');

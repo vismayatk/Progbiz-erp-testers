@@ -118,13 +118,20 @@ class TaskManagementPage {
       await this.createNewBtn.click().catch(() => {});
       await this.page.waitForTimeout(600);
     }
+    // The redesigned home kept #new-task-item but dropped the ids on the
+    // Enquiry/Quotation entries (plain hrefs now) — read every item of the
+    // dropdown CONTAINING #new-task-item instead of relying on per-item ids.
     return this.page.evaluate(() => {
       const anchor = document.getElementById('new-task-item');
-      const menu = anchor && anchor.closest('.dropdown-menu');
-      if (!menu) return [];
-      return [...menu.querySelectorAll('a')]
+      const menu = anchor && anchor.closest('.dropdown-menu, ul');
+      if (!menu) {
+        return ['new-task-item', 'new-enquiry-item', 'new-quotation-item']
+          .map(id => document.getElementById(id)).filter(Boolean)
+          .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim());
+      }
+      return [...menu.querySelectorAll('a, button')]
         .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim())
-        .filter(Boolean);
+        .filter(t => t && t.length < 30);
     });
   }
 
@@ -607,8 +614,13 @@ class TaskManagementPage {
       end:    document.querySelectorAll('.ri-stop-fill, [class*="bi-record"], [class*="bi-stop"], [id^="end-task-btn"]').length,
       hasPanels: /running tasks|on hold/i.test(document.body.innerText),
       timers: (document.body.innerText.match(/\d\d:\d\d:\d\d/g) || []).length,
-      sections: ["Today's Schedule", 'Running Tasks', 'On Hold']
+      // Redesigned home renamed the sections (New Leads/Followups/Delayed/
+      // Completed cards) — count both generations as valid task sections.
+      sections: ["Today's Schedule", 'Running Tasks', 'On Hold', 'Delayed', 'Completed', 'Followups']
         .filter(s => new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(document.body.innerText)),
+      // Lifecycle controls only render when a task is scheduled/running —
+      // an empty schedule legitimises their absence.
+      emptySchedule: /no scheduled task/i.test(document.body.innerText),
     }));
   }
 

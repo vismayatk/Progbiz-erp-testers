@@ -147,11 +147,18 @@ test.describe('CRM — Homepage', () => {
     // rendered next to the classification labels in VISIBLE text. Builds differ on the
     // category set (TEST: New/Cold/Warm/Hot/Won/Lost; DEV: New/Won/Lost/Not Connected/…),
     // so require the core three that every build shows with counts.
-    const withCounts = await page.evaluate(() => {
-      const text = document.body.innerText.replace(/\s+/g, ' ');
-      return ['New', 'Won', 'Lost'].filter((c) =>
-        new RegExp('\\b' + c + '\\b\\s*:?\\s*\\d+', 'i').test(text)).length;
-    });
+    // The redesigned dashboard loads the Leads Summary counts asynchronously
+    // (several seconds after the filter chips paint) — poll instead of sampling
+    // once, or the labels are found without their counts.
+    let withCounts = 0;
+    for (let i = 0; i < 10 && withCounts < 3; i++) {
+      withCounts = await page.evaluate(() => {
+        const text = document.body.innerText.replace(/\s+/g, ' ');
+        return ['New', 'Won', 'Lost'].filter((c) =>
+          new RegExp('\\b' + c + '\\b\\s*:?\\s*\\d+', 'i').test(text)).length;
+      });
+      if (withCounts < 3) await page.waitForTimeout(2000);
+    }
     console.log('  📊 core classification labels with counts:', withCounts, '/ 3');
     expect(withCounts, 'Leads Summary showed labels but no counts').toBe(3);
     await screenshot(page, 'home15_summary');
@@ -200,9 +207,11 @@ test.describe('CRM — Homepage', () => {
     // the menu but lost #new-enquiry-item / #new-quotation-item.
     const opts = await page.evaluate(() => {
       const anchor = document.getElementById('new-task-item');
-      const menu = anchor && anchor.closest('.dropdown-menu');
+      const menu = anchor && anchor.closest('.dropdown-menu, ul');
       if (!menu) return [];
-      return [...menu.querySelectorAll('a')].map(e => (e.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+      return [...menu.querySelectorAll('a, button')]
+        .map(e => (e.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter(t => t && t.length < 30);
     });
     await screenshot(page, 'home25_createnew');
     console.log('  📂 Create New options:', JSON.stringify(opts));

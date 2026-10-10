@@ -15,7 +15,11 @@ module.exports = defineConfig({
   testMatch: '**/tests/**/*.spec.js',
 
   // ── Parallelism ───────────────────────────────────────────────────────────
-  workers:  1,   // run sequentially (CRM state is shared)
+  // Default is sequential (CRM state is shared between tests). Parallelism is
+  // per-FILE, so ERP_WORKERS=2..3 is usually safe — files are largely
+  // independent — but the DEV tenant slows down under load; beyond 3 workers
+  // expect flaky timeouts rather than speed.
+  workers:  Number(process.env.ERP_WORKERS || 1),
   retries:  1,   // one retry on failure
 
   // ── Reporters ─────────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@ class CrmChainPage {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.BASE_URL || 'https://dev.erp.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
     this.addFollowupBtn = page.locator('#btn-add-followup');
     this.followupModal = page.locator('#followupModal.show, .modal.show').first();
   }

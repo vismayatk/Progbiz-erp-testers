@@ -25,7 +25,7 @@ class WorkflowPage {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.BASE_URL || 'https://dev.erp.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
     this.moduleId = null;
   }
 

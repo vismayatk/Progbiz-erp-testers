@@ -1,6 +1,7 @@
 'use strict';
 
 const { getAlertText, waitOverviewReady, throwIfServerError } = require('../../common/helpers');
+const { tenant, AUTOMATION_NAME, JUNK_SOURCE } = require('../../common/tenantData');
 
 class EnquiryPage {
   /**
@@ -8,7 +9,7 @@ class EnquiryPage {
    */
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // ── Listing (Leads) — "Add New" dropdown ───────────────────────────────
     // The Leads page (/leads) is the listing; "Add New" opens New Enquiry / New
@@ -25,7 +26,7 @@ class EnquiryPage {
     this.businessValueInput= page.locator('#business-value');
     this.noFollowupChk     = page.locator('#no-next-followup-enquiry');
     this.descriptionInput  = page.locator('#enquiry-description');
-    this.itemSearchInput   = page.locator('#item-search-input');   // <select> since the Aug-2026 build
+    this.itemSearchInput   = page.locator('#item-search-input');   // <select> on the Aug-2026 build, text input + search modal on older ones — see addItem()
     this.quantityInput     = page.locator('#new-item-quantity');
     this.addItemBtn        = page.locator('#btn-add-item');
 
@@ -163,10 +164,10 @@ class EnquiryPage {
 
     await this._safeFill(this.businessValueInput, data.unitPrice);
     await this._safeFill(this.descriptionInput,   data.description);
-    await this._selectFirstReal(this.sourceSelect, 'Lead Source');
+    await this.selectLeadSource();
 
     // At least one item is REQUIRED ("Please choose at least one item")
-    await this.addItem(data.product || 'Inverter', data.quantity || '1');
+    await this.addItem(data.product || tenant().item, data.quantity || '1');
 
     // Avoid the "next follow-up date" requirement by marking it Not Required
     try {
@@ -253,13 +254,15 @@ class EnquiryPage {
   /**
    * Add a line item to the enquiry.
    *
-   * The item picker changed shape in the Aug-2026 build: #item-search-input
-   * used to be a text input with a magnifier that opened #searchItemModal.
-   * It is now a plain <select> of the tenant's items, committed with
-   * #btn-add-item. (#searchItemModal still exists in the DOM but is an empty
-   * shell — #item-search-modal-input is gone, so the old flow can't work.)
+   * The item picker has two shapes depending on the tenant's build, and this
+   * handles both by looking at what #item-search-input actually is:
+   *   - <select> (Aug-2026 build, e.g. lesol_test): a plain list of the
+   *     tenant's items, committed with #btn-add-item.
+   *   - <input type=text> + magnifier (older build, e.g. onetouch_test): the
+   *     magnifier opens #searchItemModal, you search and click a result row,
+   *     then commit with #btn-add-item.
    *
-   * Flow: choose option -> set quantity -> click add -> confirm the row landed.
+   * Flow: choose item -> set quantity -> click add -> confirm the row landed.
    * The item is required for the enquiry to save, so this THROWS on failure
    * rather than logging and continuing — a silent miss here used to surface
    * as an unrelated assertion failure several steps later.
@@ -270,6 +273,75 @@ class EnquiryPage {
     await this.itemSearchInput.waitFor({ state: 'visible', timeout: 20000 });
     await this.itemSearchInput.scrollIntoViewIfNeeded();
 
+    const tag = await this.itemSearchInput.evaluate((el) => el.tagName);
+    return tag === 'SELECT'
+      ? this._addItemFromSelect(itemName, quantity)
+      : this._addItemFromModal(itemName, quantity);
+  }
+
+  /**
+   * Older picker: type-less input + magnifier -> "Search Results" modal.
+   * The modal's search box id differs between builds (#item-search-modal-input
+   * once, #searchItemModal-modal-input now), so it is found by position.
+   * Like the <select> path, a name the tenant doesn't have falls back to the
+   * first real entry (an empty search lists every item).
+   */
+  async _addItemFromModal(itemName, quantity) {
+    const page = this.page;
+
+    // The magnifier is inside the item input-group. (The "+" beside it,
+    // ri-add-fill, opens a different "New Item" modal — never click that.)
+    const group = this.itemSearchInput
+      .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
+    await group.locator('i.ri-search-line').first().click({ timeout: 15000 });
+
+    const modal = page.locator('#searchItemModal');
+    await modal.waitFor({ state: 'visible', timeout: 10000 });
+    const searchBox = modal.locator('input[type="text"]').first();
+    const searchIcon = modal.locator('i.ri-search-line').first();
+    const rows = modal.locator('table tbody tr');
+
+    const search = async (term) => {
+      await searchBox.fill(term);
+      await searchIcon.click().catch(() => {});
+      await page.waitForTimeout(1500);
+      return rows.count();
+    };
+
+    let found = await search(String(itemName));
+    if (!found) found = await search('');          // not in this tenant -> list all
+    if (!found) throw new Error('item search modal (#searchItemModal) lists no items');
+
+    // Exact name, else first containing it, else the first row. The name is the
+    // first cell (the others are Price and IsIncTax).
+    const names = (await rows.locator('td:first-child').allInnerTexts())
+      .map((t) => t.replace(/\s+/g, ' ').trim());
+    const want = String(itemName).replace(/\s+/g, ' ').trim().toLowerCase();
+    let idx = names.findIndex((n) => n.toLowerCase() === want);
+    if (idx < 0) idx = names.findIndex((n) => n.toLowerCase().includes(want));
+    if (idx < 0) idx = 0;
+    const choice = { value: names[idx], text: names[idx] };
+    if (choice.text.toLowerCase() !== want) {
+      console.log(`  ↩️  "${itemName}" not in this tenant's list — using "${choice.text}"`);
+    }
+
+    await rows.nth(idx).click({ timeout: 15000 });
+    await modal.waitFor({ state: 'hidden', timeout: 10000 });   // picking a row closes it
+
+    await this.quantityInput.fill(String(quantity));
+    await this.addItemBtn.click({ timeout: 15000 });
+
+    // Confirm the line landed in the enquiry's own grid. Direct-child selectors
+    // matter: the search modal sits inside this table and has rows of its own.
+    const line = page.locator('table:has(#item-search-input) > tbody > tr')
+      .filter({ hasText: choice.text }).first();
+    await line.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`  ✅ Item added: ${choice.text} x${quantity}`);
+    return choice;
+  }
+
+  /** Newer picker: a plain <select> of the tenant's items. */
+  async _addItemFromSelect(itemName, quantity) {
     // Resolve the option: exact label, else first containing the name, else
     // the first real entry (value "0" is the "-- Select Item --" placeholder).
     const choice = await this.itemSearchInput.evaluate((sel, wanted) => {
@@ -306,16 +378,42 @@ class EnquiryPage {
    * @returns {Promise<{name:string, phone:string}|null>}
    */
   async getExistingCustomerFromLeads() {
+    // Only customers this suite created may be reused — a real client must never
+    // get test enquiries (and Won/Lost statuses) attached to their record.
     await this.page.goto(`${this.baseUrl}/leads`, { waitUntil: 'domcontentloaded' });
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1200);
-    return this.page.evaluate(() => {
-      // Leads columns: SlNo, Number, Customer Name, Phone, ...
-      const r = document.querySelector('table tbody tr');
-      if (!r) return null;
-      const c = [...r.querySelectorAll('td')].map(e => (e.textContent || '').trim());
-      return { name: c[2] || '', phone: (c[3] || '').replace(/\D/g, '').slice(-10) };
-    });
+    const hit = await this.page.evaluate((src) => {
+      const auto = new RegExp(src, 'i');
+      const heads = [...document.querySelectorAll('table thead th')].map(e => (e.textContent || '').trim().toLowerCase());
+      const iName = heads.findIndex(h => /customer name/.test(h));
+      const iPhone = heads.findIndex(h => /phone/.test(h));
+      for (const r of document.querySelectorAll('table tbody tr')) {
+        const c = [...r.querySelectorAll('td')].map(e => (e.textContent || '').trim());
+        const name = c[iName] || '';
+        if (auto.test(name)) return { name, phone: (c[iPhone] || '').replace(/\D/g, '').slice(-10) };
+      }
+      return null;
+    }, AUTOMATION_NAME.source);
+    if (!hit) console.log('  ℹ️  No automation-created customer on /leads page 1 — a new one will be created');
+    return hit;
+  }
+
+  /** Lead Source: the tenant's configured source, else the first REAL one (never "All"/blank). */
+  async selectLeadSource() {
+    try {
+      await this.sourceSelect.waitFor({ state: 'visible', timeout: 5000 });
+      const want = tenant().leadSource;
+      const value = await this.sourceSelect.evaluate((sel, { want, junk }) => {
+        const j = new RegExp(junk, 'i');
+        const opts = [...sel.options].filter(o => o.value && o.value !== '0' && !j.test(o.text.trim()));
+        const hit = (want && opts.find(o => o.text.trim().toLowerCase() === want.toLowerCase())) || opts[0];
+        return hit ? hit.value : '';
+      }, { want, junk: JUNK_SOURCE.source });
+      if (value) { await this.sourceSelect.selectOption(value); console.log('  🔽 Lead Source = selected'); }
+    } catch {
+      console.log('  ⚠️  Lead Source select not found — skipping');
+    }
   }
 
   /**
@@ -368,8 +466,8 @@ class EnquiryPage {
     await this._selectFirstReal(this.assignToSelect, 'Assign To');
     await this._safeFill(this.businessValueInput, data.unitPrice);
     await this._safeFill(this.descriptionInput,   data.description);
-    await this._selectFirstReal(this.sourceSelect, 'Lead Source');
-    await this.addItem(data.product || 'Inverter', data.quantity || '1');
+    await this.selectLeadSource();
+    await this.addItem(data.product || tenant().item, data.quantity || '1');
     try {
       if (await this.noFollowupChk.count() && !(await this.noFollowupChk.isChecked())) {
         await this.noFollowupChk.check();
@@ -474,7 +572,8 @@ class EnquiryPage {
     const validUpto = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
     await this.page.locator('#expdate').fill(validUpto).catch(() => {});
     await this.page.locator('#quotation-quality').selectOption({ index: 1 }).catch(() => {});
-    console.log(`  📅 Valid Upto ${validUpto} + Lead Quality selected`);
+    await setFutureQuotationFollowup(this.page);
+    console.log(`  📅 Valid Upto ${validUpto} + Lead Quality + future follow-up date set`);
 
     const saveQ = this.page.locator('#btn-save-quotation');
     try {
@@ -496,11 +595,10 @@ class EnquiryPage {
    * separate dropdown. ("In Follow-up" → an ongoing status.)
    */
   statusLabelFor(status) {
+    const st = tenant().status;
     const map = {
-      'in follow-up': 'Interested',
-      'in followup':  'Interested',
-      'won':          'Got the business',
-      'lost':         'Not interested',
+      'new': st.new, 'in follow-up': st.inFollowup, 'in followup': st.inFollowup,
+      'won': st.won, 'lost': st.lost,
     };
     return map[String(status).toLowerCase()] || status;
   }
@@ -600,3 +698,21 @@ class EnquiryPage {
 }
 
 module.exports = { EnquiryPage };
+
+/**
+ * Quotation form: set "Next FollowUp Date" (#firstfollowupdate) 2 days ahead.
+ * Its default can sit below the field's own minimum (QT-F1), which blocks Save
+ * with "Follow-up date cannot be in the past." — a save test must not depend on it.
+ */
+async function setFutureQuotationFollowup(page) {
+  const f = page.locator('#firstfollowupdate');
+  if (!(await f.count().catch(() => 0))) return false;
+  const d = new Date(Date.now() + 2 * 86400000);
+  const pad = (n) => String(n).padStart(2, '0');
+  const v = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:00`;
+  await f.fill(v).catch(() => {});
+  await page.waitForTimeout(300);
+  return true;
+}
+
+module.exports.setFutureQuotationFollowup = setFutureQuotationFollowup;

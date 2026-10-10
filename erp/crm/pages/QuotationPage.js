@@ -8,7 +8,7 @@ class QuotationPage {
    */
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // ── Quotation listing ──────────────────────────────────────────────────
     this.quotationRows = page.locator(
@@ -92,6 +92,8 @@ class QuotationPage {
 
   /** Save the quotation. Returns the alert/redirect outcome. */
   async save() {
+    // the default Next FollowUp Date can sit below its own minimum (QT-F1) — set a future one
+    await require('./EnquiryPage').setFutureQuotationFollowup(this.page);
     await this.qSave.click().catch(() => {});
     await this.page.waitForTimeout(2500);
     return this.getSuccessMessage();

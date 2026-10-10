@@ -1,5 +1,7 @@
 'use strict';
 
+const { tenant } = require('../../common/tenantData');
+
 /**
  * Task Management module.
  *
@@ -35,7 +37,7 @@
 class TaskManagementPage {
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // ── Add-Task modal ──
     // NOTE: /home holds BOTH #home-create-task-modal (create) and #task-edit-modal
@@ -54,7 +56,7 @@ class TaskManagementPage {
     this.tabRepeat    = this.modal.locator('#repeatBtn');
 
     // modal-scoped fields
-    this.branchSelect   = this.modal.locator('select').filter({ has: page.locator('option', { hasText: 'Kannur' }) }).first();
+    this.branchSelect   = this.modal.locator('select').filter({ has: page.locator('option', { hasText: tenant().branch }) }).first();
     this.taskTypeSelect = this.modal.locator('#taskType');
     this.prioritySelect = this.modal.locator('#priority');
     this.taskInput      = this.modal.locator('#taskName');
@@ -66,7 +68,7 @@ class TaskManagementPage {
     this.endTimeToggle  = this.modal.locator('#addEndTimeToggle');
 
     // route-level fields (/task standalone page — single instance there)
-    this.rBranch   = page.locator('select').filter({ has: page.locator('option', { hasText: 'Kannur' }) }).first();
+    this.rBranch   = page.locator('select').filter({ has: page.locator('option', { hasText: tenant().branch }) }).first();
     this.rTaskType = page.locator('#taskType').first();
     this.rPriority = page.locator('#priority').first();
     this.rTaskName = page.locator('#taskName').first();
@@ -210,9 +212,21 @@ class TaskManagementPage {
   /** The DEV build requires a Party on the task modal (save rejects with
    *  "Please choose party"). If #partySearch is present, search broadly and
    *  pick the first party from the picker modal that opens over the task modal. */
-  async choosePartyIfRequired(term = 'a') {
+  async choosePartyIfRequired(term = 'Test Customer') {
+    // Prefer a customer this suite created ("Test Customer …") so test tasks are not
+    // attached to a real client; fall back to any party only if none exists.
     const party = this.page.locator('#partySearch:visible').first();
     if (!(await party.count().catch(() => 0))) return false;
+    const picked = await this._pickParty(party, term);
+    if (!picked && term !== 'a') {
+      console.log(`  ⚠️  no party matching "${term}" — falling back to any party`);
+      await this._pickParty(party, 'a');
+    }
+    console.log('  👥 Party selected (this build requires one)');
+    return true;
+  }
+
+  async _pickParty(party, term) {
     await party.fill(term).catch(() => {});
     await party.locator('xpath=ancestor::div[contains(@class,"input-group")][1]')
       .locator('i.ri-search-line').first().click().catch(() => {});
@@ -220,10 +234,13 @@ class TaskManagementPage {
     await picker.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
     const row = picker.locator('table tbody tr, li').first();
     await row.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    if (!(await row.count().catch(() => 0)) || !(await row.isVisible().catch(() => false))) {
+      await this.page.keyboard.press('Escape').catch(() => {});
+      return false;
+    }
     await row.click().catch(() => {});
     // generous settle: the pick triggers a form re-render that can wipe later fills
     await this.page.waitForTimeout(2200);
-    console.log('  👥 Party selected (this build requires one)');
     return true;
   }
 

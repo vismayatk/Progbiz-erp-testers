@@ -41,7 +41,7 @@ module.exports = defineConfig({
     trace:             'retain-on-failure',
 
     // Base URL — override with BASE_URL env var
-    baseURL: process.env.BASE_URL || 'https://erptest.progbiz.in',
+    baseURL: process.env.BASE_URL || 'https://test.erp.progbiz.in',
   },
 
   // ── Projects (browsers) ───────────────────────────────────────────────────

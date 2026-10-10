@@ -1,6 +1,7 @@
 'use strict';
 
 const { getAlertText, waitOverviewReady } = require('../../common/helpers');
+const { tenant } = require('../../common/tenantData');
 
 class FollowUpPage {
   /**
@@ -43,7 +44,7 @@ class FollowUpPage {
     console.log(`  ✍️  Filling follow-up: "${data.notes}"`);
 
     // Followup Status (required) — selecting it reveals Lead Quality + next date
-    const status = data.status || 'Interested';
+    const status = data.status || tenant().status.inFollowup;
     try {
       await this.statusSelect.selectOption({ label: status });
     } catch {

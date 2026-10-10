@@ -19,9 +19,9 @@ require('dotenv').config();
 const { test, expect } = require('@playwright/test');
 const { LoginPage } = require('../../common/LoginPage');
 
-const BASE = process.env.BASE_URL || 'https://dev.erp.progbiz.in';
+const BASE = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_dev',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };

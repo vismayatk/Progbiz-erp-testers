@@ -23,9 +23,13 @@ const { test, expect } = require('@playwright/test');
 const { LoginPage } = require('../../common/LoginPage');
 const { EnquiryPage } = require('../pages/EnquiryPage');
 const { CrmChainPage } = require('../pages/CrmChainPage');
+const { QuotationPage } = require('../pages/QuotationPage');
+const { setFutureQuotationFollowup } = require('../pages/EnquiryPage');
+const { tenant } = require('../../common/tenantData');
+const T = tenant();
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'group_dev',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123456',
 };
@@ -60,7 +64,8 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
     // schedules the next follow-up, and that is what puts the record on
     // /followups and on the home page's Today's Schedule. Leaving it unset
     // makes CH-05 and CH-10 fail for a reason that has nothing to do with them.
-    for (const id of ['#assignto', '#leadsource', '#followup']) {
+    await enq.selectLeadSource();   // a real source — never the junk "All"/blank ones
+    for (const id of ['#assignto', '#followup']) {
       const sel = page.locator(id);
       if (!(await sel.count().catch(() => 0))) continue;
       const opts = await sel.locator('option').evaluateAll((os) =>
@@ -83,7 +88,7 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
 
     // The item picker is a <select> committed with #btn-add-item; the enquiry
     // will not save without a line item.
-    await enq.addItem('Inverter', '2');
+    await enq.addItem(T.item, '2');
 
     await page.locator('#btn-save-enquiry').click({ timeout: 15000 });
     await page.waitForTimeout(6500);
@@ -197,6 +202,8 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
     // then picks that hidden button and times out.
     const saveBtn = page.locator('#btn-save-quotation');
     await saveBtn.waitFor({ state: 'visible', timeout: 30000 });
+    // The default Next FollowUp Date can sit below its own minimum (QT-F1) — set a future one.
+    await setFutureQuotationFollowup(page);
     await saveBtn.click({ timeout: 15000 });
     await page.waitForTimeout(7000);
     quotationPath = page.url().replace(chain.baseUrl, '');
@@ -207,8 +214,17 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
 
   test('CH-08 | Quotation appears in the Quotations listing', async () => {
     test.skip(!quotationPath, 'quotation was not created');
-    const hit = await chain.findAcrossTabs('/quotations', NAME);
-    expect(hit, `"${NAME}" not found in /quotations under any tab`).toBeTruthy();
+    let hit;
+    if (T.routes.quotations) {
+      hit = await chain.findAcrossTabs(T.routes.quotations, NAME);
+    } else {
+      // no /quotations route on this tenant: quotations are listed in /leads (Type = Quotation)
+      await new QuotationPage(chain.page).gotoQuotationList();
+      const g = await chain.readGrid();
+      const row = g.rows.find((r) => r.join(' ').includes(NAME));
+      hit = row ? { tab: 'Leads, Type = Quotation', row } : null;
+    }
+    expect(hit, `"${NAME}" not found in the quotation listing`).toBeTruthy();
     console.log(`  ✅ under "${hit.tab}": ${hit.row.slice(0, 6).join(' | ')}`);
   });
 

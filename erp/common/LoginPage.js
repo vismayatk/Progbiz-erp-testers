@@ -6,7 +6,7 @@ class LoginPage {
    */
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // exact ids on this build: #companycode, #signin-username, #signin-password
     this.companyInput  = page.locator('#companycode').or(
@@ -63,7 +63,7 @@ class LoginPage {
    * (rendered after ~58 scripts + a backend call) intermittently loads slowly
    * on the test/dev tenants.
    */
-  async login(company = 'lesol_test', username = 'admin', password = '123') {
+  async login(company = 'onetouch_test', username = 'admin', password = '123') {
     console.log(`\n  🔐 LoginPage: filling credentials for "${username}" @ "${company}"`);
     let lastErr;
     for (let attempt = 1; attempt <= 3; attempt++) {

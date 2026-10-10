@@ -32,7 +32,7 @@ const { ProjectPage } = require('../pages/ProjectPage');
 const { screenshot } = require('../../common/helpers');
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };

@@ -25,7 +25,7 @@ const INBOX = /^(All|My team inbox|Assigned to me|Added by me)\s*\d*$/i;
 class ComplaintsPage {
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
     this.rows    = page.locator('table tbody tr');
     this.subject     = page.locator('input[placeholder="Short summary of the complaint"]');
     this.description = page.locator('textarea[placeholder="Details"]');

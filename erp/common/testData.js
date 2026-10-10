@@ -1,5 +1,7 @@
 'use strict';
 
+const { tenant } = require('./tenantData');
+
 const ts = Date.now();
 
 const testData = {
@@ -7,8 +9,8 @@ const testData = {
     customerName:  `Test Customer ${ts}`,
     mobile:        '9' + String(ts).slice(-9),   // unique per run (avoids "phone already exists")
     email:         `customer${ts}@example.com`,
-    source:        'Website',
-    product:       'Inverter',   // must match a real Inventory item (Generator/Inverter/Heat Pump/...)
+    source:        tenant().leadSource,
+    product:       tenant().item,   // a real item on the current tenant (see tenantData.js)
     description:   `Auto enquiry created at ${new Date().toISOString()}`,
     quantity:      '5',
     unitPrice:     '1000',

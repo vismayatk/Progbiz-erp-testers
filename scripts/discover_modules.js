@@ -19,7 +19,7 @@ const path = require('path');
 const { chromium } = require('@playwright/test');
 const { LoginPage } = require('../erp/common/LoginPage');
 
-const BASE = process.env.BASE_URL || 'https://devtest.progbiz.in';
+const BASE = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 const C = {
   company: process.env.COMPANY_CODE,
   username: process.env.CRM_USERNAME,

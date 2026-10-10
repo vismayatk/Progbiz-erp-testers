@@ -13,7 +13,7 @@
 class LeadTransferPage {
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     this.applyBtn    = page.locator('button', { hasText: /apply filter/i }).first();
     this.transferBtn = page.locator('button', { hasText: /transfer selected/i }).first();
@@ -42,6 +42,40 @@ class LeadTransferPage {
     return rows;
   }
 
+  /** Some tenants list NO leads until a Branch is chosen (the branch select starts on "Choose"). */
+  async chooseBranch(branch) {
+    const sel = this.page.locator('select').filter({ has: this.page.locator('option', { hasText: /^\s*Choose\s*$/ }) })
+      .filter({ has: this.page.locator('option', { hasText: branch }) }).first();
+    if (!(await sel.count().catch(() => 0))) return false;
+    await sel.selectOption({ label: branch }).catch(() => {});
+    await this.page.waitForTimeout(1500);
+    console.log(`  🏢 Branch = ${branch}`);
+    return true;
+  }
+
+  /** The lead row with this phone: { number, name, phone, assignee } or null. */
+  async findLead(phone) {
+    return this.page.evaluate((ph) => {
+      const norm = s => (s || '').replace(/\D/g, '');
+      for (const r of document.querySelectorAll('table tbody tr')) {
+        const c = [...r.querySelectorAll('td')].map(e => (e.textContent || '').trim());
+        if (c.some(x => norm(x).endsWith(norm(ph).slice(-9)))) {
+          return { number: c[2], name: c[3], phone: norm(c[4]).slice(-10), assignee: c[c.length - 1] };
+        }
+      }
+      return null;
+    }, phone);
+  }
+
+  /** Tick ONLY the lead with this phone, choose the executive, transfer and confirm. */
+  async transferLeadTo(phone, executive) {
+    const row = this.rows.filter({ hasText: String(phone).slice(-9) }).first();
+    await row.locator('input[type=checkbox]').check()
+      .catch(() => row.locator('input[type=checkbox]').click().catch(() => {}));
+    await this.page.waitForTimeout(700);
+    return this._transferSelected(executive);
+  }
+
   /** Table columns: ['',SlNo,Number,Customer Name,Phone,Status,Stage,Date,Lead Source,Current Assignee] */
   async getFirstLead() {
     return this.page.evaluate(() => {
@@ -61,6 +95,10 @@ class LeadTransferPage {
     await row.locator('input[type=checkbox]').check()
       .catch(() => row.locator('input[type=checkbox]').click().catch(() => {}));
     await this.page.waitForTimeout(700);
+    return this._transferSelected(executive);
+  }
+
+  async _transferSelected(executive) {
     await this.execSelect.selectOption({ label: executive });
     await this.transferBtn.click();
 
@@ -80,6 +118,11 @@ class LeadTransferPage {
 
   /** Re-apply filters and read the Current Assignee of the lead with this phone. */
   async assigneeOf(phone) {
+    await this.applyFilters();
+    return (await this.findLead(phone))?.assignee || null;
+  }
+
+  async _assigneeOfLegacy(phone) {
     await this.applyFilters();
     return this.page.evaluate((ph) => {
       const norm = s => (s || '').replace(/\D/g, '');

@@ -17,16 +17,18 @@ const { LoginPage } = require('../../common/LoginPage');
 const { EnquiryPage } = require('../pages/EnquiryPage');
 const { FollowUpPage } = require('../pages/FollowUpPage');
 const { screenshot } = require('../../common/helpers');
+const { tenant } = require('../../common/tenantData');
+const T = tenant();
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
 const uniqEnquiry = () => {
   const ts = Date.now();
   return { customerName: `FU Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `fu${ts}@example.com`,
-    source: 'Website', product: 'Inverter', description: `auto ${ts}`, quantity: '2', unitPrice: '1000' };
+    source: T.leadSource, product: T.item, description: `auto ${ts}`, quantity: '2', unitPrice: '1000' };
 };
 
 /** Log in, seed a fresh enquiry (→ Overview), and open the follow-up modal. */
@@ -63,17 +65,17 @@ test.describe('CRM — Followup', () => {
 
     const opts = (await fu.statusOptions()).map(s => s.trim());
     console.log('  🏷  status options:', JSON.stringify(opts));
-    for (const o of ['Interested', 'Got the business', 'Not interested']) expect(opts).toContain(o); // ENQ-31
+    for (const o of [T.status.inFollowup, T.status.won, T.status.lost]) expect(opts).toContain(o); // ENQ-31
 
-    await fu.selectStatus('Interested');                              // In-Followup
+    await fu.selectStatus(T.status.inFollowup);                       // In-Followup
     expect(await fu.leadQualityVisible(), 'Lead Quality should show for In-Followup').toBeTruthy(); // ENQ-32
     expect(await fu.descriptionVisible()).toBeTruthy();
 
-    await fu.selectStatus('Got the business');                        // Won
+    await fu.selectStatus(T.status.won);                              // Won
     expect(await fu.leadQualityVisible(), 'Lead Quality hidden for Won').toBeFalsy();  // ENQ-33 (only Description)
     expect(await fu.descriptionVisible()).toBeTruthy();
 
-    await fu.selectStatus('Not interested');                          // Lost
+    await fu.selectStatus(T.status.lost);                             // Lost
     expect(await fu.leadQualityVisible(), 'Lead Quality hidden for Lost').toBeFalsy(); // ENQ-34
     expect(await fu.descriptionVisible()).toBeTruthy();
 
@@ -87,7 +89,7 @@ test.describe('CRM — Followup', () => {
   test('ENQ-36 | Save follow-up → success + appears in history (ENQ-36,38)', async ({ page }) => {
     const fu = await seedAndOpenFollowup(page);
     const note = `Auto follow-up ${Date.now()}`;
-    await fu.fillAndSave({ notes: note, status: 'Interested', businessValue: 5000 });
+    await fu.fillAndSave({ notes: note, status: T.status.inFollowup, businessValue: 5000 });
     const msg = await fu.getSuccessMessage();
     console.log('  💬 save msg:', msg);
     const count = await fu.getFollowUpCount();
@@ -97,9 +99,9 @@ test.describe('CRM — Followup', () => {
     // and ideally the note text we wrote.
     const hist = await page.evaluate(() =>
       (document.querySelector('#followups')?.textContent || '').replace(/\s+/g, ' '));
-    expect(hist, 'history should show the saved status "Interested"').toMatch(/Interested/i);
+    expect(hist.toLowerCase(), `history should show the saved status "${T.status.inFollowup}"`).toContain(T.status.inFollowup.toLowerCase());
     const noteShown = hist.includes(note);
-    console.log(`  ✅ Follow-up in history with status Interested ✓, note text ${noteShown ? '✓' : '(not rendered in list)'}`);
+    console.log(`  ✅ Follow-up in history with status ${T.status.inFollowup} ✓, note text ${noteShown ? '✓' : '(not rendered in list)'}`);
   });
 
   test('ENQ-37 | Cancel closes the follow-up popup without saving', async ({ page }) => {
@@ -115,7 +117,7 @@ test.describe('CRM — Followup', () => {
 
   test('ENQ-39 | Latest follow-up is editable/deletable (ENQ-39..42)', async ({ page }) => {
     const fu = await seedAndOpenFollowup(page);
-    await fu.fillAndSave({ notes: `FU one ${Date.now()}`, status: 'Interested', businessValue: 3000 });
+    await fu.fillAndSave({ notes: `FU one ${Date.now()}`, status: T.status.inFollowup, businessValue: 3000 });
     await page.waitForTimeout(1500);
     const ctl = await fu.latestRowControls();
     await screenshot(page, 'fu39_controls');

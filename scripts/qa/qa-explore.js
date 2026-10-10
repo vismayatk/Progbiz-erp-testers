@@ -151,12 +151,12 @@ function hrmsRoutes() {
 function moduleSpec() {
   if (MODULE === 'hrms') {
     return {
-      base: process.env.HRMS_BASE_URL || 'https://hrms-erp.progbiz.in',
+      base: process.env.HRMS_BASE_URL || 'https://test.erp.progbiz.in',
       pages: hrmsRoutes(),
       login: 'hrms',
     };
   }
-  const base = process.env.BASE_URL || 'https://devtest.progbiz.in';
+  const base = process.env.BASE_URL || 'https://test.erp.progbiz.in';
   if (ROUTES_FILE) {
     // Long GUID-bearing workflow routes make a --routes CLI arg unwieldy, and
     // a checked-in list makes a full-project sweep reproducible.

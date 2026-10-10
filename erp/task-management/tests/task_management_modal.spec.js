@@ -29,7 +29,7 @@ const { TaskManagementPage } = require('../pages/TaskManagementPage');
 const { screenshot } = require('../../common/helpers');
 
 const CREDS = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
@@ -65,11 +65,17 @@ test.describe('Task Management — Documented Cases', () => {
     for (const t of [tm.tabInstant, tm.tabLater, tm.tabRepeat]) await expect(t).toBeVisible();
 
     // TC_005 / TC_006 — Branch dropdown lists branches, Kannur default
-    const branches = await tm.getBranchOptions();
-    console.log('  🏢 Branches:', JSON.stringify(branches));
-    expect(branches).toContain('Kannur');
-    const branchSelected = (await tm.branchSelect.locator('option:checked').first().textContent()) || '';
-    expect(branchSelected, 'Main branch (Kannur) should be the default').toMatch(/Kannur/i);
+    const T = require('../../common/tenantData').tenant();
+    if (T.taskModalHasBranch) {
+      const branches = await tm.getBranchOptions();
+      console.log('  🏢 Branches:', JSON.stringify(branches));
+      expect(branches).toContain(T.branch);
+      const branchSelected = (await tm.branchSelect.locator('option:checked').first().textContent()) || '';
+      expect(branchSelected, `Main branch (${T.branch}) should be the default`).toContain(T.branch);
+    } else {
+      // single-branch tenant: the task modal has no Branch field
+      console.log(`  🏢 No Branch field in the task modal on this tenant (only "${T.branch}")`);
+    }
 
     // TC_008 — predefined Task Types. The list is TENANT master data (e.g. "Complaint"
     // exists on lesol_test but not lesol_dev) — require the core types every tenant has.

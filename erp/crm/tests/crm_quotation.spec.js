@@ -18,12 +18,15 @@ const { EnquiryPage } = require('../pages/EnquiryPage');
 const { QuotationPage } = require('../pages/QuotationPage');
 const { screenshot } = require('../../common/helpers');
 
+const { tenant } = require('../../common/tenantData');
+const T = tenant();
+
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
-const uniq = () => { const ts = Date.now(); return { customerName: `QT Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `qt${ts}@x.com`, source: 'Website', product: 'Inverter', description: 'qt', quantity: '2', unitPrice: '1000' }; };
+const uniq = () => { const ts = Date.now(); return { customerName: `QT Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `qt${ts}@x.com`, source: T.leadSource, product: T.item, description: 'qt', quantity: '2', unitPrice: '1000' }; };
 
 /** Login, seed a fresh enquiry, open its prefilled Quotation form (not saved).
  *  Returns the QuotationPage; the seeded enquiry data is exposed as `qt.seed`. */
@@ -65,9 +68,10 @@ test.describe('CRM — Quotation', () => {
         }),
       })));
     const wantQty = Number(qt.seed.quantity);
-    const line = grid.find(r => /Inverter/i.test(r.text + ' ' + r.cells.join(' ')) &&
+    const itemName = qt.seed.product.toLowerCase();
+    const line = grid.find(r => (r.text + ' ' + r.cells.join(' ')).toLowerCase().includes(itemName) &&
       r.cells.some(c => parseFloat(c) === wantQty));
-    expect(line, `enquiry item "Inverter" (qty ${wantQty}) should carry into the quotation grid`).toBeTruthy();
+    expect(line, `enquiry item "${qt.seed.product}" (qty ${wantQty}) should carry into the quotation grid`).toBeTruthy();
     // QT-006: totals must RENDER as numbers (0.00 is correct until rates are typed —
     // prices don't carry from the enquiry, so a computed-from-price total can't be asserted)
     const grossNum = parseFloat(String(s.gross).replace(/[^\d.]/g, ''));
@@ -112,6 +116,24 @@ test.describe('CRM — Quotation', () => {
     const found = await page.evaluate(n => document.body.innerText.includes(n), before.number);
     expect(found, `saved quotation ${before.number} should appear in the Type=Quotation listing`).toBeTruthy();
     console.log(`  ✅ Quotation ${before.number} saved and listed`);
+  });
+
+  test('QT-F1 | Default Next FollowUp Date is not below its own minimum', async ({ page }) => {
+    // KNOWN DEFECT QT-F1 (onetouch_test, 2026-10-09): the quotation form pre-fills
+    // "Next FollowUp Date" from the tenant's clock (UAE) but sets its min from the
+    // browser's clock, so a browser ahead of UAE time (e.g. IST) opens a form that
+    // says "Follow-up date cannot be in the past." and will not save. The save tests
+    // set a future date; this one records the default as a user lands on it.
+    test.fail(T.knownDefects.includes('QT-F1'), 'QT-F1 — quotation follow-up default below its own minimum');
+    const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
+    await page.goto(`${process.env.BASE_URL}/quotation`, { waitUntil: 'domcontentloaded' });
+    const f = page.locator('#firstfollowupdate');
+    await f.waitFor({ state: 'visible', timeout: 30000 });
+    await page.waitForTimeout(1500);
+    const { value, min } = await f.evaluate(e => ({ value: e.value, min: e.min }));
+    console.log(`  📅 default=${value} min=${min}`);
+    expect(value, 'Next FollowUp Date should be pre-filled').toBeTruthy();
+    expect(!min || value >= min, `default ${value} is below its own minimum ${min}`).toBeTruthy();
   });
 
   test('QT-001 | Create New → Quotation page (QT-001,002,009)', async ({ page }) => {

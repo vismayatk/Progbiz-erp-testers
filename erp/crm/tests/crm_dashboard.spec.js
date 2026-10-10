@@ -21,7 +21,7 @@ const { CrmDashboardPage } = require('../pages/CrmDashboardPage');
 const { EnquiryPage } = require('../pages/EnquiryPage');
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_dev',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };

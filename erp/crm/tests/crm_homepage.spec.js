@@ -18,11 +18,11 @@ const { LoginPage } = require('../../common/LoginPage');
 const { screenshot } = require('../../common/helpers');
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
-const BASE = process.env.BASE_URL || 'https://erptest.progbiz.in';
+const BASE = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
 async function arrive(page) {
   const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);

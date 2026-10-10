@@ -24,7 +24,7 @@ const { LoginPage } = require('../../common/LoginPage');
 const { SalesTargetsPage } = require('../pages/SalesTargetsPage');
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_dev',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };

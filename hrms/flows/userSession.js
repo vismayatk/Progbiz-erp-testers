@@ -42,9 +42,18 @@ async function loginAs(browser, { username, password }, { recordVideoDir } = {})
 async function withUser(browser, testInfo, creds, fn) {
   const who = creds.username;
   const keepAll = process.env.HRMS_EVIDENCE === 'all';
-  let context, page, failed = false;
+  let failed = false;
+  // Open the window BEFORE signing in, so a sign-in failure (e.g. the login page not loading) is
+  // still caught on screenshot + recording.
+  const context = await browser.newContext({
+    viewport: VIEWPORT,
+    recordVideo: { dir: testInfo.outputPath('.recordings-tmp'), size: VIEWPORT },
+  });
+  const page = await context.newPage();
   try {
-    ({ context, page } = await loginAs(browser, creds, { recordVideoDir: testInfo.outputPath('.recordings-tmp') }));
+    const company = process.env.HRMS_COMPANY_CODE || process.env.COMPANY_CODE;
+    await new HrmsLoginPage(page).login(company, creds.username, creds.password);
+    await expect(page, `${who} should be signed in (left the login page)`).not.toHaveURL(/\/login/i);
     return await fn(page);
   } catch (e) {
     failed = true;

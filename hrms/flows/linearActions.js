@@ -348,12 +348,22 @@ module.exports = {
     const form = await fk.scope({ ready: '#holidays' });
     await fk.setSelect(form.locator('#selectbox').nth(0), 'Branch', 'Assignment Type');
     await fk.setCascade(form.locator('#selectbox').nth(1), 'Main Branch', 'Branch target');
+    // Holidays* is a read-only box that opens a searchable list of switches — one per holiday.
     await form.locator('#holidays').click();
-    const opt = page.locator('[role="option"], .dropdown-item, li, label, .ng-option').filter({ hasText: holiday }).first();
-    await expect(opt, `holiday "${holiday}" is selectable`).toBeVisible({ timeout: 10000 });
-    await opt.click();
+    const search = page.locator('#holidays-search-input');
+    if (await waitVisible(search, 5000)) await search.fill(holiday);
+    const toggle = page.locator('ul.list-group li').filter({ hasText: holiday }).locator('input[type="checkbox"]').first();
+    await expect(toggle, `holiday "${holiday}" should be offered for Main Branch`).toBeVisible({ timeout: 15000 });
+    await toggle.check();
+    await expect(toggle, `holiday "${holiday}" should be switched on`).toBeChecked();
     await fk.saveAndConfirm(fk.saveButton(form), { name: 'Save holiday assignment', successRe: /success|saved|created|added|assigned/i });
-    await expectListed(page, 'holiday-assignment-list', holiday, `holiday assignment "${holiday}"`);
+    // The Main Branch row shows its first holidays and folds the rest into "+N more" (tooltip lists them).
+    await page.goto(`${BASE}/holiday-assignment-list`, { waitUntil: 'domcontentloaded' });
+    const row = page.locator('table tbody tr').filter({ hasText: 'Main Branch' }).first();
+    await expect(row, 'the Main Branch holiday assignment row is listed').toBeVisible({ timeout: 30000 });
+    const shown = await row.innerText();
+    const folded = await row.getByText(/\+\d+ more/).first().getAttribute('title').catch(() => '') || '';
+    expect(`${shown}\n${folded}`, `Main Branch should now include "${holiday}"`).toContain(holiday);
     log(`holiday "${holiday}" assigned to Main Branch`);
   },
 
@@ -488,7 +498,10 @@ module.exports = {
     await page.waitForURL(/\/ess\/referral\/admin\/detail\//, { timeout: 20000 });
     const detailUrl = page.url();
     const job = fk.selectWithOption(page, 'Choose an open job');
-    const opts = (await job.locator('option').allTextContents()).map(t => t.trim()).filter(t => /JOB\d+/.test(t) && t.includes(R.DESIGNATION));
+    // The open-job options load after the page — wait for them before choosing.
+    const jobOpts = async () => (await job.locator('option').allTextContents()).map(t => t.trim()).filter(t => /JOB\d+/.test(t) && t.includes(R.DESIGNATION));
+    await expect.poll(async () => (await jobOpts()).length, { timeout: 30000, message: `open ${R.DESIGNATION} jobs should load` }).toBeGreaterThan(0);
+    const opts = await jobOpts();
     const newest = opts.sort((x, y) => Number(y.match(/JOB(\d+)/)[1]) - Number(x.match(/JOB(\d+)/)[1]))[0];
     await fk.setSelect(job, newest, 'Open job');
     await page.locator('button').filter({ hasText: /^\s*Assign\s*$/ }).first().click();

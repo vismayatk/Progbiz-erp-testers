@@ -28,8 +28,8 @@ module.exports = [
   // ── Recruitment ──
   P('Recruitment', 'Job Requisitions', 'requisition-list', 'raiseAndApproveRequisition'),
   P('Recruitment', 'Job Board', 'vacancy-list', 'openingAndCandidate'),
-  P('Recruitment', 'Job Applications', 'job-applications-list'),
-  P('Recruitment', 'Assessments', 'assessment-list'),
+  P('Recruitment', 'Job Applications', 'job-applications-list', 'candidateSelfApplies'),
+  P('Recruitment', 'Assessments', 'assessment-list', 'takeHomeAssessment'),
   P('Recruitment', 'Interview Schedules', 'interview-schedules', 'interviewAndFeedback'),
   P('Recruitment', 'Offers', 'offer-list', 'offerApprovedSentAccepted'),
   P('Recruitment', 'Offer Acceptance', 'offer-acceptance', 'preboardingInvite'),

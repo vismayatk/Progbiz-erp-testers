@@ -217,7 +217,22 @@ async function scheduleInterview(page, rec) {
     { timeout: 20000, message: `the Candidate list should offer ${rec.candidateName}` }).toBe(true);
   const candLabel = (await candSel.locator('option').allTextContents()).map(t => t.trim()).find(t => t.includes(rec.candidateName));
   await fk.setSelect(candSel, candLabel, 'Candidate');
-  await fk.pickByOption(form, rec.roundName,   'Round');
+  // The round list reloads after the candidate is chosen and can wipe an early pick — re-pick until it holds.
+  await expect(async () => {
+    await fk.pickByOption(form, rec.roundName, 'Round');
+    await page.waitForTimeout(1500);
+    const roundSel = form.locator('select').filter({ has: page.locator('option', { hasText: rec.roundName }) }).first();
+    expect((await fk.picked(roundSel)).toLowerCase(), 'the Round choice should stay set').toContain(rec.roundName.toLowerCase());
+  }).toPass({ timeout: 45000 });
+  // Optional interview scorecard (unlocks once the round is chosen): the panel then rates its criteria.
+  if (rec.scorecard) {
+    const sc = form.locator('select').filter({ has: page.locator('option', { hasText: /free-form/i }) }).first();
+    await expect(sc, 'the Scorecard select should unlock after the round').toBeEnabled({ timeout: 15000 });
+    await expect.poll(async () => (await sc.locator('option').allTextContents()).some(t => t.includes(rec.scorecard)),
+      { timeout: 15000, message: `scorecard "${rec.scorecard}" should be offered` }).toBe(true);
+    const label = (await sc.locator('option').allTextContents()).map(t => t.trim()).find(t => t.includes(rec.scorecard));
+    await fk.setSelect(sc, label, 'Scorecard');
+  }
   rec.interviewAt = new Date(Date.now() + 2 * 60000);
   const dt = form.locator('input[type="datetime-local"]').first();
   await expect(dt, 'Interview Date should enable once a round is chosen').toBeEnabled({ timeout: 15000 });
@@ -260,9 +275,26 @@ async function recordEvaluation(page, rec) {
   const box = save.locator('xpath=ancestor::*[.//input[@type="datetime-local"]][1]');
   await expect(box.locator('input[type="datetime-local"]').first(),
     '"Interview conducted on" should be pre-filled with the booked slot').toHaveValue(dtLocal(rec.interviewAt));
-  const star = page.getByRole('radio', { name: '4 out of 5' }).first();   // stars are role=radio
-  await star.click();
-  await expect(star, 'rating 4/5 should be selected').toHaveAttribute('aria-checked', 'true');
+  if (rec.scorecard) {
+    // Scorecard: My Evaluation is a table — Rating (1–5) + Note per criterion; the overall rating is
+    // the weighted average, calculated by the app.
+    const sheet = page.locator('table').filter({ hasText: /Rating \(1.5\)/i }).first();
+    await expect(sheet, `the "${rec.scorecard}" criteria should be shown for rating`).toBeVisible({ timeout: 20000 });
+    const crit = sheet.locator('tbody tr');
+    const n = await crit.count();
+    expect(n, 'the scorecard should list its criteria').toBeGreaterThan(1);
+    for (let i = 0; i < n; i++) {
+      const name = (await crit.nth(i).locator('td').first().innerText()).replace(/\s+/g, ' ').trim();
+      await fk.setInput(crit.nth(i).locator('input').nth(0), '4', `Rating — ${name}`);
+      await fk.setInput(crit.nth(i).locator('input').nth(1), 'Solid, met expectations.', `Note — ${name}`);
+    }
+    await expect(page.getByText(/Overall rating:\s*4(\.0+)?\b/).first(), 'the overall (weighted) rating should be 4').toBeVisible({ timeout: 10000 });
+  } else {
+    // Free-form feedback: a single 1–5 star rating (stars are role=radio).
+    const star = page.getByRole('radio', { name: '4 out of 5' }).first();
+    await star.click();
+    await expect(star, 'rating 4/5 should be selected').toHaveAttribute('aria-checked', 'true');
+  }
   await fk.setSelect(box.locator('select').filter({ has: page.locator('option', { hasText: 'Proceed' }) }).first(), 'Proceed', 'Recommendation');
   await fk.setInput(box.locator('textarea').first(), 'QA automated evaluation — proceed to offer.', 'Comments');
   await save.click();

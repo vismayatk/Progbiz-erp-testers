@@ -79,4 +79,41 @@ async function withUser(browser, testInfo, creds, fn) {
   }
 }
 
-module.exports = { loginAs, withUser };
+/**
+ * Run `fn(page)` as a LOGGED-OUT visitor (e.g. a job candidate on the public career page) in its own
+ * recorded window. Same evidence rules as withUser: on failure the visitor's screen + recording are
+ * attached to the test; on success the recording is discarded (kept when HRMS_EVIDENCE=all).
+ */
+async function withVisitor(browser, testInfo, label, fn) {
+  const keepAll = process.env.HRMS_EVIDENCE === 'all';
+  let failed = false;
+  const context = await browser.newContext({
+    viewport: VIEWPORT,
+    recordVideo: { dir: testInfo.outputPath('.recordings-tmp'), size: VIEWPORT },
+  });
+  const page = await context.newPage();
+  try {
+    return await fn(page);
+  } catch (e) {
+    failed = true;
+    const shot = testInfo.outputPath(`screen-${label}.png`);
+    await page.screenshot({ path: shot, fullPage: true }).catch(() => {});
+    if (fs.existsSync(shot)) await testInfo.attach(`screenshot (${label})`, { path: shot, contentType: 'image/png' });
+    console.log(`  📸 ${label}'s screen at failure → ${shot}  | URL: ${page.url()}`);
+    throw e;
+  } finally {
+    const video = page.video();
+    await context.close().catch(() => {});
+    if (video) {
+      if (failed || keepAll) {
+        const file = testInfo.outputPath(`recording-${label}.webm`);
+        await video.saveAs(file).catch(() => {});
+        if (fs.existsSync(file)) await testInfo.attach(`recording (${label})`, { path: file, contentType: 'video/webm' });
+      }
+      await video.delete().catch(() => {});
+      fs.rmSync(testInfo.outputPath('.recordings-tmp'), { recursive: true, force: true });
+    }
+  }
+}
+
+module.exports = { loginAs, withUser, withVisitor };

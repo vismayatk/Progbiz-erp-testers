@@ -9,7 +9,7 @@ HEADED=1 npx playwright test -c hrms/playwright.config.js hrms/tests/00_linear -
 ```
 - `hrms/tests/00_linear/hrms_linear_run.spec.js` — ONE test that walks `hrms/data/hrmsPages.js` (128 HRMS pages, live sidebar order) in a single tab. The browser is never closed between pages.
 - **Every page** gets the same check (`flows/pageCheck.js`): opened once (reloaded only if it comes up blank) → not bounced to login / not a missing page → no application error → loading spinners clear → a page heading → every list shows its headers and its rows (an empty list is noted, not failed).
-- **Pages whose main job is adding something** do it **once** (`flows/linearActions.js`, 22 actions), all for the run's **one employee**, created on the Employee page (`flows/runEmployee.js`).
+- **Pages whose main job is adding something** do it **once** (`flows/linearActions.js`, 24 actions), all for the run's **one employee**, created on the Employee page (`flows/runEmployee.js`).
 - **Payroll, Attendance, Resignation & Exit = base only** (page checks, no data) — owned by teammates.
 - A failing page is recorded (screenshot + error) and the walk continues in the same tab; the run is marked failed at the end.
 - **Evidence** (only when something fails): `reports/hrms-evidence/<run>/index.html` — failure screenshots per page, the employee's own screen + recording when they were acting, the **whole-run video** (one continuous recording), trace, `page-results.json`.
@@ -18,10 +18,11 @@ Useful variants:
 - Read-only (checks only, adds nothing): `HRMS_LINEAR_READONLY=1`
 - Only some pages: `HRMS_PAGES="leave-approval,offer-list"` · Resume from page 52: `HRMS_FROM=52`
 
-## Latest result (2026-10-09)
-- Full run: **128 pages — 124 passed first time**; 4 failures were all automation issues, fixed and re-run green the same day:
-  011 Duty Handover (date conflict on a reused employee → now uses the run employee), 026 Onboarding Templates and 049 Leave Types ("is it listed" matched a hidden element → now visible-only), 056 Leave Approval (reloaded My Leave a second time and it hung on the app spinner → now uses the open page).
-- Run employee: **Riya Iyer (pbhrms0349)** · candidate **Gokul Kamath (JOB0086)** · referral **Lakshmi Raghavan → Hired, reward Pending** · ticket **TKT-261009-001 → Resolved**.
+## Latest result (2026-10-19, full headed run)
+- **128 of 128 page checks passed.** 2 actions failed and were fixed + re-run green: 049 Leave Types (list search needs Enter; name-picker now checks every page) and 052 Leave Assignment (new employees now get a leave pattern automatically — the step confirms it instead of adding a second).
+- New this round, all green end to end in one pass: job opening **published**; candidates apply **both ways** (HR-added + self-applied on the career page); **take-home assessment** sent and evaluated; **interview scorecard** attached and rated.
+- Run employee **Lakshmi Joshi (pbhrms0353)** · opening **JOB0093** · candidate **Aditya Nair** (offer accepted, pre-boarding invited) · self-applicant **Nandana Iyer** · referral **Nikhil Kamath → Hired, reward Pending** · ticket **TKT-261019-002 → Resolved**.
+- Note: the hrms-test server was intermittently slow and was down once (HTTP 503) on 2026-10-19 — not a test issue.
 
 ## Every page, in order
 | # | Section | Page | Route | Add data once |
@@ -38,10 +39,10 @@ Useful variants:
 | 010 | Core HR | Approval Config | `approval/config` | — (check only) |
 | 011 | Core HR | Duty Handover | `employee-handover` | Duty handover: run employee → Amit, unique future window |
 | 012 | Recruitment | Job Requisitions | `requisition-list` | Raise a requisition, then approve it in Recruitment Approvals |
-| 013 | Recruitment | Job Board | `vacancy-list` | Job opening + a candidate applying to it (with résumé) |
-| 014 | Recruitment | Job Applications | `job-applications-list` | — (check only) |
-| 015 | Recruitment | Assessments | `assessment-list` | — (check only) |
-| 016 | Recruitment | Interview Schedules | `interview-schedules` | Interview round, interview booked, feedback 4/5 Proceed → Completed |
+| 013 | Recruitment | Job Board | `vacancy-list` | Job opening → **published** to the public career page; HR adds a candidate to it (with résumé) — register shows Source **Manual** |
+| 014 | Recruitment | Job Applications | `job-applications-list` | A candidate **applies themselves**: logged-out window → public career page → this run's opening → Apply Now → form (name, e-mail, gender, mobile, city, résumé) → Submit — register shows Stage **APPLIED**, Source **Portal** |
+| 015 | Recruitment | Assessments | `assessment-list` | **Take-home assignment** created and sent to the candidate (e-mailed, @example.com); **interview scorecard** created (Test design ×2, Defect reporting ×1) |
+| 016 | Recruitment | Interview Schedules | `interview-schedules` | Interview booked **with the scorecard**; the panel (Amit) **evaluates the take-home 85/100**; scorecard feedback (each criterion 4/5, overall 4), Proceed → Completed. Resumable if a run is interrupted |
 | 017 | Recruitment | Offers | `offer-list` | Offer → approved → e-mailed (@example.com) → accepted |
 | 018 | Recruitment | Offer Acceptance | `offer-acceptance` | Pre-boarding invite e-mailed (@example.com) → Invited |
 | 019 | Recruitment | My Approvals | `recruitment/approvals` | — (check only) |
@@ -77,7 +78,7 @@ Useful variants:
 | 049 | Leave | Leave Types | `leave-types` | Leave type (letters-only name, e.g. "Study Leave Mysuru") |
 | 050 | Leave | Leave Patterns | `leave-patterns` | Leave pattern with effective dates |
 | 051 | Leave | Leave Policy | `leave-policy` | — (check only) |
-| 052 | Leave | Leave Assignment | `leave-assignment-list` | Assign Standard Staff to the run employee |
+| 052 | Leave | Leave Assignment | `leave-assignment-list` | Confirm the run employee has a leave pattern (new employees now get one automatically); assign Standard Staff only if missing |
 | 053 | Leave | Holidays | `holiday-list` | Holiday (28 Dec 2026) |
 | 054 | Leave | Holiday Assignment | `holiday-assignment-list` | Assign that holiday to Main Branch |
 | 055 | Leave | Apply Leave for Employee | `leave-request-on-behalf` | Apply + approve 1 day Casual Leave for the run employee (balance −1) |
@@ -156,8 +157,8 @@ Useful variants:
 | 128 | Helpdesk | Helpdesk Dashboard | `ess/helpdesk/admin` | Ticket → In Progress → internal note → Resolved |
 
 ## Data a complete run creates (all disposable, realistic names + "(Auto DD-Mon HH.MM.SS)")
-ONE employee (then profile, leave pattern, 2 approved leaves, a duty handover, a letter) · letter template · requisition (approved) · job opening · 2 candidates (one direct, one referred) with interviews and accepted offers · onboarding template · training course · leave type, leave pattern, holiday + assignment · 1 helpdesk ticket (resolved) · 1 referral (Hired, reward Pending).
-**E-mails sent by the app** (reserved `@example.com` test addresses only, user-approved): 2 offer e-mails, 1 pre-boarding invite.
+ONE employee (then profile, leave pattern, 2 approved leaves, a duty handover, a letter) · letter template · requisition (approved) · job opening · 3 candidates (HR-added, self-applied via the career page, referred) — the HR-added and referred ones interviewed with accepted offers · 1 take-home assignment (evaluated) · 1 interview scorecard · onboarding template · training course · leave type, leave pattern, holiday + assignment · 1 helpdesk ticket (resolved) · 1 referral (Hired, reward Pending).
+**E-mails sent by the app** (reserved `@example.com` test addresses only, user-approved): 2 offer e-mails, 1 pre-boarding invite, 1 take-home assignment brief.
 **Never done:** payroll runs, exit approval/clearance/settlement, reward approval/payment, edits to shared Payroll Policy or Reward Policy.
 
 ## Files to review before pushing

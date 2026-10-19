@@ -25,7 +25,7 @@ const testEmployee = require('../data/testEmployee');
 const { person, tagged, lettersOnlyCandidates, firstUnused } = require('../data/naming');
 const R = require('./recruitmentFlow');
 const L = require('./leaveFlow');
-const { withUser } = require('./userSession');
+const { withUser, withVisitor } = require('./userSession');
 const { saveRunEmployee, updateRunEmployee, requireRunEmployee, credentials } = require('./runEmployee');
 
 const BASE = process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in';
@@ -49,8 +49,42 @@ async function expectListed(page, route, text, what) {
     `${what} should be listed after a fresh load`).toBeVisible({ timeout: 30000 });
 }
 
+/** Assessments → the assignment's "Submissions & evaluation" → the candidate's row. */
+async function openSubmission(page, title, candidateName) {
+  await page.goto(`${BASE}/assessment-list`, { waitUntil: 'domcontentloaded' });
+  const row = page.locator('table tbody tr').filter({ hasText: title }).first();
+  await expect(row, `assignment "${title}" is listed`).toBeVisible({ timeout: 30000 });
+  await row.locator('[title*="Submissions"]').click();
+  const modal = page.locator('.modal.show').last();
+  await expect(modal, 'Submissions & evaluation opens').toBeVisible({ timeout: 15000 });
+  const sub = modal.locator('tbody tr').filter({ hasText: candidateName }).first();
+  await expect(sub, `${candidateName} is listed on the assignment`).toBeVisible({ timeout: 20000 });
+  return sub;
+}
+
+/** As the candidate's interview panel (Amit): score the take-home assignment + feedback → Evaluated. */
+async function evaluateAssessment(page, title, candidateName) {
+  const fk = new FormKit(page);
+  const sub = await openSubmission(page, title, candidateName);
+  await fk.setInput(sub.locator('input[type="number"]').first(), '85', 'Assessment score');
+  await fk.setInput(sub.getByPlaceholder('Your feedback').first(), 'Clear, well-structured test cases with good negative coverage.', 'Assessment feedback');
+  await sub.locator('button').filter({ hasText: /^\s*Evaluate\s*$/ }).first().click();
+  const ok = page.locator('.swal2-popup button').filter({ hasText: /^\s*(Yes.*|Evaluate|Confirm|OK)\s*$/i }).first();
+  if (await waitVisible(ok, 4000)) await ok.click();
+  await expect(sub, 'the candidate shows Evaluated').toContainText(/Evaluated/, { timeout: 30000 });
+  await expect(sub, 'the score 85 is recorded').toContainText(/85/);
+  await page.keyboard.press('Escape').catch(() => {});
+}
+
 async function pickUnusedName(page, base) {
   await page.locator('table tbody tr, .card').first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => {});
+  // Lists are paginated — show the largest page size first, so names on later pages count as taken.
+  const size = page.locator('select').filter({ has: page.locator('option', { hasText: /^\s*10\s*$/ }) }).last();
+  if (await size.count()) {
+    const sizes = (await size.locator('option').allTextContents()).map(t => t.trim()).filter(t => /^\d+$/.test(t));
+    const biggest = sizes.sort((a, b) => Number(b) - Number(a))[0];
+    if (biggest) { await size.selectOption({ label: biggest }).catch(() => {}); await page.waitForTimeout(2000); }
+  }
   return firstUnused(lettersOnlyCandidates(base), await page.locator('body').innerText());
 }
 
@@ -201,6 +235,25 @@ module.exports = {
     await fk.saveAndConfirm(fk.saveButton(form), { name: 'Save job opening', successRe: /success|saved|created|published|added/i });
     log('job opening created');
 
+    // Publish it, so candidates can apply themselves on the public career page (Job Applications page).
+    await page.goto(`${BASE}/vacancy-list`, { waitUntil: 'domcontentloaded' });
+    const rows = await R.readRows(page);
+    const newestCode = rows.map(t => (t.match(/JOB\d+/) || [])[0]).filter(Boolean)
+      .sort((a, b) => Number(b.slice(3)) - Number(a.slice(3)))[0];
+    expect(newestCode, 'the new job opening should be listed on the Job Board').toBeTruthy();
+    const openingRow = () => page.locator('table tbody tr').filter({ hasText: newestCode }).first();
+    await openingRow().locator('button').filter({ has: page.locator('i.ri-more-2-fill') }).first().click();
+    const publish = page.locator('.dropdown-menu.show a, .dropdown-menu.show button').filter({ hasText: /^\s*Publish\s*$/ }).first();
+    await expect(publish, `${newestCode} should offer "Publish"`).toBeVisible({ timeout: 10000 });
+    await publish.click();
+    const confirm = page.locator('.swal2-popup button, .modal.show button').filter({ hasText: /^\s*(Yes.*|Publish|Confirm|OK)\s*$/i }).first();
+    if (await waitVisible(confirm, 5000)) await confirm.click();
+    await page.goto(`${BASE}/vacancy-list`, { waitUntil: 'domcontentloaded' });
+    await R.readRows(page);
+    await expect(openingRow(), `${newestCode} should now be Published`).toContainText(/\bPublished\b/, { timeout: 30000 });
+    remember({ publishedOpening: newestCode });
+    log(`job opening ${newestCode} published on the public career page`);
+
     // Candidate (Job Board → Candidates register → Add New) applying to the newest opening.
     let cand = person();
     await R.gotoCandidatesRegister(page);
@@ -230,15 +283,183 @@ module.exports = {
     log(`candidate ${cand.full} applied to ${newest} — listed in the Candidates register`);
   },
 
+  /**
+   * A candidate applies THEMSELVES: logged-out window → public career page → this run's published
+   * opening → Apply Now → application form → Submit Application. Then, as Amit, the application is
+   * found in the Candidates register (by its unique e-mail).
+   */
+  async candidateSelfApplies({ page, browser, testInfo }) {
+    const code = need('publishedOpening', 'Job Board');
+    // The career page address comes from the Job Board's "Open public career page" button.
+    await page.goto(`${BASE}/vacancy-list`, { waitUntil: 'domcontentloaded' });
+    await R.readRows(page);
+    const [career] = await Promise.all([
+      page.context().waitForEvent('page', { timeout: 30000 }),
+      page.locator('[title="Open public career page"]').first().click(),
+    ]);
+    await career.waitForLoadState('domcontentloaded').catch(() => {});
+    const careerUrl = career.url();
+    await career.close();
+    expect(careerUrl, 'the public career page address').toMatch(/\/careers\//);
+
+    let who = person();
+    await R.gotoCandidatesRegister(page);
+    for (let i = 0; i < 6 && await R.candidateNameTaken(page, who.full); i++) who = person();
+
+    await withVisitor(browser, testInfo, 'candidate', async cp => {
+      await cp.goto(careerUrl, { waitUntil: 'domcontentloaded' });
+      await expect(cp.getByText(/Join Our Team/i).first(), 'the public career page opens for a logged-out visitor').toBeVisible({ timeout: 60000 });
+      const size = cp.locator('#page_size');
+      if (await waitVisible(size, 5000)) await size.selectOption('100');   // all openings on one page
+      const card = cp.locator('div, li, article').filter({ hasText: `Job Code: ${code}` }).filter({ has: cp.getByText(/Apply Now/) }).last();
+      await expect(card, `the career page should list this run's opening ${code}`).toBeVisible({ timeout: 30000 });
+      await card.getByText(/Apply Now/).first().click();
+      await expect(cp, 'Apply Now opens the application form').toHaveURL(/\/apply\//, { timeout: 30000 });
+      await expect(cp.getByText(`Job Code: ${code}`).first(), 'the form is for this run\'s opening').toBeVisible({ timeout: 30000 });
+
+      const fk = new FormKit(cp);
+      await fk.setInput(cp.locator('#applicant-firstname'), who.first, 'First Name');
+      await fk.setInput(cp.locator('#applicant-lastname'), who.last, 'Last Name');
+      await fk.setInput(cp.locator('#applicant-emailaddress'), who.email, 'Email Address');
+      await fk.setSelect(cp.locator('#applicant-gender'), who.gender, 'Gender');
+      await fk.setSelect(cp.locator('#applicant-mobile').locator('xpath=preceding::select[1]'), 'IND', 'Mobile code', { loose: true });
+      await fk.setInput(cp.locator('#applicant-mobile'), '9' + String(Date.now()).slice(-9), 'Mobile Number');
+      // City* is a type-ahead: type, then pick the suggestion (free text alone is rejected).
+      const city = cp.locator('#applicant-city');
+      await city.click();
+      await city.pressSequentially('Kochi', { delay: 60 });
+      const suggestion = cp.locator('li, [role="option"], .dropdown-item, .list-group-item, .autocomplete-item, button')
+        .filter({ hasText: /Kochi/i }).filter({ visible: true }).first();
+      await expect(suggestion, 'City search should suggest Kochi').toBeVisible({ timeout: 20000 });
+      await suggestion.click();
+      await expect(cp.getByText(/Please select your city/i), 'the city should be accepted').toHaveCount(0, { timeout: 10000 });
+      await fk.upload(cp.locator('input[type="file"]').first(), CV, 'Resume');
+      await cp.locator('#experienceNo').check().catch(() => {});
+      await cp.locator('button').filter({ hasText: /Submit Application/i }).first().click();
+      // The app answers with a confirmation; a validation message here is a refusal.
+      await expect.poll(async () => (await cp.locator('body').innerText()).replace(/\s+/g, ' '),
+        { timeout: 45000, intervals: [2000, 5000], message: 'the application should be accepted' })
+        .toMatch(/thank|success|submitted|received|applied/i);
+      log(`${who.full} applied for ${code} on the public career page (logged out)`);
+    });
+
+    // As Amit: the self-submitted application is in the Candidates register.
+    const row = await R.candidateRow(page, who.email);
+    expect(row, `the Candidates register should list ${who.email} (self-applied)`).toContain(who.email);
+    expect(row, 'a career-page application shows Stage APPLIED and Source Portal').toMatch(/APPLIED\s+Portal/);
+    remember({ selfApplicant: { name: who.full, email: who.email, code } });
+    log(`application from ${who.full} is in the Candidates register — ${row.replace(/\s+/g, ' ').slice(0, 120)}`);
+  },
+
+  /**
+   * Take-home assessment for this run's candidate: create the assignment → send it to the candidate
+   * on this run's opening (the app e-mails the brief to their @example.com address) → evaluate it
+   * (score + feedback) → the candidate's row shows Evaluated with the score.
+   */
+  async takeHomeAssessment({ page }) {
+    const fk = new FormKit(page);
+    const rec = need('rec', 'Job Board');
+    const title = tagged('Manual Testing Exercise');
+    const modal = () => page.locator('.modal.show').last();
+
+    // 1. Create the assignment.
+    await page.locator('a, button').filter({ hasText: /^\s*New Assignment\s*$/ }).first().click();
+    await expect(modal(), 'the New Assignment form opens').toBeVisible({ timeout: 15000 });
+    await modal().getByText(/^\s*Take-home Assignment\s*$/).first().click().catch(() => {});
+    await fk.setInput(modal().getByPlaceholder('e.g. React Component Build'), title, 'Title');
+    await fk.setInput(modal().locator('textarea').first(), 'Write 10 test cases for the login page (positive and negative) and log any defects you find.', 'Instructions');
+    await fk.setInput(modal().getByText(/^\s*Max Score/).first().locator('xpath=following::input[1]'), '100', 'Max Score');
+    await fk.setInput(modal().getByPlaceholder('e.g. 5'), '3', 'Due In (days)');
+    await modal().locator('button').filter({ hasText: /^\s*Save\s*$/ }).first().click();
+    await expect(modal(), 'the form closes on save').toBeHidden({ timeout: 20000 });
+    await page.goto(`${BASE}/assessment-list`, { waitUntil: 'domcontentloaded' });
+    const row = () => page.locator('table tbody tr').filter({ hasText: title }).first();
+    await expect(row(), `assignment "${title}" is listed`).toBeVisible({ timeout: 30000 });
+    log(`take-home assignment "${title}" created (max 100, due in 3 days)`);
+
+    // 2. Send it to this run's candidate on this run's opening.
+    await row().locator('[title="Send to candidates"]').click();
+    await expect(modal(), 'the Send dialog opens').toBeVisible({ timeout: 15000 });
+    const vacancy = modal().locator('select').first();
+    const vOpt = (await vacancy.locator('option').allTextContents()).map(t => t.trim()).find(t => t.includes(`(${rec.openingCode})`));
+    expect(vOpt, `the Send dialog should offer ${rec.openingCode}`).toBeTruthy();
+    await fk.setSelect(vacancy, vOpt, 'Vacancy');
+    const candRow = modal().locator('tbody tr').filter({ hasText: rec.candidateEmail }).first();
+    await expect(candRow, `${rec.candidateName} should be listed for ${rec.openingCode}`).toBeVisible({ timeout: 20000 });
+    await candRow.locator('input[type="checkbox"]').check();
+    await expect(modal(), 'one candidate selected').toContainText(/1 selected/);
+    await modal().locator('button').filter({ hasText: /^\s*Send\s*$/ }).first().click();
+    const ok = page.locator('.swal2-popup button').filter({ hasText: /^\s*(Yes.*|Send|Confirm|OK)\s*$/i }).first();
+    if (await waitVisible(ok, 4000)) await ok.click();
+    await expect(page.locator('.modal.show').filter({ hasText: 'selected' }), 'the Send dialog closes').toHaveCount(0, { timeout: 20000 });
+    await page.goto(`${BASE}/assessment-list`, { waitUntil: 'domcontentloaded' });
+    await expect(row(), 'the assignment shows 1 assigned').toContainText(/1 assigned/, { timeout: 30000 });
+    log(`assignment sent to ${rec.candidateName} (${rec.candidateEmail}) on ${rec.openingCode}`);
+
+    // Before an interview the sender only sees it read-only ("View only"): the app lets only the
+    // candidate's INTERVIEW PANEL evaluate. So it is evaluated on Interview Schedules, once Amit is
+    // on the panel (see evaluateAssessment).
+    const sub = await openSubmission(page, title, rec.candidateName);
+    await expect(sub, `${rec.candidateName} is Assigned (awaiting the interview panel)`).toContainText(/Assigned/, { timeout: 20000 });
+    await page.keyboard.press('Escape').catch(() => {});
+    remember({ assessment: title });
+
+    // Interview scorecard — a weighted competency sheet the panel rates (1–5) during the interview;
+    // it is attached to the interview on Interview Schedules.
+    const card = tagged('Software Tester — Technical Round');
+    await page.goto(`${BASE}/assessment-list`, { waitUntil: 'domcontentloaded' });
+    await page.locator('a, button, [role="tab"]').filter({ hasText: /Interview Scorecards/ }).first().click();
+    await page.locator('a, button').filter({ hasText: /^\s*New Scorecard\s*$/ }).first().click();
+    await expect(modal(), 'the New Scorecard form opens').toBeVisible({ timeout: 15000 });
+    await fk.setInput(modal().getByPlaceholder('e.g. Backend Engineer — Technical Round'), card, 'Scorecard title');
+    await fk.setInput(modal().locator('textarea').first(), 'Rate each competency 1–5 from the technical discussion.', 'Notes for the panel');
+    const criteria = [['Test design', 'Covers positive, negative and boundary cases', '2'], ['Defect reporting', 'Clear steps, expected vs actual, severity', '1']];
+    for (const [i, [name, prompt, weight]] of criteria.entries()) {
+      await modal().locator('button').filter({ hasText: /Add Criterion/ }).first().click();
+      const cr = modal().locator('tbody tr').nth(i);
+      await fk.setInput(cr.getByPlaceholder('e.g. Problem solving'), name, `Criterion ${i + 1}`);
+      await fk.setInput(cr.getByPlaceholder('Prompt for the interviewer'), prompt, `What to look for ${i + 1}`);
+      await fk.setInput(cr.locator('input[type="number"]'), weight, `Weight ${i + 1}`);
+    }
+    await modal().locator('button').filter({ hasText: /^\s*Save\s*$/ }).first().click();
+    await expect(modal(), 'the scorecard form closes on save').toBeHidden({ timeout: 20000 });
+    await page.goto(`${BASE}/assessment-list`, { waitUntil: 'domcontentloaded' });
+    await page.locator('a, button, [role="tab"]').filter({ hasText: /Interview Scorecards/ }).first().click();
+    await expect(page.locator('table tbody tr').filter({ hasText: card }).first(), `scorecard "${card}" is listed with 2 criteria`)
+      .toContainText(/2 criteria/, { timeout: 30000 });
+    remember({ scorecard: card });
+    log(`interview scorecard "${card}" created — Test design (×2), Defect reporting (×1)`);
+  },
+
   async interviewAndFeedback({ page }) {
     const rec = need('rec', 'Job Board');
-    log(`interview round "${rec.roundName}" (${await R.addInterviewRound(page, rec)})`);
-    await R.scheduleInterview(page, rec);
-    remember({ rec });   // keeps interviewAt
-    log(`interview booked for ${R.dtLocal(new Date(rec.interviewAt))} — Scheduled`);
+    // Resumable: if this candidate's interview is already booked (e.g. the run was interrupted), go
+    // straight on — the app (correctly) won't book a second open interview for the same candidate.
+    if (!rec.interviewBooked) {
+      rec.scorecard = state().scorecard;   // attach this run's interview scorecard, if one was created
+      rec.roundName = tagged('Technical Round 1');   // named per run (the app rejects a duplicate round name)
+      log(`interview round "${rec.roundName}" (${await R.addInterviewRound(page, rec)})`);
+      await R.scheduleInterview(page, rec);
+      if (rec.scorecard) log(`scorecard "${rec.scorecard}" attached to the interview`);
+      rec.interviewBooked = true;
+      remember({ rec });   // keeps interviewAt
+      log(`interview booked for ${R.dtLocal(new Date(rec.interviewAt))} — Scheduled`);
+    } else {
+      log(`resuming: interview "${rec.roundName}" for ${rec.candidateName} is already booked`);
+    }
+    // Amit is now on the candidate's interview panel, so he can evaluate the take-home assessment.
+    const assessment = state().assessment;
+    if (assessment && !rec.assessmentEvaluated) {
+      await evaluateAssessment(page, assessment, rec.candidateName);
+      rec.assessmentEvaluated = true;
+      remember({ rec });
+      log(`take-home assessment "${assessment}" evaluated by the interview panel — 85 / 100`);
+    }
     rec.interviewAt = new Date(rec.interviewAt);
     await R.recordEvaluation(page, rec);
-    log('feedback 4/5 Proceed saved — interview Completed');
+    log(rec.scorecard
+      ? `scorecard feedback saved — every criterion rated 4/5 (overall 4), Proceed — interview Completed`
+      : 'feedback 4/5 Proceed saved — interview Completed');
   },
 
   async offerApprovedSentAccepted({ page }) {
@@ -301,7 +522,10 @@ module.exports = {
     await fk.saveAndConfirm(fk.saveButton(page.locator('body')), { name: 'Save leave type', successRe: /success|saved|created|added/i });
     await page.goto(`${BASE}/leave-types`, { waitUntil: 'domcontentloaded' });
     const search = page.locator('input[placeholder*="Search leave type" i]').first();
-    if (await waitVisible(search, 10000)) await search.fill(name);
+    if (await waitVisible(search, 10000)) {
+      await search.fill(name);
+      await search.press('Enter');   // the search only applies on Enter / the search button
+    }
     await expect(page.getByText(name, { exact: false }).filter({ visible: true }).first(), `leave type "${name}" is listed`).toBeVisible({ timeout: 30000 });
     log(`leave type "${name}" saved`);
   },
@@ -322,6 +546,16 @@ module.exports = {
 
   async assignLeavePatternToRunEmployee({ page }) {
     const emp = requireRunEmployee();
+    // New employees may already get a leave pattern automatically (seen 2026-10-19: "Standard Leave"
+    // for the year) — the app then rightly refuses a second overlapping pattern. Check first.
+    await page.goto(`${BASE}/leave-request-on-behalf`, { waitUntil: 'domcontentloaded' });
+    await L.selectOnBehalfEmployee(page, new RegExp(`\\[${emp.code}\\]`));
+    const existing = (await L.leaveTypeSelect(page).locator('option').allTextContents().catch(() => []))
+      .map(t => t.trim()).filter(t => /available/i.test(t));
+    if (existing.length) {
+      log(`${emp.display} already has a leave pattern in force (assigned automatically) — leave types: ${existing.join(', ')}`);
+      return;
+    }
     const { types } = await L.assignLeavePattern(page, emp.code);
     log(`Standard Staff assigned to ${emp.display} — leave types: ${types.join(', ')}`);
   },

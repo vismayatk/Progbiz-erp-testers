@@ -31,6 +31,8 @@ Useful variants:
 - **010 Approval Config** now automated (`setupApprovalWorkflow`): creates a tagged approval workflow (Leave Request · Report Person), not default and not assigned — purely additive.
 - **056 Leave Approval** extended: the run employee now applies for two leaves and Amit **approves one and rejects the other** (`managerRejects` added to `leaveFlow.js`) — exercises both decisions on our own data.
 - **008 Letterheads** (`createLetterhead`), **023 Interview Rounds** (`createInterviewRound`), **033 Probation Templates** (`createProbationTemplate`) now automated — the remaining "main job = create" pages.
+- **009 Merge Fields** (`createMergeField`) — completes Core HR at 11/11.
+- **021 Pipeline Board** (`pipelineBoardReflectsCandidate`): the Kanban reflects the ATS (standard stages auto-move as our recruitment flow progresses the candidate; manual drag is only for custom stages), so we verify our self-applicant shows under our opening in the correct stage.
 - **App bug found while building it:** the page's own **"Download Sample Excel"** link serves a STALE template — 11 columns incl. a Branch column — which the importer itself rejects with HTTP 400 *"The uploaded file does not match the required format"*. The importer actually requires **20 columns and no Branch column** (Branch is chosen on the page): First Name*, Last Name, Country Code*, Mobile Number*, Personal Email*, Username, Designation*, Department*, Joining Date*, Work Type, Role Group*, User Level*, Employee Code, Date of Birth*, Employee Status*, Reports To, Employee Type*, Contract End Date, Gender*, Official Email. The automation builds the correct 20-column file (see `flows/employeeImport.js`).
 
 ## Every page, in order
@@ -56,7 +58,7 @@ Useful variants:
 | 018 | Recruitment | Offer Acceptance | `offer-acceptance` | Pre-boarding invite e-mailed (@example.com) → Invited |
 | 019 | Recruitment | My Approvals | `recruitment/approvals` | — (check only) |
 | 020 | Recruitment | Recruitment Dashboard | `recruitment-dashboard` | — (check only) |
-| 021 | Recruitment | Pipeline Board | `recruitment-pipeline` | — (check only) |
+| 021 | Recruitment | Pipeline Board | `recruitment-pipeline` | Filter the Kanban to our opening and confirm our self-applicant shows in the right stage (board reflects the ATS; standard stages auto-move, drag is only for custom stages) — `pipelineBoardReflectsCandidate` |
 | 022 | Recruitment | Talent Pool | `talent-pool` | — (check only) |
 | 023 | Recruitment | Interview Rounds | `interview-rounds` | Define an interview round for Software Engineer (unique round name, auto order); verify via designation filter — `createInterviewRound` |
 | 024 | Recruitment | Referral Dashboard | `ess/referral/admin` | — (check only) |

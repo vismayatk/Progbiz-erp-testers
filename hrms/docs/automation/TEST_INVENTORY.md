@@ -24,19 +24,28 @@ Useful variants:
 - Run employee **Lakshmi Joshi (pbhrms0353)** · opening **JOB0093** · candidate **Aditya Nair** (offer accepted, pre-boarding invited) · self-applicant **Nandana Iyer** · referral **Nikhil Kamath → Hired, reward Pending** · ticket **TKT-261019-002 → Resolved**.
 - Note: the hrms-test server was intermittently slow and was down once (HTTP 503) on 2026-10-19 — not a test issue.
 
+## Added 2026-10-22
+- **003 Document Compliance** now automated (`documentComplianceReport`): runs the Missing Mandatory + Expiring report views and verifies each returns its own columns/rows.
+- **004 HR Reminders** now automated (`configureReminderRule`): toggles a rule's active flag, saves, confirms persistence, restores the original (In-app channel only — no e-mails).
+- **005 Employee Excel Import** now automated (`importEmployeeExcel`): builds a valid sheet, uploads it, and verifies the imported employee reaches the register (e.g. Rohan Rao → pbhrms0357).
+- **010 Approval Config** now automated (`setupApprovalWorkflow`): creates a tagged approval workflow (Leave Request · Report Person), not default and not assigned — purely additive.
+- **056 Leave Approval** extended: the run employee now applies for two leaves and Amit **approves one and rejects the other** (`managerRejects` added to `leaveFlow.js`) — exercises both decisions on our own data.
+- **008 Letterheads** (`createLetterhead`), **023 Interview Rounds** (`createInterviewRound`), **033 Probation Templates** (`createProbationTemplate`) now automated — the remaining "main job = create" pages.
+- **App bug found while building it:** the page's own **"Download Sample Excel"** link serves a STALE template — 11 columns incl. a Branch column — which the importer itself rejects with HTTP 400 *"The uploaded file does not match the required format"*. The importer actually requires **20 columns and no Branch column** (Branch is chosen on the page): First Name*, Last Name, Country Code*, Mobile Number*, Personal Email*, Username, Designation*, Department*, Joining Date*, Work Type, Role Group*, User Level*, Employee Code, Date of Birth*, Employee Status*, Reports To, Employee Type*, Contract End Date, Gender*, Official Email. The automation builds the correct 20-column file (see `flows/employeeImport.js`).
+
 ## Every page, in order
 | # | Section | Page | Route | Add data once |
 |---|---|---|---|---|
 | 001 | Core HR | Employee | `employees` | Create the run's ONE employee (login, Reports To Amit) — used by every later page |
 | 002 | Core HR | Worker Directory | `worker-directory` | Find the run employee in the directory; complete their profile (department, blood group, nationality, address) |
-| 003 | Core HR | Document Compliance | `document-compliance` | — (check only) |
-| 004 | Core HR | HR Reminders | `hrms/reminder-rules` | — (check only) |
-| 005 | Core HR | Employee Excel Import | `upload-employee` | — (check only) |
+| 003 | Core HR | Document Compliance | `document-compliance` | Run the compliance report: verify "Missing Mandatory" lists employees + Document Type/State, and "Expiring" switches to expiry columns — `documentComplianceReport` |
+| 004 | Core HR | HR Reminders | `hrms/reminder-rules` | Toggle a reminder rule's active flag, Save (asserts the save response), confirm it persists, then restore the original (In-app only, no e-mails) — `configureReminderRule` |
+| 005 | Core HR | Employee Excel Import | `upload-employee` | Build a valid 20-column sheet, upload it (Branch = Main Branch), confirm the imported employee appears in the register — `importEmployeeExcel` |
 | 006 | Core HR | Letter Templates | `letters/templates` | Letter template "Experience Letter (Auto …)" |
 | 007 | Core HR | Generate Letter | `letters/generate` | Generate an appointment letter for the run employee (e-mail off) |
-| 008 | Core HR | Letterheads | `letters/letterheads` | — (check only) |
-| 009 | Core HR | Merge Fields | `letters/fields` | — (check only) |
-| 010 | Core HR | Approval Config | `approval/config` | — (check only) |
+| 008 | Core HR | Letterheads | `letters/letterheads` | Create a letterhead (tagged name, default A4 layout, not default) — `createLetterhead` |
+| 009 | Core HR | Merge Fields | `letters/fields` | Create a custom letter merge field (Token, Label, Employee · Text, cascading value source) — `createMergeField` |
+| 010 | Core HR | Approval Config | `approval/config` | Build a new approval workflow (Leave Request type, one "Report Person" level) and Save — tagged, NOT default, NOT assigned (additive only) — `setupApprovalWorkflow` |
 | 011 | Core HR | Duty Handover | `employee-handover` | Duty handover: run employee → Amit, unique future window |
 | 012 | Recruitment | Job Requisitions | `requisition-list` | Raise a requisition, then approve it in Recruitment Approvals |
 | 013 | Recruitment | Job Board | `vacancy-list` | Job opening → **published** to the public career page; HR adds a candidate to it (with résumé) — register shows Source **Manual** |
@@ -49,7 +58,7 @@ Useful variants:
 | 020 | Recruitment | Recruitment Dashboard | `recruitment-dashboard` | — (check only) |
 | 021 | Recruitment | Pipeline Board | `recruitment-pipeline` | — (check only) |
 | 022 | Recruitment | Talent Pool | `talent-pool` | — (check only) |
-| 023 | Recruitment | Interview Rounds | `interview-rounds` | — (check only) |
+| 023 | Recruitment | Interview Rounds | `interview-rounds` | Define an interview round for Software Engineer (unique round name, auto order); verify via designation filter — `createInterviewRound` |
 | 024 | Recruitment | Referral Dashboard | `ess/referral/admin` | — (check only) |
 | 025 | Recruitment | Reward Policy | `ess/referral/admin/policy` | — (check only) |
 | 026 | Onboarding | Onboarding Templates | `onboarding-templates` | Onboarding template with 1 stage + 1 required task |
@@ -59,7 +68,7 @@ Useful variants:
 | 030 | Onboarding | Onboarding Employees | `onboarding-employees` | — (check only) |
 | 031 | Onboarding | Blacklisted Employees | `blacklisted-employees` | — (check only) |
 | 032 | Onboarding | Training Courses | `training-courses` | Training course "Workplace Safety Induction (Auto …)" |
-| 033 | Onboarding | Probation Templates | `hrms/probation-templates` | — (check only) |
+| 033 | Onboarding | Probation Templates | `hrms/probation-templates` | Create a probation template (90 days, checkpoints 30/60/90) — `createProbationTemplate` |
 | 034 | Onboarding | Probation Dashboard | `hrms/probation` | — (check only) |
 | 035 | Onboarding | Appointment Letters | `hrms/appointment-letters` | — (check only) |
 | 036 | Onboarding | Confirmation Letters | `hrms/confirmation-letters` | — (check only) |
@@ -82,7 +91,7 @@ Useful variants:
 | 053 | Leave | Holidays | `holiday-list` | Holiday (28 Dec 2026) |
 | 054 | Leave | Holiday Assignment | `holiday-assignment-list` | Assign that holiday to Main Branch |
 | 055 | Leave | Apply Leave for Employee | `leave-request-on-behalf` | Apply + approve 1 day Casual Leave for the run employee (balance −1) |
-| 056 | Leave | Leave Approval | `leave-approval` | Run employee signs in and applies → Amit approves → employee sees Approved (balance −1) |
+| 056 | Leave | Leave Approval | `leave-approval` | Run employee applies for TWO leaves → Amit approves one and REJECTS the other → employee sees one Approved + one Rejected (balance −1, only the approved day counts) |
 | 057 | Leave | Comp-Off Approval | `comp-off-approval` | — (check only) |
 | 058 | Leave | Leave Ledger | `leave-ledger` | — (check only) |
 | 059 | Leave | Attendance Sync | `leave-attendance-sync` | — (check only) |

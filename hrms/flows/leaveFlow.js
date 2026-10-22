@@ -186,7 +186,7 @@ async function employeeApplies(page, { type, reason, day }) {
  * FIRST name, so each candidate row's View details is opened until one carries `reason` — then
  * "Approve" → "Yes, Approve". One page load, waiting for the row; reload only if it isn't there.
  */
-async function managerApproves(page, firstName, reason) {
+async function findPendingRequest(page, firstName, reason) {
   const firstCell = new RegExp(`^\\s*\\d+\\s+${firstName}\\b`);
   let target = -1;
   await expect.poll(async () => {
@@ -206,6 +206,16 @@ async function managerApproves(page, firstName, reason) {
     }
     return false;
   }, { timeout: 90000, intervals: [10000], message: `Leave Approval should list ${firstName}'s request "${reason}"` }).toBe(true);
+  return target;
+}
+
+/**
+ * Manager (admin page): find the employee's Pending request on Leave Approval — rows show only the
+ * FIRST name, so each candidate row's View details is opened until one carries `reason` — then
+ * "Approve" → "Yes, Approve".
+ */
+async function managerApproves(page, firstName, reason) {
+  const target = await findPendingRequest(page, firstName, reason);
   await page.locator('table tbody tr').nth(target).locator('button, a').filter({ hasText: /^\s*Approve\s*$/ }).first().click();
   const dlg = page.locator('.swal2-popup').filter({ hasText: /Approve Leave Request\?/i }).first();
   await expect(dlg, '"Approve Leave Request?" confirmation').toBeVisible({ timeout: 10000 });
@@ -213,7 +223,22 @@ async function managerApproves(page, firstName, reason) {
   await expect(dlg, 'the approval confirmation closes').toBeHidden({ timeout: 20000 });
 }
 
+/**
+ * Manager rejects the employee's Pending request (matched by `reason`): "Reject" → fill any required
+ * reason → confirm. Same row-finding as the approve path.
+ */
+async function managerRejects(page, firstName, reason) {
+  const target = await findPendingRequest(page, firstName, reason);
+  await page.locator('table tbody tr').nth(target).locator('button, a').filter({ hasText: /^\s*Reject\s*$/ }).first().click();
+  // Reject opens an "Add Reason for Rejection" modal with a required Reason textarea → Save.
+  const dlg = page.locator('.modal.show, [role="dialog"]').filter({ hasText: /Reason for Rejection|Add Reason/i }).first();
+  await expect(dlg, 'the "Add Reason for Rejection" dialog opens').toBeVisible({ timeout: 10000 });
+  await dlg.locator('textarea, input[type="text"]').first().fill('Rejected in testing — alternative cover arranged (automation).');
+  await dlg.locator('button').filter({ hasText: /^\s*Save\s*$/i }).first().click();
+  await expect(dlg, 'the rejection dialog closes').toBeHidden({ timeout: 20000 });
+}
+
 module.exports = {
   BASE, futureWeekdayISO, selectOnBehalfEmployee, leaveTypeSelect, assignLeavePattern, availableDays,
-  applyOnBehalf, waitMyLeaveLoaded, myBalance, myRequestRow, employeeApplies, managerApproves,
+  applyOnBehalf, waitMyLeaveLoaded, myBalance, myRequestRow, employeeApplies, managerApproves, managerRejects,
 };

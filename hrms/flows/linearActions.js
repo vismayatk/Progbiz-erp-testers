@@ -22,11 +22,12 @@ const { FormKit, waitVisible } = require('../pages/FormKit');
 const { EmployeesPage } = require('../pages/core-hr/EmployeesPage');
 const { WorkerDirectoryPage } = require('../pages/core-hr/WorkerDirectoryPage');
 const testEmployee = require('../data/testEmployee');
-const { person, tagged, lettersOnlyCandidates, firstUnused } = require('../data/naming');
+const { person, tagged, lettersOnlyCandidates, firstUnused, RUN_ID } = require('../data/naming');
 const R = require('./recruitmentFlow');
 const L = require('./leaveFlow');
 const { withUser, withVisitor } = require('./userSession');
 const { saveRunEmployee, updateRunEmployee, requireRunEmployee, credentials } = require('./runEmployee');
+const { buildEmployeeImportXlsx } = require('./employeeImport');
 
 const BASE = process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in';
 const CV = path.join(__dirname, '..', 'fixtures', 'files', 'sample-cv.pdf');
@@ -76,15 +77,20 @@ async function evaluateAssessment(page, title, candidateName) {
   await page.keyboard.press('Escape').catch(() => {});
 }
 
-async function pickUnusedName(page, base) {
-  await page.locator('table tbody tr, .card').first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => {});
-  // Lists are paginated — show the largest page size first, so names on later pages count as taken.
+/** Show the largest available page size on a paginated list, so later-page rows become visible. */
+async function maximizePageSize(page) {
   const size = page.locator('select').filter({ has: page.locator('option', { hasText: /^\s*10\s*$/ }) }).last();
   if (await size.count()) {
     const sizes = (await size.locator('option').allTextContents()).map(t => t.trim()).filter(t => /^\d+$/.test(t));
     const biggest = sizes.sort((a, b) => Number(b) - Number(a))[0];
     if (biggest) { await size.selectOption({ label: biggest }).catch(() => {}); await page.waitForTimeout(2000); }
   }
+}
+
+async function pickUnusedName(page, base) {
+  await page.locator('table tbody tr, .card').first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => {});
+  // Lists are paginated — show the largest page size first, so names on later pages count as taken.
+  await maximizePageSize(page);
   return firstUnused(lettersOnlyCandidates(base), await page.locator('body').innerText());
 }
 
@@ -121,6 +127,243 @@ module.exports = {
     await expect(basic, 'profile shows the Blood Group just saved').toContainText(emp.bloodGroup, { timeout: 30000 });
     await expect(basic, 'profile shows the Nationality just saved').toContainText(new RegExp(emp.nationality, 'i'));
     log(`profile completed: ${emp.department}, ${emp.bloodGroup}, ${emp.nationality}`);
+  },
+
+  // Employee Excel Import (/upload-employee): build a valid 20-column sheet, upload it, and confirm
+  // the imported person lands in the employee register. One extra employee per run, disposable.
+  async importEmployeeExcel({ page, testInfo }) {
+    const { xlsxPath, employee } = await buildEmployeeImportXlsx(testInfo.outputPath('employee-import'));
+    log(`importing ${employee.display} <${employee.email}> via Excel (${employee.designation}, ${employee.department}, branch ${employee.branch})`);
+
+    await page.goto(`${BASE}/upload-employee`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+
+    // Page-level Branch (native <select id=emp-branch>): there is no Branch column — every row is
+    // created in the branch chosen here, so set it to the employee's branch.
+    const branchSel = page.locator('#emp-branch');
+    if (await waitVisible(branchSel, 5000)) {
+      await branchSel.selectOption({ label: employee.branch }).catch(() => {});
+    }
+
+    // Attach the workbook to the (possibly hidden) file input, then Upload.
+    const fileInput = page.locator('#emp-upload-excel, input[type="file"]').first();
+    await fileInput.waitFor({ state: 'attached', timeout: 15000 });
+    await fileInput.setInputFiles(xlsxPath);
+    log(`attached ${path.basename(xlsxPath)}`);
+
+    const uploadBtn = page.locator('button, a, [role="button"]').filter({ hasText: /^\s*Upload\s*$/i }).first();
+    await expect(uploadBtn, 'the Upload button is present').toBeVisible({ timeout: 10000 });
+    await uploadBtn.click();
+
+    // The result is a SweetAlert: success "You've done it!", or the format-mismatch error. Read it,
+    // fail loudly on a rejection, then dismiss.
+    const popup = page.locator('.swal2-popup').first();
+    if (await waitVisible(popup, 20000)) {
+      const msg = (await popup.innerText().catch(() => '')).replace(/\s+/g, ' ').trim();
+      log(`upload reported: "${msg.slice(0, 90)}"`);
+      expect(msg, 'the import must not be rejected for a format mismatch').not.toMatch(/does not match the required format|invalid|failed/i);
+      await popup.locator('button').filter({ hasText: /^\s*(OK|Close|Done)\s*$/i }).first().click().catch(() => {});
+    }
+
+    // Persistence proof: the import runs "in the background", so poll the register for the new row
+    // (by the employee's unique e-mail). Re-submit once in case the row is added after the first
+    // search settles.
+    const po = new EmployeesPage(page);
+    let row = await po.findEmployeeRow(employee.email, employee.first, 45000);
+    if (!row) row = await po.findEmployeeRow(employee.email, employee.first, 30000);
+    expect(row, `the register should list the imported employee ${employee.display} <${employee.email}>`).toBeTruthy();
+    log(`imported employee ${employee.display} appears in the register${row[1] ? ` (${row[1]})` : ''}`);
+  },
+
+  // Document Compliance (/document-compliance): a read-only report. Run the "Missing Mandatory"
+  // and "Expiring" views and verify each returns its own result set / columns.
+  async documentComplianceReport({ page }) {
+    await page.goto(`${BASE}/document-compliance`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+    const headers = async () => (await page.locator('table th').allInnerTexts().catch(() => [])).join(' | ');
+
+    // Default / Missing Mandatory: the compliance grid lists employees with a Document Type + State.
+    const mm = page.locator('button, a, [role="button"]').filter({ hasText: /^\s*Missing Mandatory\s*$/i }).first();
+    if (await waitVisible(mm, 8000)) { await mm.click().catch(() => {}); await page.waitForTimeout(1500); }
+    await expect(page.locator('table tbody tr').first(), 'the compliance report lists rows').toBeVisible({ timeout: 30000 });
+    const mmHeads = await headers();
+    expect(mmHeads, 'the report shows the Document Type and State columns').toMatch(/Document Type/i);
+    expect(mmHeads, 'the report shows a State column').toMatch(/State/i);
+    await expect(page.locator('table tbody').getByText(/Missing/i).first(),
+      'Missing Mandatory lists employees with a missing document').toBeVisible({ timeout: 20000 });
+    const missingCount = await page.locator('table tbody tr').count();
+    log(`Missing Mandatory report: ${missingCount} row(s) on page · columns [${mmHeads}]`);
+
+    // Expiring: the grid switches to expiry columns (Expiry / Days / Bucket).
+    const ex = page.locator('button, a, [role="button"]').filter({ hasText: /^\s*Expiring\s*$/i }).first();
+    await expect(ex, 'the Expiring report toggle is present').toBeVisible({ timeout: 10000 });
+    await ex.click();
+    await page.waitForTimeout(2000);
+    const exHeads = await headers();
+    expect(exHeads, 'the Expiring report shows expiry columns').toMatch(/Expiry|Bucket|Days/i);
+    log(`Expiring report columns [${exHeads}]`);
+  },
+
+  // HR Reminders (/hrms/reminder-rules): tenant-wide reminder config. Toggle one rule's "active"
+  // flag, Save (asserting the server response), confirm it persists, then RESTORE the original —
+  // channel is left on In-app, so no e-mails are sent and the tenant config is unchanged at the end.
+  async configureReminderRule({ page }) {
+    const RULE = 'Birthday';                                // a low-risk, always-present rule
+    const goto = async () => {
+      await page.goto(`${BASE}/hrms/reminder-rules`, { waitUntil: 'domcontentloaded' });
+      await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+      await expect(page.locator(`#rr-active-${RULE}`), `the ${RULE} reminder rule is listed`).toBeVisible({ timeout: 30000 });
+    };
+    const rowSave = () => page.locator(`tr:has(#rr-active-${RULE})`).locator('button, a').filter({ hasText: /^\s*Save\s*$/i }).first();
+    const saveAndAssert = async () => {
+      const [resp] = await Promise.all([
+        page.waitForResponse(r => /save-reminder-rule/i.test(r.url()) && r.request().method() === 'POST', { timeout: 15000}),
+        rowSave().click(),
+      ]);
+      expect(resp.status(), 'saving the reminder rule returns 200').toBe(200);
+      return resp;
+    };
+
+    await goto();
+    const original = await page.locator(`#rr-active-${RULE}`).isChecked();
+    const target = !original;
+    log(`${RULE} reminder currently active=${original}; toggling to ${target} and back`);
+
+    try {
+      // Flip active, save, and confirm it persisted after a reload.
+      await page.locator(`#rr-active-${RULE}`).setChecked(target);
+      await saveAndAssert();
+      await goto();
+      expect(await page.locator(`#rr-active-${RULE}`).isChecked(),
+        `${RULE} reminder active should persist as ${target} after reload`).toBe(target);
+      log(`${RULE} reminder saved and persisted as active=${target}`);
+    } finally {
+      // Restore the original state no matter what.
+      await goto();
+      if ((await page.locator(`#rr-active-${RULE}`).isChecked()) !== original) {
+        await page.locator(`#rr-active-${RULE}`).setChecked(original);
+        await saveAndAssert();
+        log(`${RULE} reminder restored to active=${original}`);
+      }
+    }
+  },
+
+  // Approval Config (/approval/config): build a NEW approval workflow (name + Leave Request type +
+  // one "Report Person" level) and Save it. It is NOT marked default and NOT assigned, so it is
+  // purely additive — it governs nothing live and leaves existing approvals untouched.
+  async setupApprovalWorkflow({ page }) {
+    const name = tagged('QA Leave Approval');
+    await page.goto(`${BASE}/approval/config`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+
+    await page.getByPlaceholder('e.g. Long Leave Approval').first().fill(name);
+    const typeSel = page.locator('select').filter({ has: page.locator('option', { hasText: '-- Select type --' }) }).first();
+    await typeSel.selectOption({ label: 'Leave Request' });
+
+    // Add one approval level = the employee's Report Person (no secondary picker needed).
+    await page.locator('button, a, [role="button"]').filter({ hasText: /\+\s*Add level/i }).first().click();
+    const approverSel = page.locator('select').filter({ has: page.locator('option', { hasText: '-- Select approver --' }) }).first();
+    await expect(approverSel, 'a level row with an approver select was added').toBeVisible({ timeout: 10000 });
+    await approverSel.selectOption({ label: 'Report Person' });
+
+    // Save the workflow and accept any confirm.
+    await page.locator('button, a, [role="button"]').filter({ hasText: /Save Workflow/i }).first().click();
+    const ok = page.locator('.swal2-popup button, .modal.show button').filter({ hasText: /^\s*(Yes.*|Save|OK|Confirm|Done)\s*$/i }).first();
+    if (await waitVisible(ok, 5000)) await ok.click();
+    const popup = page.locator('.swal2-popup').first();
+    if (await waitVisible(popup, 8000)) {
+      const msg = (await popup.innerText().catch(() => '')).replace(/\s+/g, ' ').trim();
+      expect(msg, 'the workflow save must not report an error').not.toMatch(/error|failed|invalid|required/i);
+      await popup.locator('button').filter({ hasText: /^\s*(OK|Close|Done)\s*$/i }).first().click().catch(() => {});
+    }
+
+    // Verify the new workflow is listed (filter the table by its name).
+    await page.goto(`${BASE}/approval/config`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+    const nameFilter = page.locator('#filter-wf-name');
+    if (await waitVisible(nameFilter, 5000)) { await nameFilter.fill('QA Leave Approval'); await page.waitForTimeout(1200); }
+    await expect(page.getByText(name, { exact: false }).filter({ visible: true }).first(),
+      `the new approval workflow "${name}" should be listed`).toBeVisible({ timeout: 20000 });
+    log(`approval workflow created: "${name}" (Leave Request · Report Person) — not default, not assigned`);
+  },
+
+  // Merge Fields (/letters/fields): create a custom letter merge field. "Where the value comes from"
+  // is a cascading select that only populates after "Letter is about" is chosen.
+  async createMergeField({ page }) {
+    const fk = new FormKit(page);
+    const token = `QaAuto${RUN_ID}`;                       // tokens are unique, alphanumeric (e.g. DateOfJoining)
+    const label = `QA Auto Field ${RUN_ID}`;
+    await page.locator('button, a, [role="button"]').filter({ hasText: /New Field/i }).first().click();
+    const form = await fk.scope({ ready: 'input' });
+    await fk.setInput(form.getByPlaceholder(/DateOfJoining/i).first(), token, 'Token Name');
+    await fk.setInput(form.getByPlaceholder(/Date of joining/i).first(), label, 'Label');
+    const selects = form.locator('select');
+    await selects.nth(0).selectOption({ label: 'Employee' });   // Letter is about
+    await selects.nth(1).selectOption({ label: 'Text' });       // Type
+    // "Where the value comes from" populates after Employee is chosen — wait for a real option.
+    const vs = selects.nth(2);
+    let chosen = '';
+    await expect.poll(async () => {
+      const opts = await vs.locator('option').allTextContents();
+      const real = opts.map(t => t.trim()).find(t => t && !/choose|select/i.test(t));
+      if (real) { chosen = real; return true; }
+      return false;
+    }, { timeout: 15000, intervals: [700] }).toBe(true);
+    await vs.selectOption({ label: chosen });
+    await fk.setInput(form.getByPlaceholder(/resolves to/i).first(), 'QA automation custom merge field', 'Description').catch(() => {});
+    await fk.saveAndConfirm(fk.saveButton(form, /save/i), { name: 'Save Field' });
+    await expectListed(page, 'letters/fields', token, 'the merge field');
+    log(`merge field created: ${token} ("${label}" · Employee · Text · ${chosen})`);
+  },
+
+  // Letterheads (/letters/letterheads): create a letterhead with a tagged name; layout fields keep
+  // their defaults (A4, etc.). Not set as default.
+  async createLetterhead({ page }) {
+    const fk = new FormKit(page);
+    const name = tagged('Corporate Letterhead');
+    await page.locator('button, a, [role="button"]').filter({ hasText: /New Letterhead|Add Letterhead/i }).first().click();
+    const form = await fk.scope({ ready: 'input' });
+    await fk.setInput(form.getByPlaceholder(/Corporate letterhead/i).first().or(fk.fieldByLabel(form, 'Name', 'input')), name, 'Letterhead Name');
+    await fk.saveAndConfirm(fk.saveButton(form), { name: 'Save Letterhead' });
+    await expectListed(page, 'letters/letterheads', name, 'the letterhead');
+    log(`letterhead created: "${name}"`);
+  },
+
+  // Interview Rounds (/interview-rounds): define a round for a designation (round name unique per
+  // designation, so it carries the run tag).
+  async createInterviewRound({ page }) {
+    const fk = new FormKit(page);
+    const round = tagged('Technical Round');
+    await page.locator('button, a, [role="button"]').filter({ hasText: /Add Round|New Round/i }).first().click();
+    const form = await fk.scope({ ready: 'select' });
+    await fk.setSelect(fk.selectWithOption(form, 'Software Engineer'), 'Software Engineer', 'Designation', { loose: true });
+    await fk.setInput(fk.fieldByLabel(form, 'Round Name', 'input'), round, 'Round Name');
+    // Order No is unique per designation — leave it blank so the app assigns the next free number.
+    await fk.saveAndConfirm(fk.saveButton(form), { name: 'Add Round' });
+    // Verify via the designation filter (narrows to one page), waiting out the "Loading..." state.
+    await page.goto(`${BASE}/interview-rounds`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+    await page.locator('select').filter({ has: page.locator('option', { hasText: 'All Designations' }) }).first()
+      .selectOption({ label: 'Software Engineer' }).catch(() => {});
+    await expect.poll(async () => (await page.locator('table tbody').innerText().catch(() => 'Loading')),
+      { timeout: 30000, intervals: [800] }).not.toMatch(/Loading/i);
+    await expect(page.getByText(round, { exact: false }).filter({ visible: true }).first(),
+      'the interview round should be listed under Software Engineer').toBeVisible({ timeout: 20000 });
+    log(`interview round created: "${round}" for Software Engineer`);
+  },
+
+  // Probation Templates (/hrms/probation-templates): create a probation template with checkpoints.
+  async createProbationTemplate({ page }) {
+    const fk = new FormKit(page);
+    const name = tagged('Standard Probation');
+    await page.locator('button, a, [role="button"]').filter({ hasText: /New Template|Add Template/i }).first().click();
+    const form = await fk.scope({ ready: 'input' });
+    await fk.setInput(fk.fieldByLabel(form, 'Template Name', 'input'), name, 'Template Name');
+    await fk.setInput(fk.fieldByLabel(form, 'Duration', 'input'), '90', 'Duration (days)');
+    await fk.setInput(fk.fieldByLabel(form, 'Checkpoints', 'input'), '30, 60, 90', 'Checkpoints (days)');
+    await fk.saveAndConfirm(fk.saveButton(form), { name: 'Save Template' });
+    await expectListed(page, 'hrms/probation-templates', name, 'the probation template');
+    log(`probation template created: "${name}" (90 days · 30/60/90)`);
   },
 
   async createLetterTemplate({ page }) {
@@ -610,24 +853,35 @@ module.exports = {
   async employeeAppliesManagerApproves({ page, browser, testInfo }) {
     const emp = requireRunEmployee();
     const creds = credentials(emp);
-    const reason = tagged('Family function at hometown');
-    const day = L.futureWeekdayISO(21);
+    // Two own-data requests: one to APPROVE, one to REJECT — both from the run employee.
+    const reasonApprove = tagged('Family function at hometown');
+    const reasonReject = tagged('Personal errand');
+    const dayApprove = L.futureWeekdayISO(21);
+    const dayReject = L.futureWeekdayISO(28);
     let before;
     await withUser(browser, testInfo, creds, async ep => {
       before = await L.myBalance(ep, 'Casual Leave');
-      expect(before.available, `${emp.display} should have Casual Leave to apply for`).toBeGreaterThan(0);
-      await L.employeeApplies(ep, { type: 'Casual Leave', reason, day });
-      expect((await L.myRequestRow(ep, day)).text, 'My Leave Requests shows the request Pending').toMatch(/Casual Leave.*Pending/i);
+      expect(before.available, `${emp.display} should have at least 2 Casual Leave days to apply for`).toBeGreaterThanOrEqual(2);
+      await L.employeeApplies(ep, { type: 'Casual Leave', reason: reasonApprove, day: dayApprove });
+      expect((await L.myRequestRow(ep, dayApprove)).text, 'request #1 shows Pending').toMatch(/Casual Leave.*Pending/i);
+      await L.employeeApplies(ep, { type: 'Casual Leave', reason: reasonReject, day: dayReject });
+      expect((await L.myRequestRow(ep, dayReject)).text, 'request #2 shows Pending').toMatch(/Casual Leave.*Pending/i);
     });
-    log(`${emp.display} signed in and applied for ${day} (Casual ${before.available} available) — Pending`);
-    await L.managerApproves(page, emp.first, reason);
-    log(`Amit approved it on Leave Approval (row confirmed via View details)`);
+    log(`${emp.display} applied for two leaves — ${dayApprove} (to approve) and ${dayReject} (to reject); Casual ${before.available} available`);
+
+    await L.managerApproves(page, emp.first, reasonApprove);
+    log(`Amit APPROVED ${dayApprove} on Leave Approval`);
+    await L.managerRejects(page, emp.first, reasonReject);
+    log(`Amit REJECTED ${dayReject} on Leave Approval`);
+
     await withUser(browser, testInfo, creds, async ep => {
-      expect((await L.myRequestRow(ep, day)).text, 'the employee sees the request Approved').toMatch(/Casual Leave.*Approved/i);
+      expect((await L.myRequestRow(ep, dayApprove)).text, 'the employee sees request #1 Approved').toMatch(/Casual Leave.*Approved/i);
+      expect((await L.myRequestRow(ep, dayReject)).text, 'the employee sees request #2 Rejected').toMatch(/Casual Leave.*Reject/i);
       const after = await L.myBalance(ep, 'Casual Leave');
-      expect(after.available, `Casual available ${before.available} → ${before.available - 1}`).toBe(before.available - 1);
+      // Only the approved day consumes balance; the rejected day is released.
+      expect(after.available, `Casual available ${before.available} → ${before.available - 1} (only the approved day counts)`).toBe(before.available - 1);
       expect(after.used, `Casual used ${before.used} → ${before.used + 1}`).toBe(before.used + 1);
-      log(`${emp.display} sees Approved — Casual ${before.available} → ${after.available}`);
+      log(`${emp.display} sees one Approved + one Rejected — Casual ${before.available} → ${after.available}`);
     });
   },
 

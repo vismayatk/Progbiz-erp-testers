@@ -287,6 +287,38 @@ module.exports = {
     log(`approval workflow created: "${name}" (Leave Request · Report Person) — not default, not assigned`);
   },
 
+  // Pipeline Board (/recruitment-pipeline): a Kanban that REFLECTS the ATS — the standard stages move
+  // automatically as the candidate progresses (our recruitment flow drives that); manual drag is only
+  // for custom stages. So we verify the board mirrors our own candidate: filter to our opening and
+  // confirm the self-applicant shows on the board, and report which stage column holds them.
+  async pipelineBoardReflectsCandidate({ page }) {
+    const job = need('publishedOpening', 'Job Board');
+    const self = need('selfApplicant', 'Job Applications');
+    await page.goto(`${BASE}/recruitment-pipeline`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+
+    // Filter to our vacancy (option text looks like "Software Engineer (JOB0093)").
+    const vac = page.locator('select').filter({ has: page.locator('option', { hasText: job }) }).first();
+    await expect(vac, 'the vacancy filter is present').toBeVisible({ timeout: 20000 });
+    const opt = (await vac.locator('option').allTextContents()).map(t => t.trim()).find(t => t.includes(job));
+    expect(opt, `the board should offer our opening ${job} in the vacancy filter`).toBeTruthy();
+    await vac.selectOption({ label: opt });
+    await page.waitForTimeout(2500);
+
+    // Our self-applicant must appear on the board for this vacancy.
+    const card = page.locator('[class*="card" i]').filter({ hasText: self.name }).first();
+    await expect(card, `self-applicant ${self.name} should appear on the pipeline board for ${job}`).toBeVisible({ timeout: 30000 });
+
+    // Best-effort: report which stage column holds them.
+    let stage = 'unknown';
+    for (const s of ['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'HIRED', 'REJECTED', 'ON HOLD']) {
+      const col = page.locator('[class*="pipeline" i]').filter({ hasText: new RegExp(`^\\s*${s}\\b`, 'i') })
+        .filter({ has: page.locator('[class*="card" i]').filter({ hasText: self.name }) });
+      if (await col.count()) { stage = s; break; }
+    }
+    log(`pipeline board for ${job} shows self-applicant ${self.name} in stage ${stage}`);
+  },
+
   // Merge Fields (/letters/fields): create a custom letter merge field. "Where the value comes from"
   // is a cascading select that only populates after "Letter is about" is chosen.
   async createMergeField({ page }) {

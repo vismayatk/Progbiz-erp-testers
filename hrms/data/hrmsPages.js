@@ -35,7 +35,7 @@ module.exports = [
   P('Recruitment', 'Offer Acceptance', 'offer-acceptance', 'preboardingInvite'),
   P('Recruitment', 'My Approvals', 'recruitment/approvals'),
   P('Recruitment', 'Recruitment Dashboard', 'recruitment-dashboard'),
-  P('Recruitment', 'Pipeline Board', 'recruitment-pipeline'),
+  P('Recruitment', 'Pipeline Board', 'recruitment-pipeline', 'pipelineBoardReflectsCandidate'),
   P('Recruitment', 'Talent Pool', 'talent-pool'),
   P('Recruitment', 'Interview Rounds', 'interview-rounds', 'createInterviewRound'),
   P('Recruitment', 'Referral Dashboard', 'ess/referral/admin'),

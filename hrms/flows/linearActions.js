@@ -21,6 +21,8 @@ const { expect } = require('@playwright/test');
 const { FormKit, waitVisible } = require('../pages/FormKit');
 const { EmployeesPage } = require('../pages/core-hr/EmployeesPage');
 const { WorkerDirectoryPage } = require('../pages/core-hr/WorkerDirectoryPage');
+const { MyDocumentsPage } = require('../pages/ess/MyDocumentsPage');
+const { EmployeeProfilePage } = require('../pages/core-hr/EmployeeProfilePage');
 const testEmployee = require('../data/testEmployee');
 const { person, tagged, lettersOnlyCandidates, firstUnused, RUN_ID } = require('../data/naming');
 const R = require('./recruitmentFlow');
@@ -121,12 +123,77 @@ module.exports = {
     log(`found ${emp.display} in the Worker Directory (${card.designation}, ${card.branch})`);
 
     const po = new EmployeesPage(page);
-    await po.completeProfile({ ...emp, profileHref: card.profileHref });
-    await page.goto(`${po.baseUrl}${card.profileHref}`, { waitUntil: 'domcontentloaded' });
-    const basic = page.locator('#basic-info');
-    await expect(basic, 'profile shows the Blood Group just saved').toContainText(emp.bloodGroup, { timeout: 30000 });
-    await expect(basic, 'profile shows the Nationality just saved').toContainText(new RegExp(emp.nationality, 'i'));
-    log(`profile completed: ${emp.department}, ${emp.bloodGroup}, ${emp.nationality}`);
+    // Address keys added after some run employees were saved — default them from testEmployee.details.
+    const { presentState, presentCity, permanentSameAsPresent } = testEmployee.details;
+    Object.assign(emp, { presentState, presentCity, permanentSameAsPresent, ...emp });
+    // ONE load of the (heavy) Edit form for everything we enter, in its tab order:
+    // Basic Details → Documents → Bank Details → Emergency. No reload between tabs.
+    const extras = testEmployee.profileExtras(emp);
+    const full = { ...emp, profileHref: card.profileHref,
+      bank: emp.bank || extras.bank, emergency: emp.emergency || extras.emergency, documents: emp.documents || extras.documents };
+    updateRunEmployee({ bank: full.bank, emergency: full.emergency, documents: full.documents });
+
+    await po.completeProfile(full);
+    log(`Basic Details: ${full.department}, ${full.bloodGroup}, ${full.nationality}, address ${full.presentCity}, ${full.presentState} (permanent = present)`);
+    const hrDoc = full.documents.hr;
+    const docVia = await po.uploadDocument(full, hrDoc);
+    log(`Documents: ${hrDoc.type} no. ${hrDoc.number} ${docVia} by HR`);
+    const bankVia = await po.fillBankDetails(full);
+    log(`Bank Details: saved (${bankVia}) — ${full.bank.bankName}, a/c ${full.bank.accountNumber}, IFSC ${full.bank.ifsc}`);
+    const emgVia = await po.addEmergencyContact(full);
+    log(`Emergency: ${full.emergency.first} ${full.emergency.last} (${full.emergency.relationship}, ${full.emergency.phone}) ${emgVia}`);
+
+    // ONE load of the READ-ONLY profile view — a separate page read fresh from the server, so it proves
+    // everything above persisted. Tab by tab in its on-screen order.
+    const view = new EmployeeProfilePage(page);
+    await view.open(full.profileHref);
+    await view.verifyBasic(full);
+    await view.verifyAddress(full);
+    await view.verifyBank(full);
+    await view.verifyDocuments([hrDoc]);
+    await view.verifyEmergency(full);
+    const histRows = await view.verifyHistory(['Bank details changed', 'Emergency contact', 'Document updated']);
+    await view.verifyLifecycleJoined(full);
+    log(`profile view ✔ Basic · Address (${full.presentCity}, ${full.presentState}; permanent = present) · Bank · Documents · Emergency · History (${histRows} events) · Lifecycle (Joined)`);
+    // Tabs that fill later in the employee's life — confirm they render; their data comes from later steps / modules.
+    for (const [id, name] of [['probation-tab', 'Probation'], ['salary-details-tab', 'Salary History'], ['bgv-tab', 'Background Verification'], ['attendance-history-tab', 'Attendance History']]) {
+      const t = await view.readTab(id);
+      expect(t, `the ${name} tab should render`).not.toBe('');
+      log(`profile view · ${name}: "${t.slice(0, 70)}"`);
+    }
+  },
+
+  // My Workspace → Documents (/ess/documents): the run employee signs in and uploads their own document
+  // (a non-ID type with a random certificate number), sees it in My Documents, and HR then sees the
+  // same document on the employee's Core HR → Documents tab.
+  async employeeUploadsDocument({ page, browser, testInfo }) {
+    const emp = requireRunEmployee();
+    if (!emp.documents) {   // generate once and keep it, so the saved number is the uploaded one
+      emp.documents = testEmployee.profileExtras(emp).documents;
+      updateRunEmployee({ documents: emp.documents });
+    }
+    const doc = emp.documents.self;
+    let via, row;
+    await withUser(browser, testInfo, credentials(emp), async ep => {
+      const mine = new MyDocumentsPage(ep);
+      via = await mine.uploadDocument(doc);
+      row = await mine.verifyListed(doc, { fresh: false });   // same page — HR's view below proves it persisted
+    });
+    log(`${emp.display} signed in and ${via} ${doc.type} no. ${doc.number} — in My Documents: "${row.slice(0, 90)}"`);
+    const po = new EmployeesPage(page);
+    const hrRow = await po.verifyDocumentListed(emp, doc);
+    log(`HR sees it on ${emp.display}'s Core HR → Documents tab: "${hrRow.slice(0, 90)}"`);
+
+    // HR reviews the employee's upload and verifies it.
+    const decided = await po.verifyDocument(emp, doc);
+    log(`HR ${decided} ${doc.type} no. ${doc.number}`);
+
+    // Profile view → Documents: both documents listed, the employee's one now Verified.
+    const view = new EmployeeProfilePage(page);
+    await view.open(emp.profileHref);
+    const rows = await view.verifyDocuments([emp.documents.hr, doc].filter(Boolean));
+    expect(rows[doc.number], `the profile view should show ${doc.type} as Verified`).toMatch(/Verified/i);
+    log(`profile view · Documents: ${Object.keys(rows).length} listed — ${doc.type} Verified`);
   },
 
   // Employee Excel Import (/upload-employee): build a valid 20-column sheet, upload it, and confirm
@@ -890,7 +957,7 @@ module.exports = {
     const reasonReject = tagged('Personal errand');
     const dayApprove = L.futureWeekdayISO(21);
     const dayReject = L.futureWeekdayISO(28);
-    let before;
+    let before, after;
     await withUser(browser, testInfo, creds, async ep => {
       before = await L.myBalance(ep, 'Casual Leave');
       expect(before.available, `${emp.display} should have at least 2 Casual Leave days to apply for`).toBeGreaterThanOrEqual(2);
@@ -909,12 +976,30 @@ module.exports = {
     await withUser(browser, testInfo, creds, async ep => {
       expect((await L.myRequestRow(ep, dayApprove)).text, 'the employee sees request #1 Approved').toMatch(/Casual Leave.*Approved/i);
       expect((await L.myRequestRow(ep, dayReject)).text, 'the employee sees request #2 Rejected').toMatch(/Casual Leave.*Reject/i);
-      const after = await L.myBalance(ep, 'Casual Leave');
+      after = await L.myBalance(ep, 'Casual Leave');
       // Only the approved day consumes balance; the rejected day is released.
       expect(after.available, `Casual available ${before.available} → ${before.available - 1} (only the approved day counts)`).toBe(before.available - 1);
       expect(after.used, `Casual used ${before.used} → ${before.used + 1}`).toBe(before.used + 1);
       log(`${emp.display} sees one Approved + one Rejected — Casual ${before.available} → ${after.available}`);
     });
+
+    // HR side: the employee's profile → Leave History now carries a Casual Leave transaction beyond the
+    // opening pro-rata entitlement (the approved day). The rejected request must not debit anything.
+    expect(emp.profileHref, 'the run employee should carry its profile link (set by the Worker Directory step)').toBeTruthy();
+    const view = new EmployeeProfilePage(page);
+    await view.open(emp.profileHref);
+    // Row format: Date | Leave Type | Txn | Days | Balance After | Remarks — e.g.
+    // "23 Oct 2026 Casual Leave Used -1 2 Leave approved". The rejected request adds NO row.
+    const rows = await view.leaveHistoryRows();
+    const used = rows.filter(r => /Casual Leave\s+Used\s+-1\b/i.test(r) && /Leave approved/i.test(r));
+    const debits = rows.filter(r => /Casual Leave\s+Used\b/i.test(r));
+    expect(used.length, `Leave History should show a "Casual Leave Used -1 … Leave approved" row (rows: ${JSON.stringify(rows)})`).toBeGreaterThanOrEqual(1);
+    // One "Used" row per approved day — so the rows must equal the employee's used days (re-run safe);
+    // a debit for the rejected request would push the rows above it.
+    expect(debits.length, `Casual "Used" rows should equal the ${after.used} used day(s) — the rejected request must not be debited`).toBe(after.used);
+    expect(rows.some(r => new RegExp(`Casual Leave\\s+Used\\s+-1\\s+${after.available}\\b`, 'i').test(r)),
+      `the latest debit should leave a balance of ${after.available}`).toBe(true);
+    log(`profile view · Leave History: ${debits.length} "Used" row(s) = ${after.used} used day(s), e.g. "${used[0].slice(0, 70)}" — rejected request not debited`);
   },
 
   // ═══════════════════════════ Helpdesk ═══════════════════════════

@@ -15,7 +15,8 @@ module.exports = async () => {
   fs.mkdirSync(authDir, { recursive: true });
   const statePath = path.join(authDir, 'state.json');
 
-  const browser = await chromium.launch({ headless: !process.env.HEADED });
+  // Always hidden — it only signs in and saves the session; the visible browser is the test itself.
+  const browser = await chromium.launch({ headless: true });
   const ctx = await browser.newContext({ viewport: { width: 1600, height: 900 } });
   const page = await ctx.newPage();
 

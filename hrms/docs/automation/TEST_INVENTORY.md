@@ -24,6 +24,12 @@ Useful variants:
 - Run employee **Lakshmi Joshi (pbhrms0353)** · opening **JOB0093** · candidate **Aditya Nair** (offer accepted, pre-boarding invited) · self-applicant **Nandana Iyer** · referral **Nikhil Kamath → Hired, reward Pending** · ticket **TKT-261019-002 → Resolved**.
 - Note: the hrms-test server was intermittently slow and was down once (HTTP 503) on 2026-10-19 — not a test issue.
 
+## Added 2026-10-23
+- **Employee profile, tab by tab** (pages 002 / 056 / 120): Documents, Bank Details, Emergency and the permanent address are filled on the edit form in its tab order; the read-only profile view is then checked tab by tab. Tabs fed later (Leave History) are checked at the step that fills them; Salary History / Attendance History wait on the teammate-owned Payroll / Attendance automation. Mandatory documents (Aadhaar / PAN) need a government ID number, so non-ID types with random certificate numbers are used.
+- **Blocker detection**: every page load and every action is checked for an app crash screen ("Oops / something went wrong / contact admin", Blazor error bar); hits are reported as 🚧 BLOCKER with the error code, counted apart from failures.
+- **Run output**: each page line shows its time; the run ends with the 10 slowest pages (page check vs action). Headed runs open maximized on the primary screen (fixtures/window.js); the login setup always runs hidden; HRMS_SLOWMO sets the headed click pause (default 200 ms, 0 = full speed).
+- **Not yet proven live**: the stricter Leave History count on page 056 (the verification run's employee had only 1 leave day left).
+
 ## Added 2026-10-22
 - **003 Document Compliance** now automated (`documentComplianceReport`): runs the Missing Mandatory + Expiring report views and verifies each returns its own columns/rows.
 - **004 HR Reminders** now automated (`configureReminderRule`): toggles a rule's active flag, saves, confirms persistence, restores the original (In-app channel only — no e-mails).
@@ -39,7 +45,7 @@ Useful variants:
 | # | Section | Page | Route | Add data once |
 |---|---|---|---|---|
 | 001 | Core HR | Employee | `employees` | Create the run's ONE employee (login, Reports To Amit) — used by every later page |
-| 002 | Core HR | Worker Directory | `worker-directory` | Find the run employee in the directory; complete their profile (department, blood group, nationality, address) |
+| 002 | Core HR | Worker Directory | `worker-directory` | Find the run employee; ONE visit of the edit form in its tab order — Basic Details (department, blood group, nationality, present address Kerala/Ernakulam + permanent "Same as Present") → Documents (HR uploads a Graduation certificate, random certificate no.) → Bank Details (salary account) → Emergency (sibling contact); then ONE load of the read-only profile view checking every tab in its order (Basic, Address, Bank, Documents, Emergency, History log, Lifecycle "Joined"; Probation / Salary / BGV / Attendance render) — `findRunEmployeeAndCompleteProfile` |
 | 003 | Core HR | Document Compliance | `document-compliance` | Run the compliance report: verify "Missing Mandatory" lists employees + Document Type/State, and "Expiring" switches to expiry columns — `documentComplianceReport` |
 | 004 | Core HR | HR Reminders | `hrms/reminder-rules` | Toggle a reminder rule's active flag, Save (asserts the save response), confirm it persists, then restore the original (In-app only, no e-mails) — `configureReminderRule` |
 | 005 | Core HR | Employee Excel Import | `upload-employee` | Build a valid 20-column sheet, upload it (Branch = Main Branch), confirm the imported employee appears in the register — `importEmployeeExcel` |
@@ -93,7 +99,7 @@ Useful variants:
 | 053 | Leave | Holidays | `holiday-list` | Holiday (28 Dec 2026) |
 | 054 | Leave | Holiday Assignment | `holiday-assignment-list` | Assign that holiday to Main Branch |
 | 055 | Leave | Apply Leave for Employee | `leave-request-on-behalf` | Apply + approve 1 day Casual Leave for the run employee (balance −1) |
-| 056 | Leave | Leave Approval | `leave-approval` | Run employee applies for TWO leaves → Amit approves one and REJECTS the other → employee sees one Approved + one Rejected (balance −1, only the approved day counts) |
+| 056 | Leave | Leave Approval | `leave-approval` | Run employee applies for TWO leaves → Amit approves one and REJECTS the other → employee sees one Approved + one Rejected (balance −1); then profile view → Leave History shows "Casual Leave Used -1 … Leave approved" and no debit for the rejected one. Needs ≥ 2 Casual days (a fresh run employee has 3) |
 | 057 | Leave | Comp-Off Approval | `comp-off-approval` | — (check only) |
 | 058 | Leave | Leave Ledger | `leave-ledger` | — (check only) |
 | 059 | Leave | Attendance Sync | `leave-attendance-sync` | — (check only) |
@@ -157,7 +163,7 @@ Useful variants:
 | 117 | My Workspace | Attendance | `ess/attendance` | — (check only) |
 | 118 | My Workspace | Shift | `ess/my-shift` | — (check only) |
 | 119 | My Workspace | Locations | `ess/locations` | — (check only) |
-| 120 | My Workspace | Documents | `ess/documents` | — (check only) |
+| 120 | My Workspace | Documents | `ess/documents` | The run employee signs in and uploads an SSLC CERTIFICATE (random certificate no.) → listed in My Documents → HR sees it on the Core HR Documents tab, VERIFIES it (Verify or reject → Verified) → profile view lists both documents, SSLC Verified — `employeeUploadsDocument` |
 | 121 | My Workspace | Letters | `ess/letters` | — (check only) |
 | 122 | My Workspace | Pay | `ess/payslips` | — (check only) |
 | 123 | My Workspace | Tax | `ess/my-tax` | — (check only) |

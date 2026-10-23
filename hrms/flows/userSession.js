@@ -16,7 +16,7 @@ const fs = require('fs');
 const { expect } = require('@playwright/test');
 const { HrmsLoginPage } = require('../pages/HrmsLoginPage');
 
-const VIEWPORT = { width: 1600, height: 900 };
+const { VIEWPORT, VIDEO_SIZE } = require('../fixtures/window');   // headed: fills a maximized window
 
 /**
  * Open a fresh context (no admin cookies) and sign in as `username` / `password`.
@@ -25,7 +25,7 @@ const VIEWPORT = { width: 1600, height: 900 };
 async function loginAs(browser, { username, password }, { recordVideoDir } = {}) {
   const context = await browser.newContext({
     viewport: VIEWPORT,
-    ...(recordVideoDir ? { recordVideo: { dir: recordVideoDir, size: VIEWPORT } } : {}),
+    ...(recordVideoDir ? { recordVideo: { dir: recordVideoDir, size: VIDEO_SIZE } } : {}),
   });
   const page = await context.newPage();
   const company = process.env.HRMS_COMPANY_CODE || process.env.COMPANY_CODE;
@@ -47,7 +47,7 @@ async function withUser(browser, testInfo, creds, fn) {
   // still caught on screenshot + recording.
   const context = await browser.newContext({
     viewport: VIEWPORT,
-    recordVideo: { dir: testInfo.outputPath('.recordings-tmp'), size: VIEWPORT },
+    recordVideo: { dir: testInfo.outputPath('.recordings-tmp'), size: VIDEO_SIZE },
   });
   const page = await context.newPage();
   try {
@@ -89,7 +89,7 @@ async function withVisitor(browser, testInfo, label, fn) {
   let failed = false;
   const context = await browser.newContext({
     viewport: VIEWPORT,
-    recordVideo: { dir: testInfo.outputPath('.recordings-tmp'), size: VIEWPORT },
+    recordVideo: { dir: testInfo.outputPath('.recordings-tmp'), size: VIDEO_SIZE },
   });
   const page = await context.newPage();
   try {

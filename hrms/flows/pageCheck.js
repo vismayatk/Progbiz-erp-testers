@@ -15,6 +15,41 @@ const { expect } = require('@playwright/test');
 
 const BASE = process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in';
 
+/**
+ * Detect an application CRASH / blocker screen — the "Oops, something went wrong" style error page
+ * the app shows on a server fault (often with an error code and a "contact admin" line), or the
+ * Blazor error bar. Returns { blocked, code, snippet }. A blocker is distinct from a normal test
+ * failure: the page/flow could not run because the app itself errored.
+ */
+async function detectBlocker(page) {
+  // Blazor's built-in error bar (shown on an unhandled client error).
+  const blazor = await page.locator('#blazor-error-ui:visible').count().catch(() => 0);
+  if (blazor) return { blocked: true, code: '', snippet: 'Blazor error bar — An unhandled error has occurred' };
+
+  const text = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim();
+  // Two signals required so ordinary copy that happens to say "something went wrong" doesn't trip it.
+  const oops = /(oops[!,.\s]|something went wrong|we(?:'re| are) sorry|an (?:unexpected )?error (?:has )?occurred|unexpected error|unhandled (?:error|exception)|500 - internal)/i.test(text);
+  const hint = /(contact (?:your )?(?:admin|administrator|support|the administrator)|try again (?:later)?|error\s*(?:code|reference|ref|id)|reference\s*(?:code|id|number|no)|trace\s*id|support\s*(?:code|id))/i.test(text);
+  if (oops && hint) {
+    const rawCode = (text.match(/(?:error\s*(?:code|reference|ref|id)|reference(?:\s*(?:code|id|number|no))?|trace\s*id|support\s*(?:code|id)|code)\s*[:#]?\s*([A-Za-z0-9][A-Za-z0-9._-]{3,})/i) || [])[1] || '';
+    const code = rawCode.replace(/[.\-_]+$/, '');   // drop trailing punctuation (e.g. "ERR-50231.")
+    return { blocked: true, code, snippet: text.slice(0, 180) };
+  }
+  return { blocked: false };
+}
+
+/**
+ * Throw a clearly-labelled BLOCKER error if `page` is showing an app crash / "contact admin" screen.
+ * The "BLOCKER —" prefix lets the linear run count these apart from ordinary failures.
+ */
+async function assertNoBlocker(page, label) {
+  const b = await detectBlocker(page);
+  if (b.blocked) {
+    const where = label ? `"${label}"` : page.url();
+    throw new Error(`BLOCKER — ${where}: the app showed an error/"contact admin" screen${b.code ? ` (code ${b.code})` : ''} — "${b.snippet}"`);
+  }
+}
+
 async function checkPage(page, entry) {
   const url = `${BASE}/${entry.route}`;
   const isBlank = async () => ((await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim().length < 40);
@@ -25,6 +60,9 @@ async function checkPage(page, entry) {
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
   }
+
+  // 0. Blocker: the app crashed into an "Oops / something went wrong / contact admin" screen.
+  await assertNoBlocker(page, entry.label);
 
   // 1. Stayed on the page.
   expect(page.url(), `${entry.label}: should not be bounced to the login page`).not.toMatch(/\/login(\?|$)/i);
@@ -70,4 +108,4 @@ async function checkPage(page, entry) {
   return { heading, tables: tables.length, rows: rowCount, empty, firstRow: tables[0] ? tables[0].first : '' };
 }
 
-module.exports = { checkPage };
+module.exports = { checkPage, assertNoBlocker, detectBlocker };

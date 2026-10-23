@@ -1,7 +1,8 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
-const { BasePage } = require('../BasePage');
+const { BasePage, escapeRe } = require('../BasePage');
+const { DocumentUploadModal } = require('../components/DocumentUploadModal');
 
 /**
  * /employees — Employee master register (Core HR) + the /employee create form.
@@ -450,9 +451,17 @@ class EmployeesPage extends BasePage {
   async openEditForm(profileHref) {
     const editPath = profileHref.replace('/employee-view/', '/employee/');   // keeps its leading "/"
     await this.page.goto(`${this.baseUrl}${editPath}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-    await this.firstNameInput.waitFor({ state: 'visible', timeout: 30000 });
+    await this.firstNameInput.waitFor({ state: 'visible', timeout: 60000 });   // heavy form; slow on a cold server
     await this.waitReady();
     return editPath;
+  }
+
+  /** Open the Edit form only if it isn't already the page we're on — saves a heavy reload between tabs. */
+  async ensureEditForm(profileHref) {
+    const editPath = profileHref.replace('/employee-view/', '/employee/');
+    // The tab bar is always visible; #firstname is not (it lives on the Basic Details tab).
+    if (this.page.url().endsWith(editPath) && await this.page.locator('#basic-details-tab').isVisible().catch(() => false)) return editPath;
+    return this.openEditForm(profileHref);
   }
 
   /**
@@ -488,7 +497,23 @@ class EmployeesPage extends BasePage {
     if (profile.bloodGroup)  await this._selectByAnchor('A+', profile.bloodGroup, 'Blood Group');
 
     if (profile.addressLine1 || profile.addressLine2 || profile.presentPincode) {
-      await test.step('Fill the Present address (lines + pincode)', async () => {
+      await test.step('Fill the Present address (state, city, lines + pincode)', async () => {
+        // State / City first (City reloads per State). Present = the 1st State/City pair, Permanent = the 2nd;
+        // every address <select> shares id="selectbox", so they are found by their label.
+        if (profile.presentState) {
+          const state = this._addressSelect('State', 0);
+          await state.selectOption({ label: profile.presentState });
+          expect((await state.locator('option:checked').textContent() || '').trim(), 'present State should be set').toBe(profile.presentState);
+        }
+        if (profile.presentCity) {
+          const city = this._addressSelect('City', 0);
+          let label = '';
+          await expect.poll(async () => {
+            label = await this._optionMatching(city, profile.presentCity);
+            return label;
+          }, { timeout: 15000, message: `a City option matching "${profile.presentCity}" should load for ${profile.presentState}` }).toBeTruthy();
+          await city.selectOption({ label });
+        }
         if (profile.presentPincode) await this.fillAndBlur(this.presentPincode, profile.presentPincode);
         // The two present address-line inputs render right after #present-pincode.
         const line1 = this.presentPincode.locator('xpath=following::input[@type="text"][1]');
@@ -498,7 +523,18 @@ class EmployeesPage extends BasePage {
         if (profile.presentPincode) await expect(this.presentPincode, 'Pincode should hold the value entered').toHaveValue(String(profile.presentPincode));
       });
     }
+    if (profile.permanentSameAsPresent) await test.step('Permanent address: tick "Same as Present"', async () => {
+      // The checkbox sits INSIDE its label: <label><input type="checkbox"> Same as Present</label>.
+      const same = this.page.locator('label').filter({ hasText: /Same as Present/i }).locator('input[type="checkbox"]')
+        .or(this.page.getByLabel(/Same as Present/i)).first();
+      await expect(same, 'the "Same as Present" checkbox should be on the Edit form').toBeVisible();
+      await same.check();
+      await expect(same, '"Same as Present" should be ticked').toBeChecked();
+    });
 
+    // The save API is the reliable signal — the form often stays put without a toast after an edit.
+    const saveResp = page.waitForResponse(r => /save-new-employee/i.test(r.url()) && r.request().method() === 'POST', { timeout: 45000 })
+      .catch(() => null);
     await test.step('Save the completed profile', async () => {
       await expect(this.employeeSaveBtn, 'the Edit-form Save button should be visible').toBeVisible();
       await this.employeeSaveBtn.scrollIntoViewIfNeeded().catch(() => {});
@@ -506,6 +542,13 @@ class EmployeesPage extends BasePage {
     });
 
     const how = await test.step('Confirm the profile update was saved', async () => {
+      const resp = await saveResp;
+      if (resp) {
+        expect(resp.status(), 'the employee save API should return 200').toBe(200);
+        const body = await resp.json().catch(() => ({}));
+        expect(body.errormsg || '', `the employee save API should report no error (got "${body.errormsg}")`).toBeFalsy();
+        return 'api-200';
+      }
       const ok = await Promise.race([
         page.waitForURL(/\/employee(s|-view)\b/, { timeout: 30000 }).then(() => 'redirected').catch(() => null),
         page.getByText(/success|updated|saved|added/i).first().waitFor({ state: 'visible', timeout: 30000 }).then(() => 'toast').catch(() => null),
@@ -518,6 +561,188 @@ class EmployeesPage extends BasePage {
     });
     console.log(`  ✅ Profile completed (${how}) — dept≈${profile.department}, blood=${profile.bloodGroup}, nationality=${profile.nationality}`);
     return { ...profile, profileCompletedVia: how };
+  }
+
+  // ── Edit-form tabs that unlock after Basic Details is saved ───────────────────
+  // On-screen order: Basic Details · Documents · Bank Details · Emergency · History ·
+  // Lifecycle · Probation · Background Verification. Each tab button has a stable id
+  // (#bank-details-tab, #emergency-tab …) and opens a pane of the same name (#bank-details, #emergency).
+
+  /** Click an edit-form tab by its button id and wait for its pane to show. Returns the pane. */
+  async openTab(tabId, paneId) {
+    const pane = this.page.locator(`#${paneId}`);
+    await test.step(`Open the "${tabId}" tab`, async () => {
+      const tab = this.page.locator(`#${tabId}`);
+      await expect(tab, `the ${tabId} tab should be on the Edit form`).toBeVisible({ timeout: 30000 });
+      await tab.click();
+      await expect(pane, `the #${paneId} pane should open`).toBeVisible({ timeout: 15000 });
+      await this.page.waitForTimeout(1500);   // the pane's saved values load just after it opens
+    });
+    return pane;
+  }
+
+  /** The input right after the <label> whose text is exactly `text` (label-only match — the
+   *  Bank pane's help text also mentions "account number" and "IFSC"). */
+  _inputByLabel(scope, text) {
+    return scope.locator('label').filter({ hasText: new RegExp(`^\\s*${escapeRe(text)}\\s*\\*?\\s*$`, 'i') }).first()
+      .locator('xpath=following::input[1]');
+  }
+
+
+  /** The Documents-tab grid row carrying this document's number (or null-ish locator). */
+  _documentRow(pane, doc) {
+    return pane.locator('table tbody tr').filter({ hasText: doc.number }).first();
+  }
+
+  /**
+   * Documents tab → "Capture" → Capture Document modal (category, type, number, authority, scan) → Save.
+   * Skips the upload when a row with this document number is already listed (re-run safe).
+   */
+  async uploadDocument(profile, doc) {
+    await this.ensureEditForm(profile.profileHref);
+    const pane = await this.openTab('documents-tab', 'documents');
+    if (await this._documentRow(pane, doc).count()) return 'already-listed';
+    await pane.locator('button, a.btn').filter({ hasText: /^\s*Capture\s*$/i }).first().click();
+    const modal = new DocumentUploadModal(this.page, 'Capture Document');
+    await modal.waitOpen();
+    await modal.fill(doc);
+    await modal.submit('Save');
+    await expect(this._documentRow(pane, doc), `the ${doc.type} (${doc.number}) should be listed on the Documents tab`)
+      .toBeVisible({ timeout: 20000 });
+    return 'uploaded';
+  }
+
+  /** Assert the document is listed on the Documents tab (type + number). `fresh` reloads the Edit
+   *  form first; pass false when the caller has just reloaded it. */
+  async verifyDocumentListed(profile, doc, { fresh = true } = {}) {
+    if (fresh) await this.openEditForm(profile.profileHref); else await this.ensureEditForm(profile.profileHref);
+    const pane = await this.openTab('documents-tab', 'documents');
+    const row = this._documentRow(pane, doc);
+    await expect(row, `${doc.type} ${doc.number} should be on ${profile.display}'s Documents tab after reload`).toBeVisible({ timeout: 20000 });
+    await expect(row, `the row should show the type "${doc.type}"`).toContainText(doc.type);
+    return (await row.innerText()).replace(/\s+/g, ' ').trim();
+  }
+
+  /**
+   * HR reviews a document on the Documents tab: row → "Verify or reject" → Verify Document dialog
+   * (Decision: Verified / Rejected, Remarks) → Save; the row then shows the decision.
+   */
+  async verifyDocument(profile, doc, { decision = 'Verified', remarks = 'Checked against the original — automation' } = {}) {
+    await this.ensureEditForm(profile.profileHref);
+    const pane = await this.openTab('documents-tab', 'documents');
+    const row = this._documentRow(pane, doc);
+    await expect(row, `${doc.type} ${doc.number} should be on the Documents tab`).toBeVisible({ timeout: 20000 });
+    if (new RegExp(`\\b${decision}\\b`, 'i').test(await row.innerText())) return 'already-decided';
+    await row.locator('[title="Verify or reject"]').click();
+    const dlg = this.page.locator('.modal.show, .offcanvas.show').filter({ hasText: /Verify Document/i }).first();
+    await expect(dlg, 'the "Verify Document" dialog should open').toBeVisible({ timeout: 15000 });
+    await test.step(`Decision = ${decision}`, async () => {
+      const radio = dlg.locator(decision === 'Verified' ? '#verify-ok' : '#verify-reject');
+      await radio.check();
+      await expect(radio, `"${decision}" should be selected`).toBeChecked();
+    });
+    await dlg.locator('textarea').first().fill(remarks);
+    await test.step('Save the decision', async () => {
+      await dlg.locator('button').filter({ hasText: /^\s*Save\s*$/i }).filter({ visible: true }).last().click();
+      const closed = await dlg.waitFor({ state: 'hidden', timeout: 25000 }).then(() => true).catch(() => false);
+      if (!closed) throw new Error(`The Verify Document dialog did not close. Visible errors: ${(await this.visibleErrorText()) || '(none captured)'}`);
+    });
+    await expect(row, `the ${doc.type} row should now show "${decision}"`).toContainText(new RegExp(decision, 'i'), { timeout: 20000 });
+    return decision.toLowerCase();
+  }
+
+  _bankRows(b) {
+    return [['Bank Name', b.bankName], ['Account Number', b.accountNumber], ['IFSC', b.ifsc],
+      ['Bank Branch', b.bankBranch], ['Account Holder', b.accountHolder]];
+  }
+
+  /** Bank Details tab → Salary Account (bank name, account no., IFSC, branch, holder) → Save. */
+  async fillBankDetails(profile) {
+    const b = profile.bank;
+    expect(b, 'fillBankDetails needs profile.bank (see data/testEmployee.profileExtras)').toBeTruthy();
+    await this.ensureEditForm(profile.profileHref);
+    const pane = await this.openTab('bank-details-tab', 'bank-details');
+    for (const [label, value] of this._bankRows(b)) await this._fill(this._inputByLabel(pane, label), value, label);
+    // The bank tab shows no toast and stays put — its save API is the signal (answers in ~0.3 s).
+    const saved = this.page.waitForResponse(r => /save-employee-bank-accounts/i.test(r.url()) && r.request().method() === 'POST', { timeout: 30000 });
+    await test.step('Save Bank Details', async () => {
+      const save = pane.locator('button').filter({ hasText: /^\s*Save\s*$/i }).filter({ visible: true }).first();
+      await expect(save, 'the Bank Details Save button should be visible').toBeVisible();
+      await save.scrollIntoViewIfNeeded().catch(() => {});
+      await save.click();
+    });
+    return test.step('Confirm Bank Details were saved (save API)', async () => {
+      const resp = await saved;
+      expect(resp.status(), 'the bank save API should return 200').toBe(200);
+      const body = await resp.json().catch(() => ({}));
+      expect(body.isWarning, `the bank save should not be a warning ("${body.responseMessage}")`).toBeFalsy();
+      return 'api-200';
+    });
+  }
+
+  /**
+   * Emergency tab → Add → "Add Emergency Contact" modal (honorific, name, relationship, phone with
+   * country code, e-mail, address, primary) → Save. Skips the add when the contact is already
+   * listed, so re-running the step does not create a duplicate.
+   */
+  async addEmergencyContact(profile) {
+    const c = profile.emergency;
+    expect(c, 'addEmergencyContact needs profile.emergency (see data/testEmployee.profileExtras)').toBeTruthy();
+    await this.ensureEditForm(profile.profileHref);
+    const pane = await this.openTab('emergency-tab', 'emergency');
+    if (await pane.getByText(`${c.first} ${c.last}`, { exact: false }).count()) return 'already-listed';
+
+    await pane.locator('button, a.btn').filter({ hasText: /^\s*Add\s*$/i }).first().click();
+    const modal = this.page.locator('.modal.show, .offcanvas.show').filter({ hasText: /Add Emergency Contact/i }).first();
+    await expect(modal, 'the "Add Emergency Contact" form should open').toBeVisible({ timeout: 15000 });
+
+    await test.step(`Select Honorific = "${c.honorific}"`, async () => {
+      await modal.locator('#ec-honorific').selectOption({ label: c.honorific });
+    });
+    await this._fill(modal.locator('#ec-firstname'), c.first, 'Contact First Name');
+    await this._fill(modal.locator('#ec-lastname'), c.last, 'Contact Last Name');
+    await test.step(`Select Relationship = "${c.relationship}"`, async () => {
+      const rel = modal.locator('select').filter({ has: this.page.locator('option', { hasText: 'Sibling' }) }).first();
+      await rel.selectOption({ label: c.relationship });
+      expect((await rel.locator('option:checked').textContent() || '').trim(), 'Relationship should be set').toBe(c.relationship);
+    });
+    await test.step(`Select phone country code "${c.countryCode}"`, async () => {
+      const cc = modal.locator('select').filter({ has: this.page.locator('option', { hasText: new RegExp(`^\\s*${c.countryCode}\\b`) }) }).first();
+      const label = (await cc.locator('option').allTextContents()).map(t => t.trim()).find(t => new RegExp(`^${c.countryCode}\\b`).test(t));
+      expect(label, `a "${c.countryCode}" country-code option should exist`).toBeTruthy();
+      await cc.selectOption({ label });
+    });
+    await test.step(`Fill "Contact Phone" = "${c.phone}"`, async () => {
+      const phone = modal.locator('#ec-phone');
+      await this.fillAndBlur(phone, c.phone);
+      expect((await phone.inputValue()).replace(/\D/g, ''), 'the phone should hold the digits entered').toContain(c.phone);
+    });
+    await this._fill(modal.locator('#ec-email'), c.email, 'Contact Email');
+    await test.step('Fill the contact Address', async () => {
+      await modal.locator('textarea').first().fill(c.address);
+    });
+    if (c.primary) await test.step('Mark as Primary contact', async () => {
+      await modal.locator('#ec-primary').check();
+      await expect(modal.locator('#ec-primary'), 'Primary contact should be ticked').toBeChecked();
+    });
+
+    await test.step('Save the emergency contact', async () => {
+      await modal.locator('button').filter({ hasText: /^\s*Save\s*$/i }).first().click();
+      const closed = await modal.waitFor({ state: 'hidden', timeout: 25000 }).then(() => true).catch(() => false);
+      if (!closed) {
+        const errs = await this.visibleErrorText();
+        throw new Error(`Emergency contact save did not close the form. Visible validation/errors: ${errs || '(none captured)'}`);
+      }
+    });
+    await expect(pane.getByText(`${c.first} ${c.last}`, { exact: false }).first(),
+      'the new contact should be listed on the Emergency tab').toBeVisible({ timeout: 20000 });
+    return 'added';
+  }
+
+  /** The n-th address <select> labelled `label` ("Country" / "State" / "City"): 0 = Present, 1 = Permanent. */
+  _addressSelect(label, n) {
+    return this.page.locator('div.mb-3').filter({ has: this.page.locator('label', { hasText: new RegExp(`^\\s*${label}\\s*$`) }) })
+      .nth(n).locator('select');
   }
 
   /** The exact option label of `sel` whose text matches `term` (case-insensitive substring), or ''. */

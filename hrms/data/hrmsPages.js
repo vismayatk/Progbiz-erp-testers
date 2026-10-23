@@ -140,7 +140,7 @@ module.exports = [
   P('My Workspace', 'Attendance', 'ess/attendance'),
   P('My Workspace', 'Shift', 'ess/my-shift'),
   P('My Workspace', 'Locations', 'ess/locations'),
-  P('My Workspace', 'Documents', 'ess/documents'),
+  P('My Workspace', 'Documents', 'ess/documents', 'employeeUploadsDocument'),
   P('My Workspace', 'Letters', 'ess/letters'),
   P('My Workspace', 'Pay', 'ess/payslips'),
   P('My Workspace', 'Tax', 'ess/my-tax'),

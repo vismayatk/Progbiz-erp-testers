@@ -28,7 +28,7 @@ Useful variants:
 - **Employee profile, tab by tab** (pages 002 / 056 / 120): Documents, Bank Details, Emergency and the permanent address are filled on the edit form in its tab order; the read-only profile view is then checked tab by tab. Tabs fed later (Leave History) are checked at the step that fills them; Salary History / Attendance History wait on the teammate-owned Payroll / Attendance automation. Mandatory documents (Aadhaar / PAN) need a government ID number, so non-ID types with random certificate numbers are used.
 - **Blocker detection**: every page load and every action is checked for an app crash screen ("Oops / something went wrong / contact admin", Blazor error bar); hits are reported as 🚧 BLOCKER with the error code, counted apart from failures.
 - **Run output**: each page line shows its time; the run ends with the 10 slowest pages (page check vs action). Headed runs open maximized on the primary screen (fixtures/window.js); the login setup always runs hidden; HRMS_SLOWMO sets the headed click pause (default 200 ms, 0 = full speed).
-- **Not yet proven live**: the stricter Leave History count on page 056 (the verification run's employee had only 1 leave day left).
+- **Verified live 2026-10-23** on a fresh run employee (Pooja Rajan, pbhrms0385), pages 001 → 002 → 056 → 120: 6/6 passed — incl. Leave History "Casual Leave Used -1 2 Leave approved" with no debit for the rejected request.
 
 ## Added 2026-10-22
 - **003 Document Compliance** now automated (`documentComplianceReport`): runs the Missing Mandatory + Expiring report views and verifies each returns its own columns/rows.

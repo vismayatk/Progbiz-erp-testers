@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const path = require('path');
 const { defineConfig, devices } = require('@playwright/test');
+const { HEADED, LAUNCH_ARGS, VIEWPORT } = require('./fixtures/window');
 
 // Evidence: failures always keep a screen recording, screenshots and a trace, collected per run
 // into reports/hrms-evidence/<run time>/index.html by the evidence reporter.
@@ -38,9 +39,12 @@ module.exports = defineConfig({
 
   use: {
     headless:          process.env.HEADED ? false : true,
-    slowMo:            process.env.HEADED ? 200 : 0,
+    // Pause before every click/keystroke so a headed run is watchable. HRMS_SLOWMO=0 for full speed.
+    slowMo:            Number(process.env.HRMS_SLOWMO ?? (process.env.HEADED ? 200 : 0)),
     channel:           process.env.CHANNEL || undefined,
-    viewport:          { width: 1600, height: 900 },
+    // Headed: maximized at the top-left of the primary screen, page fills the window (fixtures/window.js).
+    viewport:          VIEWPORT,
+    launchOptions:     { args: LAUNCH_ARGS },
     actionTimeout:     30_000,
     navigationTimeout: 90_000,
     screenshot:        EVIDENCE_ALL ? 'on' : 'only-on-failure',
@@ -53,7 +57,8 @@ module.exports = defineConfig({
   },
 
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1600, height: 900 } } },
+    // Headed: no device preset — its fixed viewport / scale factor would fight the maximized window.
+    { name: 'chromium', use: HEADED ? { viewport: null, launchOptions: { args: LAUNCH_ARGS } } : { ...devices['Desktop Chrome'], viewport: VIEWPORT } },
   ],
 
   outputDir: path.join(__dirname, '..', 'test-results', 'hrms'),

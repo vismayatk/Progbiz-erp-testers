@@ -9,7 +9,7 @@ HEADED=1 npx playwright test -c hrms/playwright.config.js hrms/tests/00_linear -
 ```
 - `hrms/tests/00_linear/hrms_linear_run.spec.js` — ONE test that walks `hrms/data/hrmsPages.js` (128 HRMS pages, live sidebar order) in a single tab. The browser is never closed between pages.
 - **Every page** gets the same check (`flows/pageCheck.js`): opened once (reloaded only if it comes up blank) → not bounced to login / not a missing page → no application error → loading spinners clear → a page heading → every list shows its headers and its rows (an empty list is noted, not failed).
-- **Pages whose main job is adding something** do it **once** (`flows/linearActions.js`, 22 actions), all for the run's **one employee**, created on the Employee page (`flows/runEmployee.js`).
+- **Pages whose main job is adding something** do it **once** (`flows/linearActions.js`, 24 actions), all for the run's **one employee**, created on the Employee page (`flows/runEmployee.js`).
 - **Payroll, Attendance, Resignation & Exit = base only** (page checks, no data) — owned by teammates.
 - A failing page is recorded (screenshot + error) and the walk continues in the same tab; the run is marked failed at the end.
 - **Evidence** (only when something fails): `reports/hrms-evidence/<run>/index.html` — failure screenshots per page, the employee's own screen + recording when they were acting, the **whole-run video** (one continuous recording), trace, `page-results.json`.
@@ -18,37 +18,55 @@ Useful variants:
 - Read-only (checks only, adds nothing): `HRMS_LINEAR_READONLY=1`
 - Only some pages: `HRMS_PAGES="leave-approval,offer-list"` · Resume from page 52: `HRMS_FROM=52`
 
-## Latest result (2026-10-09)
-- Full run: **128 pages — 124 passed first time**; 4 failures were all automation issues, fixed and re-run green the same day:
-  011 Duty Handover (date conflict on a reused employee → now uses the run employee), 026 Onboarding Templates and 049 Leave Types ("is it listed" matched a hidden element → now visible-only), 056 Leave Approval (reloaded My Leave a second time and it hung on the app spinner → now uses the open page).
-- Run employee: **Riya Iyer (pbhrms0349)** · candidate **Gokul Kamath (JOB0086)** · referral **Lakshmi Raghavan → Hired, reward Pending** · ticket **TKT-261009-001 → Resolved**.
+## Latest result (2026-10-19, full headed run)
+- **128 of 128 page checks passed.** 2 actions failed and were fixed + re-run green: 049 Leave Types (list search needs Enter; name-picker now checks every page) and 052 Leave Assignment (new employees now get a leave pattern automatically — the step confirms it instead of adding a second).
+- New this round, all green end to end in one pass: job opening **published**; candidates apply **both ways** (HR-added + self-applied on the career page); **take-home assessment** sent and evaluated; **interview scorecard** attached and rated.
+- Run employee **Lakshmi Joshi (pbhrms0353)** · opening **JOB0093** · candidate **Aditya Nair** (offer accepted, pre-boarding invited) · self-applicant **Nandana Iyer** · referral **Nikhil Kamath → Hired, reward Pending** · ticket **TKT-261019-002 → Resolved**.
+- Note: the hrms-test server was intermittently slow and was down once (HTTP 503) on 2026-10-19 — not a test issue.
+
+## Added 2026-10-23
+- **Employee profile, tab by tab** (pages 002 / 056 / 120): Documents, Bank Details, Emergency and the permanent address are filled on the edit form in its tab order; the read-only profile view is then checked tab by tab. Tabs fed later (Leave History) are checked at the step that fills them; Salary History / Attendance History wait on the teammate-owned Payroll / Attendance automation. Mandatory documents (Aadhaar / PAN) need a government ID number, so non-ID types with random certificate numbers are used.
+- **Blocker detection**: every page load and every action is checked for an app crash screen ("Oops / something went wrong / contact admin", Blazor error bar); hits are reported as 🚧 BLOCKER with the error code, counted apart from failures.
+- **Run output**: each page line shows its time; the run ends with the 10 slowest pages (page check vs action). Headed runs open maximized on the primary screen (fixtures/window.js); the login setup always runs hidden; HRMS_SLOWMO sets the headed click pause (default 200 ms, 0 = full speed).
+- **Verified live 2026-10-23** on a fresh run employee (Pooja Rajan, pbhrms0385), pages 001 → 002 → 056 → 120: 6/6 passed — incl. Leave History "Casual Leave Used -1 2 Leave approved" with no debit for the rejected request.
+
+## Added 2026-10-22
+- **003 Document Compliance** now automated (`documentComplianceReport`): runs the Missing Mandatory + Expiring report views and verifies each returns its own columns/rows.
+- **004 HR Reminders** now automated (`configureReminderRule`): toggles a rule's active flag, saves, confirms persistence, restores the original (In-app channel only — no e-mails).
+- **005 Employee Excel Import** now automated (`importEmployeeExcel`): builds a valid sheet, uploads it, and verifies the imported employee reaches the register (e.g. Rohan Rao → pbhrms0357).
+- **010 Approval Config** now automated (`setupApprovalWorkflow`): creates a tagged approval workflow (Leave Request · Report Person), not default and not assigned — purely additive.
+- **056 Leave Approval** extended: the run employee now applies for two leaves and Amit **approves one and rejects the other** (`managerRejects` added to `leaveFlow.js`) — exercises both decisions on our own data.
+- **008 Letterheads** (`createLetterhead`), **023 Interview Rounds** (`createInterviewRound`), **033 Probation Templates** (`createProbationTemplate`) now automated — the remaining "main job = create" pages.
+- **009 Merge Fields** (`createMergeField`) — completes Core HR at 11/11.
+- **021 Pipeline Board** (`pipelineBoardReflectsCandidate`): the Kanban reflects the ATS (standard stages auto-move as our recruitment flow progresses the candidate; manual drag is only for custom stages), so we verify our self-applicant shows under our opening in the correct stage.
+- **App bug found while building it:** the page's own **"Download Sample Excel"** link serves a STALE template — 11 columns incl. a Branch column — which the importer itself rejects with HTTP 400 *"The uploaded file does not match the required format"*. The importer actually requires **20 columns and no Branch column** (Branch is chosen on the page): First Name*, Last Name, Country Code*, Mobile Number*, Personal Email*, Username, Designation*, Department*, Joining Date*, Work Type, Role Group*, User Level*, Employee Code, Date of Birth*, Employee Status*, Reports To, Employee Type*, Contract End Date, Gender*, Official Email. The automation builds the correct 20-column file (see `flows/employeeImport.js`).
 
 ## Every page, in order
 | # | Section | Page | Route | Add data once |
 |---|---|---|---|---|
 | 001 | Core HR | Employee | `employees` | Create the run's ONE employee (login, Reports To Amit) — used by every later page |
-| 002 | Core HR | Worker Directory | `worker-directory` | Find the run employee in the directory; complete their profile (department, blood group, nationality, address) |
-| 003 | Core HR | Document Compliance | `document-compliance` | — (check only) |
-| 004 | Core HR | HR Reminders | `hrms/reminder-rules` | — (check only) |
-| 005 | Core HR | Employee Excel Import | `upload-employee` | — (check only) |
+| 002 | Core HR | Worker Directory | `worker-directory` | Find the run employee; ONE visit of the edit form in its tab order — Basic Details (department, blood group, nationality, present address Kerala/Ernakulam + permanent "Same as Present") → Documents (HR uploads a Graduation certificate, random certificate no.) → Bank Details (salary account) → Emergency (sibling contact); then ONE load of the read-only profile view checking every tab in its order (Basic, Address, Bank, Documents, Emergency, History log, Lifecycle "Joined"; Probation / Salary / BGV / Attendance render) — `findRunEmployeeAndCompleteProfile` |
+| 003 | Core HR | Document Compliance | `document-compliance` | Run the compliance report: verify "Missing Mandatory" lists employees + Document Type/State, and "Expiring" switches to expiry columns — `documentComplianceReport` |
+| 004 | Core HR | HR Reminders | `hrms/reminder-rules` | Toggle a reminder rule's active flag, Save (asserts the save response), confirm it persists, then restore the original (In-app only, no e-mails) — `configureReminderRule` |
+| 005 | Core HR | Employee Excel Import | `upload-employee` | Build a valid 20-column sheet, upload it (Branch = Main Branch), confirm the imported employee appears in the register — `importEmployeeExcel` |
 | 006 | Core HR | Letter Templates | `letters/templates` | Letter template "Experience Letter (Auto …)" |
 | 007 | Core HR | Generate Letter | `letters/generate` | Generate an appointment letter for the run employee (e-mail off) |
-| 008 | Core HR | Letterheads | `letters/letterheads` | — (check only) |
-| 009 | Core HR | Merge Fields | `letters/fields` | — (check only) |
-| 010 | Core HR | Approval Config | `approval/config` | — (check only) |
+| 008 | Core HR | Letterheads | `letters/letterheads` | Create a letterhead (tagged name, default A4 layout, not default) — `createLetterhead` |
+| 009 | Core HR | Merge Fields | `letters/fields` | Create a custom letter merge field (Token, Label, Employee · Text, cascading value source) — `createMergeField` |
+| 010 | Core HR | Approval Config | `approval/config` | Build a new approval workflow (Leave Request type, one "Report Person" level) and Save — tagged, NOT default, NOT assigned (additive only) — `setupApprovalWorkflow` |
 | 011 | Core HR | Duty Handover | `employee-handover` | Duty handover: run employee → Amit, unique future window |
 | 012 | Recruitment | Job Requisitions | `requisition-list` | Raise a requisition, then approve it in Recruitment Approvals |
-| 013 | Recruitment | Job Board | `vacancy-list` | Job opening + a candidate applying to it (with résumé) |
-| 014 | Recruitment | Job Applications | `job-applications-list` | — (check only) |
-| 015 | Recruitment | Assessments | `assessment-list` | — (check only) |
-| 016 | Recruitment | Interview Schedules | `interview-schedules` | Interview round, interview booked, feedback 4/5 Proceed → Completed |
+| 013 | Recruitment | Job Board | `vacancy-list` | Job opening → **published** to the public career page; HR adds a candidate to it (with résumé) — register shows Source **Manual** |
+| 014 | Recruitment | Job Applications | `job-applications-list` | A candidate **applies themselves**: logged-out window → public career page → this run's opening → Apply Now → form (name, e-mail, gender, mobile, city, résumé) → Submit — register shows Stage **APPLIED**, Source **Portal** |
+| 015 | Recruitment | Assessments | `assessment-list` | **Take-home assignment** created and sent to the candidate (e-mailed, @example.com); **interview scorecard** created (Test design ×2, Defect reporting ×1) |
+| 016 | Recruitment | Interview Schedules | `interview-schedules` | Interview booked **with the scorecard**; the panel (Amit) **evaluates the take-home 85/100**; scorecard feedback (each criterion 4/5, overall 4), Proceed → Completed. Resumable if a run is interrupted |
 | 017 | Recruitment | Offers | `offer-list` | Offer → approved → e-mailed (@example.com) → accepted |
 | 018 | Recruitment | Offer Acceptance | `offer-acceptance` | Pre-boarding invite e-mailed (@example.com) → Invited |
 | 019 | Recruitment | My Approvals | `recruitment/approvals` | — (check only) |
 | 020 | Recruitment | Recruitment Dashboard | `recruitment-dashboard` | — (check only) |
-| 021 | Recruitment | Pipeline Board | `recruitment-pipeline` | — (check only) |
+| 021 | Recruitment | Pipeline Board | `recruitment-pipeline` | Filter the Kanban to our opening and confirm our self-applicant shows in the right stage (board reflects the ATS; standard stages auto-move, drag is only for custom stages) — `pipelineBoardReflectsCandidate` |
 | 022 | Recruitment | Talent Pool | `talent-pool` | — (check only) |
-| 023 | Recruitment | Interview Rounds | `interview-rounds` | — (check only) |
+| 023 | Recruitment | Interview Rounds | `interview-rounds` | Define an interview round for Software Engineer (unique round name, auto order); verify via designation filter — `createInterviewRound` |
 | 024 | Recruitment | Referral Dashboard | `ess/referral/admin` | — (check only) |
 | 025 | Recruitment | Reward Policy | `ess/referral/admin/policy` | — (check only) |
 | 026 | Onboarding | Onboarding Templates | `onboarding-templates` | Onboarding template with 1 stage + 1 required task |
@@ -58,7 +76,7 @@ Useful variants:
 | 030 | Onboarding | Onboarding Employees | `onboarding-employees` | — (check only) |
 | 031 | Onboarding | Blacklisted Employees | `blacklisted-employees` | — (check only) |
 | 032 | Onboarding | Training Courses | `training-courses` | Training course "Workplace Safety Induction (Auto …)" |
-| 033 | Onboarding | Probation Templates | `hrms/probation-templates` | — (check only) |
+| 033 | Onboarding | Probation Templates | `hrms/probation-templates` | Create a probation template (90 days, checkpoints 30/60/90) — `createProbationTemplate` |
 | 034 | Onboarding | Probation Dashboard | `hrms/probation` | — (check only) |
 | 035 | Onboarding | Appointment Letters | `hrms/appointment-letters` | — (check only) |
 | 036 | Onboarding | Confirmation Letters | `hrms/confirmation-letters` | — (check only) |
@@ -77,11 +95,11 @@ Useful variants:
 | 049 | Leave | Leave Types | `leave-types` | Leave type (letters-only name, e.g. "Study Leave Mysuru") |
 | 050 | Leave | Leave Patterns | `leave-patterns` | Leave pattern with effective dates |
 | 051 | Leave | Leave Policy | `leave-policy` | — (check only) |
-| 052 | Leave | Leave Assignment | `leave-assignment-list` | Assign Standard Staff to the run employee |
+| 052 | Leave | Leave Assignment | `leave-assignment-list` | Confirm the run employee has a leave pattern (new employees now get one automatically); assign Standard Staff only if missing |
 | 053 | Leave | Holidays | `holiday-list` | Holiday (28 Dec 2026) |
 | 054 | Leave | Holiday Assignment | `holiday-assignment-list` | Assign that holiday to Main Branch |
 | 055 | Leave | Apply Leave for Employee | `leave-request-on-behalf` | Apply + approve 1 day Casual Leave for the run employee (balance −1) |
-| 056 | Leave | Leave Approval | `leave-approval` | Run employee signs in and applies → Amit approves → employee sees Approved (balance −1) |
+| 056 | Leave | Leave Approval | `leave-approval` | Run employee applies for TWO leaves → Amit approves one and REJECTS the other → employee sees one Approved + one Rejected (balance −1); then profile view → Leave History shows "Casual Leave Used -1 … Leave approved" and no debit for the rejected one. Needs ≥ 2 Casual days (a fresh run employee has 3) |
 | 057 | Leave | Comp-Off Approval | `comp-off-approval` | — (check only) |
 | 058 | Leave | Leave Ledger | `leave-ledger` | — (check only) |
 | 059 | Leave | Attendance Sync | `leave-attendance-sync` | — (check only) |
@@ -145,7 +163,7 @@ Useful variants:
 | 117 | My Workspace | Attendance | `ess/attendance` | — (check only) |
 | 118 | My Workspace | Shift | `ess/my-shift` | — (check only) |
 | 119 | My Workspace | Locations | `ess/locations` | — (check only) |
-| 120 | My Workspace | Documents | `ess/documents` | — (check only) |
+| 120 | My Workspace | Documents | `ess/documents` | The run employee signs in and uploads an SSLC CERTIFICATE (random certificate no.) → listed in My Documents → HR sees it on the Core HR Documents tab, VERIFIES it (Verify or reject → Verified) → profile view lists both documents, SSLC Verified — `employeeUploadsDocument` |
 | 121 | My Workspace | Letters | `ess/letters` | — (check only) |
 | 122 | My Workspace | Pay | `ess/payslips` | — (check only) |
 | 123 | My Workspace | Tax | `ess/my-tax` | — (check only) |
@@ -156,8 +174,8 @@ Useful variants:
 | 128 | Helpdesk | Helpdesk Dashboard | `ess/helpdesk/admin` | Ticket → In Progress → internal note → Resolved |
 
 ## Data a complete run creates (all disposable, realistic names + "(Auto DD-Mon HH.MM.SS)")
-ONE employee (then profile, leave pattern, 2 approved leaves, a duty handover, a letter) · letter template · requisition (approved) · job opening · 2 candidates (one direct, one referred) with interviews and accepted offers · onboarding template · training course · leave type, leave pattern, holiday + assignment · 1 helpdesk ticket (resolved) · 1 referral (Hired, reward Pending).
-**E-mails sent by the app** (reserved `@example.com` test addresses only, user-approved): 2 offer e-mails, 1 pre-boarding invite.
+ONE employee (then profile, leave pattern, 2 approved leaves, a duty handover, a letter) · letter template · requisition (approved) · job opening · 3 candidates (HR-added, self-applied via the career page, referred) — the HR-added and referred ones interviewed with accepted offers · 1 take-home assignment (evaluated) · 1 interview scorecard · onboarding template · training course · leave type, leave pattern, holiday + assignment · 1 helpdesk ticket (resolved) · 1 referral (Hired, reward Pending).
+**E-mails sent by the app** (reserved `@example.com` test addresses only, user-approved): 2 offer e-mails, 1 pre-boarding invite, 1 take-home assignment brief.
 **Never done:** payroll runs, exit approval/clearance/settlement, reward approval/payment, edits to shared Payroll Policy or Reward Policy.
 
 ## Files to review before pushing

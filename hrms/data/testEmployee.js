@@ -15,7 +15,10 @@
  * Names must be letters only (the form rejects digits); phone / email /
  * username must be unique on the tenant — forRun() guarantees both.
  */
+const path = require('path');
 const { person } = require('./naming');
+
+const SAMPLE_DOC = path.join(__dirname, '..', 'fixtures', 'files', 'sample-doc.pdf');
 
 const details = {
   firstBase:      'Meera',          // first name = this + 5 random letters, e.g. "MeeraQxvbz"
@@ -46,6 +49,9 @@ const details = {
   addressLine1:   '2nd Floor, QA Towers',
   addressLine2:   'MG Road',
   presentPincode: '682016',
+  presentState:   'Kerala',            // must match the pincode — the app defaults State/City to the first option otherwise
+  presentCity:    'Ernakulam',         // matched loosely against the City options that load for the State
+  permanentSameAsPresent: true,        // tick "Same as Present" so the Permanent address is filled too
 };
 
 /**
@@ -70,4 +76,48 @@ function forRun() {
   };
 }
 
-module.exports = { details, forRun };
+/**
+ * Bank Details + Emergency Contact for an already-saved employee (edit-form tabs that only
+ * unlock after Basic Details is saved). Test values only: the account number exists only inside
+ * this HRMS tenant, the IFSC is merely format-valid, and no PAN/UAN/PF/ESI (government IDs) are
+ * set. The emergency contact is a realistic person with a reserved @example.com e-mail.
+ * Derived from `emp` so a re-run of the same step reuses the same values (idempotent).
+ */
+function profileExtras(emp) {
+  const kin = person({ gender: emp.gender === 'Female' ? 'male' : 'female' });
+  const digits = String(emp.phone || Date.now()).replace(/\D/g, '').slice(-9);
+  return {
+    bank: {
+      bankName:      'State Bank of India',
+      accountNumber: `30${digits}1`,                  // 12 digits, test-only
+      ifsc:          'SBIN0004567',
+      bankBranch:    'MG Road, Kochi',
+      accountHolder: emp.display,
+    },
+    emergency: {
+      honorific:    kin.gender === 'Female' ? 'Ms' : 'Mr',
+      first:        kin.first,
+      last:         emp.last,                           // a sibling shares the surname
+      relationship: 'Sibling',
+      countryCode:  'IND',
+      phone:        '8' + digits,                       // 10 digits, distinct from the employee's
+      email:        kin.email.replace(kin.handle, `${kin.first}.${emp.last}`.toLowerCase()),   // matches the contact's name
+      address:      '2nd Floor, QA Towers, MG Road, Kochi 682016',
+      primary:      true,
+    },
+    // Non-ID document types only (Aadhaar / PAN would need a government ID number). The numbers are
+    // random certificate numbers, generated once and kept on the run employee.
+    documents: {
+      // Uploaded by HR from Core HR → Employee → Documents tab.
+      hr:   { category: 'EDUCATION', type: 'Graduation', number: `${Math.floor(1e9 + Math.random() * 9e9)}`,
+              authority: 'All India Council for Technical Education (AICTE)', file: SAMPLE_DOC,
+              remarks: 'Degree certificate — uploaded by HR (automation)' },
+      // Uploaded by the employee from My Workspace → Documents.
+      self: { category: 'ADDRESS PROOF', type: 'SSLC CERTIFICATE', number: `${Math.floor(1e9 + Math.random() * 9e9)}`,
+              authority: 'Central Board of Secondary Education (CBSE)', file: SAMPLE_DOC,
+              remarks: 'SSLC certificate — uploaded by the employee (automation)' },
+    },
+  };
+}
+
+module.exports = { details, forRun, profileExtras };

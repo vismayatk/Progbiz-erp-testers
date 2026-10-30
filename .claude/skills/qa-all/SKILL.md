@@ -19,6 +19,10 @@ while and ask whether they want the full sweep or a specific module — if they
 only changed CRM, `/qa-crm` gives them an answer far sooner. Do not start a
 multi-hour job the user did not realise they were asking for.
 
+If what they want is "what changed since the last check" after a feature
+update, `/qa-changes` answers that in minutes: a read-only snapshot of every
+page, diffed against the previous one and mapped to the tests it touches.
+
 ## Order, and why
 
 Run in this order:

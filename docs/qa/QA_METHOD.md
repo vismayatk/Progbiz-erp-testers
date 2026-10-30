@@ -1,6 +1,6 @@
 # QA exploration method
 
-Shared reference for the `/qa-crm`, `/qa-hrms`, `/qa-task` and `/qa-all` skills.
+Shared reference for the `/qa-crm`, `/qa-hrms`, `/qa-task`, `/qa-all` and `/qa-changes` skills.
 Read this once per QA run before touching the app.
 
 ---
@@ -16,6 +16,10 @@ not bureaucratic — it is what keeps repeat runs comparable.
 - Click Delete, Remove, Deactivate, or Archive on any record.
 - Click Save, Submit, Update, or Approve on a record you did not create.
 - Change tenant settings, user permissions, roles, or passwords.
+  *Exception (agreed 13 Oct 2026):* on `onetouch_test` only, a test may change a
+  Client Setting to check its effect, then restore it immediately (in a
+  `finally`, so a failure still restores it). Ask first before touching AI Call
+  Analysis (spends AI tokens) or Monitoring Agent settings.
 - Run against production. The prober allow-lists hosts whose **first DNS label**
   carries a non-production marker — `dev.erp…`, `test.erp…`, `devtest…`,
   `qa-…`, `staging-…`, `localhost`. Everything else is refused, including
@@ -36,6 +40,9 @@ not bureaucratic — it is what keeps repeat runs comparable.
 - Open filter panels, modals, dropdowns, and tabs — then close them.
 - Sort columns, page through listings, use search boxes.
 - Type into a form to check validation, **as long as you never submit it**.
+
+**Find what a run left behind:** `node scripts/qa/find_qa_leftovers.js` lists `QA_` records on
+the masters, customers and leads (read-only). Put what it finds in the report's *Test data created*.
 
 **If you must create a record** to test a flow end to end, name it with the
 prefix `QA_` plus a timestamp (`QA_1785851441268`) so it is obviously

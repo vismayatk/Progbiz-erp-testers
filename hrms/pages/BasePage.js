@@ -13,7 +13,7 @@ class BasePage {
   constructor(page, route = '') {
     this.page = page;
     this.route = route.replace(/^\//, '');
-    this.baseUrl = process.env.HRMS_BASE_URL || 'https://hrms-erp.progbiz.in';
+    this.baseUrl = process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in';
 
     // App shell — captured skeleton (hrms/data/nav.json): body > #app > .page >
     // header.app-header + aside#sidebar.app-sidebar + div.main-content.app-content.

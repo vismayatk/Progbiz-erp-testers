@@ -51,7 +51,7 @@ module.exports = defineConfig({
     video:             EVIDENCE_ALL ? 'on' : 'retain-on-failure',
     trace:             EVIDENCE_ALL ? 'on' : 'retain-on-failure',
 
-    baseURL: process.env.HRMS_BASE_URL || 'https://hrms-erp.progbiz.in',
+    baseURL: process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in',
     // One login for the whole run (created by global-setup).
     storageState: path.join(__dirname, '.auth', 'state.json'),
   },

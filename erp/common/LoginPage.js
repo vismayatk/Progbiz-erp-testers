@@ -31,8 +31,13 @@ class LoginPage {
 
   /** Navigate to /login and wait for the (slow, JS-rendered) form. Returns true if the 3 fields rendered. */
   async openLogin() {
-    await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 }).catch(() => {});
-    const ok = await this.companyInput.waitFor({ state: 'visible', timeout: 45000 }).then(() => true).catch(() => false);
+    // The form is drawn by the app runtime and now and then never appears on the first load (Login_07,
+    // 2026-10-22: 45 s wait, then the retry passed in 4 s), so reload once before giving up.
+    let ok = false;
+    for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+      await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 }).catch(() => {});
+      ok = await this.companyInput.waitFor({ state: 'visible', timeout: attempt ? 45000 : 25000 }).then(() => true).catch(() => false);
+    }
     await this.page.waitForTimeout(500);
     return ok;
   }

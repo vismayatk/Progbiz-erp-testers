@@ -63,12 +63,20 @@ class QuotationPage {
     }, label).catch(() => '');
   }
 
+  /** The customer on the form. Since 2026-10-24 it is a party-picker button (#quotation-party, name in
+   *  .pp-value); older builds had a text input #customerNameInput. */
+  async customerName() {
+    const picked = this.page.locator('#quotation-party .pp-value').first();
+    if (await picked.count()) return (await picked.innerText().catch(() => '')).replace(/\s+/g, ' ').trim();
+    return (await this.qCustomer.inputValue({ timeout: 3000 }).catch(() => '')) || '';
+  }
+
   /** Snapshot of auto-fill state (QT-010): which fields are prefilled vs empty. */
   async autoFillState() {
     const val = async (loc) => (await loc.inputValue().catch(() => '')) || '';
     return {
       number:    await val(this.qNumber),
-      customer:  await val(this.qCustomer),
+      customer:  await this.customerName(),
       date:      await val(this.qDate),
       validUpto: await val(this.qValidUpto),
       itemRows:  await this.qItemRows.count().catch(() => 0),

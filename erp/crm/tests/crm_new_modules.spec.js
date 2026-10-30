@@ -57,16 +57,23 @@ async function gridState(page, route) {
 test.describe('CRM — Newer modules', () => {
   test.describe.configure({ timeout: 200_000 });
 
+  // optional: the module is not bought by every client. No sidebar entry = not enabled for this client
+  // (the page then shows "Access Denied"), so there is nothing to test and it is not a defect.
   const PAGES = [
     { id: 'NM-01', route: '/lead-expenses',           name: 'Lead Expenses' },
     { id: 'NM-02', route: '/lead-source-commissions', name: 'Lead Source Commissions' },
-    { id: 'NM-03', route: '/call-analysis',           name: 'AI Call Analysis' },
+    { id: 'NM-03', route: '/call-analysis',           name: 'AI Call Analysis', optional: true },
     { id: 'NM-04', route: '/sales-targets',           name: 'Sales Targets' },
   ];
 
   for (const p of PAGES) {
     test(`${p.id} | ${p.name} loads with a grid and no error text`, async ({ page }) => {
       await login(page);
+      if (p.optional) {
+        const hrefs = await page.evaluate(() => [...document.querySelectorAll('aside a[href], .app-sidebar a[href]')].map((a) => a.getAttribute('href') || ''));
+        test.skip(!hrefs.some((h) => h.replace(/^\//, '').split('?')[0] === p.route.replace(/^\//, '')),
+          `${p.name} is not in this client's sidebar, so the module is not enabled for it`);
+      }
       const s = await gridState(page, p.route);
       expect(s.pageHasError, `${p.route} rendered an error message`).toBe(false);
       expect(s.hasGrid, `${p.route} rendered no grid at all`).toBe(true);

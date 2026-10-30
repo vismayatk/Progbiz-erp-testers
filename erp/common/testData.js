@@ -2,7 +2,11 @@
 
 const { tenant } = require('./tenantData');
 
-const ts = Date.now();
+// One timestamp per `playwright test` run, shared by every worker. A worker restarts after a failed test and
+// re-imports this file; a per-import Date.now() then gave later tests (TC-11) a different customer name from
+// the one TC-02 created. Workers inherit this variable from the runner process.
+process.env.QA_RUN_TS = process.env.QA_RUN_TS || String(Date.now());
+const ts = Number(process.env.QA_RUN_TS);
 
 const testData = {
   enquiry: {

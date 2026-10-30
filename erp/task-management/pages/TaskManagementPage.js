@@ -1,6 +1,8 @@
 'use strict';
+const { expect } = require('@playwright/test');
 
 const { tenant } = require('../../common/tenantData');
+const { dismissRateLimit } = require('../../common/helpers');
 
 /**
  * Task Management module.
@@ -157,6 +159,10 @@ class TaskManagementPage {
       await this.newTaskItem.click({ timeout: 5000 }).catch(() => {});
       const ok = await this.taskInput.waitFor({ state: 'visible', timeout: 6000 }).then(() => true).catch(() => false);
       if (ok) { await this.page.waitForTimeout(500); return; }
+      // TM-11 (2026-10-22) never saw the modal after 5 clicks: a "Too many requests" dialog can sit over the
+      // menu, and a half-loaded home never wires the menu up. Clear the dialog, and reload home once.
+      await dismissRateLimit(this.page, 500);
+      if (attempt === 2) await this.gotoHome();
     }
     // last shot — surface a clear timeout if the modal never rendered
     await this.taskInput.waitFor({ state: 'visible', timeout: 12000 });
@@ -189,7 +195,13 @@ class TaskManagementPage {
   }
 
   getBranchOptions()   { return this.branchSelect.locator('option').allTextContents(); }
-  getTaskTypeOptions() { return this.taskTypeSelect.locator('option').allTextContents(); }
+  /** The Task Type list loads after the modal opens: wait until it holds real choices, not just "Choose". */
+  async getTaskTypeOptions() {
+    const opts = () => this.taskTypeSelect.locator('option').allTextContents();
+    await expect.poll(async () => (await opts()).length, { timeout: 15000, message: 'Task Type list never loaded' })
+      .toBeGreaterThan(1).catch(() => {});
+    return opts();
+  }
   getPriorityOptions() { return this.prioritySelect.locator('option').allTextContents(); }
 
   /** Presence of party / participant / host controls in the modal (TC_TASK_013..016, 030). */

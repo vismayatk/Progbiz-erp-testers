@@ -201,6 +201,11 @@ class WorkflowPage {
     await this.page.locator(`.nav-link:has-text("${tabName}"), [role="tab"]:has-text("${tabName}")`)
       .first().click({ timeout: 9000 });
     await this.page.waitForTimeout(3800);
+    // The tab pages its rows 10 at a time ("Showing 1 to 10 of 12 entries"): widen it so a
+    // template with more than 10 tasks is counted whole.
+    if (await this.page.selectOption('#page_size', '100').then(() => true).catch(() => false)) {
+      await this.page.waitForTimeout(2500);
+    }
     return this.readGrid();
   }
 

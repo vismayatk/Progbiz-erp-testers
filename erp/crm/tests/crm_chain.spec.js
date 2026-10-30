@@ -39,6 +39,7 @@ test.describe.configure({ mode: 'serial', timeout: 240_000 });
 const NAME = `QA_CHAIN_${Date.now()}`;
 let chain;                 // CrmChainPage
 let enquiryPath = null;    // /enquiry-overview/<id>
+let movedToTomorrow = false;   // set by CH-04b, read by CH-10
 let quotationFormPath = null; // /quotation/0/<enquiryId> — the prefilled form
 let quotationPath = null;  // /quotation-view/<id>
 let homeBefore = null;
@@ -146,6 +147,7 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
     expect(r.opened, 'follow-up modal did not open').toBe(true);
     expect(r.postCount, 'Save issued no request').toBeGreaterThan(0);
     expect(r.saved, 'modal stayed open after Save').toBe(true);
+    movedToTomorrow = true;   // CH-10 needs to know the follow-up is no longer due today
   });
 
   test('CH-05 | Record reaches the FollowUps listing', async () => {
@@ -183,7 +185,9 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
       const on = (e) => e.getClientRects().length > 0;
       const t = [...document.querySelectorAll('table')].filter(on)[0];
       return {
-        customer: document.querySelector('#customerNameInput')?.value
+        // the Quotation customer is a party-picker button now; older builds had an input
+        customer: document.querySelector('#quotation-party .pp-value')?.innerText?.trim()
+          || document.querySelector('#customerNameInput')?.value
           || document.querySelector('#TxtCustomer')?.value || '',
         itemRows: t ? t.querySelectorAll('tbody tr').length : 0,
       };
@@ -263,7 +267,14 @@ test.describe('CRM — Enquiry → Follow-up → Quotation chain', () => {
     // actually reflects a new CRM record on this build.
     const moved = Object.values(delta).some((v) => v !== 0);
     if (!moved) console.log('  ⓘ no task counter moved — expected, an enquiry/follow-up is not a Task Management task');
-    expect(after.scheduleText, "Today's Schedule does not mention the new record").toContain(NAME);
-    console.log(`  ✅ Today's Schedule lists ${NAME}`);
+    if (movedToTomorrow) {
+      // CH-04b saved the follow-up for tomorrow, so this record is correctly NOT due today.
+      // The home page must reflect that: listing it under Today's Schedule would be the bug.
+      expect(after.scheduleText, "Today's Schedule lists a follow-up that CH-04b moved to tomorrow").not.toContain(NAME);
+      console.log(`  ✅ ${NAME} is not on Today's Schedule (its follow-up is tomorrow)`);
+    } else {
+      expect(after.scheduleText, "Today's Schedule does not mention the new record").toContain(NAME);
+      console.log(`  ✅ Today's Schedule lists ${NAME}`);
+    }
   });
 });

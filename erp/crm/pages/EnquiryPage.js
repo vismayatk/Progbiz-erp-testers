@@ -254,8 +254,11 @@ class EnquiryPage {
   /**
    * Add a line item to the enquiry.
    *
-   * The item picker has two shapes depending on the tenant's build, and this
-   * handles both by looking at what #item-search-input actually is:
+   * The item picker has three shapes depending on the tenant's build, and this
+   * handles all by looking at what #item-search-input actually is:
+   *   - type-ahead `.item-picker` (Oct-2026 build, onetouch_test from 2026-10-24):
+   *     type in the box, click a row (.ip-option) of #item-search-input-panel,
+   *     then commit with #btn-add-item.
    *   - <select> (Aug-2026 build, e.g. lesol_test): a plain list of the
    *     tenant's items, committed with #btn-add-item.
    *   - <input type=text> + magnifier (older build, e.g. onetouch_test): the
@@ -273,10 +276,55 @@ class EnquiryPage {
     await this.itemSearchInput.waitFor({ state: 'visible', timeout: 20000 });
     await this.itemSearchInput.scrollIntoViewIfNeeded();
 
-    const tag = await this.itemSearchInput.evaluate((el) => el.tagName);
+    const { tag, picker } = await this.itemSearchInput.evaluate((el) => ({ tag: el.tagName, picker: !!el.closest('.item-picker') }));
+    if (picker) return this._addItemFromPicker(itemName, quantity);
     return tag === 'SELECT'
       ? this._addItemFromSelect(itemName, quantity)
       : this._addItemFromModal(itemName, quantity);
+  }
+
+  /**
+   * Newest picker: a type-ahead. Typing in #item-search-input opens #item-search-input-panel with one
+   * [role=option] per item. The panel's "New Item" footer opens a different modal — never click it.
+   * Like the other paths, a name the tenant doesn't have falls back to the first real entry.
+   */
+  async _addItemFromPicker(itemName, quantity) {
+    const page = this.page;
+    const panel = page.locator('#item-search-input-panel');
+    const options = panel.locator('[role="option"]');
+
+    const search = async (term) => {
+      await this.itemSearchInput.click();
+      await this.itemSearchInput.fill(term);
+      await options.first().waitFor({ state: 'visible', timeout: 6000 }).catch(() => {});
+      await page.waitForTimeout(600);
+      return options.count();
+    };
+
+    let found = await search(String(itemName));
+    if (!found) found = await search('');          // not in this tenant -> list all
+    if (!found) throw new Error('item picker (#item-search-input-panel) lists no items');
+
+    const names = (await options.locator('.ip-name').allInnerTexts()).map((t) => t.replace(/\s+/g, ' ').trim());
+    const want = String(itemName).replace(/\s+/g, ' ').trim().toLowerCase();
+    let idx = names.findIndex((n) => n.toLowerCase() === want);
+    if (idx < 0) idx = names.findIndex((n) => n.toLowerCase().includes(want));
+    if (idx < 0) idx = 0;
+    const choice = { value: names[idx], text: names[idx] };
+    if (choice.text.toLowerCase() !== want) {
+      console.log(`  ↩️  "${itemName}" not in this tenant's list — using "${choice.text}"`);
+    }
+
+    await options.nth(idx).click({ timeout: 15000 });
+    await panel.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});   // picking a row closes it
+
+    await this.quantityInput.fill(String(quantity));
+    await this.addItemBtn.click({ timeout: 15000 });
+
+    const row = page.locator('table tbody tr').filter({ hasText: choice.text }).first();
+    await row.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`  ✅ Item added: ${choice.text} x${quantity}`);
+    return choice;
   }
 
   /**
@@ -382,6 +430,8 @@ class EnquiryPage {
     // get test enquiries (and Won/Lost statuses) attached to their record.
     await this.page.goto(`${this.baseUrl}/leads`, { waitUntil: 'domcontentloaded' });
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+    // the grid draws skeleton rows first (TC-02B read one on 2026-10-24); wait for rows with real cell text
+    await this.page.waitForFunction(() => [...document.querySelectorAll('table tbody tr')].some((r) => [...r.querySelectorAll('td')].filter((c) => (c.textContent || '').trim()).length >= 4), null, { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1200);
     const hit = await this.page.evaluate((src) => {
       const auto = new RegExp(src, 'i');
@@ -658,6 +708,16 @@ class EnquiryPage {
       if (v) await lq.selectOption(v);
     } catch { /* not required for this status */ }
 
+    // Closing as Won on a lead source that earns a commission is refused without a Business Value
+    // ("Please enter the business value — this lead source earns a commission", seen 2026-10-22).
+    // A Won status shows its own #won-business-value (plus an "After Sale" status); other statuses use #business-value.
+    if (/^won$/i.test(status)) {
+      const bv = modal.locator('#won-business-value, #business-value').filter({ visible: true }).first();
+      if (await bv.count() && !Number(await bv.inputValue().catch(() => '0'))) {
+        await bv.fill('15000');
+      }
+    }
+
     try {
       const c = this.page.locator('#no-next-followup');
       if (await c.count() && !(await c.isChecked())) await c.check();
@@ -665,7 +725,18 @@ class EnquiryPage {
 
     await this.page.locator('#followup-description').fill(`Status → ${status}`).catch(() => {});
     await this.page.locator('#btn-save-followup').click();
-    await modal.waitFor({ state: 'hidden', timeout: 12000 }).catch(() => {});
+    // A refused save keeps the modal open and raises an error SweetAlert; surface its text instead of
+    // letting the test fail later on an unchanged status.
+    const refused = this.page.locator('.swal2-popup:has(.swal2-icon.swal2-error)');
+    await Promise.race([
+      modal.waitFor({ state: 'hidden', timeout: 12000 }),
+      refused.waitFor({ state: 'visible', timeout: 12000 }),
+    ]).catch(() => {});
+    if (await refused.isVisible().catch(() => false)) {
+      const why = (await refused.locator('.swal2-html-container, .swal2-title').allTextContents().catch(() => [])).join(' ').replace(/\s+/g, ' ').trim();
+      await this.page.locator('.swal2-confirm').click().catch(() => {});
+      throw new Error(`Follow-up "${label}" was not saved — the app said: "${why}"`);
+    }
     await this.page.waitForTimeout(1200);
     console.log(`  ✅ Follow-up recorded for "${status}"`);
   }

@@ -34,7 +34,10 @@
     "ui": "playwright test --ui",
     "install:browsers": "playwright install chromium",
     "test:hrms": "playwright test -c hrms/playwright.config.js",
-    "test:hrms:smoke": "playwright test -c hrms/playwright.config.js hrms/tests/00_smoke"
+    "test:hrms:smoke": "playwright test -c hrms/playwright.config.js hrms/tests/00_smoke",
+    "video:v4": "node scripts/video/beta/make_video_v4.js",
+    "video:v4:kanika": "node scripts/video/beta/make_video_v4.js --name Kanika --voice-file reports/video/beta/audio_v4/eleven/kanika_full.mp3 --overrides reports/video/beta/audio_v4/eleven/overrides.json",
+    "video:v4:tts": "node scripts/video/beta/make_video_v4.js --tts"
   },
   "keywords": [],
   "author": "",

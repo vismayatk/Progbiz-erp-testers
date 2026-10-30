@@ -1,0 +1,175 @@
+{
+  "_source": "Beta product video v3 (beta.progbiz.io): intro on how businesses use ProgBiz + CRM walkthrough + WhatsApp (inbox, chatbot, knowledge base, broadcasts) + Lead Expenses. Content reference: ~/Downloads/Managing Leads, Follow-Ups, and Performance Insights in the CRM.pdf. Every claim checked against the live pages on 2026-09-29. English first; other languages can reuse the same sections.",
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_s": 300,
+    "codec": "H.264 MP4",
+    "pace_wpm": [
+      135,
+      155
+    ]
+  },
+  "sections": [
+    {
+      "id": "01_intro",
+      "title": "Introduction",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "Enquiries arrive from Facebook ads, your website, WhatsApp and phone calls, and each one needs a quick, personal follow-up.",
+        "Miss one, and the deal goes to someone else.",
+        "ProgBiz ERP brings your leads, follow-ups, WhatsApp chats and team performance into one simple platform.",
+        "Sales executives know who to call next, managers see the whole pipeline live, and business owners see which marketing and which people deliver results.",
+        "Here is how your team uses it, every day."
+      ]
+    },
+    {
+      "id": "02_home",
+      "title": "Home",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "The day starts on the Home screen.",
+        "New leads, follow-ups, delayed work and completed activities are visible at a glance, with today’s schedule, recent follow-up history and a lead summary by stage."
+      ]
+    },
+    {
+      "id": "03_ai",
+      "title": "AI Assistant",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "Need an answer fast? Just ask the AI Assistant.",
+        "Type a question like, how many leads today, and get the answer from your own business data in seconds — no reports, no spreadsheets.",
+        "Ask about follow-ups due today, delayed tasks, project status, or who is present today.",
+        "Every conversation is saved, so you can pick up where you left off."
+      ]
+    },
+    {
+      "id": "04_dashboard",
+      "title": "CRM Dashboard",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "For managers, the CRM Dashboard turns sales activity into a clear picture.",
+        "Win rate, conversion rate, lost rate and pipeline value sit right at the top, with every lead grouped by stage — new, cold, warm, hot, won and lost.",
+        "Leads in follow-up are split into today’s, delayed and upcoming, so priorities are obvious.",
+        "Scroll down to compare every executive side by side, follow call activity, and see which lead sources actually bring in revenue."
+      ]
+    },
+    {
+      "id": "05_leads",
+      "title": "Leads",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "All your enquiries live in Leads.",
+        "Tabs keep new, in follow-up, won and lost leads apart, and Status View shows every stage of your sales process.",
+        "Powerful filters find any lead by source, quality, assignee, date, or even Facebook campaign.",
+        "And when priorities change, Lead Transfer moves leads between executives in bulk."
+      ]
+    },
+    {
+      "id": "06_followups",
+      "title": "Follow-ups",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "A lead is only as valuable as its next action.",
+        "Follow-ups are sorted into today’s, delayed, upcoming and non follow-up, so nothing slips through the cracks.",
+        "Prefer a board? Kanban View shows every follow-up by status, with the next date, last contact and executive on each card."
+      ]
+    },
+    {
+      "id": "07_wa_chat",
+      "title": "WhatsApp inbox and chatbot",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "Your customers are already on WhatsApp, and so is ProgBiz.",
+        "The shared inbox brings every WhatsApp chat into the CRM, so your whole team works from one place, with search and unread filters, and no conversation is lost.",
+        "A chatbot greets every new enquiry with your own welcome message and helps customers find the right service, day and night.",
+        "Add your documents and product details to the Knowledge Base, and the chatbot AI answers customer questions for you."
+      ]
+    },
+    {
+      "id": "08_wa_broadcast",
+      "title": "WhatsApp broadcasts",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "Need to reach many customers at once? Send a broadcast.",
+        "Pick an approved WhatsApp template, choose your customers, and send it immediately, or schedule it for later.",
+        "Then track every campaign — sent, delivered, read, clicked and replied — along with the enquiries and wins it brought in."
+      ]
+    },
+    {
+      "id": "09_calls",
+      "title": "AI Call Analysis",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "AI Call Analysis reviews your team’s recorded calls.",
+        "Every call gets a lead score, an agent score and the customer’s sentiment, and managers can listen to any recording right from the list.",
+        "Open a call to read an AI summary and a coaching note, so you know which calls went well, and how to close the next one."
+      ]
+    },
+    {
+      "id": "10_expenses",
+      "title": "Lead Expenses",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "Lead Expenses keeps track of what you spend on every lead source and ad.",
+        "Together with your results, it shows the real cost per lead and the return on your marketing."
+      ]
+    },
+    {
+      "id": "11_performance",
+      "title": "Executive Performance",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "Executive Performance brings it all together.",
+        "Each executive gets one score, built from target achievement, win rate, won value and activity, so your best performers rise to the top and everyone can see where to improve."
+      ]
+    },
+    {
+      "id": "12_closing",
+      "title": "Closing",
+      "slot": [
+        0,
+        60
+      ],
+      "sentences": [
+        "For business owners, that means fewer missed leads, faster replies on WhatsApp, a sales team that is easy to coach, and marketing money spent where it works.",
+        "ProgBiz ERP — bringing your business workflow together."
+      ],
+      "end_card_cta": "Capture every lead. Reply faster on WhatsApp. Know how your team performs."
+    }
+  ]
+}

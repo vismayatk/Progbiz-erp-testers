@@ -1,0 +1,314 @@
+{
+  "lang": "en",
+  "name": "English",
+  "sections": [
+    {
+      "id": "01_intro",
+      "sentences": [
+        {
+          "text": "Enquiries arrive from Facebook ads, your website, WhatsApp and phone calls, and each one needs a quick, personal follow-up.",
+          "anchors": {}
+        },
+        {
+          "text": "Miss one, and the deal goes to someone else.",
+          "anchors": {}
+        },
+        {
+          "text": "ProgBiz ERP brings your leads, follow-ups, WhatsApp chats and team performance into one simple platform.",
+          "anchors": {}
+        },
+        {
+          "text": "Sales executives know who to call next, managers see the whole pipeline live, and business owners see which marketing and which people deliver results.",
+          "anchors": {
+            "managers see": "managers see",
+            "and business owners": "and business owners"
+          }
+        },
+        {
+          "text": "Here is how your team uses it, every day.",
+          "anchors": {}
+        }
+      ]
+    },
+    {
+      "id": "02_home",
+      "sentences": [
+        {
+          "text": "The day starts on the Home screen.",
+          "anchors": {}
+        },
+        {
+          "text": "New leads, follow-ups, delayed work and completed activities are visible at a glance, with today’s schedule, recent follow-up history and a lead summary by stage.",
+          "anchors": {
+            "with today": "with today",
+            "recent follow-up history": "recent follow-up history",
+            "and a lead summary": "and a lead summary"
+          }
+        }
+      ]
+    },
+    {
+      "id": "03_ai",
+      "sentences": [
+        {
+          "text": "Need an answer fast? Just ask the AI Assistant.",
+          "anchors": {}
+        },
+        {
+          "text": "Type a question like, how many leads today, and get the answer from your own business data in seconds — no reports, no spreadsheets.",
+          "anchors": {}
+        },
+        {
+          "text": "Ask about follow-ups due today, delayed tasks, project status, or who is present today.",
+          "anchors": {
+            "follow-ups due today": "follow-ups due today",
+            "delayed tasks": "delayed tasks",
+            "project status": "project status",
+            "who is present today": "who is present today"
+          }
+        },
+        {
+          "text": "Every conversation is saved, so you can pick up where you left off.",
+          "anchors": {}
+        }
+      ]
+    },
+    {
+      "id": "04_dashboard",
+      "sentences": [
+        {
+          "text": "For managers, the CRM Dashboard turns sales activity into a clear picture.",
+          "anchors": {}
+        },
+        {
+          "text": "Win rate, conversion rate, lost rate and pipeline value sit right at the top, with every lead grouped by stage — new, cold, warm, hot, won and lost.",
+          "anchors": {
+            "new": "new",
+            "cold": "cold",
+            "warm": "warm",
+            "hot": "hot",
+            "won and lost": "won and lost",
+            "with every lead grouped": "with every lead grouped"
+          }
+        },
+        {
+          "text": "Leads in follow-up are split into today’s, delayed and upcoming, so priorities are obvious.",
+          "anchors": {}
+        },
+        {
+          "text": "Scroll down to compare every executive side by side, follow call activity, and see which lead sources actually bring in revenue.",
+          "anchors": {
+            "follow call activity": "follow call activity",
+            "and see which lead sources": "and see which lead sources"
+          }
+        }
+      ]
+    },
+    {
+      "id": "05_leads",
+      "sentences": [
+        {
+          "text": "All your enquiries live in Leads.",
+          "anchors": {}
+        },
+        {
+          "text": "Tabs keep new, in follow-up, won and lost leads apart, and Status View shows every stage of your sales process.",
+          "anchors": {
+            "and Status View": "and Status View",
+            "won and lost": "won and lost"
+          }
+        },
+        {
+          "text": "Powerful filters find any lead by source, quality, assignee, date, or even Facebook campaign.",
+          "anchors": {
+            "by source": "by source",
+            "quality": "quality",
+            "assignee": "assignee",
+            "date": "date",
+            "facebook campaign": "Facebook campaign"
+          }
+        },
+        {
+          "text": "And when priorities change, Lead Transfer moves leads between executives in bulk.",
+          "anchors": {}
+        }
+      ]
+    },
+    {
+      "id": "06_followups",
+      "sentences": [
+        {
+          "text": "A lead is only as valuable as its next action.",
+          "anchors": {}
+        },
+        {
+          "text": "Follow-ups are sorted into today’s, delayed, upcoming and non follow-up, so nothing slips through the cracks.",
+          "anchors": {
+            "delayed": "delayed",
+            "upcoming": "upcoming",
+            "non follow-up": "non follow-up"
+          }
+        },
+        {
+          "text": "Prefer a board? Kanban View shows every follow-up by status, with the next date, last contact and executive on each card.",
+          "anchors": {
+            "Kanban View": "Kanban View",
+            "with the next date": "with the next date"
+          }
+        }
+      ]
+    },
+    {
+      "id": "07_wa_chat",
+      "sentences": [
+        {
+          "text": "Your customers are already on WhatsApp, and so is ProgBiz.",
+          "anchors": {}
+        },
+        {
+          "text": "The shared inbox brings every WhatsApp chat into the CRM, so your whole team works from one place, with search and unread filters, and no conversation is lost.",
+          "anchors": {
+            "with search and unread filters": "with search and unread filters"
+          }
+        },
+        {
+          "text": "A chatbot greets every new enquiry with your own welcome message and helps customers find the right service, day and night.",
+          "anchors": {}
+        },
+        {
+          "text": "Add your documents and product details to the Knowledge Base, and the chatbot AI answers customer questions for you.",
+          "anchors": {}
+        }
+      ]
+    },
+    {
+      "id": "08_wa_broadcast",
+      "sentences": [
+        {
+          "text": "Need to reach many customers at once? Send a broadcast.",
+          "anchors": {}
+        },
+        {
+          "text": "Pick an approved WhatsApp template, choose your customers, and send it immediately, or schedule it for later.",
+          "anchors": {
+            "choose your customers": "choose your customers",
+            "and send it immediately": "and send it immediately"
+          }
+        },
+        {
+          "text": "Then track every campaign — sent, delivered, read, clicked and replied — along with the enquiries and wins it brought in.",
+          "anchors": {
+            "sent, delivered": "sent, delivered",
+            "along with the enquiries": "along with the enquiries"
+          }
+        }
+      ]
+    },
+    {
+      "id": "09_calls",
+      "sentences": [
+        {
+          "text": "AI Call Analysis reviews your team’s recorded calls.",
+          "anchors": {}
+        },
+        {
+          "text": "Every call gets a lead score, an agent score and the customer’s sentiment, and managers can listen to any recording right from the list.",
+          "anchors": {
+            "and managers can listen": "and managers can listen"
+          }
+        },
+        {
+          "text": "Open a call to read an AI summary and a coaching note, so you know which calls went well, and how to close the next one.",
+          "anchors": {
+            "an AI summary": "an AI summary",
+            "and a coaching note": "and a coaching note"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10_expenses",
+      "sentences": [
+        {
+          "text": "Lead Expenses keeps track of what you spend on every lead source and ad.",
+          "anchors": {}
+        },
+        {
+          "text": "Together with your results, it shows the real cost per lead and the return on your marketing.",
+          "anchors": {}
+        }
+      ]
+    },
+    {
+      "id": "11_performance",
+      "sentences": [
+        {
+          "text": "Executive Performance brings it all together.",
+          "anchors": {}
+        },
+        {
+          "text": "Each executive gets one score, built from target achievement, win rate, won value and activity, so your best performers rise to the top and everyone can see where to improve.",
+          "anchors": {
+            "so your best performers": "so your best performers",
+            "and everyone": "and everyone"
+          }
+        }
+      ]
+    },
+    {
+      "id": "12_closing",
+      "sentences": [
+        {
+          "text": "For business owners, that means fewer missed leads, faster replies on WhatsApp, a sales team that is easy to coach, and marketing money spent where it works.",
+          "anchors": {
+            "faster replies": "faster replies",
+            "a sales team": "a sales team",
+            "and marketing money": "and marketing money"
+          }
+        },
+        {
+          "text": "ProgBiz ERP — bringing your business workflow together.",
+          "anchors": {}
+        }
+      ]
+    }
+  ],
+  "screen_text": {
+    "Facebook • Website • WhatsApp": "Facebook • Website • WhatsApp",
+    "One platform for your whole sales team": "One platform for your whole sales team",
+    "Leads, follow-ups, WhatsApp and team performance, in one place": "Leads, follow-ups, WhatsApp and team performance, in one place",
+    "For sales executives": "For sales executives",
+    "For managers": "For managers",
+    "For business owners": "For business owners",
+    "How it works": "How it works",
+    "A day with ProgBiz ERP": "A day with ProgBiz ERP",
+    "From the first enquiry to the final result": "From the first enquiry to the final result",
+    "One place to start your day": "One place to start your day",
+    "Ask your data anything": "Ask your data anything",
+    "Answers in seconds": "Answers in seconds",
+    "Your pipeline at a glance": "Your pipeline at a glance",
+    "Today • Delayed • Upcoming": "Today • Delayed • Upcoming",
+    "Know which sources pay off": "Know which sources pay off",
+    "Find any lead, fast": "Find any lead, fast",
+    "Move leads in bulk": "Move leads in bulk",
+    "Never miss a follow-up": "Never miss a follow-up",
+    "Every stage on one board": "Every stage on one board",
+    "One shared WhatsApp inbox": "One shared WhatsApp inbox",
+    "A chatbot that replies 24/7": "A chatbot that replies 24/7",
+    "AI answers from your content": "AI answers from your content",
+    "Approved WhatsApp templates": "Approved WhatsApp templates",
+    "Send now or schedule": "Send now or schedule",
+    "Track every campaign": "Track every campaign",
+    "AI scores every call": "AI scores every call",
+    "Coaching for every executive": "Coaching for every executive",
+    "Every ad spend, by source": "Every ad spend, by source",
+    "Cost per lead and return": "Cost per lead and return",
+    "One score per executive": "One score per executive",
+    "Fewer missed leads": "Fewer missed leads",
+    "Faster WhatsApp replies": "Faster WhatsApp replies",
+    "A team you can coach": "A team you can coach",
+    "Marketing that pays back": "Marketing that pays back",
+    "Bringing your business workflow together": "Bringing your business workflow together",
+    "Capture every lead. Reply faster on WhatsApp. Know how your team performs.": "Capture every lead. Reply faster on WhatsApp. Know how your team performs."
+  }
+}

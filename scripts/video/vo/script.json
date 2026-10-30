@@ -1,0 +1,109 @@
+{
+  "_source": "~/Downloads/ProgBiz_ERP_CRM_4_Minute_Product_Demo_Script_and_Claude_Prompt.docx — section 3 'Full Voice-over Script' (approved wording, do not paraphrase), section 2 timeline, section 6 callouts, section 5 editing rules",
+  "video": { "width": 1920, "height": 1080, "fps": 30, "duration_s": 240, "codec": "H.264 MP4", "pace_wpm": [135, 150] },
+  "sections": [
+    {
+      "id": "01_opening",
+      "title": "Opening / Problem",
+      "slot": [0, 20],
+      "visual": "Fast UI montage + ProgBiz ERP title / brand reveal",
+      "sentences": [
+        "Managing customer enquiries is easy when everything is in one place.",
+        "ProgBiz ERP brings your sales workflow together—from the moment a lead arrives to the moment it is followed up, converted, or closed.",
+        "Let’s see how the CRM helps your team stay organized and your managers stay informed."
+      ],
+      "callouts": []
+    },
+    {
+      "id": "02_home",
+      "title": "Home",
+      "slot": [20, 50],
+      "visual": "Show Home dashboard and key cards",
+      "sentences": [
+        "Start from the Home screen and get an instant view of the day.",
+        "New leads, scheduled follow-ups, delayed activities, and completed work are visible at a glance.",
+        "Instead of searching through multiple screens, your team can immediately see what needs attention and move into the right action."
+      ],
+      "callouts": ["One place to start your day"]
+    },
+    {
+      "id": "03_dashboard",
+      "title": "CRM Dashboard",
+      "slot": [50, 95],
+      "visual": "CRM dashboard; zoom into KPIs",
+      "sentences": [
+        "For managers, the CRM Dashboard turns sales activity into a clear picture.",
+        "Here you can see total leads and how they are distributed across stages such as New, Cold, Warm, Hot, Won, Lost, and other outcomes.",
+        "Key metrics such as win rate, conversion rate, lost rate and pipeline value help the team understand what is happening in the sales funnel.",
+        "The follow-up summary also separates today’s work, delayed follow-ups and upcoming activities, so important customer actions are easier to prioritize."
+      ],
+      "callouts": ["See your sales pipeline", "Track leads by stage"],
+      "small_labels": ["Pipeline Value", "Today’s Follow-ups", "Upcoming Activities"]
+    },
+    {
+      "id": "04_leads",
+      "title": "Leads",
+      "slot": [95, 145],
+      "visual": "Navigate CRM → Leads; demonstrate search/filter/open lead",
+      "sentences": [
+        "Now let’s move to Leads.",
+        "This is where sales enquiries can be reviewed and managed from a single workspace.",
+        "A lead can contain customer information, enquiry details, lead source, assignment and follow-up information.",
+        "Use search and filters to quickly find the right records, open a lead to review its details, and assign the enquiry to the appropriate team member.",
+        "This gives every executive a structured view of the customers they need to work on."
+      ],
+      "callouts": ["Find leads faster", "Assign leads to the right executive"],
+      "small_labels": ["Search & Filter", "Lead Assignment"]
+    },
+    {
+      "id": "05_followups",
+      "title": "Follow-ups",
+      "slot": [145, 195],
+      "visual": "Open follow-up view; show today/delayed/upcoming; open one record",
+      "sentences": [
+        "The next step is follow-up.",
+        "A lead is valuable only when the next action is clear.",
+        "With follow-up management, your team can see activities that are due today, delayed, or scheduled for later.",
+        "Open a follow-up to review the customer and enquiry context, update the activity, and keep the next action visible.",
+        "This helps reduce missed callbacks and keeps the sales process moving."
+      ],
+      "callouts": ["Keep every follow-up visible", "Today • Delayed • Upcoming"]
+    },
+    {
+      "id": "06_workflow",
+      "title": "Connected workflow",
+      "slot": [195, 220],
+      "visual": "Animated path between screens: enquiry → assigned executive → follow-up → status → reporting",
+      "sentences": [
+        "The real value comes from the complete workflow.",
+        "An enquiry enters the CRM, is assigned to an executive, followed up at the right time, updated through the sales stages, and reflected in the dashboard.",
+        "So sales teams work from the same information, while managers get visibility into the overall pipeline."
+      ],
+      "callouts": ["From enquiry to conversion", "One connected CRM workflow"]
+    },
+    {
+      "id": "07_closing",
+      "title": "Closing",
+      "slot": [220, 240],
+      "visual": "Logo + concise CTA",
+      "sentences": [
+        "ProgBiz ERP CRM gives your team one connected place to manage leads, follow-ups and sales visibility.",
+        "Less time searching.",
+        "Fewer missed follow-ups.",
+        "Better visibility across the pipeline.",
+        "ProgBiz ERP—bringing your business workflow together."
+      ],
+      "callouts": [],
+      "end_card_cta": "Manage leads. Stay on top of follow-ups. See your pipeline clearly."
+    }
+  ],
+  "visual_rules": [
+    "Keep the real ProgBiz ERP UI as the hero; do not redesign the product interface; no fake UI elements; no unsupported feature claims.",
+    "Smooth cursor movement, deliberate clicks, subtle zoom-ins, focus highlights, short transitions.",
+    "On-screen text sparingly: 3–6 words per callout; do not cover important UI with captions.",
+    "When a feature is mentioned, visually focus on it within 0.5–1.5 seconds.",
+    "Pause 1–2 seconds after each important page loads before clicking.",
+    "Demo/test customer names and numbers only; no passwords, tokens, internal URLs or private customer data on screen.",
+    "No dead clicks or loading screens in the final cut."
+  ]
+}

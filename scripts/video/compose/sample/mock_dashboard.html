@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sample CRM - Dashboard (compositor test material)</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body>
+<div class="app">
+  <nav class="side">
+    <div class="brand"><i></i>Sample CRM</div>
+    <h6>Workspace</h6>
+    <a href="#"><b></b>Home</a>
+    <a href="#" class="on"><b></b>CRM Dashboard</a>
+    <a href="#"><b></b>Leads</a>
+    <a href="#"><b></b>Follow-ups</a>
+    <a href="#"><b></b>Quotations</a>
+    <h6>Reports</h6>
+    <a href="#"><b></b>Sales Targets</a>
+    <a href="#"><b></b>Activity</a>
+  </nav>
+  <section class="main">
+    <header class="top">
+      <div><div class="crumb">CRM</div><h1>CRM Dashboard</h1></div>
+      <div class="sp"></div>
+      <div class="user" id="user">
+        <div class="av">DA</div>
+        <div><div class="nm">Demo Admin</div><div class="em" id="email">demo.admin@sample-crm.test</div></div>
+      </div>
+    </header>
+    <div class="body">
+      <div class="kpis" id="kpis">
+        <div class="card kpi" id="kpi-total"><div class="lb">TOTAL LEADS</div><div class="vl">1,284</div><div class="dl">+8.2% vs last month</div></div>
+        <div class="card kpi" id="kpi-win"><div class="lb">WIN RATE</div><div class="vl">31.6%</div><div class="dl">+2.1 pts</div></div>
+        <div class="card kpi" id="kpi-conv"><div class="lb">CONVERSION RATE</div><div class="vl">18.4%</div><div class="dl dn">-0.6 pts</div></div>
+        <div class="card kpi" id="kpi-pipe"><div class="lb">PIPELINE VALUE</div><div class="vl">$ 842,500</div><div class="dl">+12.4% vs last month</div></div>
+      </div>
+      <div class="row2">
+        <div class="card" id="stages">
+          <h3>Leads by stage</h3>
+          <div style="height:34px"></div>
+          <div class="bars">
+            <div style="height:72%;background:#5b83ff"><span>412</span></div>
+            <div style="height:38%;background:#9aa7bf"><span>218</span></div>
+            <div style="height:55%;background:#f5a524"><span>305</span></div>
+            <div style="height:30%;background:#ef5b4c"><span>164</span></div>
+            <div style="height:24%;background:#22a565"><span>131</span></div>
+            <div style="height:10%;background:#c9d0dd"><span>54</span></div>
+          </div>
+          <div class="barlb"><span>New</span><span>Cold</span><span>Warm</span><span>Hot</span><span>Won</span><span>Lost</span></div>
+        </div>
+        <div class="card" id="followups">
+          <h3>Follow-up summary</h3>
+          <div class="fu">
+            <div class="it today"><div class="n">14</div><div><div class="t">Today</div><div class="s">Calls and visits due today</div></div></div>
+            <div class="it late"><div class="n">6</div><div><div class="t">Delayed</div><div class="s">Past the scheduled date</div></div></div>
+            <div class="it next"><div class="n">37</div><div><div class="t">Upcoming</div><div class="s">Scheduled for the next 7 days</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

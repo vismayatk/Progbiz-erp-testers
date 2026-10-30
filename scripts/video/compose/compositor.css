@@ -1,0 +1,12 @@
+/* The compositor draws every frame into one <canvas> (see compositor.js).
+   This sheet only pins the page so that the screenshot is exactly the canvas:
+   no margins, no scrollbars, nothing that moves by itself. */
+*, *::before, *::after {
+  box-sizing: border-box;
+  animation: none !important;
+  transition: none !important;
+}
+html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+#frame { position: absolute; left: 0; top: 0; overflow: hidden; }
+#frame > canvas { position: absolute; left: 0; top: 0; display: block; }
+#measure { display: none; }

@@ -1,0 +1,565 @@
+{
+  "_comment": "20 s proof timeline for the compositor. Every source is LOCAL test material made by scripts/video/compose/sample/make_sample_assets.js (a mock 'Sample CRM' page, not the product). Schema: scripts/video/compose/TIMELINE.md",
+  "version": 1,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "duration": 20,
+  "assets_root": ".",
+  "background": "#0B1020",
+  "brand": {
+    "name": "ProgBiz ERP",
+    "tagline": "Bringing your business workflow together",
+    "logo": "scripts/video/compose/sample/sample-logo.svg",
+    "colors": {
+      "primary": "#2563EB",
+      "accent": "#7AA7FF",
+      "ink": "#0F172A",
+      "paper": "#FFFFFF",
+      "muted": "#5B667A"
+    }
+  },
+  "scenes": [
+    {
+      "id": "s1_title",
+      "start": 0,
+      "end": 2.8,
+      "source": {
+        "type": "card",
+        "card": "title",
+        "title": "ProgBiz ERP",
+        "subtitle": "CRM — from first enquiry to follow-up"
+      }
+    },
+    {
+      "id": "s2_dashboard_still",
+      "start": 2.8,
+      "end": 8.6,
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.4
+      },
+      "source": {
+        "type": "still",
+        "path": "reports/video/poc-compose/assets/still_dashboard.png"
+      },
+      "camera": [
+        {
+          "t": 0.0,
+          "zoom": 1.0,
+          "focus": [
+            960,
+            540
+          ]
+        },
+        {
+          "t": 0.9,
+          "zoom": 1.0,
+          "focus": [
+            960,
+            540
+          ]
+        },
+        {
+          "t": 2.0,
+          "zoom": 1.7,
+          "rect": [
+            1076,
+            100,
+            812,
+            133
+          ],
+          "ease": "inOut"
+        },
+        {
+          "t": 3.5,
+          "zoom": 1.7,
+          "rect": [
+            1076,
+            100,
+            812,
+            133
+          ]
+        },
+        {
+          "t": 4.5,
+          "zoom": 1.7,
+          "focus": [
+            1576,
+            470
+          ],
+          "ease": "inOut"
+        }
+      ],
+      "cursor": {
+        "mode": "waypoints",
+        "points": [
+          {
+            "t": 0.0,
+            "x": 1120,
+            "y": 640
+          },
+          {
+            "t": 2.0,
+            "x": 1700,
+            "y": 196
+          },
+          {
+            "t": 4.95,
+            "x": 1500,
+            "y": 342,
+            "click": true
+          }
+        ]
+      },
+      "highlights": [
+        {
+          "start": 1.9,
+          "end": 3.5,
+          "rect": [
+            1501,
+            100,
+            387,
+            133
+          ],
+          "style": "outline",
+          "radius": 22,
+          "padding": 5
+        },
+        {
+          "start": 4.4,
+          "end": 5.6,
+          "rect": [
+            1288,
+            309,
+            577,
+            212
+          ],
+          "style": "spotlight",
+          "radius": 20,
+          "padding": 8
+        }
+      ],
+      "callouts": [
+        {
+          "start": 2.1,
+          "end": 3.5,
+          "text": "See your sales pipeline",
+          "target": [
+            1501,
+            100,
+            387,
+            133
+          ],
+          "placement": "auto",
+          "leader": "line"
+        },
+        {
+          "start": 4.6,
+          "end": 5.6,
+          "text": "Today • Delayed • Upcoming",
+          "target": [
+            1288,
+            309,
+            577,
+            212
+          ],
+          "placement": "auto",
+          "leader": "line",
+          "size": "small",
+          "theme": "light"
+        }
+      ],
+      "masks": [
+        {
+          "rect": [
+            1698,
+            37,
+            196,
+            20
+          ],
+          "style": "blur",
+          "radius": 7
+        }
+      ]
+    },
+    {
+      "id": "s3_section_leads",
+      "start": 8.6,
+      "end": 10.0,
+      "transition": {
+        "type": "push",
+        "duration": 0.35,
+        "direction": "left"
+      },
+      "source": {
+        "type": "card",
+        "card": "section",
+        "eyebrow": "CRM",
+        "title": "Leads",
+        "subtitle": "Every enquiry in one workspace",
+        "theme": "dark"
+      }
+    },
+    {
+      "id": "s4_leads_shot",
+      "start": 10.0,
+      "end": 15.6,
+      "transition": {
+        "type": "slide",
+        "duration": 0.35,
+        "direction": "left"
+      },
+      "source": {
+        "type": "shot",
+        "dir": "reports/video/poc-compose/capture/sample_leads",
+        "offset": 0.6,
+        "speed": 1.15,
+        "hold_from": 4.4
+      },
+      "camera": [
+        {
+          "t": 0.0,
+          "zoom": 1.0
+        },
+        {
+          "t": 0.35,
+          "zoom": 1.0
+        },
+        {
+          "t": 1.15,
+          "zoom": 1.8,
+          "focus": [
+            760,
+            250
+          ],
+          "ease": "inOut"
+        },
+        {
+          "t": 2.25,
+          "zoom": 1.8,
+          "focus": [
+            760,
+            250
+          ]
+        },
+        {
+          "t": 3.0,
+          "zoom": 1.0,
+          "focus": [
+            960,
+            540
+          ],
+          "ease": "inOut"
+        },
+        {
+          "t": 3.3,
+          "zoom": 1.0,
+          "focus": [
+            960,
+            540
+          ]
+        },
+        {
+          "t": 4.1,
+          "rect": [
+            1368,
+            166,
+            520,
+            420
+          ],
+          "padding": 110,
+          "ease": "inOut"
+        }
+      ],
+      "cursor": {
+        "mode": "events",
+        "smooth_ms": 120
+      },
+      "highlights": [
+        {
+          "start": 3.9,
+          "end": 5.45,
+          "rect": [
+            1397,
+            464,
+            462,
+            66
+          ],
+          "style": "spotlight",
+          "radius": 18,
+          "padding": 8
+        }
+      ],
+      "callouts": [
+        {
+          "start": 1.15,
+          "end": 2.3,
+          "text": "Find leads faster",
+          "target": [
+            280,
+            100,
+            710,
+            44
+          ],
+          "placement": "right",
+          "leader": "line"
+        },
+        {
+          "start": 4.1,
+          "end": 5.45,
+          "text": "Assign leads to the right executive",
+          "target": [
+            1397,
+            464,
+            462,
+            66
+          ],
+          "placement": "bottom",
+          "leader": "arrow",
+          "gap": 64
+        }
+      ],
+      "masks": [
+        {
+          "_comment": "one blur per table row: phone numbers",
+          "rect": [
+            589,
+            228,
+            170,
+            24
+          ],
+          "repeat": {
+            "dy": 54,
+            "count": 11
+          },
+          "style": "blur",
+          "radius": 7,
+          "corner": 5
+        },
+        {
+          "_comment": "phone number inside the detail panel; the panel slides in, so the mask is keyframed (hold = step with the footage frames)",
+          "rect_keys": [
+            {
+              "t": 2.678261,
+              "rect": [
+                2103,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.706957,
+              "rect": [
+                1868,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.735652,
+              "rect": [
+                1708,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.764348,
+              "rect": [
+                1630,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.793043,
+              "rect": [
+                1589,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.821739,
+              "rect": [
+                1566,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.850435,
+              "rect": [
+                1553,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.87913,
+              "rect": [
+                1546,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.907826,
+              "rect": [
+                1543,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.936522,
+              "rect": [
+                1543,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            },
+            {
+              "t": 2.973913,
+              "rect": [
+                1543,
+                359,
+                196,
+                30
+              ],
+              "ease": "hold"
+            }
+          ],
+          "style": "cover",
+          "color": "#E3E7EE",
+          "start": 2.678261
+        },
+        {
+          "_comment": "signed-in user's e-mail",
+          "rect": [
+            1698,
+            37,
+            196,
+            20
+          ],
+          "style": "blur",
+          "radius": 7
+        }
+      ]
+    },
+    {
+      "id": "s5_freeze_cut",
+      "start": 15.6,
+      "end": 17.4,
+      "transition": {
+        "type": "cut"
+      },
+      "source": {
+        "type": "shot",
+        "dir": "reports/video/poc-compose/capture/sample_leads",
+        "freeze_at": 2.0
+      },
+      "camera": [
+        {
+          "t": 0.0,
+          "zoom": 1.12,
+          "focus": [
+            900,
+            380
+          ]
+        },
+        {
+          "t": 1.8,
+          "zoom": 1.2,
+          "focus": [
+            900,
+            380
+          ],
+          "ease": "inOutSine"
+        }
+      ],
+      "callouts": [
+        {
+          "start": 0.25,
+          "end": 1.6,
+          "text": "Search & Filter",
+          "target": [
+            280,
+            100,
+            710,
+            44
+          ],
+          "placement": "right",
+          "leader": "line",
+          "size": "small",
+          "theme": "light"
+        }
+      ],
+      "masks": [
+        {
+          "rect": [
+            589,
+            228,
+            170,
+            24
+          ],
+          "repeat": {
+            "dy": 54,
+            "count": 11
+          },
+          "style": "blur",
+          "radius": 7,
+          "corner": 5
+        },
+        {
+          "_comment": "signed-in user's e-mail",
+          "rect": [
+            1698,
+            37,
+            196,
+            20
+          ],
+          "style": "blur",
+          "radius": 7
+        }
+      ]
+    },
+    {
+      "id": "s6_end",
+      "start": 17.4,
+      "end": 20.0,
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.5
+      },
+      "source": {
+        "type": "card",
+        "card": "end",
+        "title": "ProgBiz ERP",
+        "cta": "Manage leads. Stay on top of follow-ups. See your pipeline clearly.",
+        "footnote": "Contact line goes here (placeholder)"
+      }
+    }
+  ]
+}

@@ -16,7 +16,6 @@ const SKIP_BUTTONS = new Set(['Previous', 'Next', 'Search', 'Show', 'Clear', 'Ca
 // Pages whose header text is known-buggy on this build (assert the buggy text as-is).
 const QUIRKS = {
   'employee-remark': 'header shows "Employee Deduction" (build bug) — asserted as-is',
-  'add-visit-report': 'header misspelled "Add Vist Report" (build bug) — asserted as-is',
 };
 // Lazy pages that show a Loading placeholder first.
 const LAZY = new Set(['ess', 'ess/probation', 'ess/profile']);
@@ -46,6 +45,26 @@ const OVERRIDES = {
   // capture intermittently sees no table. Its columns are asserted robustly by
   // the ESS interaction suite (settleGrid), so skip the column check in smoke.
   'ess/locations': { columns: null },
+  // Re-read live on hrms-test, 2026-10-30. The crawl in hrms/data/pages predates these changes.
+  // Visit Report: the "Add Vist Report" typo was fixed (header is now "Visit Report"), and the
+  // "IDNumber" column became "Employee Code".
+  'add-visit-report': {
+    title: 'Visit Report',
+    columns: ['SL.No', 'Employee Code', 'Employee Name', 'CheckIn Time', 'CheckOut Time', 'Punch Type',
+      'Site Name', 'Purpose', 'Site Image', 'Mobile Location', 'Location'],
+  },
+  // Attendance Finalization: the page was redesigned into a "Runs" list. "Finalize" is now an icon on
+  // each run that is still under review, so the page is identified by its toolbar button instead,
+  // and the "Cut-Off" column is gone.
+  'attendance-finalization': {
+    buttons: ['Check & Update Absences'],
+    columns: ['Sl.No', 'Period', 'Scope', 'Target', 'Pending', 'Status', 'Action'],
+  },
+  // Attendance Report: "IDNumber" was replaced by "Employee Code".
+  'attendance-log': {
+    columns: ['SL.No', 'Employee Code', 'Employee Name', 'Date', 'Period', 'Employee Status', 'Entry Time',
+      'Exit Time', 'Worked Hours', 'Over Time Hours', 'Balance Working Hours', 'Must Work Hour'],
+  },
 };
 
 function deriveTitle(headers) {

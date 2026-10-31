@@ -9,13 +9,13 @@ module.exports = [
   {
     "route": "add-visit-report",
     "group": "attendance",
-    "title": "Add Vist Report",
+    "title": "Visit Report",
     "buttons": [
       "Filter"
     ],
     "columns": [
       "SL.No",
-      "IDNumber",
+      "Employee Code",
       "Employee Name",
       "CheckIn Time",
       "CheckOut Time",
@@ -26,8 +26,7 @@ module.exports = [
       "Mobile Location",
       "Location"
     ],
-    "tabs": null,
-    "quirk": "header misspelled \"Add Vist Report\" (build bug) — asserted as-is"
+    "tabs": null
   },
   {
     "route": "approval-absent-report",
@@ -52,14 +51,13 @@ module.exports = [
     "group": "attendance",
     "title": "Attendance Finalization",
     "buttons": [
-      "Finalize"
+      "Check & Update Absences"
     ],
     "columns": [
       "Sl.No",
       "Period",
       "Scope",
       "Target",
-      "Cut-Off",
       "Pending",
       "Status",
       "Action"
@@ -75,7 +73,7 @@ module.exports = [
     ],
     "columns": [
       "SL.No",
-      "IDNumber",
+      "Employee Code",
       "Employee Name",
       "Date",
       "Period",

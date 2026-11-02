@@ -91,6 +91,7 @@ async function checkPage(page, entry) {
   const readTables = () => page.evaluate(() => [...document.querySelectorAll('table')]
     .filter(t => t.getBoundingClientRect().width > 0)
     .map(t => ({
+      hasThead: !!t.querySelector('thead'),
       headers: [...t.querySelectorAll('thead th')].map(th => th.innerText.trim()).filter(Boolean).length,
       rows: [...t.querySelectorAll('tbody tr')].filter(r => (r.innerText || '').trim()).length,
       first: ((t.querySelector('tbody tr') || {}).innerText || '').replace(/\s+/g, ' ').trim().slice(0, 60),
@@ -100,8 +101,12 @@ async function checkPage(page, entry) {
     await page.waitForTimeout(1000);
     tables = await readTables();
   }
+  // Only a real data GRID (one with a <thead>) must show column headers. Some pages also render a
+  // header-less layout/summary table (e.g. Payroll Policies' second table) — that is not a grid and
+  // is not asserted on.
   for (const [i, t] of tables.entries()) {
-    expect(t.headers, `${entry.label}: table ${i + 1} should show its column headers`).toBeGreaterThan(0);
+    if (!t.hasThead) continue;
+    expect(t.headers, `${entry.label}: data table ${i + 1} should show its column headers`).toBeGreaterThan(0);
   }
   const rowCount = tables.reduce((n, t) => n + t.rows, 0);
   const empty = tables.filter(t => t.rows === 0).length;

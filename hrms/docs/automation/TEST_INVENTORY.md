@@ -193,3 +193,26 @@ ONE employee (then profile, leave pattern, 2 approved leaves, a duty handover, a
 **Suggest NOT pushing:** `hrms/exploration/_probe_*.js` and other one-off discovery scripts/screenshots, `.claude/launch.json`, `mobile-app-tests/`.
 
 **Never pushed (git-ignored):** `.env`, `hrms/.auth/` (saved logins, run employee, run state), `reports/`, `test-results/`.
+
+---
+
+## Work From Home module (added 2026-10-31 — `hrms/tests/13_wfh/wfh_module.spec.js`)
+
+Separate, self-contained spec built from the **WFH SRS v1.0** (Z:\hrms documents\SRS\WFH SRS.pdf). NOT part of the 128-page linear run — run it on its own:
+
+```bash
+$env:HEADED=1; npx playwright test -c hrms/playwright.config.js hrms/tests/13_wfh
+```
+
+One ordered walk (28 steps, all asserted + a blocker check after each action; failures/gaps listed at the end):
+- **Policies** (`/wfh-policies`, WfhSetup): create all 6 kinds — On request, Fixed Weekdays / Dates / Working days / Rotation, Fully remote (exercising every editor control incl. emergency + blackout); boundary refusals (limit 31.5, negative days); deactivate/reactivate; type filter; delete.
+- **Assignments** (`/wfh-assignments`, WfhSetup): assign On request to the ESS employee (create, or repoint an existing un-deletable one); edit remarks; pause/resume; and a throwaway create+**delete** for the Delete button.
+- **Employee life cycle** (`/ess/wfh`) — logged in **as the employee** (two-actor `withUser`): apply a full day + a half day (auto-approved), then request a revert.
+- **HR** (WfhManagement): revert an approved request from the **Work From Home Approval** list (`/wfh-requests`); **Add Work From Home for Employee** (`/wfh-apply-for-employee`); monthly **Report** (`/wfh-report`).
+- **Calendars**: My Attendance + Leave Calendar load clean.
+
+Pages: `hrms/pages/wfh/` (WfhPoliciesPage, WfhAssignmentsPage, WfhEssPage, WfhApprovalListPage, WfhHrAddPage, WfhReportPage, wfhUi). Data: `hrms/data/wfhData.js`.
+
+**Access requirements on the tenant:** the automation login needs **WfhSetup + WfhManagement**; the ESS employee's role (e.g. **Staff**) needs the **Work From Home** ESS page. The spec auto-detects whether the run employee can reach `/ess/wfh` and falls back to driving ESS as the admin if not (recording it as a gap).
+
+**Candidate app issue noted:** per the SRS any logged-in employee should reach `/ess/wfh`, but it is gated by role on this tenant (had to be granted to the Staff role explicitly).

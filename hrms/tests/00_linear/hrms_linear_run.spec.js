@@ -29,6 +29,9 @@ const { VIEWPORT, VIDEO_SIZE } = require('../../fixtures/window');
 
 const READONLY = !!process.env.HRMS_LINEAR_READONLY;
 const ONLY = (process.env.HRMS_PAGES || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+// Run only pages in these sidebar sections (e.g. "Leave" or "Core HR,Onboarding). Used by the
+// per-module presets (data/modulePresets.js) so `npm run hrms:leave` walks just that module.
+const SECTIONS = (process.env.HRMS_SECTION || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
 const FROM = Number(process.env.HRMS_FROM || 1);
 const SESSIONS = path.join(__dirname, '..', '..', '..', 'test-results', 'hrms', '_sessions');
 const STATE = path.join(__dirname, '..', '..', '.auth', 'state.json');
@@ -49,6 +52,7 @@ test('HRMS linear run — every page in sidebar order, one tab', async ({ browse
     for (const [i, entry] of pages.entries()) {
       const n = String(i + 1).padStart(3, '0');
       if (i + 1 < FROM) continue;
+      if (SECTIONS.length && !SECTIONS.some(s => entry.section.toLowerCase().includes(s))) continue;
       if (ONLY.length && !ONLY.some(o => entry.label.toLowerCase().includes(o) || entry.route.toLowerCase().includes(o))) continue;
       const doAdd = entry.add && !READONLY;
       await test.step(`${n} [${entry.section}] ${entry.label}${doAdd ? ` + ${entry.add}` : ''}`, async () => {

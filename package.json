@@ -32,6 +32,7 @@
     "hrms:referral": "node hrms/scripts/run-module.js referral",
     "hrms:resignation": "node hrms/scripts/run-module.js resignation",
     "hrms:wfh": "node hrms/scripts/run-module.js wfh",
+    "hrms:meeting": "node hrms/scripts/run-module.js meeting",
     "hrms:linear": "node hrms/scripts/run-module.js linear",
     "hrms:all": "node hrms/scripts/run-module.js all"
   },

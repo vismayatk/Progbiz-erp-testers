@@ -70,7 +70,9 @@ test.describe('My Workspace (ESS) — self-service views', () => {
   test('WS4 — access own documents (WS-007)', async ({ page }) => {
     test.setTimeout(90_000);
     await openEss(page, 'ess/documents');
-    await expect(page.getByText(/My Documents|Documents|Upload/i).first(), 'My Documents should render').toBeVisible({ timeout: 20000 });
+    // A plain text match hit a hidden "Documents" item first (the sidebar), so match the page heading like WS2/WS5/WS6.
+    await expect(page.getByRole('heading', { name: /My Documents|Documents/i }).first(),
+      'the "My Documents" page heading should render').toBeVisible({ timeout: 20000 });
     const body = (await page.locator('body').innerText());
     expect(body, 'documents view should not error').not.toMatch(/Oops|something went wrong|nothing at this address/i);
     console.log('  ✅ WS4 own documents view renders');

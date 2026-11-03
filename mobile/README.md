@@ -7,6 +7,8 @@ HTML reports with screenshots. No Appium or extra packages needed. The Playwrigh
 |---|---|
 | [automation/SETUP.md](automation/SETUP.md) | requirements, install, first run, troubleshooting |
 | [automation/README.md](automation/README.md) | what each suite checks, safety rules, files |
+| [docs/TEST-FLOW.md](docs/TEST-FLOW.md) | the whole flow as a diagram, every test case with its steps and expected result |
+| [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md) | server URLs, tenants, usernames, how to log in (passwords are **not** in git) |
 | `bin/emu` | emulator switcher: `emu start 13`, `emu install app.apk`, `emu all 13 <tenant>` |
 
 One command runs everything (release-note checks, CRM flow, old-bug re-check, every screen) and writes one

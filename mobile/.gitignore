@@ -1,0 +1,10 @@
+# Test output and local files — never commit these
+reports/
+screenshots/
+.logs/
+apks/
+__pycache__/
+*.pyc
+*.apk
+*.zip
+.DS_Store

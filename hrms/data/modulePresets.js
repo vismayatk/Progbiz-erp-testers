@@ -22,13 +22,13 @@ module.exports = {
   ess:           { section: 'My Workspace' },      // Employee Self Service
   helpdesk:      { section: 'Helpdesk' },
   referral:      { section: 'Referral' },
-  resignation:   { section: 'Resignation & Exit' },
 
   // standalone module spec files
+  resignation:   { spec: ['hrms/tests/11_resignation'] }, // Resignation & Exit — full lifecycle (incl. F&F)
   wfh:           { spec: ['hrms/tests/13_wfh'] },     // Work From Home — self-contained
   meeting:       { spec: ['hrms/tests/14_meeting'] }, // Meeting Management — self-contained
 
   // the whole suite
   linear:        { spec: ['hrms/tests/00_linear'] },               // every page, one tab
-  all:           { spec: ['hrms/tests/00_linear', 'hrms/tests/13_wfh', 'hrms/tests/14_meeting'] },
+  all:           { spec: ['hrms/tests/00_linear', 'hrms/tests/11_resignation', 'hrms/tests/13_wfh', 'hrms/tests/14_meeting'] },
 };

@@ -3,7 +3,7 @@
 
 Suites, in this order (pick with --suites):
   release     erp_release.py     U1–U8  checks for the Oct 2026 release notes
-  crm         erp_scenarios.py   S1–S3  New Enquiry → Follow-up → Leads search   (creates QA_MOB_ test data)
+  crm         erp_scenarios.py   S1–S4  Enquiry → Follow-up → Leads search → Quotation + PDF   (creates QA_MOB_ test data)
   regression  erp_regression.py  R1–R7  issues found in earlier rounds
   smoke       erp_smoke.py              every menu, tab and Home card            (~35 min)
 
@@ -35,7 +35,7 @@ from erp_scenarios import TEST_TENANTS  # noqa: E402
 
 SUITES = {
     "release": ("erp_release.py", "Release-note checks (U1–U8)"),
-    "crm": ("erp_scenarios.py", "CRM flow: enquiry → follow-up → search (S1–S3)"),
+    "crm": ("erp_scenarios.py", "CRM flow: enquiry → follow-up → search → quotation + PDF (S1–S4)"),
     "regression": ("erp_regression.py", "Old issues re-check (R1–R7)"),
     "smoke": ("erp_smoke.py", "Every screen, tab and Home card"),
 }

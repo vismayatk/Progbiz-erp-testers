@@ -10,6 +10,7 @@ labels (content-desc) and bounds we can find and tap — no debug build or Appiu
     d.screenshot("out/customers.png")
 """
 import os
+import sys
 import re
 import subprocess
 import time
@@ -72,6 +73,19 @@ class Device(object):
         self.serial = serial
         self.package = package
         self._nodes = None
+
+    def ensure_online(self):
+        """Stop with a clear message when the emulator is not running (instead of a 30 s adb timeout)."""
+        try:
+            state = self.adb("get-state", timeout=10).strip()
+        except Exception:  # noqa: BLE001 — adb hung or missing
+            state = ""
+        if state != "device":
+            ver = ""
+            sys.exit("Device %s is not running (adb state: %s).\n"
+                     "Start it first, e.g.  emu start 13   — then log in to the app and run this again." %
+                     (self.serial, state or "none"))
+        return self
 
     # ---- raw adb -------------------------------------------------------------------------
     def adb(self, *args, **kw):

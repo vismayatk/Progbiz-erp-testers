@@ -721,7 +721,7 @@ def main():
     ap.add_argument("--only", default="", help="e.g. U1,U3")
     ap.add_argument("--print", dest="do_print", action="store_true", help="U3: also open the Print PDF")
     a = ap.parse_args()
-    d = Device(a.serial)
+    d = Device(a.serial).ensure_online()
     android = d.android_version()
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out = os.path.join(QA_DIR, "reports", "erp-release_android%s_%s" % (android, stamp))

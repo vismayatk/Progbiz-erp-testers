@@ -511,7 +511,7 @@ def main():
     ap.add_argument("--list", action="store_true", help="print the discovered module map and exit")
     a = ap.parse_args()
 
-    d = Device(a.serial)
+    d = Device(a.serial).ensure_online()
     android = d.android_version()
     if not android:
         print("No device %s — start one with: emu start 13" % a.serial)

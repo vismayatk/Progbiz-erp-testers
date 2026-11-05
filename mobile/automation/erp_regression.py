@@ -258,7 +258,7 @@ def main():
     ap.add_argument("--logout", action="store_true", help="also run R8/R9 (logs the app out at the end)")
     ap.add_argument("--only", default="", help="e.g. R4,R6")
     a = ap.parse_args()
-    d = Device(a.serial)
+    d = Device(a.serial).ensure_online()
     android = d.android_version()
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out = os.path.join(QA_DIR, "reports", "erp-regression_android%s_%s" % (android, stamp))

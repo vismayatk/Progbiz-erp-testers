@@ -16,13 +16,13 @@ flowchart TD
     E -- yes --> G{"Profile company name<br/>matches the tenant?"}
     G -- no --> X["Stop — wrong tenant, nothing is created"]
     G -- yes --> H["1 Release-note checks U1–U8 (~25 min)"]
-    H --> I["2 CRM flow S1–S3 (~5 min)"]
+    H --> I["2 CRM flow S1–S4 (~9 min)"]
     I --> J["3 Old-issue re-check R1–R7 (~7 min)"]
     J --> K["4 Every screen, tab and Home card (~45 min)"]
     K --> L["Combined report: reports/erp-all_&lt;tenant&gt;_&lt;time&gt;/index.html"]
 ```
 
-Total ≈ 80 minutes. Suites run one after another (two scripts on one emulator break each other).
+Total ≈ 85 minutes. Suites run one after another (two scripts on one emulator break each other).
 Pick suites with `emu all 13 ncore_test - release,crm` (`-` = no APK to install).
 
 How a check reads the app: the scripts dump the screen (`uiautomator dump`), find elements by their accessibility label, tap at the
@@ -32,11 +32,11 @@ in the complaint chart) cannot be read — those checks say so and point to the 
 Result meaning: **PASS** = as expected · **WARN** = slow, partly readable, or cannot be tested on this tenant ·
 **FAIL** = not as expected. Every check stores at least one screenshot.
 
-## 2. CRM flow (`erp_scenarios.py`, S1–S3) — creates test data
+## 2. CRM flow (`erp_scenarios.py`, S1–S4) — creates test data
 
 ```mermaid
 flowchart LR
-    S1["S1 New Enquiry<br/>CRM › New Enquiry › Save"] --> S2["S2 Follow-up<br/>⋮ › Followup › Save"] --> S3["S3 Leads search<br/>CRM › Leads › search + Enter"]
+    S1["S1 New Enquiry<br/>CRM › New Enquiry › Save"] --> S2["S2 Follow-up<br/>⋮ › Followup › Save"] --> S3["S3 Leads search<br/>CRM › Leads › search + Enter"] --> S4["S4 Quotation<br/>⋮ › Add Quotation › Save › PDF"]
 ```
 
 | ID | Steps | Expected result | Also measured |
@@ -44,6 +44,7 @@ flowchart LR
 | **S1** New Enquiry → overview | CRM › New Enquiry. Type phone (fake number). Wait until Customer Name becomes editable again (the app looks the customer up). Type name `QA_MOB_<ts>` and place `QA_Place`. Item: tap the row above Quantity, search ("Bio" on onetouch_test, "Test" on ncore_test), pick the first result. Type a description. Next follow-up: switch the row on, pick a date +2 days and the time. Assign To › You. Save | Enquiry Overview shows the ENQ number, name, place, status **New**, assignee = signed-in user, follow-up date and the phone. Item Details tab shows the item and the description | customer-lookup time (WARN over 5 s), save time (WARN over 10 s), offline banner |
 | **S2** Follow-up → history | Open that enquiry (⋮ › Followup). Pick the first available status of *Call not answering / Contacted / Follow-up Pending*. Lead Quality › Warm (only if the tenant has it). Next Followup Date +4 days. Type description `QA_followup_<ts>`. Save | Back on the Enquiry Overview; **Follow-Up History** shows the description. (Status and next date are on screen but not exposed to accessibility — the check records WARN and the screenshot proves them) | time to load the status list (WARN over 5 s), save time |
 | **S3** Leads search | Back. CRM › Leads › search icon › type the QA name › **Enter** | The **In Follow Up** tab shows count 1 and the row `ENQ-n` with the name | time to find it |
+| **S4** Quotation → PDF | Open that enquiry › ⋮ › **Add Quotation** (customer, phone, follow-up date, item and — when the enquiry has one — Lead Quality arrive pre-filled). Quotation Valid Up To +15 days (date only). Set Sales Executive and Lead Quality if empty (the form will not save without them and shows no message). Item card ⋮ › Edit: Rate 1000, Quantity 2 (Gross must read 2000.00). Discount 10 % › ✓. Type the description. Save. Then **Files** tab › **View** | Quotation Overview: `QUO-n`, customer, place, valid-up-to, status (**New Quotation**, or **In Follow Up** when the enquiry had a follow-up), sales executive. Item Details: price 1000.00, total 2000.00, discount 10 %, Total Payable **1800.00**. **PDF**: 14 of 14 values match — Estimate No, date, expiry, customer, phone, item, item description, rate 1,000.00, qty 2.00, Gross Total 2,000.00, Discount (200.00), Total INR 1,800.00, Total In Words, Prepared By | save time (WARN over 10 s). Notes: the PDF is titled **Estimate**; the quotation's own description is not printed on it |
 
 ## 3. Release-note checks (`erp_release.py`, U1–U8)
 

@@ -7,6 +7,9 @@ Scenarios (every record is named QA_MOB_<unix time>, on a TEST tenant only):
   S2  Follow-up    — on that enquiry: ⋮ → Followup → status "Call not answering", Lead Quality,
                      next date, description → Save → Follow-Up History shows the entry
   S3  Leads search — Leads → search the QA name (keyboard Enter) → found under "In Follow Up"
+  S4  Quotation    — on that enquiry: ⋮ → Add Quotation (pre-filled from the enquiry) → valid up to +15 days,
+                     item rate 1000 × qty 2, 10 % discount, description → Save → Quotation Overview
+                     (QUO number, customer, status) and Item Details (price, total, discount, payable 1800.00)
 
 Safety: only records this run created are edited; nothing is deleted, approved, transferred,
 checked in/out; the deny list in droid.py stays on for every tap except the explicit Saves.
@@ -14,11 +17,14 @@ checked in/out; the deny list in droid.py stays on for every tap except the expl
 Usage (app logged in on a test tenant):
     python3 erp_scenarios.py --serial emulator-5556 --tenant onetouch_test
     python3 erp_scenarios.py --only S1,S3
+    python3 erp_scenarios.py --only S1,S4          # enquiry, then a quotation for it
+    python3 erp_scenarios.py --enquiry QA_MOB_1793871662 --only S4   # quotation on an existing QA enquiry
 """
 import argparse
 import datetime
 import os
 import re
+import subprocess
 import sys
 import time
 
@@ -44,6 +50,7 @@ class Scenarios(Runner):
         self.phone = "5" + str(self.ts)[-8:]          # UAE-style 9-digit mobile, obviously fake
         self.enq = None
         self.tenant = tenant
+        self.desc_q = ""
         self.user = "Super Admin"                     # assignee shown on the overview; read from Home in run()
 
     # ---- small helpers ---------------------------------------------------------------
@@ -90,8 +97,9 @@ class Scenarios(Runner):
         self.d.tap_xy(int(w * 0.8), int(y))
         time.sleep(1.5)
 
-    def pick_date(self, days_ahead):
-        """Date picker → day N days ahead (next month if needed) → confirm → time picker → confirm.
+    def pick_date(self, days_ahead, with_time=True):
+        """Date picker → day N days ahead (next month if needed) → confirm → time picker → confirm
+        (with_time=False for date-only fields such as a quotation's Valid Up To).
         v2.0.59+: bottom sheet (Today/Yesterday/Tomorrow chips, bare day numbers, Select button).
         Older builds: Material dialog ("Select date", "15, Thursday, October 15, 2026", OK)."""
         day = datetime.date.today() + datetime.timedelta(days=days_ahead)
@@ -126,8 +134,9 @@ class Scenarios(Runner):
                        allow_unsafe=True, settle=0.6)
             confirm = "OK"
         self.d.tap(self.d.find(confirm, exact=True), allow_unsafe=True, settle=1.5)
-        self.must("Now" if new else re.compile(r"Select time"), 8, "time picker")
-        self.d.tap(self.d.find(confirm, exact=True), allow_unsafe=True, settle=1.5)
+        if with_time:
+            self.must("Now" if new else re.compile(r"Select time"), 8, "time picker")
+            self.d.tap(self.d.find(confirm, exact=True), allow_unsafe=True, settle=1.5)
         return day
 
     def save_and_wait(self, until, timeout=60):
@@ -249,8 +258,23 @@ class Scenarios(Runner):
         self.type_into(lambda e: e[0], name, "search text", hide=False)
         self.d.shell("input keyevent 66")                             # search runs on Enter only
         self.d.hide_keyboard()
-        # the search box also contains the name — the result row starts with the ENQ number
-        return self.must(re.compile(r"^ENQ-\d+\n.*" + re.escape(name), re.S), 60, "search result row")
+        # the search box also contains the name — the result row starts with the ENQ number.
+        # The lead sits under the tab matching its status (New / In Follow Up / …): try each tab that has a count.
+        rx = re.compile(r"^(?:ENQ|QUO)-\d+\n.*" + re.escape(name), re.S)
+        tried = set()
+        t0 = time.time()
+        while time.time() - t0 < 60:
+            row = self.d.find(rx)
+            if row:
+                return row
+            tabs = [n for n in self.d.nodes() if re.match(r"^[^\n]+\n[1-9]\d*\nTab \d+ of \d+$", n.label)
+                    and n.label not in tried]
+            if tabs:
+                tried.add(tabs[0].label)
+                self.d.tap(tabs[0], allow_unsafe=True, settle=3)
+            else:
+                time.sleep(2)
+        raise Fail("search result row not shown within 60s")
 
     def s2_followup(self, r):
         if not self.enq:
@@ -337,6 +361,288 @@ class Scenarios(Runner):
             r["notes"].append("Result row does not show the Lead Quality")
         r["notes"].append("Found %s under In Follow Up" % self.enq)
 
+    # ---- S4 quotation --------------------------------------------------------------------
+    # ---- quotation PDF -------------------------------------------------------------------
+    @staticmethod
+    def rupees_in_words(n):
+        """1800 → 'Rupee One Thousand Eight Hundred Only' (Indian grouping, whole rupees below 10 crore)."""
+        ones = ("Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen "
+                "Seventeen Eighteen Nineteen").split()
+        tens = "_ _ Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety".split()
+
+        def below1000(x):
+            out = []
+            if x >= 100:
+                out.append(ones[x // 100] + " Hundred")
+                x %= 100
+            if x >= 20:
+                out.append(tens[x // 10] + ((" " + ones[x % 10]) if x % 10 else ""))
+            elif x:
+                out.append(ones[x])
+            return " ".join(out)
+
+        parts = []
+        for size, name in ((10 ** 7, "Crore"), (10 ** 5, "Lakh"), (1000, "Thousand")):
+            if n >= size:
+                parts.append(below1000(n // size) + " " + name)
+                n %= size
+        if n:
+            parts.append(below1000(n))
+        return "Rupee " + " ".join(parts) + " Only"
+
+    def pdf_text(self, path):
+        """Text of a PDF on this Mac: macOS PDFKit (osascript) first, then pdftotext."""
+        js = 'ObjC.import("PDFKit"); var d=$.PDFDocument.alloc.initWithURL($.NSURL.fileURLWithPath(%r)); d.string.js' % path
+        for cmd in (["osascript", "-l", "JavaScript", "-e", js], ["pdftotext", "-layout", path, "-"]):
+            try:
+                out = subprocess.run(cmd, capture_output=True, text=True, timeout=60).stdout
+                if out.strip():
+                    return out
+            except (OSError, subprocess.TimeoutExpired):
+                continue
+        return ""
+
+    def fetch_cache_pdf(self, marker):
+        """The newest PDF the app wrote to its cache since `marker` (needs adb root: emulators with Google APIs)."""
+        self.d.adb("root", timeout=30)
+        for _ in range(20):
+            if self.d.adb("get-state", timeout=10).strip() == "device":
+                break
+            time.sleep(1)
+        listing = self.d.shell("find /data/data/%s/cache -name '*.pdf' -newer %s 2>/dev/null" % (self.d.package, marker))
+        files = [l.strip() for l in listing.splitlines() if l.strip().endswith(".pdf")]
+        if not files:
+            return None
+        remote = files[-1]
+        data = self.d.adb("exec-out", "cat '%s'" % remote, binary=True)
+        if not data.startswith(b"%PDF"):
+            return None
+        local = os.path.join(self.out, "shots", "s4_quotation.pdf")
+        with open(local, "wb") as f:
+            f.write(data)
+        return local
+
+    def check_quotation_pdf(self, r, quo, valid, item, qty, rate, gross, disc_amt, payable, item_desc):
+        """Files tab → View (opens the PDF in the viewer) → read the file the app saved → compare its text."""
+        marker = "/sdcard/_s4_pdf_marker"
+        self.d.shell("touch %s" % marker)
+        self.d.tap(self.d.find(re.compile(r"^Files\nTab \d")), allow_unsafe=True, settle=3)
+        self.must(re.compile(r"^Your Quotation is Ready"), 20, "quotation file card on the Files tab")
+        self.d.tap(self.must("View", 10), allow_unsafe=True, settle=3)
+        t0 = time.time()
+        while time.time() - t0 < 25 and self.d.foreground_package() == self.d.package:
+            time.sleep(1)
+        time.sleep(4)
+        shot = os.path.join("shots", "s4_quotation_pdf.png")
+        self.d.screenshot(os.path.join(self.out, shot))              # the PDF as the viewer shows it
+        r["shots"].append(shot)
+        viewer = self.d.foreground_package()
+        local = self.fetch_cache_pdf(marker)
+        for _ in range(3):                                           # back to the ERP app
+            if self.d.foreground_package() == self.d.package:
+                break
+            self.d.back(1.5)
+        if viewer == self.d.package:
+            raise Fail("View did not open a PDF viewer")
+        if not local:
+            r["status"] = "WARN"
+            r["notes"].append("PDF opened (see the screenshot) but its file could not be read from the app cache — "
+                              "text not checked (needs an emulator that allows adb root)")
+            return
+        text = self.pdf_text(local)
+        if not text:
+            r["status"] = "WARN"
+            r["notes"].append("PDF saved as s4_quotation.pdf but no text could be read from it — check the screenshot")
+            return
+        flat = re.sub(r"\s+", " ", text)
+        money = lambda x: "{:,.2f}".format(x)
+        words = self.rupees_in_words(payable)
+        checks = [
+            ("quotation number", "Estimate No : %s" % quo),
+            ("date", "Estimate Date : %s" % datetime.date.today().strftime("%d/%m/%Y")),
+            ("expiry (valid up to)", "Expiry Date : %s" % valid.strftime("%d/%m/%Y")),
+            ("customer", self.name),
+            ("customer phone", self.phone),
+            ("item", item),
+            ("item description", item_desc),
+            ("rate", money(rate)),
+            ("quantity", "%.2f" % qty),
+            ("gross total", "Gross Total " + money(gross)),
+            ("discount", "Discount (%s)" % money(disc_amt)),
+            ("total", "INR %s" % money(payable)),
+            ("total in words", words),
+            ("prepared by", self.user),
+        ]
+        bad = [(label, want) for label, want in checks if want.lower().replace("-", " ") not in flat.lower().replace("-", " ")]
+        r["notes"].append("PDF %s (%d KB): %d of %d values match the quotation" %
+                          (os.path.basename(local), os.path.getsize(local) // 1024, len(checks) - len(bad), len(checks)))
+        if bad:
+            raise Fail("quotation PDF does not show: " + "; ".join("%s %r" % b for b in bad))
+        title = re.search(r"\b(Estimate|Quotation|Proforma)\b", flat)
+        if title and title.group(1) != "Quotation":
+            r["notes"].append("PDF is titled %r, the app calls it a Quotation" % title.group(1))
+        if self.desc_q and self.desc_q not in flat:
+            r["notes"].append("The quotation's own description (%s) is not printed on the PDF" % self.desc_q)
+
+    def choose_if_unset(self, field, choice):
+        """A required dropdown that shows "Choose" (red) → open it and pick `choice`. Skips fields already filled
+        or absent. (The quotation form refuses to save without Lead Quality and Sales Executive, silently.)"""
+        h = self.d.size()[1]
+        lab = None
+        for _ in range(8):
+            lab = self.d.find(field, exact=True)
+            if lab and h * 0.15 < lab.bounds[1] < h * 0.8:
+                break
+            self.d.scroll_down(0.5)
+            time.sleep(0.8)
+        else:
+            return False
+        btn = [n for n in self.d.nodes() if n.label == "Choose" and abs(n.center[1] - lab.center[1]) < 90]
+        if not btn:
+            return False
+        self.d.tap(btn[0], allow_unsafe=True, settle=1.5)
+        self.d.tap(self.must(choice, 10, "%s option %r" % (field, choice)), allow_unsafe=True, settle=1.5)
+        return True
+
+    def set_number(self, idx, value):
+        """Replace the text of the idx-th EditText on screen (sorted top to bottom) and close the keyboard."""
+        e = sorted(self.edits(), key=lambda n: n.bounds[1])[idx]
+        self.d.tap_xy(*e.center)
+        time.sleep(1.0)
+        self.d.shell("input keyevent KEYCODE_MOVE_END")
+        for _ in range(14):
+            self.d.shell("input keyevent KEYCODE_DEL")
+        self.d.shell("input text " + value)
+        time.sleep(0.8)
+
+    def amounts(self):
+        return [l for l in self.d.labels() if re.fullmatch(r"[\d,]+\.\d\d", l)]
+
+    def s4_quotation(self, r):
+        """Enquiry ⋮ › Add Quotation → rate 1000 × qty 2, 10 % discount, valid +15 days, description → Save →
+        Quotation Overview (number, customer, status) and Item Details (price, total, discount, payable)."""
+        if not self.enq:
+            raise Fail("S1 did not create an enquiry")
+        rate, qty, disc, valid_days = 1000, 2, 10, 15
+        gross = rate * qty
+        payable = gross - gross * disc // 100
+        if not self.d.exists(re.compile(r"^Enquiry Number")):
+            row = self.open_enquiry(self.name)
+            self.d.tap(row, allow_unsafe=True, settle=2)
+            end = time.time() + 120
+            while time.time() < end and not self.d.exists(re.compile(r"^(Enquiry Number|Quotation Number)")):
+                time.sleep(1.5)
+            if self.d.exists(re.compile(r"^Quotation Number")):
+                raise Fail("%s already has a quotation — the Leads list opens it as a quotation. Use a new enquiry: "
+                           "--only S1,S4" % self.name)
+            self.must(re.compile(r"^Enquiry Number"), 5, "Enquiry Overview")
+        w, h = self.d.size()
+        menu = [n for n in self.d.nodes() if n.clickable and n.bounds[0] > w * 0.85 and n.bounds[3] < h * 0.13]
+        self.d.tap(menu[0], allow_unsafe=True, settle=1.5)
+        self.d.tap(self.must("Add Quotation", 10, "Add Quotation in the Actions menu"), allow_unsafe=True, settle=3)
+        self.must("Create Quotation", 20, "Create Quotation form")
+        time.sleep(3)
+        # the form is pre-filled from the enquiry
+        vals = [e.text for e in self.edits()]
+        if self.name not in vals:
+            raise Fail("Create Quotation did not carry the customer name %s over from the enquiry" % self.name)
+        r["shots"].append(self.shot("s4_quotation_form"))
+        # Valid Up To (date only)
+        lab = self.must("Quotation Valid Up To", 5)
+        self.tap_right_of(lab.center[1])
+        valid = self.pick_date(valid_days, with_time=False)
+        for field, choice in (("Sales Executive", "You"), ("Lead Quality", "Warm")):
+            if self.choose_if_unset(field, choice):
+                r["notes"].append("%s was empty after Add Quotation (pre-fill) — set to %s" % (field, choice))
+        # item row: ⋮ › Edit → rate and quantity
+        for _ in range(8):
+            row = self.d.find(re.compile(r"^.+\nQuantity\n"))
+            if row and row.bounds[1] > h * 0.15 and row.bounds[3] < h * 0.9:
+                break
+            self.d.scroll_down(0.5)
+            time.sleep(0.8)
+        else:
+            raise Fail("the item row is missing on the quotation form")
+        item = row.label.split("\n")[0]
+        self.d.tap_xy(row.bounds[2] - 32, row.bounds[1] + 34)           # the card's ⋮
+        self.d.tap(self.must("Edit", 8, "item menu"), settle=3)
+        self.must("Add Item", 8, "item sheet")
+        self.set_number(0, str(rate))
+        self.set_number(1, str(qty))
+        self.d.hide_keyboard()
+        time.sleep(1.5)
+        sheet = " ".join(self.d.labels())
+        if "%d.00" % gross not in sheet:
+            raise Fail("item sheet Gross is not %d.00 for rate %d x qty %d (%s)" % (gross, rate, qty, sheet[-120:]))
+        self.d.tap(self.d.find("Save", exact=True), allow_unsafe=True, settle=3)       # saves the item row only
+        # discount
+        for _ in range(8):
+            fld = [n for n in self.edits() if n.bounds[0] > w * 0.55 and n.bounds[3] - n.bounds[1] < 200]
+            if self.d.exists("Discount", exact=True) and fld:
+                break
+            self.d.scroll_down(0.5)
+            time.sleep(0.8)
+        self.d.tap_xy(*fld[-1].center)
+        time.sleep(1.0)
+        self.d.shell("input text %d" % disc)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        self.d.tap_xy(int(w * 0.89), fld[-1].center[1])                  # ✓ applies the discount
+        time.sleep(2)
+        am = self.amounts()
+        if "%d.00" % gross not in am or "%d.00" % payable not in am:
+            raise Fail("form totals %s, expected gross %d.00 and payable %d.00" % (am, gross, payable))
+        r["shots"].append(self.shot("s4_quotation_totals"))
+        # description
+        desc = "QA_quotation_%d" % self.ts
+        self.desc_q = desc
+        for _ in range(8):
+            lab = self.d.find("DESCRIPTION", exact=True)
+            if lab and h * 0.2 < lab.bounds[1] < h * 0.7:
+                break
+            self.d.scroll_up(0.5)
+            time.sleep(0.8)
+        box = [n for n in self.edits() if lab and n.bounds[1] > lab.bounds[3] and n.bounds[3] - n.bounds[1] > 150][0]
+        self.d.tap_xy(*box.center)
+        time.sleep(1.0)
+        self.d.shell("input text " + desc)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        # Save
+        secs = self.save_and_wait(re.compile(r"^Quotation Overview$"), 60)
+        r["load_s"] = secs
+        self.banner_note(r)
+        time.sleep(2)
+        info = next((l for l in self.d.labels() if l.startswith("Quotation Number")), "")
+        r["shots"].append(self.shot("s4_quotation_overview"))
+        m = re.search(r"Quotation Number\s+(\S+)", info)
+        self.quo = m.group(1) if m else "?"
+        flat = info.replace("\n", " ")
+        for want in (self.name, "QA_Place", valid.strftime("%d/%m/%Y"), self.user, "Sales"):
+            if want not in flat:
+                raise Fail("Quotation Overview is missing %r (%s)" % (want, flat[:200]))
+        # status follows the enquiry: "New Quotation" without a follow-up, "In Follow Up" after one
+        status = next((st for st in ("In Follow Up", "New Quotation") if "Status " + st in flat), None)
+        if status is None:
+            raise Fail("Quotation Overview has no recognised Status (%s)" % flat[:220])
+        r["notes"].append("Quotation status: %s" % status)
+        self.d.tap(self.d.find(re.compile(r"^Item Details\nTab 2")), allow_unsafe=True, settle=3)
+        time.sleep(2)
+        det = " ".join(l.replace("\n", " ") for l in self.d.labels())
+        r["shots"].append(self.shot("s4_quotation_items"))
+        for want in (item, "Quantity %d" % qty, "Price %d.00" % rate, "Total %d.00" % gross, "%d %%" % disc,
+                     "Total Payable %d.00" % payable):
+            if want not in det:
+                raise Fail("Quotation Item Details is missing %r (%s)" % (want, det[:240]))
+        r["notes"].append("Created %s from %s: %s × %d at %d.00, %d%% discount, payable %d.00, valid to %s; save took %.1fs"
+                          % (self.quo, self.enq, item, qty, rate, disc, payable, valid.strftime("%d/%m/%Y"), secs))
+        m = re.search(r"QA_mobile_automation_\d+", det)
+        item_desc = m.group(0) if m else ""
+        self.check_quotation_pdf(r, self.quo, valid, item, qty, rate, gross, gross * disc // 100, payable, item_desc)
+        if secs > 10:
+            r["notes"].append("Slow save: %.1fs from Save to the overview" % secs)
+            r["status"] = "WARN"
+
     def run(self, only):
         if self.go_home():                            # "Hello Nihal" → the assignee the overview should show
             hello = next((l for l in self.d.labels() if l.startswith("Hello ")), "")
@@ -345,7 +651,8 @@ class Scenarios(Runner):
                 self.user = name
         plan = [("S1", "New Enquiry → overview", self.s1_new_enquiry),
                 ("S2", "Follow-up update → history", self.s2_followup),
-                ("S3", "Leads search", self.s3_search)]
+                ("S3", "Leads search", self.s3_search),
+                ("S4", "Add Quotation → overview", self.s4_quotation)]
         for sid, title, fn in plan:
             if only and sid not in only:
                 continue
@@ -386,7 +693,7 @@ def main():
     if a.tenant not in TEST_TENANTS:
         print("Refusing: scenario tests create data — use a test tenant (%s)" % ", ".join(TEST_TENANTS))
         return 2
-    d = Device(a.serial)
+    d = Device(a.serial).ensure_online()
     android = d.android_version()
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out = os.path.join(QA_DIR, "reports", "erp-scenarios_android%s_%s" % (android, stamp))
@@ -400,6 +707,7 @@ def main():
             return 2
         sc.name, sc.enq = a.enquiry, "existing"
         sc.ts = int(a.enquiry.split("_")[-1])
+        sc.phone = "5" + str(sc.ts)[-8:]
         only = [x for x in (only or ["S2", "S3"]) if x != "S1"]
     print("Progbiz ERP scenarios · Android %s · %s · data prefix %s → %s" % (android, a.tenant, sc.name, out))
     t0 = time.time()

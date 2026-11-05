@@ -10,6 +10,8 @@ Scenarios (every record is named QA_MOB_<unix time>, on a TEST tenant only):
   S4  Quotation    — on that enquiry: ⋮ → Add Quotation (pre-filled from the enquiry) → valid up to +15 days,
                      item rate 1000 × qty 2, 10 % discount, description → Save → Quotation Overview
                      (QUO number, customer, status) and Item Details (price, total, discount, payable 1800.00)
+  S5  Complaint    — Complaints › New Complaint: type, subject, priority High, the QA customer, description, a photo
+                     → Save → Complaint Overview (CMP number, status New, details, attachment, timeline) → listed
 
 Safety: only records this run created are edited; nothing is deleted, approved, transferred,
 checked in/out; the deny list in droid.py stays on for every tap except the explicit Saves.
@@ -24,9 +26,11 @@ import argparse
 import datetime
 import os
 import re
+import struct
 import subprocess
 import sys
 import time
+import zlib
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from droid import Device  # noqa: E402
@@ -36,6 +40,17 @@ TEST_TENANTS = ("lesol_test", "onetouch_test", "ncore_test")
 ITEM_SEARCH = {"ncore_test": "Test"}                 # item search text per tenant (default "Bio")
 STATUS_PREF = ["Call not answering", "Contacted", "Follow-up Pending"]   # first one the tenant has is used
 DATE_TIME = re.compile(r"^\d{2}/\d{2}/\d{4} \d{2}:\d{2} [AP]M$")
+
+
+IMAGE_NAME = "QA_attach_test.png"
+
+
+def tiny_png(path, w=64, h=64, rgb=(30, 90, 160)):
+    raw = b"".join(b"\x00" + bytes(rgb) * w for _ in range(h))
+    chunk = lambda t, d: struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
+    with open(path, "wb") as f:
+        f.write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+                + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
 
 
 class Fail(Exception):
@@ -51,7 +66,9 @@ class Scenarios(Runner):
         self.enq = None
         self.tenant = tenant
         self.desc_q = ""
+        self.cmp = ""
         self.user = "Super Admin"                     # assignee shown on the overview; read from Home in run()
+        self.user_known = False                       # True once "Hello <name>" was read from Home
 
     # ---- small helpers ---------------------------------------------------------------
     def edits(self):
@@ -484,6 +501,41 @@ class Scenarios(Runner):
         if self.desc_q and self.desc_q not in flat:
             r["notes"].append("The quotation's own description (%s) is not printed on the PDF" % self.desc_q)
 
+    def push_test_image(self):
+        local = os.path.join(self.out, IMAGE_NAME)
+        tiny_png(local)
+        self.d.adb("push", local, "/sdcard/Download/" + IMAGE_NAME)
+        self.d.shell("am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Download/%s"
+                     % IMAGE_NAME)
+        time.sleep(2)
+
+    def pick_test_image(self):
+        """In the system picker opened by Photos: tap the QA test image tile."""
+        t0 = time.time()
+        while time.time() - t0 < 10 and self.d.foreground_package() == self.d.package:
+            time.sleep(1)
+        for _ in range(3):
+            tile = [n for n in self.d.nodes() if IMAGE_NAME in n.label and "Preview" not in n.label]
+            if tile:
+                x1, y1, x2, y2 = tile[0].bounds
+                self.d.tap_xy(x1 + (x2 - x1) // 4, y1 + (y2 - y1) * 3 // 4)
+                break
+            roots = self.d.find("Show roots", exact=True)        # go to Downloads
+            if roots:
+                self.d.tap(roots, allow_unsafe=True, settle=1.5)
+                dl = self.d.find("Downloads", exact=True)
+                if dl:
+                    self.d.tap(dl, allow_unsafe=True, settle=2)
+        t0 = time.time()
+        while time.time() - t0 < 15 and self.d.foreground_package() != self.d.package:
+            time.sleep(1)
+        if self.d.foreground_package() != self.d.package:
+            self.d.back(1.5)
+            self.d.back(1.5)
+            return False
+        time.sleep(2)
+        return True
+
     def choose_if_unset(self, field, choice):
         """A required dropdown that shows "Choose" (red) → open it and pick `choice`. Skips fields already filled
         or absent. (The quotation form refuses to save without Lead Quality and Sales Executive, silently.)"""
@@ -643,16 +695,144 @@ class Scenarios(Runner):
             r["notes"].append("Slow save: %.1fs from Save to the overview" % secs)
             r["status"] = "WARN"
 
+    # ---- S5 complaint --------------------------------------------------------------------
+    def complaints_all_count(self):
+        """The count on the Complaints list's "All" tab (waits for it to load)."""
+        t0 = time.time()
+        while time.time() - t0 < 40:
+            for l in self.d.labels():
+                m = re.match(r"^All\n(\d+)\nTab 1 of", l)
+                if m:
+                    return int(m.group(1))
+            time.sleep(2)
+        raise Fail("Complaints list did not show its All count within 40s")
+
+    def s5_complaint(self, r):
+        """Complaints › New Complaint: type, subject, priority High, the QA customer, description, a photo → Save →
+        Complaint Overview (CMP number, status New, details, attachment, timeline) → one more complaint in the list.
+        Never taps Acknowledge / Start / Resolve / Resume (they change the complaint's status)."""
+        subject, desc = "QA_complaint_%d" % self.ts, "QA_complaint_desc_%d" % self.ts
+        self.open_drawer_item("Complaints", "Complaints")
+        before = self.complaints_all_count()
+        self.open_drawer_item("Complaints", "New Complaint")
+        self.must("New Complaint", 15, "New Complaint form")
+        time.sleep(3)
+
+        def edits():
+            return sorted(self.edits(), key=lambda n: n.bounds[1])
+
+        # type (required): the first option the tenant offers
+        self.d.tap(self.must("Choose", 10, "Complaint Type"), allow_unsafe=True, settle=2.5)
+        opts = [n for n in self.d.nodes() if n.clickable and n.label and n.label not in ("Dismiss", "Scrim")]
+        if not opts:
+            raise Fail("the Complaint Type list is empty on this tenant — create a complaint type first")
+        ctype = opts[0].label.split("\n")[0]
+        self.d.tap(opts[0], allow_unsafe=True, settle=2)
+        # subject (required)
+        self.d.tap(edits()[0], allow_unsafe=True, settle=1.2)
+        self.d.shell("input text " + subject)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        # priority
+        self.d.tap(self.must("Normal", 5, "Priority"), allow_unsafe=True, settle=2)
+        self.d.tap(self.must("High", 5, "Priority option High"), allow_unsafe=True, settle=2)
+        # customer: the QA customer S1 created, if the picker lists it
+        self.d.tap(self.must(re.compile(r"^Customer\nSearch customer"), 5, "Customer"), allow_unsafe=True, settle=3)
+        row = next((n for n in self.d.nodes() if n.cls.endswith("Button") and n.label.startswith(self.name + "\n")), None)
+        customer = None
+        if row:
+            self.d.tap(row, allow_unsafe=True, settle=3)
+            customer = self.name
+        else:
+            r["notes"].append("Customer %s is not in the picker — complaint created without a customer" % self.name)
+            self.d.back(1.5)
+        self.d.hide_keyboard()
+        # description
+        box = next(e for e in edits() if e.bounds[3] - e.bounds[1] > 150)
+        self.d.tap(box, allow_unsafe=True, settle=1.2)
+        self.d.shell("input text " + desc)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        # photo
+        self.push_test_image()
+        for _ in range(3):
+            if self.d.exists("Photos", exact=True):
+                break
+            self.d.scroll_down(0.5)
+        self.d.tap(self.must("Photos", 5), allow_unsafe=True, settle=2)
+        if not self.pick_test_image():
+            raise Fail("could not pick the test photo in the system picker")
+        counter = next((l for l in self.d.labels() if re.fullmatch(r"\d+/10", l)), "?")
+        if not counter.startswith("1/"):
+            raise Fail("attachment counter is %s after picking one photo" % counter)
+        r["shots"].append(self.shot("s5_complaint_form"))
+        # Save (the Save button stays in the sheet header — do not scroll, a downward drag closes the sheet)
+        secs = self.save_and_wait(re.compile(r"^Complaint Overview$"), 60)
+        r["load_s"] = secs
+        self.banner_note(r)
+        time.sleep(2)
+        head = next((l for l in self.d.labels() if re.match(r"^CMP-\d+\n", l)), "")
+        det = next((l for l in self.d.labels() if l.startswith("Type\n")), "")
+        r["shots"].append(self.shot("s5_complaint_overview"))
+        m = re.match(r"^(CMP-\d+)", head)
+        if not m:
+            raise Fail("Complaint Overview has no CMP number (%s)" % head[:120])
+        self.cmp = m.group(1)
+        flat = (head + "\n" + det).replace("\n", " ")
+        digits = re.sub(r"\D", "", flat)
+        wants = [(" New ", " New "), ("subject", subject), ("description", desc), ("priority", "high"),
+                 ("type", ctype), ("logged by", "Logged by " + self.user if self.user_known else "Logged by ")]
+        if customer:
+            wants += [("customer", customer), ("phone", self.phone)]
+        miss = [(k, w) for k, w in wants if (w not in digits if k == "phone" else w.lower() not in (" " + flat + " ").lower())]
+        if miss:
+            raise Fail("Complaint Overview is missing %s (%s)" % ("; ".join("%s %r" % x for x in miss), flat[:260]))
+        # attachment + timeline (below the first screen)
+        below, shot_taken = [], False
+        for _ in range(4):
+            self.d.scroll_down(0.6)
+            time.sleep(1.0)
+            labs = self.d.labels()
+            below += labs
+            if not shot_taken and any(l.startswith("Attachments") for l in labs):
+                r["shots"].append(self.shot("s5_complaint_attachment"))      # evidence: the photo under Attachments
+                shot_taken = True
+        below = " ".join(l.replace("\n", " ") for l in below)
+        r["shots"].append(self.shot("s5_complaint_timeline"))
+        if IMAGE_NAME.split(".")[0] not in below:
+            raise Fail("the attached photo is not listed under Attachments on the Complaint Overview")
+        if "Complaint %s logged" % self.cmp not in below:
+            r["notes"].append("Timeline does not show 'Complaint %s logged'" % self.cmp)
+            r["status"] = "WARN"
+        pool = re.search(r"(In team pool[^\n]*|On hold with[^\n]*|Assigned to[^\n]*)", head)
+        r["notes"].append("Created %s (%s, High) for %s in %.1fs; routed: %s; attachment listed%s"
+                          % (self.cmp, ctype, customer or "no customer", secs, pool.group(1) if pool else "?",
+                             "" if "Routed to" in below else " (timeline has no 'Routed to' entry)"))
+        # the list gained exactly one complaint
+        self.open_drawer_item("Complaints", "Complaints")
+        after = self.complaints_all_count()
+        row = self.d.find(re.compile(r"^%s\n" % re.escape(self.cmp)))
+        r["shots"].append(self.shot("s5_complaints_list"))
+        if after != before + 1:
+            r["notes"].append("Complaints All count went %d → %d (expected +1)" % (before, after))
+            r["status"] = "WARN"
+        if row is None or subject not in row.label:
+            raise Fail("%s is not listed in Complaints with its subject (All count %d → %d)" % (self.cmp, before, after))
+        if secs > 10:
+            r["notes"].append("Slow save: %.1fs from Save to the overview" % secs)
+            r["status"] = "WARN"
+
     def run(self, only):
         if self.go_home():                            # "Hello Nihal" → the assignee the overview should show
             hello = next((l for l in self.d.labels() if l.startswith("Hello ")), "")
             name = re.sub(r"[^\w .'-]", "", hello[len("Hello "):]).strip()
             if name:
-                self.user = name
+                self.user, self.user_known = name, True
         plan = [("S1", "New Enquiry → overview", self.s1_new_enquiry),
                 ("S2", "Follow-up update → history", self.s2_followup),
                 ("S3", "Leads search", self.s3_search),
-                ("S4", "Add Quotation → overview", self.s4_quotation)]
+                ("S4", "Add Quotation → overview", self.s4_quotation),
+                ("S5", "New Complaint → overview", self.s5_complaint)]
         for sid, title, fn in plan:
             if only and sid not in only:
                 continue
@@ -709,6 +889,9 @@ def main():
         sc.ts = int(a.enquiry.split("_")[-1])
         sc.phone = "5" + str(sc.ts)[-8:]
         only = [x for x in (only or ["S2", "S3"]) if x != "S1"]
+    if "S5" in only and "S1" not in only and not a.enquiry:
+        only = ["S1"] + only                          # the complaint needs the QA customer that S1 creates
+        print("S5 needs a QA customer: running S1 first (or pass --enquiry QA_MOB_… to reuse one)")
     print("Progbiz ERP scenarios · Android %s · %s · data prefix %s → %s" % (android, a.tenant, sc.name, out))
     t0 = time.time()
     sc.run(only)

@@ -3,7 +3,7 @@
 Four suites for the ERP Android app (`io.progbiz.erp`), run on the local emulators, plus one command that runs them all:
 
 - **`erp_release.py` — release-note checks U1–U8** (Oct 2026 notes, first verified on v2.0.61). Read-only except U8, which may save up to two `QA_MOB_` leads.
-- **`erp_scenarios.py` — creates test data** (`QA_MOB_<time>`): New Enquiry → Follow-up → Leads search → Quotation (with the quotation PDF checked), with checks on what the app shows after each Save. Refuses to run unless `--tenant` is a test tenant.
+- **`erp_scenarios.py` — creates test data** (`QA_MOB_<time>`): New Enquiry → Follow-up → Leads search → Quotation (with the quotation PDF checked) → Complaint, with checks on what the app shows after each Save. Refuses to run unless `--tenant` is a test tenant.
 - **`erp_regression.py` — read-only**: re-checks issues found in earlier rounds (R1–R7; R8/R9 log out, only with `--logout`).
 - **`erp_smoke.py` — read-only**: opens every screen (menus discovered from the app, so it works for any tenant/role).
 - **`run_all.py`** — runs the four suites in order and writes one combined report.
@@ -95,6 +95,7 @@ without typing. The smoke suite never types into fields.
 | S2 | On that enquiry: ⋮ → Followup → Call not answering, Lead Quality Warm, next date (+4 days), description → Save | Follow-Up History shows status, date, description; save time |
 | S3 | CRM → Leads → search the QA name + Enter | appears under "In Follow Up" with count 1 |
 | S4 | On the QA enquiry: ⋮ → **Add Quotation** (pre-filled from the enquiry). Valid up to +15 days, item rate 1000 × qty 2, 10 % discount, description → Save | Quotation Overview shows the QUO number, customer, place, valid-up-to, status, sales executive; Item Details shows price 1000.00, total 2000.00, discount 10 %, **payable 1800.00**. Then **Files → View**: the quotation PDF is read and its 14 values are compared (number, date, expiry, customer, phone, item, description, rate, quantity, gross, discount, total, total in words, prepared by) |
+| S5 | Complaints › **New Complaint**: type (first one the tenant has), subject `QA_complaint_<ts>`, priority High, the QA customer, description, a photo (Photos → test PNG) → Save | Complaint Overview: `CMP-n`, status **New**, subject, description, priority, type, customer, phone, logged by; the photo is listed under Attachments; timeline has "Complaint CMP-n logged" and "Routed to <team>"; the Complaints list shows it and its **All** count rose by 1. Never taps Acknowledge / Start / Resolve / Resume |
 
 Quotation PDF check: the app writes the PDF into its cache; the script reads it with adb root (Google-APIs emulators) and extracts the text with macOS PDFKit (`osascript`), or `pdftotext` if installed.
 

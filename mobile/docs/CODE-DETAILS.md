@@ -18,7 +18,7 @@ This is **not** an Android Studio app project: Android Studio only supplies the 
 flowchart TD
     emu["bin/emu  (bash)<br/>starts the emulator, installs the APK"] --> runall["run_all.py<br/>conductor + combined report"]
     runall --> rel["erp_release.py<br/>U1–U8"]
-    runall --> crm["erp_scenarios.py<br/>S1–S4"]
+    runall --> crm["erp_scenarios.py<br/>S1–S5"]
     runall --> reg["erp_regression.py<br/>R1–R9"]
     runall --> smk["erp_smoke.py<br/>every screen"]
     rel --> sc[Scenarios class]
@@ -71,7 +71,7 @@ Result record used everywhere: `{group, name, kind, status PASS|WARN|FAIL, notes
 
 ## 4. The suites
 
-**`erp_scenarios.py` — CRM flow (S1–S4).** `class Scenarios(Runner)`; creates data; refuses tenants outside `TEST_TENANTS`.
+**`erp_scenarios.py` — CRM flow and complaint (S1–S5).** `class Scenarios(Runner)`; creates data; refuses tenants outside `TEST_TENANTS`.
 
 | Method | Job |
 |---|---|
@@ -79,6 +79,9 @@ Result record used everywhere: `{group, name, kind, status PASS|WARN|FAIL, notes
 | `s2_followup` | ⋮ › Followup: status, lead quality, next date, description; Save; verify Follow-Up History |
 | `s3_search` | Leads › search › Enter › expect "In Follow Up 1" and the row |
 | `s4_quotation` | enquiry ⋮ › **Add Quotation** (pre-filled) → valid-up-to, item rate/quantity (item ⋮ › Edit), 10 % discount, description → Save → verify the overview and Item Details → **check the PDF** |
+| `s5_complaint` | Complaints › New Complaint: type, subject, priority, QA customer, description, photo → Save → verify the Complaint Overview (number, status, details, attachment, timeline) and that the list's All count rose by 1 |
+| `push_test_image()`, `pick_test_image()`, `tiny_png()` | build a small QA PNG, copy it to the emulator and pick it in the system photo picker (shared by S5 and release check U1) |
+| `complaints_all_count()` | the count on the Complaints list's *All* tab |
 | `check_quotation_pdf()` | Files tab › View opens the PDF; the file is read from the app cache with `adb root`, its text extracted (`pdf_text()`: macOS PDFKit via `osascript`, else `pdftotext`) and 14 values compared with what was entered |
 | `choose_if_unset()` | the quotation form silently refuses to save without Lead Quality / Sales Executive — fills them when empty |
 | `rupees_in_words()` | 1800 → "Rupee One Thousand Eight Hundred Only" (Indian grouping) for the PDF's total-in-words line |

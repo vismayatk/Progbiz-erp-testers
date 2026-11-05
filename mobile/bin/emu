@@ -376,7 +376,7 @@ emu — Mobile QA emulator helper
   emu crash [version]          Show recent app crashes (for bug reports)
   emu test [version] [modules] Run the Progbiz ERP read-only smoke test (app must be logged in),
                                e.g. emu test 13   ·   emu test 13 crm,projects   → HTML report
-  emu scenarios <ver> <tenant> Run the CRM flow: enquiry → follow-up → search → quotation + PDF check (TEST tenant only; makes QA_MOB_ data)
+  emu scenarios <ver> <tenant> Run the CRM flow: enquiry → follow-up → search → quotation + PDF → complaint (TEST tenant only; makes QA_MOB_ data)
   emu release <ver> <tenant>   Run the release-note checks U1–U8 (Oct 2026 notes) → HTML report
   emu all <ver> <tenant> [apk|-] [suites]
                                Run EVERYTHING: release checks, CRM flow, old-issue re-check, every screen

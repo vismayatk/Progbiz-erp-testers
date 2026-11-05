@@ -31,7 +31,7 @@ import zlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from droid import Device  # noqa: E402
 from erp_smoke import write_report, QA_DIR  # noqa: E402
-from erp_scenarios import Scenarios, Fail, TEST_TENANTS, ITEM_SEARCH, DATE_TIME  # noqa: E402
+from erp_scenarios import Scenarios, Fail, TEST_TENANTS, ITEM_SEARCH, DATE_TIME, IMAGE_NAME  # noqa: E402
 
 HEADER = re.compile(r"^(.+), (Collapsed|Expanded)$")
 COUNTER = re.compile(r"^\d+/\d+$")
@@ -42,7 +42,6 @@ CHEQUE = [("Cheque Collection", "Cheques Collected", "New Collection"),
           ("Cheque Issue", "Issued Cheques", "Issue Cheques"),
           ("Cheque Issue", "Uncleared Cheques", None),
           ("Cheque Issue", "Cheque Master", "Add Cheque Book")]
-IMAGE_NAME = "QA_attach_test.png"
 
 
 class Missing(Exception):
@@ -51,14 +50,6 @@ class Missing(Exception):
 
 class NotTestable(Exception):
     """The tenant has no data/setup to test this item (reported as WARN)."""
-
-
-def tiny_png(path, w=64, h=64, rgb=(30, 90, 160)):
-    raw = b"".join(b"\x00" + bytes(rgb) * w for _ in range(h))
-    chunk = lambda t, d: struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
-    with open(path, "wb") as f:
-        f.write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
-                + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
 
 
 class Release(Scenarios):
@@ -216,41 +207,6 @@ class Release(Scenarios):
         time.sleep(2.5)
 
     # ---- U1 ------------------------------------------------------------------------------
-    def push_test_image(self):
-        local = os.path.join(self.out, IMAGE_NAME)
-        tiny_png(local)
-        self.d.adb("push", local, "/sdcard/Download/" + IMAGE_NAME)
-        self.d.shell("am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Download/%s"
-                     % IMAGE_NAME)
-        time.sleep(2)
-
-    def pick_test_image(self):
-        """In the system picker opened by Photos: tap the QA test image tile."""
-        t0 = time.time()
-        while time.time() - t0 < 10 and self.d.foreground_package() == self.d.package:
-            time.sleep(1)
-        for _ in range(3):
-            tile = [n for n in self.d.nodes() if IMAGE_NAME in n.label and "Preview" not in n.label]
-            if tile:
-                x1, y1, x2, y2 = tile[0].bounds
-                self.d.tap_xy(x1 + (x2 - x1) // 4, y1 + (y2 - y1) * 3 // 4)
-                break
-            roots = self.d.find("Show roots", exact=True)        # go to Downloads
-            if roots:
-                self.d.tap(roots, allow_unsafe=True, settle=1.5)
-                dl = self.d.find("Downloads", exact=True)
-                if dl:
-                    self.d.tap(dl, allow_unsafe=True, settle=2)
-        t0 = time.time()
-        while time.time() - t0 < 15 and self.d.foreground_package() != self.d.package:
-            time.sleep(1)
-        if self.d.foreground_package() != self.d.package:
-            self.d.back(1.5)
-            self.d.back(1.5)
-            return False
-        time.sleep(2)
-        return True
-
     def u1_complaint_attachments(self, r):
         self.push_test_image()
         self.open_path("Complaints", "New Complaint")

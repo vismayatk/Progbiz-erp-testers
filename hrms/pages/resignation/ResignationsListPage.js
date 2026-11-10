@@ -142,7 +142,7 @@ class ResignationsListPage extends BasePage {
   async submitInitiate(empCode) {
     const btn = this.fk.saveButton(this.main, /initiate|submit|save|raise/i);
     await btn.click();
-    const detailRe = /\/resignation\/([0-9a-f-]{8,})/i;
+    const detailRe = /\/(?:resignation|exit)\/([0-9a-f-]{8,})/i;   // app lands on /exit/{guid}
     let ok = false;
     const deadline = Date.now() + 25000;
     while (Date.now() < deadline) {
@@ -222,8 +222,11 @@ class ResignationsListPage extends BasePage {
   async openDetailByCode(code) {
     const row = await this.searchByCode(code);
     await expect(row, `the exit row for ${code}`).toBeVisible({ timeout: 20000 });
+    // The app serves the exit detail page at /exit/{guid}; /resignation/{guid} 301-redirects to it,
+    // so accept EITHER path (the canonical URL after any redirect is /exit/).
+    const DETAIL_URL = /\/(resignation|exit)\/[0-9a-f-]{8,}/i;
     const candidates = [
-      row.locator('a[href*="/resignation/"]').first(),
+      row.locator('a[href*="/resignation/"], a[href*="/exit/"]').first(),
       row.locator('[title*="view" i], [title*="detail" i], a[title], i[class*="eye" i]').first(),
       row.locator('td').nth(2),   // the Employee cell (whole row is clickable → navigates)
       row,                        // the row itself (cursor:pointer @onclick)
@@ -231,11 +234,11 @@ class ResignationsListPage extends BasePage {
     for (const c of candidates) {
       if (!(await c.count())) continue;
       await c.click().catch(() => {});
-      await this.page.waitForURL(/\/resignation\/[0-9a-f-]{8,}/i, { timeout: 8000 }).catch(() => {});
-      if (/\/resignation\/[0-9a-f-]{8,}/i.test(this.page.url())) break;
+      await this.page.waitForURL(DETAIL_URL, { timeout: 8000 }).catch(() => {});
+      if (DETAIL_URL.test(this.page.url())) break;
     }
-    await expect(this.page, 'should land on the exit detail page').toHaveURL(/\/resignation\/[0-9a-f-]{8,}/i, { timeout: 15000 });
-    return (this.page.url().match(/resignation\/([0-9a-f-]{8,})/i) || [])[1] || '';
+    await expect(this.page, 'should land on the exit detail page').toHaveURL(DETAIL_URL, { timeout: 15000 });
+    return (this.page.url().match(/(?:resignation|exit)\/([0-9a-f-]{8,})/i) || [])[1] || '';
   }
 
   async statusForCode(code) {

@@ -201,35 +201,63 @@ class ResignationDetailPage extends BasePage {
 
   // ── Letters (FR-29..31) ─────────────────────────────────────────────────────────
   // The Exit Letters card: one template <select> (-- Choose a letter template -- / Experience /
-  // Relieving / …). Flow: pick a template → "Preview" (renders inline) → "Issue Letter".
-  letterSelect() { return this.main.locator('select').filter({ has: this.page.locator('option', { hasText: /Choose a letter template|Relieving|Experience/i }) }).first(); }
+  // Experience / Relieving). The app issues letters via CHECKBOXES ("Tick one or more letters …")
+  // + a "Preview" button (renders the email + PDFs) → Issue. Preview is DISABLED until at least one
+  // letter is ticked AND Full & Final settlement is completed. (Replaces the old <select> picker.)
+  letterChecks() { return this.main.locator('label[for^="exitletter"], .form-check:has(input[id^="exitletter"]) label'); }
+  previewBtn() { return this.main.locator('button, a.btn').filter({ hasText: /^\s*Preview\s*$/i }).first(); }
 
-  /** Which letters the type offers (from the template select options). */
+  /** Which letters the exit offers (checkbox labels, e.g. ["Experience","Relieving"]). */
   async issuableLetters() {
-    const sel = this.letterSelect();
-    if (!(await sel.count())) return [];
-    return (await sel.locator('option').allTextContents()).map(t => t.trim()).filter(t => t && !/choose a letter/i.test(t));
+    const labs = this.letterChecks();
+    const n = await labs.count();
+    const out = [];
+    for (let i = 0; i < n; i++) { const t = (await labs.nth(i).innerText().catch(() => '')).trim(); if (t) out.push(t); }
+    return [...new Set(out)];
+  }
+
+  /** True when the exit type has NO configured letter templates ("No letter templates found…"). */
+  async lettersHaveNoTemplates() {
+    return /no letter templates found for this exit type/i.test(await this.text());
   }
 
   /**
-   * Issue a letter by name: select the template → Preview → Issue Letter → confirm.
-   * Returns 'issued' | 'already' | 'not-available'.
+   * Issue a letter by name: tick its checkbox → Preview → (fill email body if required) → Issue.
+   * Returns 'issued' | 'no-templates' (exit type has no letter templates configured)
+   * | 'gated' (Preview disabled — F&F not complete / nothing ticked)
+   * | 'not-available' (letter not offered) | 'no-issue-control' | 'not-issued'
+   * | 'error:<code>' (letter-engine server error).
    */
   async generateLetter(name) {
-    const sel = this.letterSelect();
-    if (!(await sel.count())) return 'not-available';
-    const opt = (await sel.locator('option').allTextContents()).map(t => t.trim()).find(o => new RegExp(name, 'i').test(o));
-    if (!opt) return 'not-available';
-    await sel.selectOption({ label: opt });
-    await this.page.waitForTimeout(1000);
-    const preview = this.main.locator('button, a.btn').filter({ hasText: /^\s*Preview\s*$/i }).first();
-    if (await preview.count() && !(await preview.isDisabled().catch(() => false))) { await preview.click(); await this.page.waitForTimeout(1800); }
-    const issue = this.main.locator('button, a.btn').filter({ hasText: /Issue Letter|^\s*Issue\s*$|Generate/i }).first();
-    if (!(await issue.count())) return 'not-available';
+    if (await this.lettersHaveNoTemplates()) return 'no-templates';
+    const lab = this.letterChecks().filter({ hasText: new RegExp(name, 'i') }).first();
+    if (!(await lab.count())) return 'not-available';
+    await lab.click().catch(() => {});                 // clicking the label toggles its checkbox
+    await this.page.waitForTimeout(700);
+    const preview = this.previewBtn();
+    if (!(await preview.count())) return 'not-available';
+    if (await preview.isDisabled().catch(() => true)) return 'gated';
+    await preview.click();
+    await this.page.waitForTimeout(2200);
+    // Preview may reveal that the exit type has no templates to render.
+    if (await this.lettersHaveNoTemplates()) return 'no-templates';
+    // The preview is a modal / offcanvas / inline panel; find the Issue/Send control within it.
+    const scope = this.page.locator('.modal.show:visible, .offcanvas.show:visible, .swal2-popup:visible').first();
+    const root = (await scope.count()) ? scope : this.main;
+    // fill a required email body if one is present and empty
+    const body = root.locator('textarea, [contenteditable="true"]').first();
+    if (await body.count()) {
+      const cur = await body.evaluate(e => (e.value !== undefined ? e.value : e.innerText) || '').catch(() => '');
+      if (!cur.trim()) await body.fill('Please find the attached exit letter(s). Regards, HR.').catch(() => {});
+    }
+    const issue = root.locator('button, a.btn').filter({ hasText: /Issue Letter|^\s*Issue\s*$|Send|Generate|Confirm/i })
+      .filter({ hasNotText: /cancel|close|back|^\s*Preview\s*$/i }).first();
+    if (!(await issue.count())) return 'no-issue-control';
     await issue.click();
-    // Poll up to 7s for the outcome: a success (card updates) OR an "Oops … Error Code: X" server
-    // error (an unhandled exception in the letter engine), handling any confirm dialog in between.
-    const deadline = Date.now() + 7000;
+    // Poll for the outcome. Success REQUIRES a positive "issued" marker for this letter — the mere
+    // disappearance of "No <name> letter has been issued" is NOT success (the section also changes to
+    // "No letter templates found…" when nothing can be issued).
+    const deadline = Date.now() + 10000;
     while (Date.now() < deadline) {
       const dtxt = (await this.page.locator('.swal2-popup:visible, .modal.show:visible').allInnerTexts().catch(() => [])).join(' ').replace(/\s+/g, ' ');
       if (/oops|went wrong|error code|support center/i.test(dtxt)) {
@@ -237,10 +265,15 @@ class ResignationDetailPage extends BasePage {
         await this.page.locator('.swal2-confirm:visible, .swal2-close:visible, .modal.show .btn-close').first().click().catch(() => {});
         return `error:${code || 'unknown'}`;
       }
-      if (/are you sure|confirm|proceed/i.test(dtxt)) await confirmSwal(this.page, /issue|generate|yes|confirm|proceed/i).catch(() => {});
-      const body = (await this.main.innerText().catch(() => '')).replace(/\s+/g, ' ');
-      if (!new RegExp(`No ${name} letter has been issued`, 'i').test(body) && /letter (has been )?(issued|generated)/i.test(body)) return 'issued';
-      await this.page.waitForTimeout(500);
+      if (/are you sure|confirm|proceed|issue these|send (the )?letter/i.test(dtxt)) await confirmSwal(this.page, /issue|send|generate|yes|confirm|proceed/i).catch(() => {});
+      const main = (await this.main.innerText().catch(() => '')).replace(/\s+/g, ' ');
+      if (/no letter templates found for this exit type/i.test(main)) return 'no-templates';
+      // positive issued marker: "<name> letter issued", "issued on <date>", a download/view control
+      if (new RegExp(`${name} letter (issued|generated)|${name}[^.]*issued on|issued on [\\d]`, 'i').test(main)
+          || (await this.main.locator('a, button').filter({ hasText: new RegExp(`${name}.*(download|view|re-?issue)`, 'i') }).count())) {
+        return 'issued';
+      }
+      await this.page.waitForTimeout(600);
     }
     return 'not-issued';
   }

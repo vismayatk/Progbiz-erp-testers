@@ -297,20 +297,31 @@ test.describe('Resignation & Exit — complete module', () => {
     await det.open(run.guid);
     const issuable = await det.issuableLetters();
     console.log(`  • issuable letters: ${issuable.join(', ') || '(none shown)'}`);
+    const noTemplates = await det.lettersHaveNoTemplates();
+    console.log(`  • exit-letter templates configured for this exit type: ${noTemplates ? 'NO ("Add them under Letter Templates")' : 'yes/unknown'}`);
     run.letters = {};
     for (const L of ['Relieving', 'Experience']) {
       run.letters[L] = await det.generateLetter(L).catch(e => `error: ${e.message.slice(0, 60)}`);
       console.log(`  • ${L} letter: ${run.letters[L]}`);
-      if (/^error/i.test(run.letters[L])) {   // server-side failure issuing the letter → evidence
-        const shot = testInfo.outputPath(`letter-error-${L}.png`);
-        await page.screenshot({ path: shot, fullPage: true }).catch(() => {});
-        if (require('fs').existsSync(shot)) await testInfo.attach(`${L} letter issue error`, { path: shot, contentType: 'image/png' });
-      }
+      const shot = testInfo.outputPath(`letter-${L}.png`);
+      await page.screenshot({ path: shot, fullPage: true }).catch(() => {});
+      if (require('fs').existsSync(shot)) await testInfo.attach(`${L} letter outcome (${run.letters[L]})`, { path: shot, contentType: 'image/png' });
       await det.open(run.guid);   // re-read before the next letter
     }
-    run.lettersBlocked = Object.values(run.letters).some(v => /^error|not-issued|not-available/.test(v));
+    const outcomes = Object.values(run.letters);
+    run.lettersBlocked = outcomes.some(v => v !== 'issued');
     if (run.lettersBlocked) {
-      console.log(`  🚧 BLOCKER — exit letter issuance FAILED (${JSON.stringify(run.letters)}). Required Relieving/Experience closure letters cannot be generated (Letter-engine "Oops" server error / unconfigured template) → exit closure is gated. Reported as a finding; not an automation defect.`);
+      const svr = outcomes.find(v => /^error:/.test(v));
+      const cause = svr
+        ? `letter-engine SERVER error (${svr}) — an app defect`
+        : (noTemplates || outcomes.some(v => v === 'no-templates'))
+          ? 'no exit-letter TEMPLATES are configured for this exit type (the page says "Add them under Letter Templates") — a tenant CONFIGURATION gap, not a code/server defect'
+          : outcomes.some(v => v === 'gated')
+            ? 'letter Preview is gated (Full & Final settlement not completed)'
+            : 'letters could not be issued at this point';
+      console.log(`  🚧 BLOCKER — exit letters not issued ${JSON.stringify(run.letters)}: ${cause}. Exit closure\'s letter dependency is unmet. Reported as a finding.`);
+    } else {
+      console.log('  ✅ exit letters issued (Relieving + Experience)');
     }
     // Don't fail on the app-side letter blocker (it is a reported finding); DO fail on an unexpected crash screen.
     await assertNoBlocker(page, 'Exit Letters').catch(() => {});

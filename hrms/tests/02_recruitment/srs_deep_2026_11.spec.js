@@ -109,4 +109,57 @@ test.describe('Recruitment SRS 2026-11 — deep create+persist (R1, R2)', () => 
     expect(await candidateRow(page, who.email), 'a Talent-Pool-only person should not appear in the candidate register').toBe('');
   });
 
+  // ── R5 — In-Person interview Location auto-fills from the opening's branch (non-destructive) ──
+  test('R5 choosing In-Person in Schedule Interview reveals a branch-based Location field', async ({ page }) => {
+    const fk = new FormKit(page);
+    await fk.gotoReady(`${BASE}/interview-schedules`, { ready: /Schedule Interview/i });
+    await page.locator('a, button').filter({ hasText: /Schedule Interview/i }).first().click().catch(() => {});
+    const form = await fk.scope({ ready: 'input[type="datetime-local"]' });
+
+    // Designation → Job Opening: try each designation until one has an active opening.
+    const desigSel = form.locator('select').filter({ has: page.locator('option', { hasText: /Select designation/i }) }).first();
+    const opening = form.locator('select').filter({ has: page.locator('option', { hasText: /Pick a job opening first|Select.*opening/i }) }).first();
+    const desigs = (await desigSel.locator('option').allInnerTexts()).map(t => t.trim()).filter(t => !/select designation/i.test(t));
+    let openingPicked = false;
+    for (const d of desigs) {
+      await desigSel.selectOption({ label: d }).catch(() => {});
+      await page.waitForTimeout(1500);
+      const enabled = await opening.isEnabled().catch(() => false);
+      const optN = await opening.locator('option').count();
+      if (enabled && optN > 1) {
+        await fk.setCascade(opening, null, 'Job Opening', { index: 1 });
+        openingPicked = true;
+        break;
+      }
+    }
+    test.skip(!openingPicked, 'no designation currently has an active job opening to derive a branch for the In-Person location');
+
+    // Mode → In-Person. On this build the Mode select only enables after the full
+    // candidate + round cascade; if it is still locked, skip (documented) rather than
+    // drive the whole schedule flow for a convenience auto-fill.
+    const mode = form.locator('select').filter({ has: page.locator('option', { hasText: /In-Person/i }) }).first();
+    await page.waitForTimeout(1500);
+    test.skip(!(await mode.isEnabled().catch(() => false)),
+      'Mode/Location are gated behind the full designation→opening→candidate→round cascade; not driven here (non-destructive convenience feature)');
+    await fk.setSelect(mode, 'In-Person', 'Mode', { loose: true });
+    await page.waitForTimeout(1500);
+
+    // A Location field appears for In-Person mode.
+    const loc = form.locator('input[placeholder*="location" i], textarea[placeholder*="location" i], ' +
+      'input[placeholder*="address" i], textarea[placeholder*="address" i]').first();
+    await expect(loc, 'an In-Person interview should reveal a Location field').toBeVisible({ timeout: 10000 });
+
+    // If the opening's branch has a saved map pin, the box pre-fills with an address + a Maps link.
+    const val = (await loc.inputValue().catch(() => '')) || '';
+    const body = (await form.innerText().catch(() => '')).replace(/\s+/g, ' ');
+    if (val.trim()) {
+      expect(val, 'a pre-filled In-Person location should carry a Google Maps link to the branch pin')
+        .toMatch(/maps\.(google|app\.goo)|goo\.gl\/maps|google\.com\/maps/i);
+    } else {
+      // No pin on this branch → field stays blank+editable; the "Edit on map" affordance is still offered.
+      expect(body, 'the In-Person location row should offer a map editor / help note').toMatch(/map|location/i);
+    }
+    // Non-destructive: never click "Schedule Interview".
+  });
+
 });

@@ -206,7 +206,12 @@ class Features(Release):
         time.sleep(6)
         self.d.back(3)
         self.tab("Starred")
-        self.ass(self.wait_row(subj) is not None, "the starred mail is not in Starred")
+        if self.wait_row(subj, 12) is None:
+            self.d.swipe(540, 700, 540, 1700, 400)                    # pull to refresh
+            time.sleep(4)
+            self.ass(self.wait_row(subj, 12) is not None, "the starred mail is not in Starred, even after pull-to-refresh")
+            r["notes"].append("BUG: the Starred tab shows 'No mail in Starred' for a mail that is starred until the list is pulled to refresh")
+            r["status"] = "WARN"
         r["shots"].append(self.shot("f1_starred"))
         self.tab("Inbox")
         row = next((x for x in self.rows(subj) if "Re:" not in x.label and "Fwd:" not in x.label), None)

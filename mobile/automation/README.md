@@ -19,7 +19,7 @@ emu all 13 ncore_test
 ```
 
 - With a new APK installed first (keeps the login): `emu all 13 ncore_test ~/Downloads/erp.apk`
-- Only some suites: `emu all 13 ncore_test - release,crm` (`-` = no APK; suites: release, crm, regression, smoke)
+- Only some suites: `emu all 13 ncore_test - release,crm` (`-` = no APK; suites: release, crm, features, regression, smoke)
 - Just the release-note checks: `emu release 13 ncore_test`
 
 It launches the app, taps "Maybe Later" on the Update Available prompt, and checks you are logged in. On the
@@ -104,6 +104,7 @@ Only the enquiry the run created is edited; nothing is deleted, approved, transf
 
 ## Files
 
+- `erp_features.py` — new-feature scenarios F1–F6 (mail, lead notes, Super Hot, WhatsApp 24-hour window, purchase invoice, receipt); every step asserts the entered data is displayed. Run alone: `python3 erp_features.py --serial emulator-5554 --tenant lesol_test [--only F1,F2]`.
 - `run_all.py` — the one-command runner (`emu all`), combined report in `reports/erp-all_*`.
 - `erp_release.py` — release-note checks U1–U8 above.
 - `erp_regression.py` — re-checks of earlier issues.

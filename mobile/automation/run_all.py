@@ -3,7 +3,7 @@
 
 Suites, in this order (pick with --suites):
   release     erp_release.py     U1–U8  checks for the Oct 2026 release notes
-  crm         erp_scenarios.py   S1–S5  Enquiry → Follow-up → Leads search → Quotation + PDF → Complaint   (creates QA_MOB_ test data)
+  crm         erp_scenarios.py   S1–S6  Enquiry → Follow-up → Leads search → Quotation + PDF → Complaint → Task   (creates QA_MOB_ test data)
   regression  erp_regression.py  R1–R7  issues found in earlier rounds
   smoke       erp_smoke.py              every menu, tab and Home card            (~35 min)
 
@@ -35,7 +35,8 @@ from erp_scenarios import TEST_TENANTS  # noqa: E402
 
 SUITES = {
     "release": ("erp_release.py", "Release-note checks (U1–U8)"),
-    "crm": ("erp_scenarios.py", "CRM flow: enquiry → follow-up → search → quotation + PDF → complaint (S1–S5)"),
+    "crm": ("erp_scenarios.py", "CRM flow: enquiry → follow-up → search → quotation + PDF → complaint → task (S1–S6)"),
+    "features": ("erp_features.py", "New features: mail, lead notes, Super Hot, WhatsApp window, purchase invoice, receipt (F1–F6)"),
     "regression": ("erp_regression.py", "Old issues re-check (R1–R7)"),
     "smoke": ("erp_smoke.py", "Every screen, tab and Home card"),
 }
@@ -119,9 +120,9 @@ def run_suite(key, serial, tenant, out_dir, extra):
     return res
 
 
-SUITE_DIR = {"release": "erp-release", "crm": "erp-scenarios", "regression": "erp-regression", "smoke": "erp-smoke"}
+SUITE_DIR = {"release": "erp-release", "crm": "erp-scenarios", "features": "erp-features", "regression": "erp-regression", "smoke": "erp-smoke"}
 SUITE_TITLE = {"release": ("release-note checks", "ERP Release Checks"), "crm": ("scenario tests", "ERP Mobile Scenarios"),
-               "regression": ("regression checks", "ERP Regression Checks"), "smoke": ("smoke test", "ERP Mobile Smoke")}
+               "features": ("new-feature scenarios", "ERP Mobile New Features"), "regression": ("regression checks", "ERP Regression Checks"), "smoke": ("smoke test", "ERP Mobile Smoke")}
 
 
 def thumbs(result, run_dir, limit=4):
@@ -252,7 +253,7 @@ def main():
     ap.add_argument("--tenant", default=None, help="company code; data-creating suites need a test tenant: " + ", ".join(TEST_TENANTS))
     ap.add_argument("--user", default="admin", help="username filled on the login screen (default admin)")
     ap.add_argument("--apk", help="install this APK first (adb install -r keeps the login)")
-    ap.add_argument("--suites", default="release,crm,regression,smoke", help="comma list of: " + ", ".join(SUITES))
+    ap.add_argument("--suites", default="release,crm,features,regression,smoke", help="comma list of: " + ", ".join(SUITES))
     ap.add_argument("--print", dest="do_print", action="store_true", help="release U3: also open the Print PDF")
     ap.add_argument("--combine", metavar="YYYYMMDD", help="no device: one report with the latest result of every check "
                     "from that day's runs (e.g. after re-running a few checks)")

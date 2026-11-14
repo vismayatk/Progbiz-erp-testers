@@ -37,7 +37,7 @@ from droid import Device  # noqa: E402
 from erp_smoke import Runner, write_report, QA_DIR, DRAWER_MARK  # noqa: E402
 
 TEST_TENANTS = ("lesol_test", "onetouch_test", "ncore_test")
-ITEM_SEARCH = {"ncore_test": "Test"}                 # item search text per tenant (default "Bio")
+ITEM_SEARCH = {"ncore_test": "Test", "lesol_test": "Sol"}                 # item search text per tenant (default "Bio")
 STATUS_PREF = ["Call not answering", "Contacted", "Follow-up Pending"]   # first one the tenant has is used
 DATE_TIME = re.compile(r"^\d{2}/\d{2}/\d{4} \d{2}:\d{2} [AP]M$")
 
@@ -67,6 +67,7 @@ class Scenarios(Runner):
         self.tenant = tenant
         self.desc_q = ""
         self.cmp = ""
+        self.task_title, self.task_checks, self.task_row = "", [], ""
         self.user = "Super Admin"                     # assignee shown on the overview; read from Home in run()
         self.user_known = False                       # True once "Hello <name>" was read from Home
 
@@ -738,13 +739,20 @@ class Scenarios(Runner):
         self.d.tap(self.must("High", 5, "Priority option High"), allow_unsafe=True, settle=2)
         # customer: the QA customer S1 created, if the picker lists it
         self.d.tap(self.must(re.compile(r"^Customer\nSearch customer"), 5, "Customer"), allow_unsafe=True, settle=3)
-        row = next((n for n in self.d.nodes() if n.cls.endswith("Button") and n.label.startswith(self.name + "\n")), None)
+        row = None
+        for _ in range(8):                            # the list is alphabetical and not filtered by the search box:
+            row = next((n for n in self.d.nodes() if n.cls.endswith("Button") and n.label.startswith(self.name + "\n")), None)
+            if row:                                   # the QA customer is often just below the first screen
+                break
+            self.d.scroll_down(0.6)
+            time.sleep(1.0)
         customer = None
         if row:
             self.d.tap(row, allow_unsafe=True, settle=3)
             customer = self.name
         else:
             r["notes"].append("Customer %s is not in the picker — complaint created without a customer" % self.name)
+            r["status"] = "WARN"
             self.d.back(1.5)
         self.d.hide_keyboard()
         # description
@@ -822,6 +830,291 @@ class Scenarios(Runner):
             r["notes"].append("Slow save: %.1fs from Save to the overview" % secs)
             r["status"] = "WARN"
 
+    # ---- S6 task for later: priority, dates, notify when done, checklist --------------------
+    def tab_count(self, tab):
+        """The number on a My Tasks tab ("Upcoming\n8\nTab 3 of 5"); None while the tabs are not shown."""
+        for l in self.d.labels():
+            m = re.match(r"^%s\n(\d+)\nTab \d+ of" % re.escape(tab), l)
+            if m:
+                return int(m.group(1))
+        return None
+
+    def scroll_to(self, label, tries=8):
+        """Scroll a bottom sheet (finger up) until the label is on screen; return its node."""
+        w, h = self.d.size()
+        for _ in range(tries):
+            n = self.d.find(label, exact=True) if isinstance(label, str) else self.d.find(label)
+            if n and n.bounds[1] > h * 0.14 and n.bounds[3] < h * 0.97:
+                return n
+            self.d.swipe(w // 2, int(h * 0.78), w // 2, int(h * 0.45), 500)
+            time.sleep(1.0)
+        raise Fail("%r not found in the form" % (label if isinstance(label, str) else label.pattern))
+
+    def value_of_row(self, label):
+        """Tap the value on the right of a form row (the row label itself is not clickable)."""
+        n = self.scroll_to(label)
+        self.tap_right_of((n.bounds[1] + n.bounds[3]) / 2)
+
+    def checklist_node(self):
+        return next((n for n in self.d.nodes() if n.label.startswith("CHECKLIST\n")), None)
+
+    def checklist_lines(self):
+        n = self.checklist_node()
+        return n.label.split("\n") if n else []
+
+    def checklist_y(self, idx, lines):
+        """Screen y of the idx-th checklist row: rows are 126 px apart, a ticked row has an extra 'who • when' line (55 px)."""
+        n = self.checklist_node()
+        rows = []                                           # [name, ticked]
+        for l in lines[2:]:
+            if "•" in l and rows:
+                rows[-1][1] = True
+            else:
+                rows.append([l, False])
+        return n.bounds[1] + 193 + 126 * idx + 55 * sum(1 for x in rows[:idx] if x[1])
+
+    def show_checklist(self):
+        w, h = self.d.size()
+        for _ in range(5):
+            n = self.checklist_node()
+            if n and n.bounds[1] > h * 0.15 and n.bounds[3] < h * 0.97:
+                return n
+            self.d.swipe(w // 2, int(h * 0.78), w // 2, int(h * 0.38), 500)
+            time.sleep(1.0)
+        raise Fail("the Checklist is not shown on the Task Overview")
+
+    def checklist_count(self):
+        lines = self.checklist_lines()
+        return lines[1] if len(lines) > 1 else "?"
+
+    def checklist_tick(self, idx, expect):
+        lines = self.checklist_lines()
+        self.d.tap_xy(107, self.checklist_y(idx, lines))
+        time.sleep(2.5)
+        got = self.checklist_count()
+        if got != expect:
+            raise Fail("checklist counter is %s after tapping item %d (expected %s)" % (got, idx + 1, expect))
+
+    def checklist_menu(self, idx, action):
+        """⋮ on a checklist row → 'Edit Checklist' / 'Delete Checklist'."""
+        lines = self.checklist_lines()
+        self.d.tap_xy(980, self.checklist_y(idx, lines))
+        time.sleep(2)
+        self.d.tap(self.must(action, 6, action), allow_unsafe=True, settle=2.5)
+
+    def checklist_add(self, text):
+        n = self.show_checklist()
+        add = next(x for x in self.d.nodes() if x.label == "Add" and abs(x.bounds[1] - n.bounds[1]) < 90)
+        self.d.tap(add, allow_unsafe=True, settle=2.5)
+        self.must("Add Checklist Item", 8, "checklist sheet")
+        self.d.tap(sorted(self.edits(), key=lambda e: e.bounds[1])[0], allow_unsafe=True, settle=1.2)
+        self.d.shell("input text " + text)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        self.d.tap(self.d.find("Add", exact=True), allow_unsafe=True, settle=3)
+
+    def reopen_task(self, title):
+        """Back to My Tasks › Upcoming and open the task again (proves what was saved on the server)."""
+        self.d.back(2.5)
+        self.d.tap(self.must(re.compile(r"^Upcoming\n\d+\nTab"), 8, "Upcoming tab"), allow_unsafe=True, settle=3)
+        row = None
+        for _ in range(5):
+            row = next((n for n in self.d.nodes() if n.label.startswith(title)), None)
+            if row:
+                break
+            self.d.scroll_down(0.6)
+            time.sleep(1.0)
+        if row is None:
+            raise Fail("task %s is not listed after going back" % title)
+        self.d.tap(row, allow_unsafe=True, settle=4)
+        self.must(re.compile(r"^Task Overview$"), 15, "Task Overview")
+        time.sleep(1.5)
+
+    def s6_overview(self, r, row, title, desc, checks, dates, team_name):
+        """Task Overview: details, then the checklist: tick / untick / edit / add / delete, and that it persists."""
+        self.d.tap(row, allow_unsafe=True, settle=4)
+        self.must(re.compile(r"^Task Overview$"), 15, "Task Overview")
+        time.sleep(1.5)
+        r["shots"].append(self.shot("s6_task_overview"))
+        det = next((l for l in self.d.labels() if l.startswith("Task Type\n")), "").replace("\n", " ")
+        fmt = "%d/%m/%Y"
+        for want in ("Activities", title, "Scheduled On " + dates["Start Date"].strftime(fmt),
+                     "Scheduled End On " + dates["End Date"].strftime(fmt), "Finished Before " + dates["Deadline"].strftime(fmt)):
+            if want not in det:
+                raise Fail("Task Overview is missing %r (%s)" % (want, det[:220]))
+        self.show_checklist()
+        flat = " ".join(l.replace("\n", " ") for l in self.d.labels())
+        for want in (desc, checks[0], checks[1], "Host", "Not Started"):
+            if want not in flat:
+                raise Fail("Task Overview is missing %r" % want)
+        if self.checklist_count() != "0/2":
+            raise Fail("checklist counter is %s on a new task with 2 items (expected 0/2)" % self.checklist_count())
+        # tick → untick → tick (the Start Task button is never tapped: it starts a timer)
+        self.checklist_tick(0, "1/2")
+        if "•" not in " ".join(self.checklist_lines()):
+            r["notes"].append("A ticked checklist item shows no 'who • when' line")
+            r["status"] = "WARN"
+        r["shots"].append(self.shot("s6_checklist_ticked"))
+        self.checklist_tick(0, "0/2")
+        self.checklist_tick(0, "1/2")
+        # edit the second item
+        self.checklist_menu(1, "Edit Checklist")
+        self.must("Edit Checklist Item", 8, "edit sheet")
+        self.d.tap(sorted(self.edits(), key=lambda e: e.bounds[1])[0], allow_unsafe=True, settle=1.2)
+        self.d.shell("input keyevent KEYCODE_MOVE_END")
+        self.d.shell("input text _edit")
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        self.d.tap(self.must("Update", 6, "Update"), allow_unsafe=True, settle=3)
+        if checks[1] + "_edit" not in " ".join(self.checklist_lines()):
+            raise Fail("the edited checklist item text is not shown")
+        # add a third item here
+        third = "QA_check_%d_c" % self.ts
+        self.checklist_add(third)
+        if self.checklist_count() != "1/3":
+            raise Fail("checklist counter is %s after adding an item (expected 1/3)" % self.checklist_count())
+        # leave and reopen: everything must have been saved
+        self.reopen_task(title)
+        self.show_checklist()
+        lines = " ".join(self.checklist_lines())
+        if self.checklist_count() != "1/3" or checks[1] + "_edit" not in lines or third not in lines or "•" not in lines:
+            raise Fail("after reopening the task the checklist is %r (expected 1/3 with the edit, the new item and the tick)" % lines[:200])
+        r["shots"].append(self.shot("s6_checklist_reopened"))
+        # delete the added item (own QA row) — confirm dialog "Are you sure to delete?"
+        self.checklist_menu(2, "Delete Checklist")
+        btn = [n for n in self.d.nodes() if n.label == "Delete" and n.clickable]
+        if not btn:
+            raise Fail("no delete confirmation after Delete Checklist")
+        self.d.tap(btn[-1], allow_unsafe=True, settle=3)
+        if self.checklist_count() != "1/2" or third in " ".join(self.checklist_lines()):
+            raise Fail("the checklist item was not removed (%s)" % " ".join(self.checklist_lines())[:160])
+        r["shots"].append(self.shot("s6_checklist_deleted"))
+        # Edit Task: does it still show what was saved? (never saved here)
+        w, h = self.d.size()
+        self.d.tap_xy(int(w * 0.94), int(h * 0.084))
+        time.sleep(2)
+        self.d.tap(self.must("Edit Task", 6, "Edit Task"), allow_unsafe=True, settle=3.5)
+        self.must(re.compile(r"^Edit Task$"), 10, "Edit Task form")
+        for _ in range(3):
+            self.d.swipe(w // 2, int(h * 0.78), w // 2, int(h * 0.38), 500)
+            time.sleep(1.0)
+        notify_shown = self.d.exists("Notify", exact=True) and self.d.exists("Teams", exact=True)
+        dl = self.d.find("Deadline", exact=True)
+        deadline_blank = bool(dl) and any(n.label == "Tap to Select" and abs((n.bounds[1] + n.bounds[3]) - (dl.bounds[1] + dl.bounds[3])) < 120
+                                          for n in self.d.nodes())
+        r["shots"].append(self.shot("s6_edit_task_notify"))
+        if not notify_shown:
+            r["notes"].append("Edit Task shows 'Notify when done' unticked although the task was saved with Notify → Team %s "
+                              "— check s6_edit_task_notify.png" % team_name)
+            r["status"] = "WARN"
+        if deadline_blank:
+            r["notes"].append("Edit Task shows the Deadline empty although the overview shows 'Finished Before %s'"
+                              % dates["Deadline"].strftime(fmt))
+            r["status"] = "WARN"
+        self.d.tap(self.must("Cancel", 6, "Cancel"), allow_unsafe=True, settle=2.5)     # nothing is saved
+        r["notes"].append("Checklist: ticked/unticked, edited, added and deleted an item; the saved state was identical after reopening")
+
+    def s6_task(self, r):
+        """My Tasks › + › Task for later: type Activities, priority High, title, description, dates,
+        Notify when done → Team, two checklist items → Add → the task is listed under Upcoming."""
+        title, desc = "QA_task_%d" % self.ts, "QA_task_desc_%d" % self.ts
+        checks = ["QA_check_%d_a" % self.ts, "QA_check_%d_b" % self.ts]
+        self.open_drawer_item("Task Management", "My Tasks")
+        before, t0 = None, time.time()
+        while before is None and time.time() - t0 < 30:
+            before = self.tab_count("Upcoming")
+            time.sleep(1.5)
+        if before is None:
+            raise Fail("My Tasks did not show its tab counts within 30s")
+        w, h = self.d.size()
+        self.d.tap_xy(int(w * 0.893), int(h * 0.925))                  # the + button has no label
+        self.d.tap(self.must("Task for later", 8, "Task for later"), allow_unsafe=True, settle=3.5)
+        self.must(re.compile(r"^Task for Later$"), 10, "Task for Later form")
+        self.d.tap(self.must("Choose", 10, "Task Type"), allow_unsafe=True, settle=2.5)
+        self.d.tap(self.must("Activities", 8, "task type Activities"), allow_unsafe=True, settle=2)
+        if not self.d.exists("High", exact=True):                      # already High → nothing to change
+            self.d.tap(self.must("Normal", 5, "Priority"), allow_unsafe=True, settle=2)
+            self.d.tap(self.must("High", 5, "Priority option High"), allow_unsafe=True, settle=2)
+        ed = sorted(self.edits(), key=lambda n: n.bounds[1])
+        self.d.tap(ed[0], allow_unsafe=True, settle=1.2)
+        self.d.shell("input text " + title)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        box = next(e for e in sorted(self.edits(), key=lambda n: n.bounds[1]) if e.bounds[3] - e.bounds[1] > 150)
+        self.d.tap(box, allow_unsafe=True, settle=1.2)
+        self.d.shell("input text " + desc)
+        time.sleep(0.8)
+        self.d.hide_keyboard()
+        # schedule: start tomorrow, end and deadline later (Scheduled is the default)
+        dates = {}
+        for lab, days in (("Start Date", 1), ("End Date", 2), ("Deadline", 3)):
+            self.value_of_row(lab)
+            dates[lab] = self.pick_date(days)
+        r["shots"].append(self.shot("s6_task_form"))
+        # notify when done → Team → QA_Team_A
+        self.d.tap(self.scroll_to("Notify when done"), allow_unsafe=True, settle=2)
+        self.value_of_row("Notify")
+        self.d.tap(self.must("Team", 5, "Notify option Team"), allow_unsafe=True, settle=2)
+        self.value_of_row("Teams")
+        team = next((n for n in self.d.nodes() if n.clickable and n.label.startswith("QA_Team")), None)
+        if team is None:
+            raise Fail("the Notify team list has no QA_Team")
+        team_name = team.label.split("\n")[0]
+        self.d.tap(team, allow_unsafe=True, settle=1.5)
+        self.d.tap(self.d.find("Add", exact=True), allow_unsafe=True, settle=2.5)   # confirm the team picker
+        # checklist
+        for item in checks:
+            lab = self.scroll_to("CHECKLIST")
+            add = next(n for n in self.d.nodes() if n.label == "Add" and abs(n.bounds[1] - lab.bounds[1]) < 90)
+            self.d.tap(add, allow_unsafe=True, settle=2.5)
+            self.must("Add Checklist Item", 8, "checklist sheet")
+            self.d.tap(sorted(self.edits(), key=lambda n: n.bounds[1])[0], allow_unsafe=True, settle=1.2)
+            self.d.shell("input text " + item)
+            time.sleep(0.8)
+            self.d.hide_keyboard()
+            self.d.tap(self.d.find("Add", exact=True), allow_unsafe=True, settle=2.5)
+        self.scroll_to(checks[-1])
+        r["shots"].append(self.shot("s6_task_checklist"))
+        flat = " ".join(l.replace("\n", " ") for l in self.d.labels())
+        for want in (team_name, checks[0], checks[1], "Notify when done"):
+            if want not in flat:
+                raise Fail("the task form lost %r before saving" % want)
+        # save (the Add button in the sheet header)
+        head = next(n for n in self.d.nodes() if n.label == "Add" and n.bounds[1] < h * 0.15)
+        t0 = time.time()
+        self.d.tap(head, allow_unsafe=True, settle=1.0)
+        if self.d.wait_for(re.compile(r"^Task for Later$"), timeout=45, gone=True) is False:
+            raise Fail("the Task for Later form did not close within 45s of Add")
+        secs = time.time() - t0
+        r["load_s"] = secs
+        self.banner_note(r)
+        time.sleep(3)
+        # listed under Upcoming
+        self.d.tap(self.must(re.compile(r"^Upcoming\n\d+\nTab"), 8, "Upcoming tab"), allow_unsafe=True, settle=3)
+        after = self.tab_count("Upcoming")
+        row = None
+        for _ in range(6):
+            row = next((n for n in self.d.nodes() if n.label.startswith(title)), None)
+            if row:
+                break
+            self.d.scroll_down(0.6)
+            time.sleep(1.0)
+        r["shots"].append(self.shot("s6_task_listed"))
+        if after != before + 1:
+            r["notes"].append("Upcoming count went %s → %s (expected +1)" % (before, after))
+            r["status"] = "WARN"
+        if row is None:
+            raise Fail("the new task %s is not listed under Upcoming (count %s → %s)" % (title, before, after))
+        self.s6_overview(r, row, title, desc, checks, dates, team_name)
+        self.task_title = title
+        self.task_checks = checks
+        self.task_row = row.label.replace("\n", " | ")
+        r["notes"].append("Created task %s (Activities, High, start %s, notify %s, 2 checklist items) in %.1fs; row: %s"
+                          % (title, dates["Start Date"].strftime("%d/%m/%Y"), team_name, secs, self.task_row))
+        if secs > 10:
+            r["notes"].append("Slow save: %.1fs from Add to the list" % secs)
+            r["status"] = "WARN"
+
     def run(self, only):
         if self.go_home():                            # "Hello Nihal" → the assignee the overview should show
             hello = next((l for l in self.d.labels() if l.startswith("Hello ")), "")
@@ -832,7 +1125,8 @@ class Scenarios(Runner):
                 ("S2", "Follow-up update → history", self.s2_followup),
                 ("S3", "Leads search", self.s3_search),
                 ("S4", "Add Quotation → overview", self.s4_quotation),
-                ("S5", "New Complaint → overview", self.s5_complaint)]
+                ("S5", "New Complaint → overview", self.s5_complaint),
+                ("S6", "Task for later → checklist, notify", self.s6_task)]
         for sid, title, fn in plan:
             if only and sid not in only:
                 continue

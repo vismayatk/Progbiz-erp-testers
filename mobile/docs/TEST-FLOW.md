@@ -16,7 +16,7 @@ flowchart TD
     E -- yes --> G{"Profile company name<br/>matches the tenant?"}
     G -- no --> X["Stop — wrong tenant, nothing is created"]
     G -- yes --> H["1 Release-note checks U1–U8 (~25 min)"]
-    H --> I["2 CRM flow + complaint S1–S5 (~13 min)"]
+    H --> I["2 CRM flow + complaint S1–S6 (~13 min)"]
     I --> J["3 Old-issue re-check R1–R7 (~7 min)"]
     J --> K["4 Every screen, tab and Home card (~45 min)"]
     K --> L["Combined report: reports/erp-all_&lt;tenant&gt;_&lt;time&gt;/index.html"]
@@ -32,7 +32,7 @@ in the complaint chart) cannot be read — those checks say so and point to the 
 Result meaning: **PASS** = as expected · **WARN** = slow, partly readable, or cannot be tested on this tenant ·
 **FAIL** = not as expected. Every check stores at least one screenshot.
 
-## 2. CRM flow and complaint (`erp_scenarios.py`, S1–S5) — creates test data
+## 2. CRM flow and complaint (`erp_scenarios.py`, S1–S6) — creates test data
 
 ```mermaid
 flowchart LR
@@ -46,6 +46,21 @@ flowchart LR
 | **S3** Leads search | Back. CRM › Leads › search icon › type the QA name › **Enter** | The **In Follow Up** tab shows count 1 and the row `ENQ-n` with the name | time to find it |
 | **S4** Quotation → PDF | Open that enquiry › ⋮ › **Add Quotation** (customer, phone, follow-up date, item and — when the enquiry has one — Lead Quality arrive pre-filled). Quotation Valid Up To +15 days (date only). Set Sales Executive and Lead Quality if empty (the form will not save without them and shows no message). Item card ⋮ › Edit: Rate 1000, Quantity 2 (Gross must read 2000.00). Discount 10 % › ✓. Type the description. Save. Then **Files** tab › **View** | Quotation Overview: `QUO-n`, customer, place, valid-up-to, status (**New Quotation**, or **In Follow Up** when the enquiry had a follow-up), sales executive. Item Details: price 1000.00, total 2000.00, discount 10 %, Total Payable **1800.00**. **PDF**: 14 of 14 values match — Estimate No, date, expiry, customer, phone, item, item description, rate 1,000.00, qty 2.00, Gross Total 2,000.00, Discount (200.00), Total INR 1,800.00, Total In Words, Prepared By | save time (WARN over 10 s). Notes: the PDF is titled **Estimate**; the quotation's own description is not printed on it |
 | **S5** New Complaint → overview | Complaints › **New Complaint**. Complaint Type: first option. Subject `QA_complaint_<ts>`. Priority › High. Customer: the QA customer from S1 (the picker lists every contact; the search box does not filter). Description. Photos › test PNG (counter 1/10). Save — the Save button is in the sheet header; do not scroll, a downward drag closes the sheet and loses the form | Complaint Overview: `CMP-n`, status **New**, subject, description, **high**, type, customer, phone, logged by; "In team pool — unassigned" (routed to the type's team). Below: **Attachments** lists `scaled_QA_attach_test.png`; Timeline: "Complaint CMP-n logged", "Routed to <team>". Complaints list: row shows the CMP number and subject, **All** count +1 | save time (WARN over 10 s). Never taps Acknowledge / Start / Resolve / Resume |
+| **S6** Task for later → checklist, notify (v2.0.65+) | Task Management › My Tasks › **+** › **Task for later**. Type Activities, priority High, task `QA_task_<ts>`, description, Start/End/Deadline dates (+1/+2/+3 days), **Notify when done → Team → QA_Team_…**, two checklist items → **Add**. Checks: the task is listed under *Upcoming* (count +1); **Task Overview** shows type, name, the three dates, description, checklist 0/2, host *Not Started*; checklist: tick (counter 1/2 and *who • when*), untick, tick, **Edit Checklist**, add a third item, reopen the task (everything saved), **Delete Checklist** (confirm) → 1/2; **Edit Task** is opened and cancelled to check that Notify when done and Deadline are still shown. Never taps *Start Task* (starts a timer). |
+
+## 2b. New-feature scenarios (`erp_features.py`, F1–F6, app 2.0.65+) — every step asserts the entered data is displayed
+
+| Step | What is entered | What must be displayed (assertion) |
+|---|---|---|
+| **F1** Mail | Compose to the logged-in user, subject `QA_mail_<ts>`, body | Sent row shows subject + body + `To: <user>`; Inbox lists it; opened mail shows subject, body, "to you"; **Reply** shows `Re: …`, recipient and quoted body and lands in Inbox; **Forward** shows `Fwd: …` + forwarded block; **Star** → listed under Starred; **Move to Trash** → listed in Trash |
+| **F2** Lead notes | Leads › first lead › Notes › + `QA_note_<ts>` | typing `@` lists colleagues; the note card shows text, author and today's date; edit → text + `edited` tag; delete → gone (WARN if no confirmation) |
+| **F3** Super Hot | Lead › ⋮ › Followup › status › Lead Quality | list contains **Super Hot**; choosing it displays "Super Hot" (cancelled, nothing saved) |
+| **F4** WhatsApp window | Chat older than 3 days | message box replaced by "The 24-hour reply window has closed." — **FAIL while the bug exists** |
+| **F5** Purchase invoice | first supplier, first item, rate 50 × qty 10, item's own tax, cash payment = total | supplier shown; item sheet Net = 500 + tax; item card shows qty/rate/total; overview shows PO-n, supplier, total, Confirmed; Items tab shows Qty 10 / Rate 50.00; list shows PO-n with the total and All count +1; an error dialog on opening the form is recorded (WARN) |
+| **F6** Receipt | first income ledger, amount 100, narration `QA_receipt_<ts>`, Received In first account | line shows ledger + 100.00; "Voucher saved" dialog shows R-n + 100.00; list shows R-n 100.00, count +1; View shows narration, ledger, 100.00 |
+
+Run: `python3 erp_features.py --serial emulator-5554 --tenant lesol_test [--only F1,F2]` or `emu all … features`. Mails go to the logged-in user
+only; nothing is sent to customers; only records created by the run are deleted (notes).
 
 ## 3. Release-note checks (`erp_release.py`, U1–U8)
 

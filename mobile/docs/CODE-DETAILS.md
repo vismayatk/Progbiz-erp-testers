@@ -18,7 +18,7 @@ This is **not** an Android Studio app project: Android Studio only supplies the 
 flowchart TD
     emu["bin/emu  (bash)<br/>starts the emulator, installs the APK"] --> runall["run_all.py<br/>conductor + combined report"]
     runall --> rel["erp_release.py<br/>U1–U8"]
-    runall --> crm["erp_scenarios.py<br/>S1–S5"]
+    runall --> crm["erp_scenarios.py<br/>S1–S6"]
     runall --> reg["erp_regression.py<br/>R1–R9"]
     runall --> smk["erp_smoke.py<br/>every screen"]
     rel --> sc[Scenarios class]
@@ -71,7 +71,7 @@ Result record used everywhere: `{group, name, kind, status PASS|WARN|FAIL, notes
 
 ## 4. The suites
 
-**`erp_scenarios.py` — CRM flow and complaint (S1–S5).** `class Scenarios(Runner)`; creates data; refuses tenants outside `TEST_TENANTS`.
+**`erp_scenarios.py` — CRM flow and complaint (S1–S6).** `class Scenarios(Runner)`; creates data; refuses tenants outside `TEST_TENANTS`.
 
 | Method | Job |
 |---|---|
@@ -80,6 +80,7 @@ Result record used everywhere: `{group, name, kind, status PASS|WARN|FAIL, notes
 | `s3_search` | Leads › search › Enter › expect "In Follow Up 1" and the row |
 | `s4_quotation` | enquiry ⋮ › **Add Quotation** (pre-filled) → valid-up-to, item rate/quantity (item ⋮ › Edit), 10 % discount, description → Save → verify the overview and Item Details → **check the PDF** |
 | `s5_complaint` | Complaints › New Complaint: type, subject, priority, QA customer, description, photo → Save → verify the Complaint Overview (number, status, details, attachment, timeline) and that the list's All count rose by 1 |
+| `s6_task` / `s6_overview` | Task for later (type, priority, dates, Notify when done → Team, 2 checklist items) → listed under Upcoming → Task Overview details → checklist tick / untick / edit / add / reopen / delete (`checklist_*` helpers find rows by offset from the CHECKLIST card) → Edit Task opened and cancelled |
 | `push_test_image()`, `pick_test_image()`, `tiny_png()` | build a small QA PNG, copy it to the emulator and pick it in the system photo picker (shared by S5 and release check U1) |
 | `complaints_all_count()` | the count on the Complaints list's *All* tab |
 | `check_quotation_pdf()` | Files tab › View opens the PDF; the file is read from the app cache with `adb root`, its text extracted (`pdf_text()`: macOS PDFKit via `osascript`, else `pdftotext`) and 14 values compared with what was entered |
@@ -90,6 +91,12 @@ Result record used everywhere: `{group, name, kind, status PASS|WARN|FAIL, notes
 | `pick_date()` | handles both the old Material date dialog and the 2.0.59+ bottom-sheet picker, then the time picker |
 | `open_enquiry()`, `save_and_wait()`, `banner_note()` | search by name, Save and wait for a screen, note an offline banner |
 | per-tenant settings | `ITEM_SEARCH` ("Bio" / "Test"), `STATUS_PREF` (Call not answering / Contacted / Follow-up Pending), `TEST_TENANTS` |
+
+**`erp_features.py` — new-feature scenarios (F1–F6).** `class Features(Release)`; each step asserts that what was entered is displayed on the next screen.
+F1 Mail (send to self → Sent/Inbox → open → Reply/Forward/Star/Trash), F2 lead notes (add/@ list/edit/delete), F3 Super Hot in Lead Quality,
+F4 WhatsApp 24-hour reply window, F5 purchase invoice (form, overview, Items tab, list count), F6 receipt voucher (dialog, list, View).
+Helpers: `type_in()` (clears the field, re-reads positions after the keyboard hides), `top_menu()`, `error_dialog()` (records an unexpected
+"Not found" dialog as a bug), `band()` (text of a whole list card), `abandon_forms()`. Mails go only to the logged-in user.
 
 **`erp_regression.py` — old bugs (279 lines).** `r1…r9`; each raises `Still` when the old bug is present (FAIL), returns normally when
 fixed (PASS), and any other error becomes WARN ("could not check"). R8/R9 (logout) run only with `--logout`.

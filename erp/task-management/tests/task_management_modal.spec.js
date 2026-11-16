@@ -10,17 +10,21 @@
  *   TM-12  Repeat mode fields                           (recurring schedule)
  *   TM-13  Negative — missing Task Type rejected        (mandatory-field)
  *   TM-14  Negative — missing Task title rejected       (mandatory-field)
- *   TM-15  My Task page columns                         TC_054-055 · Scenario 9
- *   TM-16  Created Task page + actions                  TC_048-053 · Scenario 8
- *   TM-17  Delegated Tasks (Assignees) column           (delegation)
- *   TM-18  Unscheduled Task page + row actions          TC_062-068 · Scenario 11
- *   TM-19  Status tabs (Pending/Overdue/Completed)      TC_057-059
+ *   TM-15  My Tasks cards: task, type, time, status      TC_054-055 · Scenario 9
+ *   TM-16  Created Task page + actions                  TC_048-053 · Scenario 8 (skips: the page was removed)
+ *   TM-17  Delegated board: columns, counts, assignees  (delegation)
+ *   TM-18  Unscheduled tray + card actions              TC_062-068 · Scenario 11
+ *   TM-19  Delegated board "When" chips filter + counts TC_057-059
  *   TM-20  Task lifecycle controls on dashboard         TC_044-056 · Scenario 4
  *   TM-21  Daily Activity Report                        TC_069-072 · Scenario 12
  *   TM-22  Calendar & Timeline reachable                Scenario 6 (single-user part)
  *   TM-23  Multi-user participant/admin visibility      TC_018-024 · Scenarios 5,6 (skipped — needs 2nd login)
  *
- * Run:  npx playwright test tests/task_management_modal.spec.js
+ * Nov 2026 redesign: My Tasks is a week planner and Delegated Tasks a status board (cards, no table,
+ * no status tabs); /created-tasks and /unscheduled-tasks were removed. TM-15, 17, 18 and 19 check the
+ * same things on the new layout (see TaskManagementPage "listing pages").
+ *
+ * Run:  npx playwright test erp/task-management/tests/task_management_modal.spec.js
  */
 require('dotenv').config();
 const { test, expect } = require('@playwright/test');
@@ -241,16 +245,26 @@ test.describe('Task Management — Documented Cases', () => {
     console.log(`  ✅ ASSERT: Rejected missing Task title — "${msg}"`);
   });
 
-  test('TM-15 | My Task page columns (TC_054-055)', async ({ page }) => {
+  test('TM-15 | My Tasks cards show the task, its type, its time and its status (TC_054-055)', async ({ page }) => {
     const tm = await arrive(page);
     await tm.gotoMyTasks();
+    await tm.waitForTaskList();
     expect(page.url()).toContain('/my-tasks');
-    const cols = await tm.getColumns();
-    console.log('  🧾 My Tasks columns:', JSON.stringify(cols));
-    const joined = cols.join(' | ');
-    for (const c of ['Status', 'Task', 'Task Type', 'Added on']) expect(joined).toMatch(new RegExp(c, 'i'));
+    // Nov 2026 redesign: the Status / Task / Task Type / Added on columns became cards on a week planner.
+    const cards = await tm.taskCards();
+    console.log(`  🧾 My Tasks cards: ${cards.length}; first: ${cards[0] ? tm.cardText(cards[0]) : '(none)'}`);
+    test.skip(!cards.length, 'My Tasks is empty for this user: no card to read.');
+    for (const c of cards) {
+      expect(c.name, 'a card with no task name').toBeTruthy();
+      expect(c.type, `card "${c.name}" shows no Task Type icon`).toBeTruthy();
+      expect(['Unscheduled', 'Scheduled', 'Running', 'Hold', 'Finished'], `card "${c.name}" has no known status`).toContain(c.status);
+      // a scheduled card carries its date / time; an unscheduled one says so
+      if (c.where !== 'Unscheduled') expect(c.time, `card "${c.name}" (${c.where}) shows no time`).toMatch(/\d{1,2}:\d{2}\s*(AM|PM)/i);
+      // a card in the Delayed tray is flagged late, held or running; a card in the week is not in a tray
+      if (c.where === 'Delayed') expect(c.late, `card "${c.name}" sits in Delayed but is not marked late`).toBe(true);
+    }
     await screenshot(page, 'tm15_mytask_cols');
-    console.log('  ✅ ASSERT: My Task page shows documented columns');
+    console.log('  ✅ ASSERT: every My Tasks card shows its task, type, time and status');
   });
 
   test('TM-16 | Created Task page loads with actions (TC_048-053)', async ({ page }) => {
@@ -270,80 +284,86 @@ test.describe('Task Management — Documented Cases', () => {
     console.log('  ✅ ASSERT: Created Task page lists rows with actions (', kinds.join(',') || 'none', ')');
   });
 
-  test('TM-17 | Delegated Tasks shows Assignees column', async ({ page }) => {
+  test('TM-17 | Delegated Tasks board: five status columns, column counts match, assignees on every card', async ({ page }) => {
     const tm = await arrive(page);
     await tm.gotoDelegated();
+    await tm.waitForTaskList();
     expect(page.url()).toContain('delegated-tasks');
-    const cols = await tm.getColumns();
-    console.log('  🧾 Delegated columns:', JSON.stringify(cols));
-    expect(cols.join(' | ')).toMatch(/Assignees/i);
+    // Nov 2026 redesign: the table with an Assignees column became a status board of cards.
+    const cols = await tm.boardColumns();
+    console.log('  🧾 Delegated board:', JSON.stringify(cols));
+    expect(Object.keys(cols), 'board columns').toEqual(['Unscheduled', 'Scheduled', 'Running', 'Hold', 'Finished']);
+    for (const [name, c] of Object.entries(cols)) {
+      expect(c.cards, `column "${name}": the badge says ${c.count} but ${c.cards} card(s) are drawn`).toBe(c.count);
+    }
+    const cards = (await tm.taskCards()).filter((c) => c.view === 'board');
+    test.skip(!cards.length, 'No delegated task on this tenant right now: nothing to read assignees from.');
+    for (const c of cards) {
+      expect(c.name, 'a board card with no task name').toBeTruthy();
+      expect(c.who, `card "${c.name}" shows no assignee`).toBeTruthy();
+    }
     await screenshot(page, 'tm17_delegated');
-    console.log('  ✅ ASSERT: Delegated Tasks shows Assignees');
+    console.log(`  ✅ ASSERT: Delegated board shows 5 columns and assignees on all ${cards.length} card(s)`);
   });
 
-  test('TM-18 | Unscheduled Task page + row actions (TC_062-068, Scenario 11)', async ({ page }) => {
+  test('TM-18 | Unscheduled tasks: the My Tasks tray and its card actions (TC_062-068, Scenario 11)', async ({ page }) => {
     const tm = await arrive(page);
+    // Nov 2026 redesign: /unscheduled-tasks is gone; unscheduled tasks sit in a tray on My Tasks
+    // ("Drag onto a day to schedule") and under the "Unscheduled" chip of the Delegated board.
     await tm.gotoUnscheduled();
-    test.skip(await tm.isDeadRoute(), 'This build has no /unscheduled-tasks route (removed in the DEV redesign).');
-    expect(page.url()).toContain('unscheduled-tasks');
-    const cols = await tm.getColumns();
+    expect(await tm.isDeadRoute(), '/unscheduled-tasks opens again: give it its own page test').toBe(true);
+    await tm.gotoMyTasks();
+    await tm.waitForTaskList();
+    const s = await tm.plannerState();
+    expect(s.trays, 'the Unscheduled tray is missing from My Tasks').toHaveProperty('Unscheduled');
+    const tray = page.locator('.tm-tray').filter({ has: page.locator('.tm-tray-h', { hasText: 'Unscheduled' }) });
+    await expect(tray.locator('.tm-tray-hint'), 'tray hint').toContainText(/drag onto a day to schedule/i);
+    expect(s.trays.Unscheduled.cards, `Unscheduled tray: badge ${s.trays.Unscheduled.badge}, cards ${s.trays.Unscheduled.cards}`).toBe(s.trays.Unscheduled.badge);
+    const cards = (await tm.taskCards()).filter((c) => c.where === 'Unscheduled');
     const kinds = await tm.rowActionKinds();
-    console.log('  🧾 Unscheduled columns:', JSON.stringify(cols), '| actions:', JSON.stringify(kinds));
+    console.log(`  🧾 Unscheduled tray: ${cards.length} card(s) | actions on the page: ${JSON.stringify(kinds)}`);
     await screenshot(page, 'tm18_unscheduled');
-    // Array.isArray(kinds) is always true. Assert the table header rendered, and that
-    // any rows present expose row actions (Unscheduled can legitimately be empty).
-    expect(cols.join(' | '), 'Unscheduled table header must render').toMatch(/Task/i);
-    const unschedRows = await page.locator('table tbody tr').count();
-    if (unschedRows > 0) {
-      expect(kinds.some(k => /edit-task|delete-task|overview-task/.test(k)),
-        'Unscheduled rows present but no row actions rendered').toBeTruthy();
-    }
-    console.log('  ✅ ASSERT: Unscheduled page reachable (rows:', unschedRows, 'actions:', kinds.join(',') || 'none', ')');
+    for (const c of cards) expect(c.status, `card "${c.name}" in the Unscheduled tray`).toBe('Unscheduled');
+    // a card with a ⋮ menu must offer Open
+    if (cards.some((c) => c.hasMenu)) expect(kinds, 'cards with a menu must offer Open').toEqual(expect.arrayContaining(['overview-task']));
+    console.log('  ✅ ASSERT: Unscheduled tray present, its count matches its cards (', cards.length, ')');
   });
 
-  test('TM-19 | Status tabs Pending/Overdue/Completed navigable (TC_057-059)', async ({ page }) => {
+  test('TM-19 | Delegated board "When" filter: each chip filters the board and its count equals the cards shown (TC_057-059)', async ({ page }) => {
+    test.setTimeout(200_000);
     const tm = await arrive(page);
-    await tm.gotoMyTasks();
-    // wait until the list is interactive (a too-early click no-ops on the Blazor circuit)
-    const hasData = await page.waitForFunction(() =>
-      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
-      { timeout: 20000 }).then(() => true).catch(() => false);
-    if (!hasData) {
-      // On DEV, party-attached tasks are delegated to the party owner, so admin's My Tasks
-      // can be legitimately empty — run the same tab check on Delegated Tasks instead.
-      console.log('  ℹ️  My Tasks empty for this user — checking the Delegated Tasks tabs instead');
-      await tm.gotoDelegated();
-      await page.waitForFunction(() =>
-        [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
-        { timeout: 20000 }).catch(() => {});
-    }
+    await tm.gotoDelegated();
+    await tm.waitForTaskList();
+    // Nov 2026 redesign: the Today / Delayed / Upcoming / Unscheduled / Completed tabs are "When" chips over the board.
     const counts = await tm.getTabCounts();
-    console.log('  📊 Tab badges:', JSON.stringify(counts));
-    let topRows = {};
-    let renderedSomewhere = false;
-    // up to 2 rounds: transient skeleton/no-data loads produce all-empty top rows -
-    // reload once and retry before failing
-    for (let round = 0; round < 2; round++) {
-      topRows = {}; renderedSomewhere = false;
-      for (const tab of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
-        const n = await tm.clickTab(tab);
-        topRows[tab] = await tm.firstRowText();
-        console.log(`  📑 ${tab} (badge ${counts[tab]}) → ${n} row(s) | top: "${topRows[tab].slice(0, 40)}"`);
-        if (topRows[tab]) renderedSomewhere = true;
-      }
-      if (renderedSomewhere) break;
-      console.log('  ⏳ all tabs rendered empty (transient load) - reloading once');
-      await page.reload({ waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(5000);
+    console.log('  📊 When chips:', JSON.stringify(counts));
+    for (const chip of ['All open', 'Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
+      expect(counts, `"${chip}" chip missing`).toHaveProperty(chip);
     }
-    expect(renderedSomewhere, 'no status tab rendered any rows — task list not loading').toBeTruthy();
-    // At least two tabs must differ → switching has an observable effect. An EMPTY tab next
-    // to a populated one IS filtering evidence (with tasks in a single bucket, the other
-    // tabs legitimately show nothing), so empties count as a distinct signal.
-    const distinct = new Set(Object.values(topRows));
-    expect(distinct.size, `tab switching had no effect — every tab showed the same top row (${[...distinct]})`).toBeGreaterThan(1);
+    // the open buckets add up to All open
+    expect(counts.Today + counts.Delayed + counts.Upcoming + counts.Unscheduled, 'Today + Delayed + Upcoming + Unscheduled should equal All open').toBe(counts['All open']);
+
+    const shown = {};
+    try {
+      for (const chip of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed', 'All open']) {
+        const n = await tm.clickTab(chip);
+        const cols = await tm.boardColumns();
+        const total = Object.values(cols).reduce((a, c) => a + (c.count || 0), 0);
+        shown[chip] = (await tm.taskCards()).filter((c) => c.view === 'board').map((c) => c.name).join('|');
+        console.log(`  📑 ${chip} (chip ${counts[chip]}) → ${n} card(s), column badges total ${total}`);
+        expect(n, `"${chip}": the chip says ${counts[chip]} but ${n} card(s) are shown`).toBe(counts[chip]);
+        expect(total, `"${chip}": the column badges add up to ${total}, the chip says ${counts[chip]}`).toBe(counts[chip]);
+        if (chip === 'Unscheduled') expect(cols.Unscheduled.cards, 'the Unscheduled chip should show only the Unscheduled column').toBe(n);
+        if (chip === 'Completed') expect(cols.Finished.cards, 'the Completed chip should show only the Finished column').toBe(n);
+      }
+    } finally {
+      await tm.clickTab('All open').catch(() => {});
+    }
+    // switching must have an observable effect when the buckets differ in size
+    const sizes = new Set(['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed'].map((c) => counts[c]));
+    if (sizes.size > 1) expect(new Set(Object.values(shown)).size, 'every chip showed the same cards').toBeGreaterThan(1);
     await screenshot(page, 'tm19_tabs');
-    console.log('  ✅ ASSERT: status tabs navigable AND switching filters the list');
+    console.log('  ✅ ASSERT: every When chip filters the board and its count equals the cards shown');
   });
 
   test('TM-20 | Task lifecycle controls on dashboard (Scenario 4)', async ({ page }) => {

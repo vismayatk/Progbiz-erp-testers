@@ -77,6 +77,14 @@ test.describe('CRM — Homepage', () => {
     await arrive(page);
     await go(page, 'followups');
     expect(page.url()).toContain('/followups');
+    // Nov 2026: /followups opens on an Agenda (a week strip + one day's follow-ups). Read its "Missed" count,
+    // then switch to List View, where the Today's / Delayed / Upcoming chips and the grid live.
+    const agendaMissed = await page.evaluate(() => {
+      const b = document.getElementById('btn-agenda-missed'); if (!b) return null;
+      const m = (b.textContent || '').match(/(\d+)/); return m ? Number(m[1]) : null;
+    });
+    const listView = page.locator('#btn-view-list');
+    if (await listView.count()) { await listView.click(); await page.waitForTimeout(2500); }
     for (const id of ['tab-followup-today', 'tab-followup-overdue', 'tab-followup-upcoming']) {
       await expect(page.locator(`#${id}`), `${id} missing`).toBeVisible();
     }
@@ -85,12 +93,16 @@ test.describe('CRM — Homepage', () => {
     console.log('  📊 Today followups:', today, '| Overdue (Delayed):', overdue);
     expect(today, 'Today count did not render').not.toBeNull();
     expect(overdue, 'Overdue count did not render').not.toBeNull();
+    // the Agenda's "Missed" and the List View's "Delayed" are the same follow-ups
+    if (agendaMissed !== null) expect(agendaMissed, `Agenda "Missed" (${agendaMissed}) vs List View "Delayed" (${overdue})`).toBe(overdue);
     // Home_08 drill-down: click must work (no swallow) and, for a nonzero count, render rows
     await page.locator('#tab-followup-overdue').click();
     await page.waitForTimeout(1500);
     const overdueRows = await page.evaluate(() => document.querySelectorAll('table tbody tr').length);
     console.log('  📊 Overdue drill-down rows:', overdueRows);
     if (overdue > 0) expect(overdueRows, 'Overdue badge > 0 but the drill-down rendered no rows').toBeGreaterThan(0);
+    // 10 rows a page: a Delayed count that fits on one page must list exactly that many
+    if (overdue > 0 && overdue < 10) expect(overdueRows, `Delayed says ${overdue} but ${overdueRows} row(s) are listed`).toBe(overdue);
     await screenshot(page, 'home05_followups');
     console.log('  ✅ Followups Today + Overdue counts AND the drill-down opens rows');
   });

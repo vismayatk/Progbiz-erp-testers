@@ -39,6 +39,7 @@ const PROFILES = {
     routes: { items: '/crm-items', itemCategories: '/crm-item-categories', quotations: null }, // quotations live in /leads (Type = Quotation)
     itemForm: 'modal',                // "New Item" modal on /crm-items
     knownDefects: ['QT-F1'],          // quotation follow-up default is below its own minimum (UAE vs browser clock)
+    staffCashPerson: 'Anciya',        // Accounts > Staff Cash: the one staff member the tests give cash to and collect it from
   },
 };
 

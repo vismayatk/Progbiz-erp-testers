@@ -154,8 +154,10 @@ const banner = (n, t) => console.log(`\n${'â”€'.repeat(62)}\n  ${n}. ${t}\n${'â”
       const on = (e) => e.getClientRects().length > 0;
       const t = [...document.querySelectorAll('table')].filter(on)[0];
       return {
-        customer: document.querySelector('#customerNameInput')?.value
-          || document.querySelector('#TxtCustomer')?.value || '',
+        // 12 Nov: the customer is a picker button (.pp-trigger); older builds used a text input
+        customer: (document.querySelector('.pp-trigger')?.innerText
+          || document.querySelector('#customerNameInput')?.value
+          || document.querySelector('#TxtCustomer')?.value || '').trim(),
         itemRows: t ? t.querySelectorAll('tbody tr').length : 0,
         quotationNo: document.querySelector('#quotation-no')?.value || null,
       };
@@ -213,9 +215,9 @@ const banner = (n, t) => console.log(`\n${'â”€'.repeat(62)}\n  ${n}. ${t}\n${'â”
 
     if (guid) {
       const types = await wf.readTypes();
-      const t0 = types[0];
+      const t0 = types.find((t) => !t.manual && t.phases > 0) || types[0];   // 12 Nov: a type with "Manual Phases = Yes" has no template
       step('WF-02', 'Types carry a phase/task template',
-        types.length > 0 && types.every((t) => t.phases > 0 && t.tasks > 0),
+        types.length > 0 && types.filter((t) => !t.manual).every((t) => t.phases > 0 && t.tasks > 0),
         `${types.length} type(s); using "${t0?.type}" (${t0?.phases} phases / ${t0?.tasks} tasks)`);
 
       let prjPath = null;

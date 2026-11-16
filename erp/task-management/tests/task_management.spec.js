@@ -2,9 +2,15 @@
 
 /**
  * Task Management module — E2E
- *   TM-01  My Tasks page loads (tabs + table)
+ *   TM-01  My Tasks opens as a week planner (toolbar, trays, seven days)
  *   TM-02  Create a task and verify it appears
  *   TM-03  All Task-Management pages are reachable (smoke)
+ *   TM-04  Task for Later lands on its day, TM-05 no Task Type refused, TM-06 Online Meeting
+ *   TM-07  Planner: counts match the cards, week navigation, Show completed, search
+ *   TM-08  Daily Activity Report
+ *
+ * Nov 2026 redesign: My Tasks lost its status tabs and table. It is a week planner of cards
+ * (Delayed and Unscheduled trays + seven day columns); see TaskManagementPage "listing pages".
  *
  * Run:  npx playwright test tests/task_management.spec.js
  */
@@ -22,23 +28,38 @@ const CREDS = {
 
 test.describe('Task Management Module', () => {
 
-  test('TM-01 | My Tasks page loads with status tabs', async ({ page }) => {
+  test('TM-01 | My Tasks opens as a week planner: toolbar, Delayed and Unscheduled trays, seven days with today marked', async ({ page }) => {
     const login = new LoginPage(page);
     const tm = new TaskManagementPage(page);
     await login.goto();
     await login.login(CREDS.company, CREDS.username, CREDS.password);
 
     await tm.gotoMyTasks();
+    await tm.waitForTaskList();
     expect(page.url()).toContain('/my-tasks');
 
-    const counts = await tm.getTabCounts();
-    console.log('  📊 Tab counts:', JSON.stringify(counts));
-    // The five status buckets should be present
-    for (const tab of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
-      expect(counts, `Tab "${tab}" missing`).toHaveProperty(tab);
+    // the toolbar: week navigation, Show completed, search, Filters
+    for (const id of ['#btn-week-previous', '#btn-week-today', '#btn-week-next', '#task-search', '#btn-toggle-filter']) {
+      await expect(page.locator(id), `${id} missing from the planner toolbar`).toBeVisible();
     }
+    await expect(page.locator('#my-tasks-show-completed'), '"Show completed" switch missing').toHaveCount(1);
+
+    const s = await tm.plannerState();
+    console.log('  📊 Planner:', JSON.stringify({ week: s.label, trays: s.trays, days: s.days.map((d) => `${d.name}${d.today ? '*' : ''}=${d.count}`) }));
+    expect(s.label, 'week label ("9 – 15 Nov 2026")').toMatch(/\d{1,2}(\s+[A-Za-z]{3})?(\s+\d{4})?\s*[–-]\s*\d{1,2}\s+[A-Za-z]{3}\s+\d{4}/);
+    // the two trays replace the old Delayed / Unscheduled tabs, each with its count
+    for (const tray of ['Delayed', 'Unscheduled']) {
+      expect(s.trays, `"${tray}" tray missing`).toHaveProperty(tray);
+      expect(typeof s.trays[tray].badge, `"${tray}" tray shows no count`).toBe('number');
+    }
+    // seven day columns, exactly one of them today
+    expect(s.days.length, 'the week grid should have seven day columns').toBe(7);
+    for (const d of s.days) expect(d.name, 'day column heading').toMatch(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d{1,2}/);
+    expect(s.days.filter((d) => d.today).length, 'exactly one column is marked Today').toBe(1);
+    const counts = await tm.getTabCounts();
+    for (const k of ['Delayed', 'Unscheduled', 'Today', 'Upcoming']) expect(counts, `count for "${k}" missing`).toHaveProperty(k);
     await screenshot(page, 'tm01_my_tasks');
-    console.log('  ✅ ASSERT: My Tasks loaded with all status tabs');
+    console.log('  ✅ ASSERT: My Tasks loaded as a week planner with its trays and seven days');
   });
 
   test('TM-02 | Create a task and verify it is listed', async ({ page }) => {
@@ -91,17 +112,28 @@ test.describe('Task Management Module', () => {
     const msg = await tm.createTask(name, { type: 'Call', mode: 'later' });
     await screenshot(page, 'tm04_later_task');
     expect(msg, `Scheduled task should save, got: "${msg}"`).toBeFalsy();
-    // The "later" scheduling is what distinguishes TM-04 from TM-02. Verify the ROW's
-    // own status + date rather than which tab holds it: the DEV build has a bucketing
-    // bug (scheduled future tasks list under "Unscheduled" and badges read 0), so the
-    // row text "Scheduled <date>" is the reliable proof the schedule persisted.
-    const row = await tm.findTaskRowText(name);
-    console.log(`  🔎 task row: ${row}`);
-    expect(row, `Task "${name}" not found in My Tasks or Delegated Tasks after save`).toBeTruthy();
+    // The "later" scheduling is what distinguishes TM-04 from TM-02: the planner must file the task
+    // under its own day (two days ahead, which can be next week's grid) with its time on the card,
+    // and the details panel must carry the scheduled date.
     const d = new Date(Date.now() + 2 * 86400000);
     const expectDate = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-    expect(row, `row should carry Scheduled status, got: ${row}`).toMatch(/\bScheduled\b/i);
-    expect(row, `row should carry the +2d date ${expectDate}, got: ${row}`).toContain(expectDate);
+    const dayName = `${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()]} ${d.getDate()}`;
+    const card = await tm.findOnPlanner(name);
+    if (card) {
+      console.log(`  🔎 task card: ${tm.cardText(card)}`);
+      expect(card.status, `card should be Scheduled, got: ${tm.cardText(card)}`).toBe('Scheduled');
+      expect(card.where, `card should sit under ${dayName}, got: ${tm.cardText(card)}`).toContain(dayName);
+      expect(card.time, `card should show its 10:00 AM time, got: ${tm.cardText(card)}`).toMatch(/10:00\s*AM/i);
+      expect(await tm._openCard(card), 'the scheduled card did not open its details').toBe(true);
+      const details = (await tm.detailsModal.innerText()).replace(/\s+/g, ' ');
+      expect(details, `details should carry "Scheduled : ${expectDate}"`).toMatch(new RegExp(`Scheduled\\s*:\\s*${expectDate}\\s+10:00\\s*AM`, 'i'));
+    } else {
+      // assigned to someone else: it sits on the creator's Delegated board, in the Scheduled column
+      const row = await tm.findInDelegated(name);
+      console.log(`  🔎 delegated card: ${row}`);
+      expect(row, `Task "${name}" not found in My Tasks or Delegated Tasks after save`).toBeTruthy();
+      expect(row, `card should be in the Scheduled column, got: ${row}`).toMatch(/\bScheduled\b/i);
+    }
     console.log(`  ✅ ASSERT: Task "${name}" persisted with its +2d schedule (${expectDate})`);
   });
 
@@ -126,66 +158,83 @@ test.describe('Task Management Module', () => {
     const msg = await tm.createTask(name, { type: 'Online Meeting', priority: 'High' });
     await screenshot(page, 'tm06_meeting');
     expect(msg, `Task should save, got: "${msg}"`).toBeFalsy();
-    // Data round-trip: verify the row shows the task with its type
-    const tab = await tm.findAcrossTabs(name);
-    console.log(`  🔎 "${name}" visible under tab: ${tab}`);
-    expect(tab, `Online Meeting task "${name}" not listed in My Tasks`).toBeTruthy();
-    const rowHasType = await page.evaluate((n) => {
-      const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
-      return r ? /online meeting/i.test(r.textContent || '') : false;
-    }, name);
-    expect(rowHasType, 'Row should display Task Type "Online Meeting"').toBeTruthy();
+    // Data round-trip: the card must be on the planner and carry its Task Type
+    const card = await tm.findOnPlanner(name);
+    console.log(`  🔎 "${name}" card: ${card ? tm.cardText(card) : '(not on My Tasks)'}`);
+    expect(card, `Online Meeting task "${name}" not listed in My Tasks`).toBeTruthy();
+    expect(card.type, 'the card should carry Task Type "Online Meeting"').toMatch(/online meeting/i);
     console.log(`  ✅ ASSERT: Online Meeting task "${name}" created, listed with correct type`);
   });
 
-  test('TM-07 | My Tasks status tabs are navigable', async ({ page }) => {
-    test.setTimeout(150_000);
+  test('TM-07 | My Tasks planner: counts match the cards, week navigation, Show completed and search', async ({ page }) => {
+    test.setTimeout(200_000);
     const login = new LoginPage(page); const tm = new TaskManagementPage(page);
     await login.goto(); await login.login(CREDS.company, CREDS.username, CREDS.password);
 
     await tm.gotoMyTasks();
-    // wait until the list is interactive (a too-early click no-ops on the Blazor circuit)
-    let hasData = await page.waitForFunction(() =>
-      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
-      { timeout: 20000 }).then(() => true).catch(() => false);
-    if (!hasData) {
-      // On DEV, party-attached tasks are delegated to the party owner, so admin's My Tasks
-      // can be legitimately empty — run the same tab check on Delegated Tasks instead.
-      console.log('  ℹ️  My Tasks empty for this user — checking the Delegated Tasks tabs instead');
-      await tm.gotoDelegated();
-      await page.waitForFunction(() =>
-        [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
-        { timeout: 20000 }).catch(() => {});
+    await tm.waitForTaskList();
+    const now = await tm.plannerState();
+    const openCards = await tm.taskCards();
+    console.log('  📊 Planner:', JSON.stringify({ week: now.label, trays: now.trays, cards: openCards.length }));
+
+    // 1. what the headers say is what is drawn: tray badge = cards in the tray, "n tasks" = cards in the day
+    for (const [name, t] of Object.entries(now.trays)) {
+      expect(t.cards, `${name} tray: the badge says ${t.badge} but ${t.cards} card(s) are drawn`).toBe(t.badge);
     }
-    const counts = await tm.getTabCounts();
-    console.log('  📊 Tab badges:', JSON.stringify(counts));
-    // Prove tab switching actually FILTERS: capture the first rendered row per tab.
-    // If clicking tabs did nothing (old bug: wrong selector), every tab shows the same top row.
-    let topRows = {};
-    let renderedSomewhere = false;
-    // up to 2 rounds: transient skeleton/no-data loads produce all-empty top rows -
-    // reload once and retry before failing
-    for (let round = 0; round < 2; round++) {
-      topRows = {}; renderedSomewhere = false;
-      for (const tab of ['Today', 'Delayed', 'Upcoming', 'Unscheduled', 'Completed']) {
-        const n = await tm.clickTab(tab);
-        topRows[tab] = await tm.firstRowText();
-        console.log(`  📑 ${tab} (badge ${counts[tab]}) → ${n} row(s) | top: "${topRows[tab].slice(0, 40)}"`);
-        if (topRows[tab]) renderedSomewhere = true;
-      }
-      if (renderedSomewhere) break;
-      console.log('  ⏳ all tabs rendered empty (transient load) - reloading once');
-      await page.reload({ waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(5000);
+    for (const d of now.days) {
+      if (d.count !== null) expect(d.cards, `${d.name}: the header says "${d.meta}" but ${d.cards} card(s) are drawn`).toBe(d.count);
     }
-    expect(renderedSomewhere, 'no status tab rendered any rows — task list not loading').toBeTruthy();
-    // At least two tabs must differ → switching has an observable effect. An EMPTY tab next
-    // to a populated one IS filtering evidence (with tasks in a single bucket, the other
-    // tabs legitimately show nothing), so empties count as a distinct signal.
-    const distinct = new Set(Object.values(topRows));
-    expect(distinct.size, `tab switching had no effect — every tab showed the same top row (${[...distinct]})`).toBeGreaterThan(1);
+    // every card names its task and has a status
+    for (const c of openCards) {
+      expect(c.name, 'a card with no task name').toBeTruthy();
+      expect(['Unscheduled', 'Scheduled', 'Running', 'Hold', 'Finished'], `card "${c.name}" has no known status`).toContain(c.status);
+    }
+
+    try {
+      // 2. Next / Previous week move the grid, Today comes back
+      const next = await tm.plannerWeek('next');
+      const nextState = await tm.plannerState();
+      console.log(`  ⏭  next week: ${next}`);
+      expect(next, 'Next Week did not change the week label').not.toBe(now.label);
+      expect(nextState.days.some((d) => d.today), 'next week should not contain today').toBe(false);
+      expect(nextState.days.length).toBe(7);
+      expect(await tm.plannerWeek('today'), 'Today did not come back to the current week').toBe(now.label);
+      const prev = await tm.plannerWeek('previous');
+      console.log(`  ⏮  previous week: ${prev}`);
+      expect(prev, 'Previous Week did not change the week label').not.toBe(now.label);
+      expect(prev).not.toBe(next);
+      expect(await tm.plannerWeek('today')).toBe(now.label);
+
+      // 3. "Show completed" adds finished cards and never hides an open one
+      expect(await tm.showCompleted(true), '"Show completed" did not switch on').toBe(true);
+      const withDone = await tm.taskCards();
+      const finished = withDone.filter((c) => c.status === 'Finished');
+      console.log(`  ✔ with completed: ${withDone.length} card(s), ${finished.length} finished (open: ${openCards.length})`);
+      expect(withDone.length, 'switching "Show completed" on lost cards').toBeGreaterThanOrEqual(openCards.length);
+      expect(withDone.length - finished.length, 'the open cards changed when completed ones were shown').toBe(openCards.length);
+      expect(await tm.showCompleted(false)).toBe(false);
+      const again = await tm.taskCards();
+      expect(again.filter((c) => c.status === 'Finished').length, 'finished cards stay after switching "Show completed" off').toBe(0);
+
+      // 4. search narrows the planner to matching cards; clearing brings them back
+      const sample = openCards.find((c) => /\d{6,}/.test(c.name)) || openCards[0];
+      test.skip(!sample, 'My Tasks is empty for this user: nothing to search for.');
+      const word = (sample.name.match(/\d{6,}/) || [sample.name.split(' ')[0]])[0];
+      await tm.searchTasks(word);
+      const found = await tm.taskCards();
+      console.log(`  🔎 search "${word}": ${found.length} card(s)`);
+      expect(found.length, `search "${word}" found nothing although a card carries it`).toBeGreaterThan(0);
+      for (const c of found) expect(c.name.toLowerCase(), `search "${word}" kept a card that does not match`).toContain(word.toLowerCase());
+      await tm.searchTasks('zzqa-no-such-task-zz');
+      expect((await tm.taskCards()).length, 'a nonsense search still shows cards').toBe(0);
+      await tm.searchTasks('');
+      expect((await tm.taskCards()).length, 'clearing the search did not bring the cards back').toBe(openCards.length);
+    } finally {
+      // leave the planner as found: current week, completed hidden, no search
+      await tm.showCompleted(false).catch(() => {});
+    }
     await screenshot(page, 'tm07_tabs');
-    console.log('  ✅ ASSERT: status tabs navigable AND switching filters the list');
+    console.log('  ✅ ASSERT: planner counts match the cards; week navigation, Show completed and search work');
   });
 
   test('TM-08 | Daily Activity Report loads with data', async ({ page }) => {

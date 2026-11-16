@@ -413,7 +413,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
   test('TC-12 | Lead Transfer — transfer a lead to an executive and verify the new assignee', async ({ page }) => {
     test.setTimeout(240_000);   // page is slow + Apply-Filters retries through intermittent backend errors
     console.log('\n═══════════════════════════════════════');
-    console.log('TC-12 | Lead Transfer (CRM → Lead Transfer)');
+    console.log('TC-12 | Lead Transfer (Leads list → tick → Transfer; the /bulk-lead-transfer page was removed in Nov 2026)');
     console.log('═══════════════════════════════════════');
 
     const loginPage   = new LoginPage(page);
@@ -436,7 +436,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     await transfer.goto();
     await transfer.chooseBranch(T.branch);
     const rows = await transfer.applyFilters();
-    expect(rows, 'Lead Transfer list did not load (backend ExpectedStartOfValueNotFound?)').toBeGreaterThan(0);
+    expect(rows, 'the list of leads to transfer did not load').toBeGreaterThan(0);
 
     const lead = await transfer.findLead(data.mobile);
     expect(lead, `our lead ${data.customerName} is not in the Lead Transfer list`).toBeTruthy();
@@ -451,13 +451,26 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       throw new Error(`Lead transfer failed (backend): "${result}"`);
     }
 
-    // PRIMARY assertion: re-search the lead and confirm its Current Assignee changed.
+    // PRIMARY assertion: re-search the lead and read its assignee again.
     const newAssignee = await transfer.assigneeOf(data.mobile);
     console.log(`  🔎 After transfer, ${lead.number} assignee = "${newAssignee}" (toast: ${JSON.stringify(result)})`);
-    expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()),
-      `Expected assignee "${target}" but found "${newAssignee}". Transfer toast: "${result}"`
-    ).toBeTruthy();
-    console.log(`  ✅ ASSERT: ${lead.number} reassigned "${lead.assignee}" → "${newAssignee}"`);
+    if (/sent for approval/i.test(result || '')) {
+      // Nov 2026 build: a transfer is a REQUEST. The app answers "The transfer has been sent for approval. The leads
+      // stay with their current executive until it is approved", and the lead's Assignee cell reads
+      // "<current executive> Transfer Awaiting Approval". Check exactly that; the approval step itself is not automated
+      // yet (who approves, and where, is an open question in reports/qa/changes-onetouch_test-2026-11-14.md).
+      expect(newAssignee || '', `the lead should be marked "Transfer Awaiting Approval", found "${newAssignee}"`).toMatch(/transfer awaiting approval/i);
+      expect((newAssignee || '').toLowerCase(), `the lead should stay with "${lead.assignee}" until the transfer is approved, found "${newAssignee}"`)
+        .toContain((lead.assignee || '').toLowerCase());
+      expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()), `the lead moved to "${target}" although the transfer is only awaiting approval`).toBe(false);
+      test.info().annotations.push({ type: 'open-question', description: `A lead transfer by ${CREDS.username} now waits for approval: who approves it, and where?` });
+      console.log(`  ✅ ASSERT: transfer of ${lead.number} to "${target}" was raised and is awaiting approval; the lead stays with "${lead.assignee}"`);
+    } else {
+      expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()),
+        `Expected assignee "${target}" but found "${newAssignee}". Transfer toast: "${result}"`
+      ).toBeTruthy();
+      console.log(`  ✅ ASSERT: ${lead.number} reassigned "${lead.assignee}" → "${newAssignee}"`);
+    }
   });
 
   // --------------------------------------------------------------------------

@@ -22,7 +22,9 @@
  * A page entry may carry hand-written keys: known (a tracked defect, kept as its own expected-fail
  * test), noForm (don't open the Add form), permission (an Access Denied wall is the expected
  * screen), skip (reason), optionalButtons (buttons in `buttons` that only show for some data, e.g.
- * a "Show all" that appears once a table is long enough to be cut short).
+ * a "Show all" that appears once a table is long enough to be cut short), knownList (a tracked defect in the
+ * page's search, kept as an expected-fail LIST test), deniedTabs (tabs that show an Access Denied wall to this user).
+ * A `known` entry may add `tab`: open that tab, then load the page again, before looking for the console error.
  *
  *   definePageSuite('Master pages', (e) => ['Master', 'Users'].includes(e.group));
  */
@@ -40,8 +42,11 @@ const C = {
   password: process.env.PASSWORD     || '123',
 };
 const GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+// POSTs whose name looks like a write but that only read: /api/policy/assignments is the paged list query of
+// Policy Compliance (body: { status, search, page, pageSize }), read from the 14 Nov 2026 trace.
+const READ_POST = /\/api\/policy\/assignments(\?|$)/i;
 const WRITE_VERB = /\/(save|add|create|insert|update|edit|delete|remove|send|submit|upload|import|approve|reject|transfer|convert|assign|post|publish|sync|reset|change-password)[\w-]*(\/|\?|$)/i;
-const ERROR_TEXT = /oops|something went wrong|error code|unhandled error|exception|nothing at this address|page not found/i;
+const ERROR_TEXT = /oops|something went wrong|error code|unhandled error|\bexception\b|nothing at this address|page not found/i;   // \bexception\b: not the "Frequency exceptions" tab
 const NETWORK_NOISE = /net::ERR_(NETWORK_CHANGED|INTERNET_DISCONNECTED|CONNECTION_|TIMED_OUT|NAME_NOT_RESOLVED|ABORTED)/;
 
 const clean = (s) => String(s ?? '').replace(/[*:]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -92,6 +97,14 @@ function definePageSuite(title, select) {
     test.describe.configure({ timeout: 150_000 });
     test.skip(!manifest, `no erp/common/fixtures/pages.${C.company}.json for tenant ${C.company} (node scripts/qa/make_page_manifest.js)`);
 
+    // A menu group that is renamed (Whatsapp -> Messaging, 2026-11) would otherwise leave a suite with no
+    // pages: it would report nothing at all and the lost coverage would go unseen.
+    if (manifest && !pages.length) {
+      test('GUARD | this suite selects at least one page from the manifest', () => {
+        throw new Error(`"${title}" matched 0 pages in the manifest: its group was probably renamed. Check the group names in pages.${C.company}.json and the filter in this spec.`);
+      });
+    }
+
     /** @type {import('@playwright/test').Page} */
     let page;
     let menuHrefs = [];
@@ -108,7 +121,7 @@ function definePageSuite(title, select) {
       });
       page.on('request', (r) => {
         const u = r.url();
-        if (u.startsWith(BASE) && !['GET', 'HEAD', 'OPTIONS'].includes(r.method()) && /\/api\//.test(u) && WRITE_VERB.test(u.replace(BASE, ''))) writes.push(`${r.method()} ${u.replace(BASE, '').slice(0, 120)}`);
+        if (u.startsWith(BASE) && !['GET', 'HEAD', 'OPTIONS'].includes(r.method()) && /\/api\//.test(u) && WRITE_VERB.test(u.replace(BASE, '')) && !READ_POST.test(u.replace(BASE, ''))) writes.push(`${r.method()} ${u.replace(BASE, '').slice(0, 120)}`);
       });
       const lp = new LoginPage(page);
       await lp.goto();
@@ -210,6 +223,12 @@ function definePageSuite(title, select) {
           await el.click({ timeout: 8000 }).catch(() => {});
           await page.waitForTimeout(1500);
           const t = await page.evaluate(readPage);
+          if ((e.deniedTabs || []).some((d) => noCount(d) === noCount(tab))) {
+            // tracked: this tab shows an Access Denied wall to this user. If the wall goes away this fails, so the entry gets removed.
+            expect.soft(/access denied|don'?t have permission/i.test(t.body), `tab "${tab}" no longer shows Access Denied: remove it from deniedTabs`).toBe(true);
+            test.info().annotations.push({ type: 'open-question', description: `tab "${tab}" on ${e.path} shows Access Denied to ${C.username}` });
+            continue;
+          }
           expect.soft(ERROR_TEXT.test(t.body), `tab "${tab}" shows an error`).toBe(false);
           expect.soft(t.rows > 0 || t.body.length > 120, `tab "${tab}" is blank`).toBe(true);
           const fresh = consoleErrs.slice(before).filter((m) => !NETWORK_NOISE.test(m));
@@ -227,12 +246,18 @@ function definePageSuite(title, select) {
       if (e.filters && e.filters.search && (e.columns || []).length) {
         test(`LIST | ${tag} (${e.path}) search and paging work`, async () => {
           test.skip(!!e.skip, e.skip);
+          if (e.knownList) test.fail(true, e.knownList);   // a tracked defect in this page's search, kept as an expected failure
           await visit(resolve(e.path), e);
           const box = e.filters.search.id ? page.locator(`#${e.filters.search.id}`).first()
             : page.getByPlaceholder(e.filters.search.placeholder || /search/i).first();
           test.skip(!(await box.isVisible().catch(() => false)), 'the search box is inside a collapsed filter panel');
-          const rows = () => page.locator('table tbody tr').filter({ visible: true }).count();
-          const bodyRows = async () => (await page.locator('table tbody tr').allInnerTexts()).map((t) => t.replace(/\s+/g, ' ').trim());
+          // the list is the visible table with the most columns; a second table (a legend, a summary) is not searched
+          const bodyRows = () => page.evaluate(() => {
+            const vis = (n) => n.getClientRects().length > 0;
+            const t = [...document.querySelectorAll('table')].filter(vis).sort((a, b) => b.querySelectorAll('thead th').length - a.querySelectorAll('thead th').length)[0];
+            return t ? [...t.querySelectorAll('tbody tr')].filter(vis).map((r) => r.innerText.replace(/\s+/g, ' ').trim()) : [];
+          });
+          const rows = async () => (await bodyRows()).length;
           const before = await rows();
           const firstBefore = (await bodyRows())[0];
           // 1. nothing matches nonsense
@@ -241,7 +266,7 @@ function definePageSuite(title, select) {
           await box.press('Enter');
           await page.waitForTimeout(2500);
           const after = await bodyRows();
-          expect.soft(after.filter((r) => r && !/^no\b|nothing|empty|not found/i.test(r)).length, 'rows still listed for a search that matches nothing').toBe(0);
+          expect.soft(after.filter((r) => r && !/^no\b|nothing|empty|not found|^(select|choose)\b/i.test(r)).length, 'rows still listed for a search that matches nothing').toBe(0);
           expect.soft(ERROR_TEXT.test((await page.evaluate(readPage)).body), 'error after searching').toBe(false);
           // 2. clearing restores the list
           await box.fill('');
@@ -294,7 +319,7 @@ function definePageSuite(title, select) {
 
           const { scope } = await clickOpener(e);
 
-          const form = await scope.evaluate((root) => {
+          const readForm = () => scope.evaluate((root) => {
             const vis = (n) => !!(n.offsetWidth || n.offsetHeight || n.getClientRects().length);
             const t = (x) => (x || '').replace(/\s+/g, ' ').trim();
             const group = (n) => n.closest('.form-group, .form-check, .form-switch, [class*="col-"], .mb-3, td, li');
@@ -305,14 +330,20 @@ function definePageSuite(title, select) {
                 id: n.id || '', visible: vis(n), label: labelOf(n), required: n.required || n.getAttribute('aria-required') === 'true' || /\*/.test(labelOf(n)) })),
             };
           });
-
-          const lost = [];
-          for (const h of e.form.heading || []) if (!clean(form.text).includes(clean(noCount(h)))) lost.push(`heading "${h}"`);
-          for (const f of e.form.fields || []) {
-            const hit = form.fields.find((x) => (f.id ? x.id === f.id : clean(x.label) === clean(f.label) || clean(x.label).includes(clean(f.label))));
-            if (!hit) { lost.push(`field "${f.id || f.label}"`); continue; }
-            if (f.required && !hit.required) lost.push(`field "${f.id || f.label}" no longer marked required`);
-          }
+          const missingFrom = (form) => {
+            const lost = [];
+            for (const h of e.form.heading || []) if (!clean(form.text).includes(clean(noCount(h)))) lost.push(`heading "${h}"`);
+            for (const f of e.form.fields || []) {
+              const hit = form.fields.find((x) => (f.id ? x.id === f.id : clean(x.label) === clean(f.label) || clean(x.label).includes(clean(f.label))));
+              if (!hit) { lost.push(`field "${f.id || f.label}"`); continue; }
+              if (f.required && !hit.required) lost.push(`field "${f.id || f.label}" no longer marked required`);
+            }
+            return lost;
+          };
+          // some forms fill in after the shell opens (dropdowns, a second request): look again for up to 8 s before calling it changed
+          let form = await readForm();
+          let lost = missingFrom(form);
+          for (let i = 0; i < 4 && lost.length; i++) { await page.waitForTimeout(2000); form = await readForm(); lost = missingFrom(form); }
           expect.soft(lost, `${lost.length} expected form element(s) missing — the form changed (see /qa-changes)`).toEqual([]);
           expect.soft(ERROR_TEXT.test(form.text), 'error text in the form').toBe(false);
 
@@ -336,6 +367,11 @@ function definePageSuite(title, select) {
           test.fail(true, `${k.id} — ${k.reason}`);
           await visit(resolve(e.path), e);
           if (k.onOpen && e.form) { await clickOpener(e); await page.waitForTimeout(1000); }
+          if (k.tab) {   // the fault shows when the page is left after this tab was opened: open it, then load the page again
+            await page.locator('[role="tab"], .nav-tabs .nav-link, .nav-pills .nav-link').filter({ hasText: new RegExp(`^\\s*${esc(k.tab)}`, 'i') }).first().click({ timeout: 8000 });
+            await page.waitForTimeout(2500);
+            await visit(resolve(e.path), e);   // visit() clears the list first, so what is left is what leaving the page raised
+          }
           const hits = consoleErrs.filter((m) => new RegExp(k.console, 'i').test(m));
           expect(hits, `${k.id}: ${k.reason}`).toEqual([]);
         });

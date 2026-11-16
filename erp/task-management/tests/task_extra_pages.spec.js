@@ -9,4 +9,4 @@
  */
 const { definePageSuite } = require('../../common/pageSuite');
 
-definePageSuite('Task Management — pages without a deeper spec (Calendar, To Do, Timeline, Daily Activity, Predefined Tasks)', (e) => e.group === 'Task Management');
+definePageSuite('Task Management — pages without a deeper spec (Calendar, To Do, Timeline, Daily Activity, Predefined Tasks)', (e) => ['Task Management', 'Task'].includes(e.group));   // Predefined Tasks moved to a "Task" menu group

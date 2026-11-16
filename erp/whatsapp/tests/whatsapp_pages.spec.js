@@ -9,4 +9,4 @@
  */
 const { definePageSuite } = require('../../common/pageSuite');
 
-definePageSuite('WhatsApp — Chat, Broadcasts, Bots, Accounts, Templates, Knowledge Base', (e) => e.group === 'Whatsapp');
+definePageSuite('WhatsApp — Chat, Broadcasts, Bots, Accounts, Templates, Knowledge Base', (e) => ['Whatsapp', 'Messaging'].includes(e.group));   // the menu group was renamed Whatsapp -> Messaging

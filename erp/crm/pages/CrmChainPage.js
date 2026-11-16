@@ -65,6 +65,17 @@ class CrmChainPage {
    */
   async findAcrossTabs(listingPath, needle) {
     await this.goto(listingPath);
+    // 12 Nov: Quotations opens on a Board (cards); the grid is behind the "Table" toggle
+    const tableToggle = this.page.locator('#quot-view-table:visible');
+    if (await tableToggle.count().catch(() => 0)) { await tableToggle.click().catch(() => {}); await this.page.waitForTimeout(1500); }
+    // 12 Nov: FollowUps opens on an Agenda (a day at a time, no grid); the grid and its Today's / Delayed /
+    // Upcoming / Non Followup chips are behind "List View". The choice is kept in localStorage (followupView),
+    // so it only lasts for this browser context.
+    const listToggle = this.page.locator('#btn-view-list:visible');
+    if (await listToggle.count().catch(() => 0) && !(await listToggle.evaluate((b) => b.classList.contains('active')).catch(() => true))) {
+      await listToggle.click().catch(() => {});
+      await this.page.waitForTimeout(2000);
+    }
     await this.page.selectOption('#page_size', '100').catch(() => {});
     await this.page.waitForTimeout(3000);
 

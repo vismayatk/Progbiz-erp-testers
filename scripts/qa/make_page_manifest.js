@@ -26,7 +26,7 @@ const args = process.argv.slice(2);
 const arg = (n) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
 const COMPANY = arg('--company') || process.env.COMPANY_CODE;
 const OUT = path.join(ROOT, 'erp', 'common', 'fixtures', `pages.${COMPANY}.json`);
-const PRESERVE = ['known', 'noForm', 'permission', 'skip', 'note', 'extraChecks', 'pin', 'optionalButtons'];
+const PRESERVE = ['known', 'knownList', 'deniedTabs', 'noForm', 'permission', 'skip', 'note', 'extraChecks', 'pin', 'optionalButtons'];
 // Pages with their own deeper specs (or that must not be touched) never go in the manifest.
 const NEVER = new Set(['/client-setting', '/home', '/']);
 const GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
@@ -42,6 +42,11 @@ const DATE_TAB = /^\d{1,2}\s+(mon|tue|wed|thu|fri|sat|sun)[a-z]*$/i;
 // On a page that lists records, row-level buttons are record names ("Alico Madina market Suspect"),
 // so only buttons that look like actions are kept.
 const ACTION = /^(add|new|create|save|clear|export|import|upload|download|print|filter|search|reset|apply|close|cancel|edit|view|back|go back|collapse all|expand all|refresh|submit|send|sync|copy|assign|calculate|history|show|hide|today|settings|alert limits|nature view|status view|block number)\b/i;
+// A button whose name carries a number is a count tile ("Suspect 78 83% of all", "Today's returns 0.00 0
+// confirmed") or a record ("Anciya 1 reporting"), not an action; "2 Weeks" style range buttons are kept.
+// data that a page draws as buttons: figures, people cards ("A Amit — —"), e-mail addresses, the month label of a calendar
+const DATA_BTN = (b) => (/(^|\s)\d[\d,.]*(%|\s|$)/.test(b) && !/^\d+\s+(day|week|month|year)s?$/i.test(b))
+  || /@| — —/.test(b) || /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*$/i.test(b);
 const PAGER = /^(\d+|next|last|first|prev|previous|«|»|‹|›|<<|>>|\.\.\.|…)$/i;
 const volatileId = (id) => !id || /\d{3,}/.test(id) || GUID.test(id) || /^switcher/i.test(id);
 
@@ -72,7 +77,7 @@ function entry(p) {
   const skipBtn = new Set([...columns, ...tabs].map((x) => x.toLowerCase()));
   const hasRows = (p.tables || []).some((t) => t.rows > 0);
   const buttons = [...new Set((p.buttons || []).filter((x) => !DATE_TAB.test(norm(x))).map(noCount)
-    .filter((b) => b && b.length > 1 && b.length < 40 && !PAGER.test(b) && !/^close$/i.test(b) && !isRowButton(b) && !skipBtn.has(b.toLowerCase()))
+    .filter((b) => b && b.length > 1 && b.length < 40 && !PAGER.test(b) && !/^close$/i.test(b) && !isRowButton(b) && !DATA_BTN(b) && !skipBtn.has(b.toLowerCase()))
     .filter((b) => !hasRows || ACTION.test(b)))];
   const controls = (p.controls || []).filter((c) => !['password', 'hidden'].includes(c.type))
     .map((c) => ({ id: volatileId(c.id) ? '' : c.id, label: norm(c.label).replace(/\s*\*\s*$/, ''), type: c.tag === 'select' ? 'select' : (c.type || c.tag), required: !!c.required }))
@@ -82,7 +87,8 @@ function entry(p) {
   const all = (p.controls || []).filter((c) => !['password', 'hidden'].includes(c.type));
   const searchCtl = all.find((c) => c.tag === 'input' && ['text', 'search', ''].includes(c.type || '') && (/filter-name|search/i.test(c.id || '') || /search/i.test(`${c.label} ${c.placeholder}`)));
   const dateSel = all.find((c) => c.tag === 'select' && (c.options || []).some((o) => /^this month$/i.test(o)) && (c.options || []).some((o) => /^today$/i.test(o)));
-  const heading = [...new Set((p.heading || []).map(noCount).filter(Boolean))].slice(0, 4);
+  // a time-of-day greeting ("Good afternoon, Super Admin!") is different every few hours, so it is not page identity
+  const heading = [...new Set((p.heading || []).map(noCount).filter((h) => h && !/^good (morning|afternoon|evening|night)\b/i.test(h)))].slice(0, 4);
   const moduleScoped = GUID.test(p.path);
   const e = {
     path: p.path.replace(GUID, '{module}'),

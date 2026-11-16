@@ -54,10 +54,23 @@ test.describe('CRM — Complaints (new module)', () => {
     const form = await complaints.describeForm();
     console.log(`  controls: ${JSON.stringify(form.controls.map((c) => c.label))}`);
     console.log(`  buttons: ${JSON.stringify(form.buttons)}`);
-    // As read live 2026-09-18: Complaint type*, Branch*, Subject* are required.
-    expect(await complaints.selectAfter('Complaint type').count(), 'no "Complaint type" select').toBeGreaterThan(0);
+    // Complaint type*, Branch*, Subject* are required. Nov 2026: Complaint type is a set of choices (one per
+    // active type) instead of a dropdown, and says so when the tenant has none; Priority is three buttons.
+    const type = await complaints.complaintTypeField();
+    console.log(`  complaint type: ${JSON.stringify(type)}`);
+    expect(type.kind, 'the form has no "Complaint type" field at all').not.toBe('missing');
+    if (type.kind === 'none' && type.notice) {
+      // no active type on this tenant (CMP-F1): the form must say so and link to the setup page
+      await expect(page.locator('a[href*="complaint-types"]').filter({ hasText: /set up complaint types/i }), 'no link to set up complaint types').toBeVisible();
+    }
     expect(await complaints.selectAfter('Branch').count(), 'no "Branch" select').toBeGreaterThan(0);
+    expect(await complaints.selectAfter('Branch').evaluate((e) => e.required || /\*/.test((e.closest('div')?.querySelector('label')?.textContent) || '')), 'Branch is no longer marked required').toBe(true);
     expect(await complaints.subject.count(), 'no Subject input').toBeGreaterThan(0);
+    expect(await complaints.expandDetails(), 'no Description box, even after "Add details"').toBe(true);
+    const priority = await complaints.priorityField();
+    console.log(`  priority: ${JSON.stringify(priority)}`);
+    expect(priority.options.map((o) => o.trim()), 'Priority choices').toEqual(expect.arrayContaining(['Normal', 'Medium', 'High']));
+    expect(priority.selected, 'Priority should start on Normal').toMatch(/normal/i);
     expect(await complaints.createBtn.count(), 'no "Create complaint" button').toBeGreaterThan(0);
   });
 
@@ -96,5 +109,43 @@ test.describe('CRM — Complaints (new module)', () => {
     const hit = await complaints.findAcrossTabs(NAME);
     console.log(hit ? `  found under "${hit.tab}": ${hit.row.slice(0, 140)}` : '  not found under any tab');
     expect(hit, `"${NAME}" not found in /complaints under any tab`).toBeTruthy();
+  });
+
+  test('CMP-05 | List and Board show the same complaints: tiles, inbox counts, rows and board columns agree', async ({ page }) => {
+    await complaints.goto();
+    const tiles = await complaints.tiles();
+    test.skip(!Object.keys(tiles).length, 'this build has no complaint tiles (older layout)');
+    const inbox = await complaints.inboxCounts();
+    console.log(`  tiles: ${JSON.stringify(tiles)}`);
+    console.log(`  inbox: ${JSON.stringify(inbox)}`);
+    for (const t of ['Open', 'In progress', 'Overdue (SLA)', 'Due in 4 hours', 'Escalated', 'In team pool', 'Resolved']) {
+      expect(tiles, `tile "${t}" missing`).toHaveProperty(t);
+      expect(typeof tiles[t], `tile "${t}" shows "${tiles[t]}", not a count`).toBe('number');
+    }
+    for (const chip of ['All', 'My team inbox', 'Assigned to me', 'Added by me']) expect(inbox, `inbox chip "${chip}" missing`).toHaveProperty(chip);
+    // a sub-inbox can never hold more than All
+    for (const chip of ['My team inbox', 'Assigned to me', 'Added by me']) expect(inbox[chip], `"${chip}" (${inbox[chip]}) is larger than All (${inbox.All})`).toBeLessThanOrEqual(inbox.All);
+
+    // the All inbox lists what its chip counts (first page: the list pages at 10 or more rows)
+    const rows = await complaints.listRows();
+    console.log(`  list rows under All: ${rows.length}`);
+    if (inbox.All < 10) expect(rows.length, `the All chip says ${inbox.All} but ${rows.length} row(s) are listed`).toBe(inbox.All);
+    else expect(rows.length, `the All chip says ${inbox.All} but the list is empty`).toBeGreaterThan(0);
+    if (inbox.All === 0) await expect(page.locator('table.cmp-table'), 'an empty list should say so').toContainText(/no complaints found/i);
+
+    // Board: five status columns with counts; the inbox chips keep their counts
+    expect(await complaints.setView('Board'), 'no Board switch on /complaints').toBe(true);
+    try {
+      const cols = await complaints.boardColumns();
+      console.log(`  board: ${JSON.stringify(cols)}`);
+      expect(Object.keys(cols), 'board columns').toEqual(['Open', 'Assigned', 'In Progress', 'Resolved', 'Closed']);
+      for (const [name, n] of Object.entries(cols)) expect(typeof n, `board column "${name}" shows "${n}", not a count`).toBe('number');
+      expect(await complaints.inboxCounts(), 'the inbox counts changed between List and Board').toEqual(inbox);
+      // nothing can be on the board that the All inbox does not count
+      const onBoard = Object.values(cols).reduce((a, n) => a + n, 0);
+      if (inbox.All === 0) expect(onBoard, 'the board shows complaints while All is 0').toBe(0);
+    } finally {
+      await complaints.setView('List');
+    }
   });
 });

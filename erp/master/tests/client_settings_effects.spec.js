@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Master — Client Settings effects  (CSE-01 .. CSE-20)
+ * Master — Client Settings effects  (CSE-01 .. CSE-17)
  * /client-setting drives what other pages show. Each test flips ONE option, checks the page it
  * should change, then restores it (ClientSettingsPage.withSettings restores in `finally`, so a
  * failing check still leaves the tenant as it was) and checks the page went back.
@@ -14,6 +14,10 @@
  *   Repeat Business (B2B)    -> "B2B Dashboard" + "Repeat Accounts" in the sidebar
  *   Quotation Payment Term / Grouping / Quantity -> #paymentterm / #item-group / #item-quantity on /quotation
  *   Quotation Default T&C    -> #terms-and-condition prefilled on /quotation
+ * Observed on 2 Nov 2026 (settings added after 13 Oct):
+ *   After-sale Follow-up           -> "After-sale Followups" in the sidebar
+ *   Item-wise Summary On Leads Home -> an "Item-Wise Summary" card on the Leads home screen
+ *   Default Customer Type          -> the Add Customer form opens on Individual (B2C) or Business (B2B)
  * Not covered yet (needs a saved record, ask the product team first): Default Task On Enquiry,
  * Quotation "Need Place", Require Quantity/Remark/Place/Business Value/Lead Quality blocking Save,
  * First Response SLA, Search Only My Own Customers (needs the second user).
@@ -45,6 +49,8 @@ const KNOWN_OPTIONS = [
   'RestrictCustomerSearchToOwn', 'IncludeCustomFieldInSearch', 'first-response-sla', 'auto-reassign-sla', 'sla-lead-sources',
   'enable-ai-call-analysis', 'achievement-basis', 'default-task-on-enquiry',
   'quot-quantity-in-quotation', 'quot-payment-term', 'grouping-quotation', 'quot-need-place', 'quot-default-terms',
+  // added after 13 Oct 2026
+  'EnableAfterSaleFollowup', 'ShowItemWiseLeadSummary', 'default-customer-type',
 ];
 
 // One switch -> one field on one form. shownWhen = the switch value that makes the field appear.
@@ -64,14 +70,17 @@ const FORMS = {
   quotation: { path: '/quotation', ready: '#quotation-no' },
 };
 
-async function openForm(page, form) {
-  // the tenant throttles bursts: back off and reload, up to three times, before waiting for the form
+/** Open a path. The tenant throttles bursts: while its "Too many requests" dialog is up, back off and reload (three tries). */
+async function gotoUnthrottled(page, path) {
   for (let attempt = 0; attempt < 3; attempt++) {
-    await page.goto(`${BASE}${FORMS[form].path}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-    await page.waitForTimeout(1500);
+    await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await page.waitForTimeout(3000);   // the dialog appears when the page's first API calls come back
     if (!(await dismissRateLimit(page))) break;
     await page.waitForTimeout(15000 * (attempt + 1));
   }
+}
+async function openForm(page, form) {
+  await gotoUnthrottled(page, FORMS[form].path);
   await page.locator(FORMS[form].ready).waitFor({ state: 'visible', timeout: 30000 });
   await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
   await page.waitForTimeout(1500);   // conditional fields draw after the form shell
@@ -101,6 +110,24 @@ test.describe('Master — Client Settings effects', () => {
     settings = new ClientSettingsPage(page);
   });
   test.afterAll(async () => { await page?.close(); });
+
+  // The menu is drawn from /api/common/get-client-enquiry-settings. When the tenant's request limit refuses that
+  // call (HTTP 429, seen on 14 Nov 2026 right after a save), the menu is drawn without the setting and the entry
+  // is missing although the setting is on. That is the throttle (PERF-04), not the feature under test: wait it
+  // out and load Home again before the menu is read.
+  async function loadHome() {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const settingsCall = page.waitForResponse((r) => /get-client-enquiry-settings/.test(r.url()), { timeout: 30000 }).catch(() => null);
+      await page.goto(`${BASE}/home`, { waitUntil: 'domcontentloaded' });
+      const res = await settingsCall;
+      await page.locator('aside a[href], .app-sidebar a[href]').first().waitFor({ timeout: 30000 });
+      await page.waitForTimeout(1500);
+      const limited = (res && res.status() === 429) || await dismissRateLimit(page, 500);
+      if (!limited) return;
+      console.log('  ⏳ the settings call was rate-limited (429): waiting 20 s and loading Home again');
+      await page.waitForTimeout(20000);
+    }
+  }
 
   test('CSE-01 | Client Settings lists every known option in its three sections', async () => {
     await settings.goto();
@@ -163,7 +190,7 @@ test.describe('Master — Client Settings effects', () => {
     const original = Boolean(await settings.get('AllowRepeatBusiness'));
     const menu = () => page.evaluate(() => [...document.querySelectorAll('aside a[href], .app-sidebar a[href]')]
       .map((a) => a.getAttribute('href') || '').filter((h) => /b2b-dashboard|repeat-accounts/.test(h)).length);
-    const home = async () => { await page.goto(`${BASE}/home`, { waitUntil: 'domcontentloaded' }); await page.locator('aside a[href], .app-sidebar a[href]').first().waitFor({ timeout: 30000 }); await page.waitForTimeout(1500); };
+    const home = loadHome;
     await settings.withSettings({ AllowRepeatBusiness: !original }, async () => {
       await home();
       expect(await menu(), `menu entries with Repeat Business ${!original ? 'on' : 'off'}`).toBe(!original ? 2 : 0);
@@ -189,6 +216,71 @@ test.describe('Master — Client Settings effects', () => {
     await page.goto(`${BASE}/leads`, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#include-custom-field-search')).toBeAttached({ timeout: 30000 });
     await expect(page.locator('#include-custom-field-search')).toBeChecked({ checked: original, timeout: 15000 });
+  });
+
+  test('CSE-15 | After-sale Follow-up adds After-sale Followups to the menu', async () => {
+    await settings.goto();
+    const original = Boolean(await settings.get('EnableAfterSaleFollowup'));
+    const menu = () => page.evaluate(() => [...document.querySelectorAll('aside a[href], .app-sidebar a[href]')]
+      .map((a) => (a.getAttribute('href') || '').replace(/^\//, '')).filter((h) => h === 'after-sale').length);
+    const home = loadHome;
+    await settings.withSettings({ EnableAfterSaleFollowup: !original }, async () => {
+      await home();
+      expect(await menu(), `After-sale menu entries with After-sale Follow-up ${!original ? 'on' : 'off'}`).toBe(!original ? 1 : 0);
+    });
+    await home();
+    expect(await menu(), 'menu back to how it was').toBe(original ? 1 : 0);
+  });
+
+  test('CSE-16 | Item-wise Summary On Leads Home adds the Item-Wise Summary card', async () => {
+    await settings.goto();
+    const original = Boolean(await settings.get('ShowItemWiseLeadSummary'));
+    const toggle = (name) => page.locator('.app-content, .main-content').locator('button, a.btn, [role=button]')
+      .filter({ hasText: new RegExp(`^\\s*${name}\\s*$`) }).first();
+    let startedOnTask = false;
+    // the Home screen opens on the profile's theme (Task here); the summary card lives on the Leads view
+    const leadsHome = async () => {
+      await gotoUnthrottled(page, '/home');
+      await page.locator('aside a[href], .app-sidebar a[href]').first().waitFor({ timeout: 30000 });
+      const history = page.getByText('Followup History').first();
+      // a click that lands before the page is interactive does nothing, so click again until the Leads view shows
+      await expect(async () => {
+        if (!(await history.isVisible().catch(() => false))) { startedOnTask = true; await toggle('Leads').click({ timeout: 5000 }); }
+        await expect(history, 'the Leads home screen did not open').toBeVisible({ timeout: 6000 });
+      }).toPass({ timeout: 45000 });
+      await page.waitForTimeout(1500);
+    };
+    try {
+      await settings.withSettings({ ShowItemWiseLeadSummary: !original }, async () => {
+        await leadsHome();
+        await expectShown(page, 'text=Item-Wise Summary', !original, `Item-wise Summary = ${!original ? 'on' : 'off'}`);
+      });
+      await leadsHome();
+      await expectShown(page, 'text=Item-Wise Summary', original, `Item-wise Summary restored to ${original ? 'on' : 'off'}`);
+    } finally {
+      if (startedOnTask) await toggle('Task').click({ timeout: 8000 }).catch(() => {});   // leave the Home screen as it was found
+    }
+  });
+
+  test('CSE-17 | Default Customer Type decides whether Add Customer opens on Individual or Business', async () => {
+    await settings.goto();
+    const original = String(await settings.get('default-customer-type'));          // "Individual (B2C)" | "Business (B2B)"
+    const other = /B2B/.test(original) ? 'Individual (B2C)' : 'Business (B2B)';
+    const kind = (label) => (/B2B/.test(label) ? 'Business' : 'Individual');
+    const opensOn = async () => {
+      await openForm(page, 'enquiry');
+      await page.locator('#btn-add-new-customer').click({ timeout: 15000 });
+      const business = page.locator('#enquiry-new-customer-modal #radio-business');
+      await expect(business, 'the Add Customer form did not open').toBeVisible({ timeout: 15000 });
+      const on = (await business.isChecked()) ? 'Business' : 'Individual';
+      await page.keyboard.press('Escape');                                         // never saved
+      await page.waitForTimeout(800);
+      return on;
+    };
+    await settings.withSettings({ 'default-customer-type': other }, async () => {
+      expect(await opensOn(), `Add Customer with Default Customer Type "${other}"`).toBe(kind(other));
+    });
+    expect(await opensOn(), `Add Customer once "${original}" is restored`).toBe(kind(original));
   });
 
   test('CSE-99 | after all effects, every Client Setting equals its value at the start of the run', async () => {

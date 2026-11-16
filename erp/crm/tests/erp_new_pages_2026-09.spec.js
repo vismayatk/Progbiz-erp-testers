@@ -25,6 +25,7 @@
 require('dotenv').config();
 const { test, expect } = require('@playwright/test');
 const { LoginPage } = require('../../common/LoginPage');
+const { dismissRateLimit } = require('../../common/helpers');
 
 const BASE = process.env.BASE_URL;
 const C = {
@@ -43,6 +44,13 @@ async function login(page) {
 async function pageState(page, route) {
   await page.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(4000);
+  // The tenant throttles bursts with a "Too many requests … Please wait a little while" dialog. It is not the
+  // page's own state (it read as "stuck loading" on 14 Nov 2026): dismiss it, give the tenant time, load again.
+  for (let attempt = 0; attempt < 2 && await dismissRateLimit(page, 500); attempt++) {
+    await page.waitForTimeout(20000 * (attempt + 1));
+    await page.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await page.waitForTimeout(4000);
+  }
   return page.evaluate(() => {
     const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
     const onScreen = (e) => {
@@ -69,6 +77,16 @@ async function pageState(page, route) {
 test.describe('ERP — new pages found 2026-09-18', () => {
   test.describe.configure({ timeout: 200_000 });
 
+  // One login for the file, shared by its 13 read-only page checks: a login per test is what tripped the
+  // tenant's request limit (NP-07, 09, 10 and 11 failed on the "Too many requests" dialog on 14 Nov 2026).
+  /** @type {import('@playwright/test').Page} */
+  let page;
+  test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+    await login(page);
+  });
+  test.afterAll(async () => { await page?.close(); });
+
   const PAGES = [
     // Complaints module's Master-side config — deliberately read-only here:
     // "Save settings"/"Save" on this page rewrites the tenant's escalation
@@ -91,8 +109,7 @@ test.describe('ERP — new pages found 2026-09-18', () => {
   ];
 
   for (const p of PAGES) {
-    test(`${p.id} | ${p.name} (${p.group}) loads with no backend error`, async ({ page }) => {
-      await login(page);
+    test(`${p.id} | ${p.name} (${p.group}) loads with no backend error`, async () => {
       const s = await pageState(page, p.route);
       console.log(`  ${p.route} → tables=${s.tableCount} rows=${s.totalRows} chart=${s.hasChart} empty=${s.emptyState} bodyChars=${s.bodyChars}`);
 

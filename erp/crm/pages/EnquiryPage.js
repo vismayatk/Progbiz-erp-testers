@@ -587,13 +587,31 @@ class EnquiryPage {
     // ENQ-number / customer-name CELLS. Clicking the row body or hunting for <a> does
     // nothing (the old anchor-based strategies silently left us on /leads).
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 });
-    for (const nth of [1, 2]) {              // td[1] = ENQ number, td[2] = customer name
-      await this.page.locator('table tbody tr').first().locator('td').nth(nth).click().catch(() => {});
+    // Find those cells by their column headings, not by position: the Nov 2026 listing gained a
+    // checkbox column in front. And take the first row that IS an enquiry: the listing also holds
+    // quotations (number "QUO-…"), whose cells open /quotation-view instead.
+    const target = await this.page.evaluate(() => {
+      const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const t = [...document.querySelectorAll('table')].filter((x) => x.getClientRects().length)
+        .sort((a, b) => b.querySelectorAll('thead th').length - a.querySelectorAll('thead th').length)[0];
+      if (!t) return null;
+      const hs = [...t.querySelectorAll('thead th')].map((h) => clean(h.innerText));
+      const ni = hs.findIndex((h) => /^number$/i.test(h));
+      const ci = hs.findIndex((h) => /^customer name$/i.test(h));
+      const rows = [...t.querySelectorAll('tbody tr')];
+      const ri = ni < 0 ? -1 : rows.findIndex((r) => /ENQ-?\d/i.test(clean((r.querySelectorAll('td')[ni] || {}).innerText)));
+      return { ni, ci, ri };
+    }).catch(() => null);
+    const row = this.page.locator('table tbody tr').nth(target && target.ri >= 0 ? target.ri : 0);
+    const cells = target && target.ni >= 0 ? [target.ni, target.ci].filter((n) => n >= 0) : [1, 2];
+    for (const nth of cells) {
+      await row.locator('td').nth(nth).click().catch(() => {});
       const ok = await this.page.waitForURL(/enquiry-overview/i, { timeout: 8000 }).then(() => true).catch(() => false);
       if (ok) {
         console.log(`  🔗 Opened first enquiry via td[${nth}] — URL: ${this.page.url()}`);
         return;
       }
+      if (!/\/leads/.test(this.page.url())) { await this.gotoList(); await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {}); }
     }
     throw new Error(`openFirstEnquiry: clicking ENQ/customer cells did not reach enquiry-overview (still on ${this.page.url()})`);
   }
@@ -761,6 +779,17 @@ class EnquiryPage {
               .replace(/\s+/g, ' ').trim().slice(0, 120);
             out.push(line);
           }
+        }
+        // Nov 2026 overview: label / value pairs with no colon —
+        //   <span class="k">Status</span><span class="badge">New Enquiry</span>   (summary strip)
+        //   <span class="k">Status</span><span class="v">New Enquiry</span>       (Enquiry Details card)
+        for (const k of document.querySelectorAll('span.k')) {
+          if (!k.getClientRects().length) continue;
+          const label = (k.textContent || '').replace(/\s+/g, ' ').trim();
+          if (!/^(followup\s*)?status$/i.test(label)) continue;
+          const v = k.nextElementSibling;
+          const val = v ? (v.textContent || '').replace(/\s+/g, ' ').trim() : '';
+          if (val && val !== '--') out.push(`${label} : ${val}`);
         }
         return [...new Set(out)].join(' | ');
       }).catch(() => '');

@@ -5,7 +5,7 @@
  * Add Lead, and the Start→Hold→Resume→End lifecycle.
  * Source: Test cases TC_TASK_044-064 + Scenarios 4, 7, 13, 14, 15.
  *
- * The Task Details panel (#task-overview-modal) opens from a My Tasks row and holds
+ * The Task Details panel (#task-overview-modal) opens from a My Tasks card (week planner since Nov 2026) and holds
  * everything: notes (#txtChat + .btn-send), document upload (.fe-paperclip →
  * #file-input-document), lifecycle (Hold / End Task / Resume), and a ⋮ menu
  * (.fe-more-vertical) → Edit Task / Reschedule Task / Add Lead.

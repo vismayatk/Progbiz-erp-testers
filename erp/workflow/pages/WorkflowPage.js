@@ -94,9 +94,9 @@ class WorkflowPage {
     await this.gotoTypes();
     const g = await this.readGrid();
     const idx = (name) => g.columns.findIndex((c) => new RegExp(`^${name}$`, 'i').test(c));
-    const ti = idx('Type'), pi = idx('Phases'), ki = idx('Tasks'), ri = idx('Records');
+    const mi = idx('Manual Phases'), ti = idx('Type'), pi = idx('Phases'), ki = idx('Tasks'), ri = idx('Records');
     return g.rows.map((r) => ({
-      type: r[ti], phases: parseInt(r[pi], 10) || 0,
+      type: r[ti], manual: mi >= 0 && /^yes$/i.test(r[mi] || ''), phases: parseInt(r[pi], 10) || 0,
       tasks: parseInt(r[ki], 10) || 0, records: parseInt(r[ri], 10) || 0,
     })).filter((t) => t.type);
   }
@@ -206,7 +206,10 @@ class WorkflowPage {
     if (await this.page.selectOption('#page_size', '100').then(() => true).catch(() => false)) {
       await this.page.waitForTimeout(2500);
     }
-    return this.readGrid();
+    const g = await this.readGrid();
+    // 12 Nov: the Tasks tab groups tasks under a phase header row and ends with an "Add task" row; neither is a task
+    if (/^Tasks$/i.test(tabName)) g.rows = g.rows.filter((r) => r.length > 1 && (r[1] || '').trim());
+    return g;
   }
 
   /** Does the page (dashboard / status report) mention the project? */

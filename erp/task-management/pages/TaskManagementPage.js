@@ -23,16 +23,19 @@ const { dismissRateLimit } = require('../../common/helpers');
  *    toggles #instantDeadlineToggle/#addEndTimeToggle → date/time pickers) ·
  *    #repeatBtn (Start/End Time + From/To Date).
  *
- *  Listing pages: My Tasks (/my-tasks), Created Tasks (/created-tasks),
- *    Delegated Tasks (/delegated-tasks), To Do List (/todo-list),
- *    Unscheduled Tasks (/unscheduled-tasks), Calendar (/calendar),
- *    Daily Activity Report (/daily-activity-report), Task Timeline.
- *  Row actions (Action column, no ids since the Sep-2026 build): a red delete
- *    button (i.ri-delete-bin-5-fill) FIRST on deletable tasks, then the
- *    send-plane (i.ri-send-plane-2-line) that opens #task-overview-modal — or,
- *    for Enquiry/Quotation Followup and Complaint task types, navigates to the
- *    source record. The old #edit-task-{id} / #delete-task-{id} /
- *    #overview-task-{id} ids are gone. See _openRowOverview().
+ *  The /task page form (Nov 2026) keeps those ids and adds a Checklist box, "Assign To"
+ *    (#assignTo) and a Participants multiselect (#participantMultiselect-*); the creator is the
+ *    host by default, so there is no Hosts picker (.add-host-btn) on it any more.
+ *
+ *  Listing pages (redesigned in the Nov 2026 build — see "listing pages" below):
+ *    My Tasks (/my-tasks) is a week planner of cards, Delegated Tasks (/delegated-tasks) a
+ *    status board of cards; neither has a table or status tabs. To Do List (/todo-list),
+ *    Calendar (/calendar, a Team / Me week grid), Daily Activity Report
+ *    (/daily-activity-report, still a table), Task Timeline.
+ *    /created-tasks and /unscheduled-tasks were removed (dead routes).
+ *  A card opens #task-overview-modal when clicked — or, for Enquiry / Quotation Followup,
+ *    Complaint and Projects task types, navigates to the source record. Its ⋮ menu holds
+ *    Open / Delete. See _openCard().
  *  Dashboard lifecycle controls: .ri-play-fill (start/resume),
  *    .ri-pause-fill (hold), .ri-stop-fill (end).
  */
@@ -534,42 +537,203 @@ class TaskManagementPage {
     return null;   // success
   }
 
-  // ════════════════════════ listing pages ════════════════════════
+  // ════════════════════════ listing pages (Nov 2026 redesign) ════════════════════════
+  //
+  // My Tasks (/my-tasks) is a WEEK PLANNER, no table and no status tabs:
+  //   toolbar  .tm-wk-bar   #btn-week-previous · #btn-week-today · #btn-week-next · .tm-wk-label ("9 – 15 Nov 2026")
+  //                         #my-tasks-show-completed (switch) · #task-search (+ submit) · #btn-toggle-filter
+  //   trays    .tm-tray     h6.tm-tray-h "Delayed <badge>" (.is-late) and "Unscheduled <badge>", cards in .tm-tray-list
+  //   week     .tm-wk-grid  7 × .tm-day (.is-today / .is-empty): .tm-day-name "Sat 14", .tm-day-meta "5 tasks · 0.3 h planned"
+  //   card     .tm-wc.tm-ty-<type> (.is-late .is-hold .is-run .is-fin .has-menu)
+  //              .tm-wc-main[role=button][title=<full task name>]   click = open (#task-overview-modal, or the source record)
+  //              .tm-wc-ico[title=<Task Type>] · bdi = time · .tm-wc-chips .badge = Hold / Running / "9d late"
+  //              .tm-wc-menu = ⋮ → Open / Delete
+  // Delegated Tasks (/delegated-tasks) is a STATUS BOARD:
+  //   "When" chips .dtb-when-btn  All open · Today · Delayed · Upcoming · Unscheduled · Completed (each with a count)
+  //   columns      .dtb-col       Unscheduled · Scheduled · Running · Hold · Finished (.dtb-col-title, .dtb-count)
+  //   card         .dtb-card      button.dtb-card-open = task name (click = open) · .dtb-ty[title=<Task Type>]
+  //                               .dtb-who-name = assignees · .dtb-time bdi · .dtb-card-menu = ⋮ → Open / Open Work Flow / Delete
+  // /created-tasks and /unscheduled-tasks no longer exist ("Sorry, there's nothing at this address").
 
-  /** My Tasks status-tab counts (Today/Delayed/Upcoming/Unscheduled/Completed). */
+  /** Wait until the planner or the board has drawn its cards (the skeleton placeholders are gone). */
+  async waitForTaskList(timeout = 25000) {
+    await this.page.waitForFunction(() => {
+      const planner = document.querySelector('.tm-wk-grid'); const board = document.querySelector('.dtb-board');
+      if (!planner && !board) return false;
+      if (document.querySelector('.dtb-board .placeholder-glow, .tm-wk-trays .placeholder-glow, .tm-wk-grid .placeholder-glow')) return false;
+      return planner ? planner.querySelectorAll('.tm-day').length >= 7 : true;
+    }, { timeout }).catch(() => {});
+    await this.page.waitForTimeout(700);
+  }
+
+  /** True on the My Tasks week planner, false on the Delegated board (or anything else). */
+  async onPlanner() { return (await this.page.locator('.tm-wk-grid').count().catch(() => 0)) > 0; }
+
+  /**
+   * Every task card now on the page, planner or board, in document order:
+   *   { i, view, name, type, time, chips[], where, status, late, hasMenu, who }
+   * `where` is the tray ("Delayed" / "Unscheduled"), the day ("Sat 14") or the board column;
+   * `status` is Unscheduled / Scheduled / Running / Hold / Finished.
+   */
+  async taskCards() {
+    return this.page.evaluate(() => {
+      const t = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const out = [];
+      document.querySelectorAll('.tm-wc').forEach((c, i) => {
+        const main = c.querySelector('.tm-wc-main'); if (!main) return;
+        const tray = c.closest('.tm-tray'); const day = c.closest('.tm-day');
+        const where = tray ? t(tray.querySelector('.tm-tray-h').textContent).replace(/\s*\d+$/, '')
+          : day ? t((day.querySelector('.tm-day-name') || {}).textContent) : '';
+        const cl = c.classList;
+        const ico = c.querySelector('.tm-wc-ico');
+        out.push({
+          i, view: 'planner',
+          name: main.getAttribute('title') || t((c.querySelector('.tm-wc-name') || {}).textContent),
+          type: (ico && ico.getAttribute('title')) || '',
+          time: t((c.querySelector('.tm-wc-time bdi') || {}).textContent),
+          chips: [...c.querySelectorAll('.tm-wc-chips .badge')].map((b) => t(b.textContent)),
+          where, today: !!(day && day.classList.contains('is-today')),
+          status: cl.contains('is-fin') ? 'Finished' : cl.contains('is-run') ? 'Running' : cl.contains('is-hold') ? 'Hold'
+            : /unscheduled/i.test(where) ? 'Unscheduled' : 'Scheduled',
+          late: cl.contains('is-late'), hasMenu: cl.contains('has-menu'), who: '',
+        });
+      });
+      document.querySelectorAll('.dtb-card').forEach((c, i) => {
+        const open = c.querySelector('.dtb-card-open'); if (!open) return;      // a loading skeleton
+        const col = c.closest('.dtb-col'); const ty = c.querySelector('.dtb-ty');
+        const where = col ? t((col.querySelector('.dtb-col-title') || {}).textContent) : '';
+        out.push({
+          i, view: 'board', name: t(open.textContent), type: (ty && ty.getAttribute('title')) || '',
+          time: t((c.querySelector('.dtb-time') || {}).textContent),
+          chips: [...c.querySelectorAll('.dtb-chip')].map((b) => t(b.textContent)),
+          where, today: false, status: where, late: /late/i.test(c.textContent || ''), hasMenu: !!c.querySelector('.dtb-card-menu'),
+          who: t((c.querySelector('.dtb-who-name') || {}).textContent),
+        });
+      });
+      return out;
+    });
+  }
+
+  /** One line of text for a card, the way the old table row read ("name | type | status | where time | chips | who"). */
+  cardText(c) {
+    return [c.name, c.type, c.status, `${c.where} ${c.time}`.trim(), c.chips.join(' '), c.who].filter(Boolean).join(' | ');
+  }
+
+  /** The planner's shape: week label, the 7 day columns, the two tray counts and how many cards each tray really holds. */
+  async plannerState() {
+    return this.page.evaluate(() => {
+      const t = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const num = (s) => { const m = t(s).match(/(\d+)/); return m ? Number(m[1]) : null; };
+      const trays = {};
+      document.querySelectorAll('.tm-tray').forEach((tr) => {
+        const h = tr.querySelector('.tm-tray-h'); if (!h) return;
+        const badge = h.querySelector('.badge');
+        trays[t(h.textContent).replace(/\s*\d+$/, '')] = { badge: badge ? num(badge.textContent) : null, cards: tr.querySelectorAll('.tm-wc').length };
+      });
+      const days = [...document.querySelectorAll('.tm-wk-grid .tm-day')].map((d) => ({
+        name: t((d.querySelector('.tm-day-name') || {}).textContent), meta: t((d.querySelector('.tm-day-meta') || {}).textContent),
+        count: num((d.querySelector('.tm-day-meta') || {}).textContent), cards: d.querySelectorAll('.tm-wc').length,
+        today: d.classList.contains('is-today'),
+      }));
+      return { label: t((document.querySelector('.tm-wk-label') || {}).textContent), trays, days,
+        showCompleted: !!(document.querySelector('#my-tasks-show-completed') || {}).checked };
+    });
+  }
+
+  /**
+   * Counts by bucket.
+   *   Planner: { Delayed, Unscheduled } from the tray badges, Today = today's column, Upcoming = the later days of the shown week.
+   *   Board:   the "When" chips — { 'All open', Today, Delayed, Upcoming, Unscheduled, Completed }.
+   */
   async getTabCounts() {
+    if (await this.onPlanner()) {
+      const s = await this.plannerState();
+      const out = {};
+      for (const [k, v] of Object.entries(s.trays)) out[k] = v.badge;
+      const ti = s.days.findIndex((d) => d.today);
+      if (ti >= 0) {
+        out.Today = s.days[ti].count ?? s.days[ti].cards;
+        out.Upcoming = s.days.slice(ti + 1).reduce((n, d) => n + (d.count ?? d.cards), 0);
+      }
+      return out;
+    }
     return this.page.evaluate(() => {
       const out = {};
-      for (const b of document.querySelectorAll('button, a.btn')) {
-        const m = (b.textContent || '').replace(/\s+/g, ' ').trim().match(/^(Today|Delayed|Upcoming|Unscheduled|Completed)\s+(\d+)$/i);
+      for (const b of document.querySelectorAll('.dtb-when-btn')) {
+        const m = (b.innerText || b.textContent || '').replace(/\s+/g, ' ').trim().match(/^(.*?)\s+(\d+)$/);
         if (m) out[m[1]] = Number(m[2]);
       }
       return out;
     });
   }
 
-  /** Click a My Tasks status tab by label and return the row count after load. */
-  /** The My Tasks status tabs are <li class="nav-item"> wrapping a <button class="nav-link">.
-   *  Click the inner control so the list actually filters, then wait for the reload. */
+  /** Board only: click a "When" chip (All open / Today / Delayed / Upcoming / Unscheduled / Completed); returns the cards then shown. */
   async clickTab(label) {
-    const tab = this.page.locator('li.nav-item')
-      .filter({ hasText: new RegExp(`^\\s*${label}\\s*\\d*\\s*$`, 'i') })
-      .locator('button, a').first();
-    await tab.click().catch(() => {});
+    // the chip's text is its label followed by its count with no space in between ("Today0"), so no \b after the label
+    const chip = this.page.locator('.dtb-when-btn').filter({ hasText: new RegExp(`^\\s*${label}\\s*\\d*\\s*$`, 'i') }).first();
+    if (!(await chip.count().catch(() => 0))) return (await this.taskCards()).length;   // the planner has no status tabs
+    await chip.click({ timeout: 8000 }).catch(() => {});
     await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
-    await this.page.waitForTimeout(1500);
-    return this.rows.count();
+    await this.waitForTaskList(12000);
+    return this.page.locator('.dtb-card:has(.dtb-card-open)').count();
   }
 
-  /** Text of the first data row (used to prove a tab switch changed the rendered set). */
+  /** Board only: { column: { count (the column badge), cards (cards drawn) } }. */
+  async boardColumns() {
+    return this.page.evaluate(() => {
+      const t = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const out = {};
+      document.querySelectorAll('.dtb-col').forEach((c) => {
+        const n = t((c.querySelector('.dtb-count') || {}).textContent);
+        out[t((c.querySelector('.dtb-col-title') || {}).textContent)] = { count: n === '' ? null : Number(n), cards: c.querySelectorAll('.dtb-card .dtb-card-open').length };
+      });
+      return out;
+    });
+  }
+
+  /** Type in the list's search box (#task-search) and run it; an empty string clears the search. */
+  async searchTasks(text) {
+    const box = this.search;
+    if (!(await box.count().catch(() => 0))) return false;
+    await box.fill(text).catch(() => {});
+    await box.press('Enter').catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
+    await this.waitForTaskList(12000);
+    return true;
+  }
+
+  /** Planner: move to the previous / next week, or back to the current one. Returns the new week label. */
+  async plannerWeek(dir) {
+    const id = dir === 'next' ? '#btn-week-next' : dir === 'previous' ? '#btn-week-previous' : '#btn-week-today';
+    await this.page.locator(id).click({ timeout: 8000 }).catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
+    await this.waitForTaskList(12000);
+    return (await this.plannerState()).label;
+  }
+
+  /** Planner: switch "Show completed" on or off (finished cards carry .is-fin). */
+  async showCompleted(on = true) {
+    const sw = this.page.locator('#my-tasks-show-completed');
+    if (!(await sw.count().catch(() => 0))) return false;
+    if ((await sw.isChecked().catch(() => false)) !== on) {
+      await sw.setChecked(on, { force: true }).catch(async () => { await sw.evaluate((e) => e.click()).catch(() => {}); });
+      await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
+      await this.waitForTaskList(12000);
+    }
+    return sw.isChecked().catch(() => false);
+  }
+
+  /** Text of the first card (or the first table row on the report pages). */
   async firstRowText() {
+    const cards = await this.taskCards();
+    if (cards.length) return this.cardText(cards[0]).slice(0, 80);
     return this.page.evaluate(() => {
       const r = document.querySelector('table tbody tr');
       return r ? (r.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80) : '';
     });
   }
 
-  /** Visible table header labels on the current page. */
+  /** Visible table header labels on the current page (report pages; the planner and the board have no table). */
   async getColumns() {
     return this.page.evaluate(() =>
       [...document.querySelectorAll('table thead th, table thead td')]
@@ -578,26 +742,17 @@ class TaskManagementPage {
   }
 
   /**
-   * Distinct row-action kinds present, as stable names: 'overview-task',
-   * 'delete-task', 'edit-task'. Older builds exposed them as ids
-   * (#overview-task-{id} …); the Sep-2026 build dropped the ids and renders
-   * id-less icon buttons instead (send-plane = overview, bin = delete), so
-   * read both and map the icons onto the same names — callers (TM-16, TM-18)
-   * don't need to know which build they're on.
+   * Distinct card-action kinds present, as stable names: 'overview-task' (⋮ → Open), 'delete-task' (⋮ → Delete),
+   * 'open-workflow' (⋮ → Open Work Flow). The menus are in the markup whether or not they are open.
    */
   async rowActionKinds() {
     return this.page.evaluate(() => {
       const kinds = new Set();
-      for (const e of document.querySelectorAll('[id^="edit-task-"],[id^="delete-task-"],[id^="overview-task-"]')) {
-        kinds.add(e.id.replace(/-\d+$/, ''));
-      }
-      const ICONS = [
-        ['overview-task', 'i.ri-send-plane-2-line'],
-        ['delete-task', 'i[class*="ri-delete-bin"]'],
-        ['edit-task', 'i.ri-pencil-line, i.ri-edit-line, i.ri-edit-2-line, i.bi-pencil-square'],
-      ];
-      for (const [kind, sel] of ICONS) {
-        if (document.querySelector(`table tbody tr :is(a, button) ${sel}`)) kinds.add(kind);
+      for (const a of document.querySelectorAll('.tm-wc-menu .dropdown-item, .dtb-card-menu .dropdown-item')) {
+        const t = (a.textContent || '').replace(/\s+/g, ' ').trim();
+        if (/^open$/i.test(t)) kinds.add('overview-task');
+        else if (/^delete$/i.test(t)) kinds.add('delete-task');
+        else if (/work ?flow/i.test(t)) kinds.add('open-workflow');
       }
       return [...kinds];
     });
@@ -636,48 +791,64 @@ class TaskManagementPage {
     }));
   }
 
-  /** Search My Tasks for a task name and report whether a row contains it. */
+  /** Search My Tasks for a task name and report whether a card carries it (this week, later weeks, then completed). */
   async findTask(name) {
+    return !!(await this.findOnPlanner(name));
+  }
+
+  /**
+   * Find a task on the My Tasks planner by (part of) its name and return its card, or null.
+   * Searches with the list's own search box, then looks at the current week, up to `weeksAhead` later weeks
+   * (a task scheduled a few days ahead can fall in next week's grid), and last with "Show completed" on.
+   * Leaves the planner on the week where the card was found.
+   */
+  async findOnPlanner(name, { weeksAhead = 2, completed = true } = {}) {
     await this.gotoMyTasks();
-    await this.search.fill(name).catch(() => {});
-    await this.search.press('Enter').catch(() => {});
-    await this.page.waitForTimeout(2500);
-    return this.page.evaluate((n) =>
-      [...document.querySelectorAll('table tbody tr')]
-        .some(r => (r.textContent || '').toLowerCase().includes(n.toLowerCase())),
-      name);
+    await this.waitForTaskList();
+    await this.searchTasks(name);
+    const needle = name.toLowerCase();
+    const look = async (tries = 3) => {
+      for (let i = 0; i < tries; i++) {
+        const hit = (await this.taskCards()).find((c) => c.view === 'planner' && c.name.toLowerCase().includes(needle));
+        if (hit) return hit;
+        await this.page.waitForTimeout(900);
+      }
+      return null;
+    };
+    let card = await look();
+    for (let w = 0; !card && w < weeksAhead; w++) { await this.plannerWeek('next'); card = await look(2); }
+    if (!card && completed) {
+      await this.plannerWeek('today');
+      await this.showCompleted(true);
+      card = await look(2);
+    }
+    return card;
   }
 
   // ════════════════════════ Task Details panel (#task-overview-modal) ════════════════════════
-  // Opened from a My Tasks row via the ".ri-send-plane-2-line" action button. Holds:
+  // Opened by clicking a card (.tm-wc-main on the planner, .dtb-card-open on the board) or ⋮ → Open. Holds:
   //   notes (#txtChat + .btn-send), document upload (.fe-paperclip → #file-input-document),
-  //   lifecycle (Hold .btn-warning-light / End Task .btn-danger-light / Resume),
+  //   lifecycle (Hold .btn-warning-light / End Task .btn-danger-light / Resume .btn-success-light),
   //   and a ⋮ menu (.fe-more-vertical) → Edit Task / Reschedule Task / Add Lead.
 
   get detailsModal() { return this.page.locator('#task-overview-modal'); }
 
   /**
-   * Open #task-overview-modal from ONE row, via its send-plane anchor ONLY.
+   * Open #task-overview-modal from ONE card (as returned by taskCards()).
    *
-   * 2026-09-18 re-audit: the Action cell on deletable tasks is now
-   *   <a class="btn-danger-light"><i class="ri-delete-bin-5-fill"></a>   ← delete, FIRST
-   *   <a class="btn-primary-light"><i class="ri-send-plane-2-line"></a>  ← open overview
-   * The openers below used to click "every control in the cell" until the modal
-   * appeared — which now clicks delete first and raises "Are you sure you want to
-   * delete?" / "delete all remaining tasks in this series?" on a real task, then
-   * burns the test budget waiting behind that dialog (TM-24..26 timeouts).
-   *
-   * CRM/Complaint-linked task types (Enquiry Followup, Quotation Followup,
-   * Complaint) route their send-plane to the source record
-   * (/enquiry-overview, /quotation-view, /complaint-detail) instead of opening
-   * the overview. If a click navigates, come back and report not-openable.
+   * CRM / Complaint / Work Flow task types (Enquiry Followup, Quotation Followup, Complaint, Projects Task)
+   * route their card to the source record (/enquiry-overview, /quotation-view, /complaint-detail, the project)
+   * instead of opening the panel. If the click navigates, come back and report not-openable.
    */
-  async _openRowOverview(row) {
-    const opener = row.locator('td').first().locator('a:has(i.ri-send-plane-2-line)').first();
-    if (!(await opener.count().catch(() => 0))) return false;
+  async _openCard(card) {
+    const target = card.view === 'board'
+      ? this.page.locator('.dtb-card').nth(card.i).locator('.dtb-card-open')
+      : this.page.locator('.tm-wc').nth(card.i).locator('.tm-wc-main');
+    if (!(await target.count().catch(() => 0))) return false;
     const before = this.page.url();
-    await opener.click({ timeout: 5000 }).catch(() => {});
-    const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+    await target.scrollIntoViewIfNeeded().catch(() => {});
+    await target.click({ timeout: 5000 }).catch(() => {});
+    const ok = await this.detailsModal.waitFor({ state: 'visible', timeout: 6000 }).then(() => true).catch(() => false);
     if (ok) {
       await this.page.locator('#txtChat').waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
       await this.page.waitForTimeout(800);
@@ -690,100 +861,47 @@ class TaskManagementPage {
     return false;
   }
 
-  /** Open the Task Details panel (#task-overview-modal) for the task named `name`.
-   *  On the DEV build a party-attached task is delegated to the party owner, so it
-   *  can live under My Tasks OR Delegated Tasks and under any status tab. Scan both
-   *  pages across the likely tabs; open via the send-plane anchor only (see
-   *  _openRowOverview — the same cell now holds a delete button). */
+  /** Open the Task Details panel for the task named `name`: My Tasks first (any week, completed too), then the
+   *  Delegated board, where a task assigned to someone else sits for its creator. */
   async openTaskDetails(name) {
-    const tryOpenHere = async () => {
-      const row = this.page.locator('table tbody tr').filter({ hasText: name }).first();
-      if (!(await row.isVisible().catch(() => false))) return false;
-      return this._openRowOverview(row);
-    };
-    // Bounded sweep: check My Tasks default + the tabs a task realistically sits in
-    // (Today/Upcoming — where a reschedule lands it), then Delegated default. Enough
-    // for re-verification without paying a full 12-tab networkidle sweep every call.
-    await this.gotoMyTasks();
-    await this.page.waitForTimeout(2000);
-    if (await tryOpenHere()) return true;
-    for (const tab of ['Today', 'Upcoming', 'Unscheduled']) {
-      await this.clickTab(tab);
-      await this.page.waitForTimeout(900);
-      if (await tryOpenHere()) return true;
-    }
-    await this.gotoDelegated();
-    await this.page.waitForTimeout(2000);
-    if (await tryOpenHere()) return true;
+    const card = await this.findOnPlanner(name);
+    if (card && await this._openCard(card)) return true;
+    const row = await this.findInDelegated(name, { asCard: true });
+    if (row && await this._openCard(row)) return true;
     return false;
   }
 
-  /** Open the FIRST openable task in My Tasks (any populated status tab) and return
-   *  its task name, or null. Used when a freshly-created task isn't reachable by its
-   *  creator (DEV mandatory-party delegation) — the detail-panel operations under test
-   *  are exercised against an existing task instead.
+  /** Open the FIRST openable task in My Tasks (trays, then the week) and return its name, or null.
    *
    *  Only MACHINE-MADE tasks are eligible (a `QA_`/`TM` prefix, or a 13-digit ms
    *  timestamp in the name — "Repeat 1789652320867", "LaterTask 1789533179909").
    *  TM-25/26/28 rename, reschedule and start/hold/end whatever this opens; on a
    *  shared tenant that must never be a colleague's real task (docs/qa/QA_METHOD.md:
    *  never Save on a record you did not create). No eligible task → null → the
-   *  caller skips, which is the honest outcome.
+   *  caller creates one or skips.
    *
-   *  Bounded: at most MAX_ATTEMPTS send-plane clicks across all tabs, so a tenant
-   *  full of non-openable rows ends in a clean skip, not a 200 s test timeout. */
+   *  `preferStatus` ('Running' / 'Hold' / 'Scheduled' …) restricts the candidates to that status.
+   *  Bounded: at most MAX_ATTEMPTS clicks, so a planner full of non-openable cards ends in a clean null. */
   async openFirstOpenableTask(preferStatus) {
     const MAX_ATTEMPTS = 4;
-    const LINKED = /enquiry followup|quotation followup|complaint/i;   // route to their source record
-    const PLAIN = /^(call|online meeting|meeting|activities)$/i;       // try these first
-    let attempts = 0;
-    // Load My Tasks ONCE and switch tabs in place: a re-goto per tab costs a
-    // page load for nothing. There is no #page_size control on this listing
-    // (checked live 2026-09-21) — selecting it blocks for the full 30 s action
-    // timeout per tab, which is what pushed TM-24 past its 200 s budget.
+    const LINKED = /followup|follow-up|complaint|project/i;          // these open their source record, not the panel
+    const PLAIN = /^(call|online meeting|offline meeting|meeting|activities)$/i;   // try these first
     await this.gotoMyTasks();
-    await this.page.waitForTimeout(2500);
-    // Tab labels carry their counts ("Delayed 3", "Today 0") — skip the empty
-    // ones instead of paying a click + settle to discover they're empty. These
-    // buckets are day-scoped, so most are legitimately empty on a quiet day.
-    const counts = {};
-    for (const label of await this.page.locator('li.nav-item').allInnerTexts().catch(() => [])) {
-      const m = label.replace(/\s+/g, ' ').trim().match(/^(.*?)\s+(\d+)$/);
-      if (m) counts[m[1].toLowerCase()] = Number(m[2]);
-    }
-    for (const tab of ['Today', 'Upcoming', 'Delayed', 'Unscheduled', 'Completed']) {
+    await this.waitForTaskList();
+    const want = preferStatus ? new RegExp(preferStatus, 'i') : null;
+    const candidates = (await this.taskCards())
+      .filter((c) => c.view === 'planner' && !LINKED.test(c.type) && /(^(QA_|TM))|\d{13}/.test(c.name) && !/^QA_PRJ_/.test(c.name))
+      .filter((c) => !want || want.test(c.status) || c.chips.some((x) => want.test(x)))
+      .sort((a, b) => Number(PLAIN.test(b.type)) - Number(PLAIN.test(a.type)));
+    let attempts = 0;
+    for (const cand of candidates) {
       if (attempts >= MAX_ATTEMPTS) break;
-      if (counts[tab.toLowerCase()] === 0) continue;
-      if (!/\/my-tasks/.test(this.page.url())) { await this.gotoMyTasks(); await this.page.waitForTimeout(2000); }
-      await this.clickTab(tab);
-      await this.page.waitForTimeout(1200);
-      const candidates = await this.page.evaluate(({ preferStatus, linkedSrc, plainSrc }) => {
-        const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
-        const linked = new RegExp(linkedSrc, 'i'), plain = new RegExp(plainSrc, 'i');
-        const t = [...document.querySelectorAll('table')].filter((x) => x.getClientRects().length)
-          .sort((a, b) => b.querySelectorAll('thead th').length - a.querySelectorAll('thead th').length)[0];
-        if (!t) return [];
-        const hs = [...t.querySelectorAll('thead th')].map((h) => clean(h.innerText));
-        const ti = hs.findIndex((h) => /^task type$/i.test(h));
-        const si = hs.findIndex((h) => /^status$/i.test(h));
-        const ni = hs.findIndex((h) => /^task$/i.test(h));
-        return [...t.querySelectorAll('tbody tr')].map((r, i) => {
-          const c = [...r.querySelectorAll('td')].map((td) => clean(td.innerText));
-          return { i, type: c[ti] || '', status: c[si] || '', name: c[ni] || '',
-            hasOpener: !!r.querySelector('td a i.ri-send-plane-2-line') };
-        }).filter((r) => r.hasOpener && !linked.test(r.type)
-          && /(^(QA_|TM))|\d{13}/.test(r.name)                              // machine-made only
-          && (!preferStatus || new RegExp(preferStatus, 'i').test(r.status)))
-          .sort((a, b) => Number(plain.test(b.type)) - Number(plain.test(a.type)));
-      }, { preferStatus: preferStatus || '', linkedSrc: LINKED.source, plainSrc: PLAIN.source });
-
-      for (const cand of candidates) {
-        if (attempts >= MAX_ATTEMPTS) break;
-        attempts++;
-        const opened = await this._openRowOverview(this.page.locator('table tbody tr').nth(cand.i));
-        if (opened) return cand.name || 'existing task';
-        if (!/\/my-tasks/.test(this.page.url())) break;   // navigated away and couldn't recover — reload this tab loop
-      }
+      attempts++;
+      // the card list can re-draw between reads: find this card again by name before clicking
+      const now = (await this.taskCards()).find((c) => c.view === 'planner' && c.name === cand.name && c.where === cand.where);
+      if (!now) continue;
+      if (await this._openCard(now)) return cand.name;
+      if (!/\/my-tasks/.test(this.page.url())) { await this.gotoMyTasks(); await this.waitForTaskList(); }
     }
     return null;
   }
@@ -947,20 +1065,12 @@ class TaskManagementPage {
     return this._confirmAction();
   }
 
-  /** Status badge for a task row in My Tasks (searched across tabs). null if not found. */
+  /** Status of a task as its My Tasks card shows it: Running / Hold / Finished / Scheduled / Unscheduled. null if not found. */
   async rowStatus(name) {
-    await this.gotoMyTasks();
-    for (const tab of ['default', 'Today', 'Delayed', 'Upcoming', 'Completed', 'Unscheduled']) {
-      if (tab !== 'default') { await this.clickTab(tab); await this.page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {}); await this.page.waitForTimeout(600); }
-      const st = await this.page.evaluate((n) => {
-        const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
-        if (!r) return null;
-        const m = (r.textContent || '').match(/\b(Running|Hold|Scheduled|Completed|Pending|Unscheduled|Not Started)\b/i);
-        return m ? m[1] : 'row-found';
-      }, name);
-      if (st) return st;
-    }
-    return null;
+    const card = await this.findOnPlanner(name);
+    if (card) return card.status;
+    const d = await this.findInDelegated(name, { asCard: true });
+    return d ? d.status : null;
   }
   /** Read the status badges currently shown in the Task Details participant row. */
   /**
@@ -981,29 +1091,11 @@ class TaskManagementPage {
     });
   }
 
-  /** Search My Tasks across every status tab; returns the tab label where found, else null.
-   *  Each tab loads its table via AJAX, so scan with a networkidle wait + retries. */
+  /** Where a task sits: the My Tasks tray ("Delayed" / "Unscheduled") or day ("Mon 16") that holds its card,
+   *  "Delegated" when it is only on the Delegated board (assigned to someone else), else null. */
   async findAcrossTabs(name) {
-    await this.gotoMyTasks();
-    const needle = name.toLowerCase();
-    const scan = async () => {
-      for (let i = 0; i < 4; i++) {
-        const hit = await this.page.evaluate((x) =>
-          [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x)), needle);
-        if (hit) return true;
-        await this.page.waitForTimeout(1000);
-      }
-      return false;
-    };
-    await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
-    if (await scan()) return 'default';
-    for (const tab of ['Today', 'Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
-      await this.clickTab(tab);
-      await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
-      if (await scan()) return tab;
-    }
-    // Party-attached tasks live under DELEGATED Tasks for their creator on the
-    // DEV build (My Tasks can be legitimately empty) — final fallback.
+    const card = await this.findOnPlanner(name);
+    if (card) return card.where || 'My Tasks';
     if (await this.findInDelegated(name)) return 'Delegated';
     return null;
   }
@@ -1015,83 +1107,45 @@ class TaskManagementPage {
       /nothing at this address|page not found|404/i.test(document.body.innerText)).catch(() => false);
   }
 
-  /** True if `name` appears specifically under the given My Tasks status tab.
-   *  (findAcrossTabs short-circuits on the unfiltered view; this pins one bucket.) */
+  /** True if `name` sits in the given My Tasks bucket: 'Delayed' / 'Unscheduled' (the trays), 'Today', 'Upcoming'
+   *  (a later day, this week or the next ones) or 'Completed' (a finished card). */
   async tabContains(name, tabLabel) {
-    await this.gotoMyTasks();
-    // the first tab click can fire before the list is interactive — wait for a
-    // non-empty data row first, then click, then scan generously
-    await this.page.waitForFunction(() =>
-      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
-      { timeout: 15000 }).catch(() => {});
-    await this.clickTab(tabLabel);
-    await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
-    const needle = name.toLowerCase();
-    for (let i = 0; i < 6; i++) {
-      const hit = await this.page.evaluate((x) =>
-        [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').toLowerCase().includes(x)), needle);
-      if (hit) return true;
-      if (i === 2) await this.clickTab(tabLabel);   // re-click once in case the first fired too early
-      await this.page.waitForTimeout(1500);
-    }
-    return false;
+    const card = await this.findOnPlanner(name);
+    if (!card) return false;
+    if (/^completed$/i.test(tabLabel)) return card.status === 'Finished';
+    if (/^today$/i.test(tabLabel)) return card.today;
+    if (/^upcoming$/i.test(tabLabel)) return !card.today && !/delayed|unscheduled/i.test(card.where) && card.status !== 'Finished';
+    return new RegExp(`^${tabLabel}$`, 'i').test(card.where);
   }
 
-  /** Bucket-agnostic row lookup: scan every My Tasks tab, then Delegated Tasks,
-   *  and return the matching row's TEXT (carries the status badge + dates), or null.
-   *  Use this instead of asserting WHICH tab a task is under — the DEV build has a
-   *  known bucketing bug (scheduled future tasks list under "Unscheduled", badges 0). */
+  /** Bucket-agnostic lookup: the task's card on My Tasks (any week, completed too), then on the Delegated board,
+   *  as one line of text ("name | type | status | where time | chips | assignees"), or null. */
   async findTaskRowText(name) {
-    const scanRow = () => this.page.evaluate((n) => {
-      const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
-      return r ? (r.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 140) : null;
-    }, name);
-    await this.gotoMyTasks();
-    await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
-    let row = await scanRow();
-    if (row) return row;
-    for (const tab of ['Today', 'Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
-      await this.clickTab(tab);
-      row = await scanRow();
-      if (row) return row;
-    }
+    const card = await this.findOnPlanner(name);
+    if (card) return this.cardText(card).slice(0, 200);
     return this.findInDelegated(name);
   }
 
-  /** Find a task by name on the Delegated Tasks page (where party-attached tasks
-   *  live for their CREATOR on the DEV build — the save even redirects there).
-   *  Searches by name and returns the matching row's text (has the Status badge),
-   *  or null if not found. */
-  async findInDelegated(name) {
-    if (!/delegated-tasks/.test(this.page.url())) await this.gotoDelegated();
-    await this.page.waitForFunction(() =>
-      [...document.querySelectorAll('table tbody tr')].some(r => (r.textContent || '').trim().length > 0),
-      { timeout: 15000 }).catch(() => {});
-    const search = this.page.locator('input[placeholder*="Search" i]:visible').first();
-    if (await search.count().catch(() => 0)) {
-      await search.fill(name).catch(() => {});
-      await search.press('Enter').catch(() => {});
-      // some builds only search via the magnifier button next to the box
-      await search.locator('xpath=following-sibling::button[1]').click().catch(() => {});
-      await this.page.waitForTimeout(2500);
-    }
-    const scanRow = () => this.page.evaluate((n) => {
-      const r = [...document.querySelectorAll('table tbody tr')].find(x => (x.textContent || '').includes(n));
-      return r ? (r.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120) : null;
-    }, name);
-    for (let i = 0; i < 4; i++) {
-      const row = await scanRow();
-      if (row) return row;
-      await this.page.waitForTimeout(1500);
-    }
-    // the Delegated page has its own status tabs — a future-dated task sits under
-    // Upcoming, not the default Today view
-    for (const tab of ['Upcoming', 'Unscheduled', 'Delayed', 'Completed']) {
-      await this.clickTab(tab);
-      const row = await scanRow();
-      if (row) return row;
-    }
-    return null;
+  /** Find a task by name on the Delegated Tasks board (where a task assigned to someone else sits for its
+   *  CREATOR). Searches by name under "All open", then under "Completed". Returns the card's text (it carries
+   *  the column = status), or the card itself with { asCard: true }; null if not found. */
+  async findInDelegated(name, { asCard = false } = {}) {
+    await this.gotoDelegated();
+    await this.waitForTaskList();
+    await this.searchTasks(name);
+    const needle = name.toLowerCase();
+    const look = async (tries = 3) => {
+      for (let i = 0; i < tries; i++) {
+        const hit = (await this.taskCards()).find((c) => c.view === 'board' && c.name.toLowerCase().includes(needle));
+        if (hit) return hit;
+        await this.page.waitForTimeout(1000);
+      }
+      return null;
+    };
+    let card = await look();
+    if (!card) { await this.clickTab('Completed'); card = await look(2); }
+    if (!card) return null;
+    return asCard ? card : this.cardText(card).slice(0, 200);
   }
 
   /** Daily Activity Report: wait for rows and return the count. */

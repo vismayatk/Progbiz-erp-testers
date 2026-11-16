@@ -127,6 +127,9 @@ class QuotationPage {
     const dead = await this.page.evaluate(() =>
       /nothing at this address|page not found/i.test(document.body.innerText)).catch(() => false);
     if (!dead) {
+      // 12 Nov 2026: /quotations opens on a Board of cards; the grid with the QUO numbers is behind the "Table" toggle
+      const tableToggle = this.page.locator('#quot-view-table:visible');
+      if (await tableToggle.count().catch(() => 0)) { await tableToggle.click().catch(() => {}); await this.page.waitForTimeout(1500); }
       await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
       await this.page.waitForTimeout(1500);
       console.log('  📋 /quotations listing loaded');

@@ -62,13 +62,20 @@ test.describe('Work Flow — Project flow', () => {
   test('WF-02 | Every Type carries a template of phases and tasks', async () => {
     const types = await wf.readTypes();
     expect(types.length, 'no Types configured for the module').toBeGreaterThan(0);
-    for (const t of types) {
+    // A type marked "Manual Phases: Yes" has no template by design (its phases are added by hand on
+    // each project), so only the template types must carry phases and tasks. On 14 Nov 2026 the
+    // tenant had one of each: "One touch project" (template) and "test" (manual, 0 / 0).
+    const templated = types.filter((t) => !t.manual);
+    const manual = types.filter((t) => t.manual);
+    expect(templated.length, 'no template Type (Manual Phases: No) configured for the module').toBeGreaterThan(0);
+    for (const t of templated) {
       expect(t.phases, `type "${t.type}" has no phases in its template`).toBeGreaterThan(0);
       expect(t.tasks,  `type "${t.type}" has no tasks in its template`).toBeGreaterThan(0);
     }
-    // Remember one type for the creation tests — the first, so the choice is
+    if (manual.length) console.log(`  ℹ ${manual.length} manual-phase type(s) without a template: ${manual.map((t) => t.type).join(', ')}`);
+    // Remember one type for the creation tests — the first template type, so the choice is
     // deterministic per tenant but never hardcoded.
-    templateType = types[0];
+    templateType = templated[0];
     console.log(`  ✅ ${types.length} type(s); using "${templateType.type}" (${templateType.phases} phases / ${templateType.tasks} tasks)`);
   });
 

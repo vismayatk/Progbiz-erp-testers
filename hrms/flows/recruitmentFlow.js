@@ -421,10 +421,79 @@ async function sendPreboardingInvite(page, rec) {
     'after inviting, the row should offer "Resend Invite"').toBeVisible({ timeout: 15000 });
 }
 
+/**
+ * Copy the candidate pre-boarding portal link for this run's candidate (no e-mail is sent). The
+ * "Copy Pre-boarding Link" action is offered on /offer-acceptance only while the invite is still
+ * valid (an expired invite only offers "Resend"). Returns the clipboard URL.
+ * The caller must have granted the context clipboard-read/clipboard-write permission.
+ */
+async function copyPreboardingLink(page, rec) {
+  const fk = new FormKit(page);
+  await fk.gotoReady(`${BASE}/offer-acceptance`, { ready: /Accepted Offers|Offer Acceptance/i });
+  await page.waitForTimeout(1500);
+  const row = page.locator('table tbody tr').filter({ hasText: rec.candidateEmail }).first();
+  await expect(row, `the offer-acceptance row for ${rec.candidateEmail}`).toBeVisible({ timeout: 25000 });
+  const more = row.locator('button, a').filter({ hasText: /More actions/i })
+    .or(row.locator('[aria-label*="More actions" i], [title*="More actions" i]'))
+    .or(row.locator('button').filter({ has: page.locator('i.fa-ellipsis-v, i.bi-three-dots, i.bi-three-dots-vertical') })).first();
+  if (await more.count()) { await more.click().catch(() => {}); await page.waitForTimeout(700); }
+  const copy = page.locator('.dropdown-menu.show a, .dropdown-menu.show button, button, a')
+    .filter({ hasText: /Copy Pre-?boarding Link/i }).first();
+  await expect(copy, '"Copy Pre-boarding Link" (shown while the invite is valid)').toBeVisible({ timeout: 12000 });
+  await copy.click();
+  await page.waitForTimeout(1000);
+  let url = '';
+  try { url = await page.evaluate(() => navigator.clipboard.readText()); } catch (e) { /* permission */ }
+  await page.keyboard.press('Escape').catch(() => {});
+  expect(url, 'the clipboard should hold the candidate-preboarding URL').toMatch(/\/candidate-preboarding\//);
+  return url;
+}
+
+/** Realistic candidate pre-boarding details for this run. */
+function preboardingDetails(rec) {
+  const last9 = String(Date.now()).slice(-9);
+  return {
+    fullName: rec.candidateName,
+    email: rec.candidateEmail,
+    dob: '1996-05-14',
+    address: '42 MG Road, Kochi, Kerala 682016',
+    aadhaar: ('2468' + last9).slice(0, 12),
+    pan: 'ABCPK' + last9.slice(0, 4) + 'Q',
+    emergencyName: 'Meera ' + (rec.cand && rec.cand.last || 'Nair'),
+    emergencyPhone: '98' + last9.slice(0, 8),
+    bankName: 'State Bank of India',
+    accountHolder: rec.candidateName,
+    accountNumber: '3' + last9 + last9.slice(0, 2),
+    ifsc: 'SBIN0001234',
+    branch: 'Kochi Main',
+    nomineeName: 'Meera ' + (rec.cand && rec.cand.last || 'Nair'),
+    nomineeAge: '34',
+    nomineePhone: '97' + last9.slice(0, 8),
+  };
+}
+
+/**
+ * Candidate-side pre-boarding SUBMISSION. Opens the copied portal URL in a fresh (unauthenticated)
+ * page acting as the candidate, fills the details + documents, and submits. Returns a result
+ * `{ ok, errors, body, readOnly }`. If the invite was already submitted the page is read-only.
+ */
+async function submitPreboardingDetails(context, url, rec) {
+  const { CandidatePreboardingPage } = require('../pages/recruitment/CandidatePreboardingPage');
+  const cand = await context.newPage();
+  const po = new CandidatePreboardingPage(cand);
+  await po.open(url);
+  if (await po.isReadOnly()) { const body = (await cand.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').slice(0, 200); await cand.close(); return { ok: true, readOnly: true, errors: [], body, page: null }; }
+  await po.fill(preboardingDetails(rec));
+  const res = await po.submit();
+  if (!res.ok) await po.dumpControls().catch(() => {});
+  return { ...res, readOnly: false, page: cand };
+}
+
 module.exports = {
   BASE, DEPARTMENT, DESIGNATION, BRANCH, dtLocal,
   clickLauncher, gotoCandidatesRegister, searchRegister, candidateRow, assertCandidateListed,
   candidateNameTaken, openAddCandidate, readRows, rowOn, rowMenuAction, approveRecruitmentRequest,
   addInterviewRound, scheduleInterview, recordEvaluation, createOffer, submitAndApproveOffer,
   sendOfferAndRecordAcceptance, sendPreboardingInvite,
+  copyPreboardingLink, preboardingDetails, submitPreboardingDetails,
 };

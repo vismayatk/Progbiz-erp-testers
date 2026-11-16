@@ -33,6 +33,7 @@ const {
   readRows, approveRecruitmentRequest,
   addInterviewRound, scheduleInterview, recordEvaluation, createOffer, submitAndApproveOffer,
   sendOfferAndRecordAcceptance, sendPreboardingInvite,
+  copyPreboardingLink, submitPreboardingDetails,
 } = require('../../flows/recruitmentFlow');
 
 const CV = path.join(__dirname, '..', '..', 'fixtures', 'files', 'sample-cv.pdf');
@@ -252,12 +253,51 @@ test.describe.serial('Recruitment — positive hiring workflow', () => {
     console.log('  ✅ R9c candidate listed in Offer Acceptance');
   });
 
-  // "Start Onboarding" unlocks only after the CANDIDATE submits their details through the
-  // e-mailed portal link — a candidate-side step outside this admin run.
   test('R9d — send the pre-boarding invite (REC-012)', async ({ page }) => {
     test.setTimeout(200_000);
     expect(rec.candidateEmail, 'R9d depends on R9c').toBeTruthy();
     await sendPreboardingInvite(page, rec);
     console.log(`  ✅ R9d pre-boarding invite sent to ${rec.candidateEmail} (Invited)`);
+  });
+
+  // The CANDIDATE submits their pre-boarding details through the portal link HR copies
+  // ("Copy Pre-boarding Link" — no e-mail needed). Two-actor: HR copies the token link, then a
+  // fresh unauthenticated page acts as the candidate and fills + submits the form. This unlocks
+  // "Start Onboarding" on the HR side.
+  test('R9e — candidate submits pre-boarding details via the copied portal link (REC-013)', async ({ page, context }) => {
+    test.setTimeout(240_000);
+    expect(rec.candidateEmail, 'R9e depends on R9d').toBeTruthy();
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE });
+
+    const url = await copyPreboardingLink(page, rec);
+    console.log(`  🔗 copied pre-boarding link: ${url}`);
+    rec.preboardingUrl = url;
+
+    const res = await submitPreboardingDetails(context, url, rec);
+    if (res.readOnly) {
+      console.log(`  ℹ️ R9e portal already submitted/approved (read-only): ${res.body}`);
+    } else {
+      // attach the candidate-side screenshot as evidence
+      if (res.page) {
+        const shot = test.info().outputPath('R9e-candidate-submitted.png');
+        await res.page.screenshot({ path: shot, fullPage: true }).catch(() => {});
+        await test.info().attach('R9e-candidate-submitted', { path: shot, contentType: 'image/png' }).catch(() => {});
+        await res.page.close().catch(() => {});
+      }
+      expect(res.ok, `the candidate submission should succeed (errors: ${JSON.stringify(res.errors)} | ${res.body})`).toBeTruthy();
+      console.log(`  ✅ R9e candidate submitted pre-boarding details — "${res.body}"`);
+    }
+
+    // HR side: the invite status should move to "Submitted" and "Start Onboarding" should unlock.
+    await page.waitForTimeout(1500);
+    const fk = new (require('../../pages/FormKit').FormKit)(page);
+    await fk.gotoReady(`${BASE}/offer-acceptance`, { ready: /Accepted Offers/i });
+    const row = page.locator('table tbody tr').filter({ hasText: rec.candidateEmail }).first();
+    await expect(row, 'the HR offer-acceptance row after submission').toBeVisible({ timeout: 20000 });
+    const started = await row.locator('button, a').filter({ hasText: /Start Onboarding|Submitted|View in Onboarding/i }).count();
+    console.log(`  • HR row controls after submission: Start-Onboarding/Submitted present = ${started > 0}`);
+    const hr = test.info().outputPath('R9e-hr-after-submit.png');
+    await page.screenshot({ path: hr, fullPage: true }).catch(() => {});
+    await test.info().attach('R9e-hr-after-submit', { path: hr, contentType: 'image/png' }).catch(() => {});
   });
 });

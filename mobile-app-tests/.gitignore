@@ -1,0 +1,7 @@
+# Mobile automation — ignore runtime artifacts and local scratch
+screens/            # emulator screenshots captured during runs
+exploration/        # ad-hoc device probes / scratch
+.claude/            # local panel settings
+*.png
+*.apk
+apk/

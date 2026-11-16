@@ -44,8 +44,10 @@ module.exports = [
   P('Onboarding', 'Onboarding Templates', 'onboarding-templates', 'createOnboardingTemplate'),
   P('Onboarding', 'Onboarding Pipeline', 'onboarding-pipeline'),
   P('Onboarding', 'Pre-boarding Approvals', 'preboarding-approvals'),
-  P('Onboarding', 'Onboarding Tasks', 'onboarding-tasks'),
-  P('Onboarding', 'Onboarding Employees', 'onboarding-employees'),
+  // 2026-11-02: devs restructured Onboarding — '/onboarding-tasks' moved to '/my-onboarding-tasks'
+  // (listed under My Workspace below) and '/onboarding-employees' was removed; two report pages added.
+  P('Onboarding', 'Onboarded Employees Report', 'onboarded-employees-report'),
+  P('Onboarding', 'Onboarding Task Report', 'onboarding-task-report'),
   P('Onboarding', 'Blacklisted Employees', 'blacklisted-employees'),
   P('Onboarding', 'Training Courses', 'training-courses', 'createTrainingCourse'),
   P('Onboarding', 'Probation Templates', 'hrms/probation-templates', 'createProbationTemplate'),

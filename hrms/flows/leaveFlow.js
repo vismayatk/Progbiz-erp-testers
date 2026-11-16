@@ -79,21 +79,25 @@ async function availableDays(page, code, typeRe = /Casual Leave/i) {
 }
 
 /**
- * Admin "Apply Leave for Employee" → Apply and Approve, 1 day of Casual Leave on `day`.
- * Fails on a refusal; verifies the Casual balance drops by 1 on a fresh read. → { day, before, after }
+ * Admin "Apply Leave for Employee" → Apply and Approve, 1 day of `typeName` on `day`.
+ * `typeName` defaults to Casual Leave; pass a different type (e.g. Medical Leave) when another step
+ * in the same run needs the Casual balance (a new employee's auto-assigned pattern grants only a
+ * couple of days per type). Fails on a refusal; verifies that type's balance drops by 1 on a fresh
+ * read. → { day, before, after }
  */
-async function applyOnBehalf(page, code, day) {
+async function applyOnBehalf(page, code, day, typeName = 'Casual Leave') {
   const fk = new FormKit(page);
+  const typeRe = new RegExp(typeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
   const nameRe = new RegExp(`\\[${code}\\]`);
   await page.goto(`${BASE}/leave-request-on-behalf`, { waitUntil: 'domcontentloaded' });
   await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
   await selectOnBehalfEmployee(page, nameRe);
   const lt = leaveTypeSelect(page);
   await expect(lt, 'Leave Type select should be present').toBeVisible({ timeout: 20000 });
-  const casual = (await lt.locator('option').allTextContents()).find(t => /Casual Leave/i.test(t));
-  expect(casual, 'Casual Leave with an available balance').toBeTruthy();
+  const casual = (await lt.locator('option').allTextContents()).find(t => typeRe.test(t));
+  expect(casual, `${typeName} with an available balance`).toBeTruthy();
   const before = Number((casual.match(/(\d+)\s*d available/i) || [])[1] ?? NaN);
-  expect(Number.isNaN(before), 'Casual Leave should show "<n> d available"').toBe(false);
+  expect(Number.isNaN(before), `${typeName} should show "<n> d available"`).toBe(false);
   await lt.selectOption({ label: casual });
   await page.waitForTimeout(1500);
   await fk.setInput(page.getByText(/Start Date \*/i).first().locator('xpath=following::input[@type="date"][1]'), day, 'Start Date');
@@ -112,8 +116,8 @@ async function applyOnBehalf(page, code, day) {
     await page.waitForTimeout(400);
   }
   expect(said, 'the app should confirm the leave was applied and approved').toMatch(/balance is updated|applied for .* and approved/i);
-  const after = await availableDays(page, code);
-  expect(after, `Casual Leave available should drop from ${before} to ${before - 1}`).toBe(before - 1);
+  const after = await availableDays(page, code, typeRe);
+  expect(after, `${typeName} available should drop from ${before} to ${before - 1}`).toBe(before - 1);
   return { day, before, after };
 }
 

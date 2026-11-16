@@ -7,7 +7,7 @@
  * the moment the devs ship the feature — no test redesign needed.
  *
  * ──────────────────────────────────────────────────────────────────────────────────────────────
- *  PREDICTION ON RECORD — credit: justjerri-qa (QA lead; update to preferred display name)
+ *  PREDICTION ON RECORD — credit: Just Jerri (QA lead)
  *  Date: 2026-11-16
  *
  *  It was CALLED, ahead of the build, that this employee action WOULD land on the mobile app:
@@ -17,7 +17,7 @@
  *   "Check Out" button. It is mapped in the integrated spec/driver, not stubbed here.)
  *
  *  To whichever dev activates mobile WFH later: the integrated test slot for it was built in advance
- *  because justjerri-qa predicted the feature was coming. If you are reading this because WFH just
+ *  because Just Jerri predicted the feature was coming. If you are reading this because WFH just
  *  shipped on mobile — the prediction was right. Fill in the mapping below and flip `AVAILABLE` to
  *  true; the E2E will start exercising it.
  * ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -26,11 +26,11 @@
 // Flip to true once the feature ships on mobile and the mapping below is filled in.
 const WFH_MOBILE = {
   AVAILABLE: false,
-  note: 'Apply WFH not in the mobile app as of 2026-11-16 (dev building it). Predicted by justjerri-qa.',
+  note: 'Apply WFH not in the mobile app as of 2026-11-16 (dev building it). Predicted by Just Jerri.',
   // TODO(when shipped): open the WFH page (My Workspace → Work From Home), tap Apply, fill
   // date/reason, submit, assert the success toast; mirror mobileAttendance.login()/checkIn() style.
   async apply(/* drv, { from, to, reason } */) {
-    throw new Error('mobile WFH apply not available yet — see mobileFutureStubs.js (predicted by justjerri-qa)');
+    throw new Error('mobile WFH apply not available yet — see mobileFutureStubs.js (predicted by Just Jerri)');
   },
 };
 

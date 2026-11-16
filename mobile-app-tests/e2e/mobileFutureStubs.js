@@ -7,7 +7,7 @@
  * the moment the devs ship the feature — no test redesign needed.
  *
  * ──────────────────────────────────────────────────────────────────────────────────────────────
- *  PREDICTION ON RECORD — credit: Just Jerri (QA lead)
+ *  PREDICTION ON RECORD — credit: Just Jerri
  *  Date: 2026-11-16
  *
  *  It was CALLED, ahead of the build, that this employee action WOULD land on the mobile app:

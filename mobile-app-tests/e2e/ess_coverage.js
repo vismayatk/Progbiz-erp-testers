@@ -1,17 +1,18 @@
 'use strict';
 
 /**
- * MOBILE ESS COVERAGE (complete) — walk the WHOLE employee app, exercise the safe actions, assert
+ * MOBILE HRMS/ESS COVERAGE — walk the employee app's HRMS surface, exercise the safe actions, assert
  * each, screenshot each, and write an issues report.
  *
  * The Progbiz ERP Android app is the minimal employee (self-service) view of the web HRMS. This
- * script signs in as a test employee and covers the entire surface:
- *   • 4 bottom-nav tabs  — Home, Calendar, Tasks, Account/Settings
- *   • 17 menu pages      — Dashboard · Task Management (Timeline/My Tasks/Delegated/To Do/Daily
- *                          Activity) · My Workspace (Workspace/Profile/Approvals/Requests/Leave/
- *                          Handover/Attendance/Team Calendar/Shift/Locations) · Credentials
+ * script signs in as a test employee and covers the HRMS/ESS surface only:
+ *   • bottom-nav shell   — Home, Calendar, Account/Settings
+ *   • 11 HRMS pages      — My Workspace (Workspace/Profile/Approvals/Requests/Leave/Handover/
+ *                          Attendance/Team Calendar/Shift/Locations) · Credentials
  *   • in-page actions    — Apply Leave, New Request, Add Request, Add Location, Request a Change,
- *                          Approve/Reject (present-only), create-task, tab switches
+ *                          tab switches
+ * The ERP Task module (Task dashboard, Timeline, My Tasks, Delegated, To Do, Daily Activity, task
+ * widgets) is a generic task tracker, NOT HRMS, and is intentionally excluded.
  * Each item is classified OK / EMPTY / ERROR / NO-NAV / NO-FORM / REVIEW, screenshotted, and rolled
  * into reports/mobile/<run>/report.md (+ .json). NON-DESTRUCTIVE: opens forms and cancels, never
  * submits, never approves/rejects, never logs out.
@@ -32,12 +33,12 @@ const CREDS = {
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const sh = (c) => { try { return execSync(c, { cwd: MOBILE_DIR, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim(); } catch { return ''; } };
+const sh = (c) => { try { return execSync(c, { cwd: MOBILE_DIR, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 20000, killSignal: 'SIGKILL' }).trim(); } catch { return ''; } };  // hard timeout: no single adb/emu child can wedge the run
 const adb = (a) => sh(`"${drv.ADB}" -s ${drv.SERIAL} ${a}`);
 const emu = (a) => sh(`node panel/emu.js ${a}`);
 const tap = (x, y) => emu(`tap ${x} ${y}`);
 const tapText = (t) => emu(`tap-text "${t}"`);
-const ui = () => emu('ui');
+const ui = () => { for (let i = 0; i < 2; i++) { const u = emu('ui'); if (u && u.trim()) return u; } return ''; };  // retry on empty dump (uiautomator races Flutter semantics)
 const has = (re) => re.test(ui());
 const hasInputs = () => /EditText|TextField|input/i.test(ui());
 
@@ -47,18 +48,14 @@ const GROUPS = ['Dashboard', 'Task Management', 'My Workspace', 'Credentials'];
 const NAVTABS = [
   { name: 'Nav: Home',     x: 105, y: 2246, expect: /Hello|Completed|Pending|Check|Today Tasks/i },
   { name: 'Nav: Calendar', x: 329, y: 2246, expect: /Calendar|November|2026|\bS\b|\bM\b/i },
-  { name: 'Nav: Tasks',    x: 751, y: 2246, expect: /Task|Unscheduled|Nothing here/i },
   { name: 'Nav: Account',  x: 975, y: 2246, expect: /Lakshmi|progbiz|Staff|Setting|Logout|Log out|Profile/i },
+  // Nav: Tasks (bottom-nav task list) omitted — Task module is not HRMS.
 ];
 
 // Menu pages {name, group, item, expect, tabs?, action?}
 const PAGES = [
-  { name: 'Dashboard',       group: 'Dashboard',       item: 'Task',            expect: /Dashboard|Status|HIGH|Task|Overview/i },
-  { name: 'Timeline',        group: 'Task Management', item: 'Timeline',        expect: /Timeline|Calendar|November|task|Nothing/i },
-  { name: 'My Tasks',        group: 'Task Management', item: 'My Tasks',        expect: /My Tasks|task|Nothing|Unscheduled/i },
-  { name: 'Delegated Tasks', group: 'Task Management', item: 'Delegated Tasks', expect: /Delegat|task|Nothing/i },
-  { name: 'To Do',           group: 'Task Management', item: 'To Do',           expect: /To.?Do|task|Nothing/i },
-  { name: 'Daily Activity',  group: 'Task Management', item: 'Daily Activity',  expect: /Daily Activity|report|Nothing|Apply/i },
+  // NOTE: the ERP Task module (Task dashboard, Timeline, My Tasks, Delegated, To Do, Daily Activity)
+  // is a generic task tracker, NOT HRMS — intentionally excluded. HRMS/ESS surfaces only below.
   { name: 'Workspace',       group: 'My Workspace',    item: 'Workspace',       expect: /Workspace|Leave|Attendance|Profile|Apply/i },
   { name: 'Profile',         group: 'My Workspace',    item: 'Profile',         expect: /Profile|Personal|Employee Code|Lakshmi|Designation/i,
     tabs: ['Personal', 'Job', 'Contact', 'Bank'],
@@ -88,26 +85,44 @@ function snap(label) {
   return `screens/${name}.png`;
 }
 
-const atHome = () => /Hello |Today Tasks|Get real-time insights/i.test(ui());
-function dismissDialogs() {
-  if (has(/Maybe Later/i)) tapText('Maybe Later');
-  if (has(/Continue Without Check-in/i)) tapText('Continue Without Check-in');
+const HOME_RE = /Hello |Today Tasks|Get real-time insights|View All/i;
+
+/** One UI dump, dismissing the blocking nags (update prompt / check-in prompt) inline. */
+function dump() {
+  let u = ui();
+  if (/Maybe Later/i.test(u)) { tapText('Maybe Later'); u = ui(); }
+  if (/Continue Without Check-in/i.test(u)) { tapText('Continue Without Check-in'); u = ui(); }
+  return u;
 }
 
-/** Bring the app to its HOME dashboard. The app restores its last route and the Task sub-module
- *  traps navigation, so: (1) back out of any form, (2) tap the Home bottom-nav, (3) if still not
- *  home, do a full reset (pm clear + re-login) which always escapes to the dashboard. */
+/** Poll (up to ms) for the HOME shell to paint. ui() itself blocks ~2-3s, so this self-paces —
+ *  no fixed sleeps needed, and it separates "did the tap work" from "has it rendered yet", which
+ *  is what the old single-shot check got wrong (it raced the render → false "not home"). */
+function pollHome(ms) {
+  const end = Date.now() + ms;
+  do { if (HOME_RE.test(dump())) return true; } while (Date.now() < end);
+  return false;
+}
+async function geoSafe() { try { await drv.setGeo(11.891560, 75.468381, 1); } catch {} }
+
+/** Bring the app to its HOME shell (where the hamburger lives). Cheap path first: tap the Home
+ *  bottom-nav and POLL for the dashboard to render. Only after 3 cheap attempts genuinely fail do
+ *  we pay for the hard reset (pm clear + re-login) — which the old code hit on nearly every page
+ *  because its one-shot home check kept racing the render. */
 async function goToDashboard() {
-  for (let i = 0; i < 2 && !atHome(); i++) { tap(74, 228); await sleep(1200); }   // exit a form/detail
-  dismissDialogs();
-  for (let i = 0; i < 4 && !atHome(); i++) { tap(105, 2246); await sleep(1800); }  // Home tab
-  dismissDialogs();
-  if (!atHome()) {                                                                 // trapped → hard reset
-    await drv.launchApp({ fresh: true });
-    await drv.login(CREDS);
-    for (let i = 0; i < 3 && !atHome(); i++) { tap(105, 2246); await sleep(1800); }
+  if (pollHome(1)) { await geoSafe(); return true; }           // already home (1 dump)
+  for (let i = 0; i < 3; i++) {
+    tap(105, 2246); await sleep(500);                          // Home bottom-nav tab
+    if (pollHome(6000)) { await geoSafe(); return true; }      // poll ~2-3 dumps for the render
   }
-  try { await drv.setGeo(11.891560, 75.468381, 1); } catch {}
+  // Trapped → PLAIN relaunch. The app keeps its session (stays logged in), so we must NOT pm clear
+  // or re-login here: that was the real killer — a flaky/empty dump made login() miss that we were
+  // already in, loop, then pm clear and degrade the device. A plain relaunch + Home tap is enough.
+  await drv.launchApp({});
+  for (let i = 0; i < 3 && !pollHome(1); i++) { tap(105, 2246); await sleep(600); }
+  const ok = pollHome(6000);
+  await geoSafe();
+  return ok;
 }
 
 /** Open the hamburger, collapse the other groups, expand the target, and tap the item. */
@@ -119,7 +134,7 @@ async function openPage(group, item) {
     if (g !== group && new RegExp(`desc="${g}, Expanded"`).test(ui())) { tapText(g); await sleep(800); }
   }
   if (new RegExp(`desc="${group}, Collapsed"`).test(ui())) { tapText(group); await sleep(900); }
-  for (let s = 0; s < 6 && !itemRe.test(ui()); s++) { emu('scroll down'); await sleep(600); }
+  for (let s = 0; s < 9 && !itemRe.test(ui()); s++) { emu('scroll down'); await sleep(600); }
   if (!itemRe.test(ui())) return false;
   tapText(item); await sleep(3500);
   return !/Version 2\.0|desc="(Dashboard|Task Management|My Workspace|Credentials), (Collapsed|Expanded)"/i.test(ui());
@@ -158,9 +173,15 @@ async function probeAction(a) {
   SHOTS = path.join(OUT, 'screens');
   fs.mkdirSync(SHOTS, { recursive: true });
 
-  console.log('• ensuring emulator + login…');
+  console.log('• ensuring emulator + app at home…');
   await drv.ensureBooted();
-  if (!await drv.login(CREDS)) { await drv.launchApp({ fresh: true }); await drv.login(CREDS); }
+  await drv.launchApp({});                         // plain launch — the app persists its session
+  // Best-effort home; NEVER log in or pm-clear here. The app stays signed in across the session, so
+  // a login/wipe is never needed — and a pm-clear permanently degrades uiautomator for this boot
+  // (the cause of every prior startup hang). If home-detection is flaky, we proceed anyway and the
+  // per-page screenshot is the evidence; a page that can't be reached is just logged NO-NAV.
+  await goToDashboard();
+  console.log('• at home — starting walk');
 
   const results = [];   // {kind, name, status, snippet, detail, shot, extra[]}
 
@@ -206,20 +227,7 @@ async function probeAction(a) {
     console.log(status + (extra.length ? ` (+${extra.length})` : ''));
   }
 
-  // ---- 3. dashboard widgets (present-only checks) ----
-  process.stdout.write('• Dashboard widgets … ');
-  await goToDashboard();
-  const dtxt = pageText(), du = ui();
-  const widgets = [
-    { name: 'Task work-timer (Check In/Out)', ok: /Check Out|Check In|\d\d:\d\d:\d\d/i.test(du) },
-    { name: 'Task status tiles', ok: /Completed|Delayed|Pending/i.test(dtxt) },
-    { name: 'Today Tasks / View All', ok: /Today Tasks|View All/i.test(dtxt) },
-    { name: 'Create-task (+) FAB', ok: /desc=""/.test(du) || /\+|Add|Create/i.test(du) },
-    { name: 'Menu (hamburger)', ok: /85,221/.test(du) },
-  ];
-  const dshot = snap('Dashboard-widgets');
-  results.push({ kind: 'widgets', name: 'Dashboard widgets', status: widgets.every((w) => w.ok) ? 'OK' : 'REVIEW', snippet: widgets.map((w) => `${w.ok ? '✓' : '✗'} ${w.name}`).join(' · '), shot: dshot, extra: widgets.map((w) => ({ name: w.name, status: w.ok ? 'OK' : 'MISSING' })) });
-  console.log('done');
+  // (Dashboard task-widget probe removed — the Task module is not HRMS.)
 
   // ---- report ----
   const flat = [];

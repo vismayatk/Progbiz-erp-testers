@@ -34,6 +34,8 @@
     "hrms:wfh": "node hrms/scripts/run-module.js wfh",
     "hrms:meeting": "node hrms/scripts/run-module.js meeting",
     "hrms:mobile": "node mobile-app-tests/run.js",
+    "hrms:mobile:inout": "node mobile-app-tests/run.js attendance_in_out_e2e",
+    "hrms:mobile:leave": "node mobile-app-tests/run.js leave_sync_e2e",
     "hrms:mobile:coverage": "node mobile-app-tests/e2e/ess_coverage.js",
     "hrms:linear": "node hrms/scripts/run-module.js linear",
     "hrms:all": "node hrms/scripts/run-module.js all"

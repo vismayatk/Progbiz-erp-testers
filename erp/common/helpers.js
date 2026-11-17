@@ -107,4 +107,24 @@ async function throwIfServerError(page, timeoutMs = 4000) {
   return false;
 }
 
-module.exports = { screenshot, getAlertText, clickByText, selectOption, waitOverviewReady, throwIfServerError };
+/**
+ * Detect and dismiss the app's "Too many requests" rate-limit dialog
+ * ("Too many attempts. Please wait a little while and try again." + OK).
+ * Seen live on 2026-09-21 during a long single-session run (crm_enquiry ENQ-16,
+ * ~90 min / 140+ tests in) — a genuine server-side throttle, not a UI bug.
+ * A tight client-side retry loop (as in EnquiryPage.addItem) can itself walk
+ * straight into this if it fires several requests in a few seconds, so callers
+ * that retry should check for this and back off longer than their normal gap.
+ * Returns true if the dialog was present (and has now been dismissed).
+ */
+async function dismissRateLimit(page, timeoutMs = 1500) {
+  const dlg = page.getByText(/too many (requests|attempts)/i).first();
+  const seen = await dlg.waitFor({ state: 'visible', timeout: timeoutMs }).then(() => true).catch(() => false);
+  if (!seen) return false;
+  console.log('  ⏳ "Too many requests" dialog seen — dismissing and backing off');
+  await page.getByRole('button', { name: /^ok$/i }).first().click().catch(() => {});
+  await page.waitForTimeout(500);
+  return true;
+}
+
+module.exports = { screenshot, getAlertText, clickByText, selectOption, waitOverviewReady, throwIfServerError, dismissRateLimit };

@@ -1,0 +1,179 @@
+{
+  "_source": "Beta product video (beta.progbiz.io), Bordio-style 4-minute walkthrough. Every claim was checked against the live pages on 2026-09-29 (reports/video/beta/scout/). Draft wording — awaiting Vismaya's approval.",
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_s": 240,
+    "codec": "H.264 MP4",
+    "pace_wpm": [
+      135,
+      150
+    ]
+  },
+  "sections": [
+    {
+      "id": "01_opening",
+      "title": "Opening",
+      "slot": [
+        0,
+        21
+      ],
+      "visual": "Title card, then a quick montage of Home, AI Assistant, Dashboard, Kanban",
+      "sentences": [
+        "Leads arrive from everywhere — Facebook ads, your website, WhatsApp and phone calls.",
+        "Keeping track of every one of them, and every follow-up, is where sales teams lose deals.",
+        "Meet ProgBiz ERP — one CRM that keeps your whole sales team on the same page."
+      ],
+      "callouts": []
+    },
+    {
+      "id": "02_home",
+      "title": "Home",
+      "slot": [
+        21,
+        43
+      ],
+      "visual": "Home: summary cards, Today's Schedule, Followup History, Summary",
+      "sentences": [
+        "Every day starts on the Home screen.",
+        "New leads, follow-ups, delayed work and completed activities are visible at a glance.",
+        "Today’s schedule shows who to call and when, the follow-up history shows what your team just did, and the summary breaks your leads down by stage."
+      ],
+      "callouts": [
+        "One place to start your day"
+      ]
+    },
+    {
+      "id": "03_ai",
+      "title": "AI Assistant",
+      "slot": [
+        43,
+        73
+      ],
+      "visual": "AI Assistant: New chat, type 'How many leads today?', answer appears",
+      "sentences": [
+        "Need an answer fast? Just ask.",
+        "The AI Assistant understands questions about your own business data.",
+        "Type a question like, how many leads today, and get the answer in seconds — no reports, no spreadsheets.",
+        "Ask about follow-ups due today, delayed tasks, project status, or even who is present today.",
+        "Previous conversations are saved on the left, so you can pick up where you left off."
+      ],
+      "callouts": [
+        "Ask your data anything"
+      ]
+    },
+    {
+      "id": "04_dashboard",
+      "title": "CRM Dashboard",
+      "slot": [
+        73,
+        114
+      ],
+      "visual": "CRM Dashboard: KPI rates, stage cards, Leads in Follow-up; scroll to Executive-Wise Leads, Call Activity, Lead Source ROI",
+      "sentences": [
+        "For managers, the CRM Dashboard turns sales activity into a clear picture.",
+        "Win rate, conversion rate, lost rate and pipeline value sit right at the top, with every lead grouped by stage — new, cold, warm, hot, won and lost.",
+        "Leads in follow-up are split into today’s, delayed and upcoming, so priorities are obvious.",
+        "Change the period or pick one executive in a click, and download any table when you need it.",
+        "Scroll down to compare every executive side by side, follow call activity, and see which lead sources actually bring in revenue."
+      ],
+      "callouts": [
+        "Your pipeline at a glance",
+        "Today • Delayed • Upcoming",
+        "Know which sources pay off"
+      ]
+    },
+    {
+      "id": "05_leads",
+      "title": "Leads",
+      "slot": [
+        114,
+        147
+      ],
+      "visual": "Leads: Nature tabs, Status View tabs, filter panel; Bulk Lead Transfer filters",
+      "sentences": [
+        "All your enquiries live in Leads.",
+        "Tabs keep new, in follow-up, won and lost leads apart, and Status View breaks them down by every stage of your sales process.",
+        "Every lead shows its source, value, date and assigned executive in one row.",
+        "Powerful filters find any lead by source, quality, assignee, date, or even Facebook campaign.",
+        "And when priorities change, Lead Transfer moves leads between executives in bulk."
+      ],
+      "callouts": [
+        "Find any lead, fast",
+        "Move leads in bulk"
+      ]
+    },
+    {
+      "id": "06_followups",
+      "title": "Follow-ups",
+      "slot": [
+        147,
+        175
+      ],
+      "visual": "Follow-ups: Today's / Delayed / Upcoming / Non Followup tabs, then Kanban View",
+      "sentences": [
+        "A lead is only as valuable as its next action.",
+        "Follow-ups are sorted into today’s, delayed, upcoming and non follow-up, so nothing slips through the cracks.",
+        "Prefer a board? Kanban View shows every follow-up by status, with the next date, last contact and executive on each card.",
+        "So your team always knows exactly who to call next."
+      ],
+      "callouts": [
+        "Never miss a follow-up",
+        "Every stage on one board"
+      ]
+    },
+    {
+      "id": "07_calls",
+      "title": "AI Call Analysis",
+      "slot": [
+        175,
+        205
+      ],
+      "visual": "AI Call Analysis list (Lead / Agent score, Sentiment), then the Call Analysis detail: scores, Summary, Coaching Note",
+      "sentences": [
+        "This is where ProgBiz goes further.",
+        "AI Call Analysis reviews your team’s recorded calls.",
+        "Managers can listen to any recording right from the list.",
+        "Every call gets a lead score, an agent score and the customer’s sentiment.",
+        "Open a call to read an AI summary of the conversation and a coaching note for your executive — so you know which calls went well, and how to close the next one."
+      ],
+      "callouts": [
+        "AI scores every call",
+        "Coaching for every executive"
+      ]
+    },
+    {
+      "id": "08_performance",
+      "title": "Executive Performance",
+      "slot": [
+        205,
+        227
+      ],
+      "visual": "Executive Performance: KPI cards, top-3 ranking, score formula, executives table with AI Score",
+      "sentences": [
+        "Executive Performance brings it all together.",
+        "Each executive gets one score, built from target achievement, win rate, won value and activity — with leads, follow-ups, calls and AI scores in a single table.",
+        "Your best performers rise to the top, and everyone can see where to improve."
+      ],
+      "callouts": [
+        "One score per executive"
+      ]
+    },
+    {
+      "id": "09_closing",
+      "title": "Closing",
+      "slot": [
+        227,
+        240
+      ],
+      "visual": "End card: logo + CTA",
+      "sentences": [
+        "Capture every lead, never miss a follow-up, and know exactly how your team is performing.",
+        "ProgBiz ERP — bringing your business workflow together."
+      ],
+      "callouts": [],
+      "end_card_cta": "Capture every lead. Never miss a follow-up. Know how your team performs."
+    }
+  ]
+}

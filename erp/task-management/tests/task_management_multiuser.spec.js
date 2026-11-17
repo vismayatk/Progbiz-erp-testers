@@ -26,12 +26,12 @@ const { TaskManagementPage } = require('../pages/TaskManagementPage');
 const { screenshot } = require('../../common/helpers');
 
 const ADMIN = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
 const SECOND = {
-  company:  process.env.SECOND_COMPANY || process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.SECOND_COMPANY || process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.SECOND_USERNAME,
   password: process.env.SECOND_PASSWORD,
   name:     process.env.SECOND_NAME,

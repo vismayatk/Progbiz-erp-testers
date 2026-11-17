@@ -1,0 +1,626 @@
+<title>ERP Platform WBS</title>
+<style>
+  :root {
+    --bg: #F3F5F7;
+    --surface: #FFFFFF;
+    --surface-2: #EBEFF3;
+    --ink: #121820;
+    --ink-soft: #4C5768;
+    --ink-faint: #7C8697;
+    --border: #DCE2E9;
+    --accent: #0E6E85;
+    --accent-ink: #FFFFFF;
+    --brass: #9C6A2E;
+    --brass-bg: #F5ECDD;
+    --shadow: 0 1px 2px rgba(18,24,32,.04), 0 8px 24px -12px rgba(18,24,32,.12);
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0B0F13; --surface: #131922; --surface-2: #1A2129;
+      --ink: #E7EBEF; --ink-soft: #A7B0BC; --ink-faint: #737E8C;
+      --border: #26303B;
+      --accent: #4EB6CE; --accent-ink: #06161A;
+      --brass: #E0AE6B; --brass-bg: #2E2416;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0B0F13; --surface: #131922; --surface-2: #1A2129;
+    --ink: #E7EBEF; --ink-soft: #A7B0BC; --ink-faint: #737E8C;
+    --border: #26303B;
+    --accent: #4EB6CE; --accent-ink: #06161A;
+    --brass: #E0AE6B; --brass-bg: #2E2416;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', -apple-system, Segoe UI, sans-serif;
+    line-height: 1.5;
+  }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+  .shell {
+    display: flex;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px 96px;
+    gap: 28px;
+  }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    position: sticky;
+    top: max(16px, env(safe-area-inset-top, 0px));
+    width: 264px;
+    flex: 0 0 264px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    padding: 18px 14px;
+  }
+  .sidebar-title { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; margin: 0 0 10px 4px; }
+  .toc-list { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .toc-list a {
+    display: flex; align-items: baseline; gap: 8px;
+    text-decoration: none; color: var(--ink-soft);
+    font-size: 13.5px; padding: 7px 8px; border-radius: 7px;
+    transition: background .12s, color .12s;
+  }
+  .toc-list a:hover { background: var(--surface-2); color: var(--ink); }
+  .toc-num { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--brass); flex: 0 0 auto; min-width: 20px; }
+  .toc-count { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
+  .sidebar-actions { display: flex; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .sidebar-actions button {
+    flex: 1; font: inherit; font-size: 12.5px; padding: 7px 6px; cursor: pointer;
+    border-radius: 7px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-soft);
+  }
+  .sidebar-actions button:hover { color: var(--ink); border-color: var(--accent); }
+
+  /* ---- Main ---- */
+  .main { flex: 1 1 auto; min-width: 0; }
+
+  .doc-header { margin-bottom: 24px; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+  h1.doc-title { font-size: 30px; line-height: 1.15; margin: 0 0 10px; text-wrap: balance; font-weight: 650; }
+  .doc-sub { color: var(--ink-soft); font-size: 15px; max-width: 74ch; margin: 0 0 14px; }
+  .doc-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12.5px; color: var(--ink-faint); font-family: 'IBM Plex Mono', monospace; }
+  .doc-meta b { color: var(--ink-soft); font-weight: 600; }
+
+  /* ---- Module accordion ---- */
+  .module {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    scroll-margin-top: 16px;
+    overflow: hidden;
+  }
+  .module > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .module > summary::-webkit-details-marker { display: none; }
+  .mod-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600; font-size: 14px;
+    color: var(--brass); background: var(--brass-bg);
+    border-radius: 7px; padding: 4px 9px; flex: 0 0 auto;
+  }
+  .mod-titles { flex: 1 1 auto; min-width: 0; }
+  .mod-name { font-size: 16.5px; font-weight: 600; margin: 0; }
+  .mod-route { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+  .mod-count { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); flex: 0 0 auto; }
+  .chevron { flex: 0 0 auto; width: 18px; height: 18px; color: var(--ink-faint); transition: transform .18s ease; }
+  .module[open] .chevron { transform: rotate(90deg); }
+
+  .mod-body { padding: 2px 18px 18px; border-top: 1px solid var(--border); }
+  .mod-scope { color: var(--ink-soft); font-size: 13.5px; margin: 14px 0 16px; max-width: 74ch; }
+
+  .feature { margin-bottom: 16px; }
+  .feature:last-child { margin-bottom: 4px; }
+  .feat-head { display: flex; align-items: baseline; gap: 9px; margin-bottom: 8px; }
+  .feat-num { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--accent); font-weight: 600; }
+  .feat-name { font-size: 14.5px; font-weight: 600; }
+
+  .task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+  .task-row { display: flex; align-items: flex-start; gap: 10px; padding: 5px 8px; border-radius: 7px; }
+  .task-row:hover { background: var(--surface-2); }
+  .task-num { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-faint); flex: 0 0 auto; padding-top: 2px; min-width: 40px; text-align: right; }
+  .task-text { font-size: 13.75px; color: var(--ink); flex: 1 1 auto; }
+  .task-text code { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+  /* ---- Cross-cutting ---- */
+  .xcut-head { margin: 36px 0 14px; }
+  .xcut-head .eyebrow { margin-bottom: 6px; }
+  .xcut-head h2 { font-size: 22px; margin: 0 0 6px; }
+  .xcut-head p { color: var(--ink-soft); font-size: 13.5px; max-width: 72ch; margin: 0; }
+  .xcut-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .xcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .xcard-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .xcard-icon {
+    width: 30px; height: 30px; border-radius: 8px; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--accent); color: var(--accent-ink);
+  }
+  .xcard-icon svg { width: 16px; height: 16px; }
+  .xcard h3 { font-size: 14.5px; margin: 0; }
+  .xcard ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .xcard li { font-size: 13px; color: var(--ink-soft); padding-left: 14px; position: relative; }
+  .xcard li::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+  footer.note { margin-top: 28px; font-size: 12px; color: var(--ink-faint); border-top: 1px solid var(--border); padding-top: 14px; }
+
+  /* ---- Mobile TOC ---- */
+  .mobile-toc { display: none; }
+
+  @media (max-width: 860px) {
+    .shell { flex-direction: column; padding-inline: 16px; }
+    .sidebar { display: none; }
+    .mobile-toc {
+      display: block; position: sticky; top: 0; z-index: 5;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 10px 12px; margin-bottom: 16px;
+    }
+    .mobile-toc summary { cursor: pointer; font-size: 13.5px; font-weight: 600; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+    .mobile-toc summary::-webkit-details-marker { display: none; }
+    .mobile-toc .toc-list { margin-top: 10px; max-height: 50vh; overflow-y: auto; }
+    .xcut-grid { grid-template-columns: 1fr; }
+    .doc-meta { font-size: 11.5px; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;650;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar">
+    <p class="sidebar-title">Modules</p>
+    <ul class="toc-list" id="tocList"></ul>
+    <div class="sidebar-actions">
+      <button id="expandAll">Expand all</button>
+      <button id="collapseAll">Collapse all</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <details class="mobile-toc" id="mobileToc">
+      <summary>Jump to module ▾</summary>
+      <ul class="toc-list" id="tocListMobile"></ul>
+    </details>
+
+    <header class="doc-header">
+      <p class="eyebrow">Work Breakdown Structure · v2.0 · Functional</p>
+      <h1 class="doc-title">Progbiz ERP Platform — Functional WBS</h1>
+      <p class="doc-sub">What each module actually does, module by module, in the standard 3-tier WBS convention (Module → Feature → Capability). No backend, API or database detail — just the functionality a user or admin gets. Grounded in the live nav structure and behaviour of <code class="mono">test.erp.progbiz.in</code>.</p>
+      <div class="doc-meta">
+        <span><b>11</b> modules</span>
+        <span><b id="featCount">—</b> features</span>
+        <span><b id="taskCount">—</b> capabilities</span>
+        <span>Reference build: <b>lesol_test</b> tenant</span>
+      </div>
+    </header>
+
+    <div id="modules"></div>
+
+    <section id="xcut"></section>
+
+    <footer class="note">
+      Module routes and nav structure are taken from a live crawl of the reference tenant. This version describes user-facing functionality only — see the engineering WBS for the implementation breakdown (frontend/backend/database/security) behind each capability.
+    </footer>
+  </main>
+</div>
+
+<script>
+const MODULES = [
+  {
+    name: 'Home / Main Dashboard', route: '/home',
+    scope: 'The landing page every user sees after login — a personalized summary, quick-create shortcuts, and the navigation spine for every other module.',
+    features: [
+      { name: 'Landing & Personalization', tasks: [
+        'Personalized welcome showing the logged-in user\'s name and last login time',
+        'Persistent sidebar and top bar available from every page in the app',
+        'Only the modules and menu items a user\'s role is allowed to use are shown',
+      ]},
+      { name: "Today's Schedule & Task Counters", tasks: [
+        '"Today\'s Schedule" widget lists everything due today at a glance',
+        'Counter tiles show Pending, Delayed, Completed and Unscheduled task totals',
+      ]},
+      { name: 'Global "Create New" Quick-Action', tasks: [
+        'One menu to create a Task, Enquiry, or Quotation from anywhere in the app',
+        'Only shows the create options a user\'s role is permitted to use',
+      ]},
+      { name: 'Notifications & Lifecycle Widget', tasks: [
+        'Notification bell shows an unread count and a feed of recent alerts',
+        'A running or on-hold task can be started, held, resumed or ended directly from Home',
+      ]},
+      { name: 'Global Navigation', tasks: [
+        'Collapsible sidebar groups every module a user can access',
+        'Menu automatically adapts to what the logged-in user\'s role permits',
+      ]},
+    ],
+  },
+  {
+    name: 'AI Assistant', route: '/data-assistant',
+    scope: 'A conversational assistant that understands the ERP\'s own data and can answer questions or take action on request.',
+    features: [
+      { name: 'Conversational Chat', tasks: [
+        'Chat with an AI assistant in real time, with responses appearing as they\'re generated',
+        'Conversation history is kept for the session; start a fresh conversation anytime',
+      ]},
+      { name: 'Context-Aware Answers', tasks: [
+        'Ask questions in plain language about CRM, Task or Report data and get answers grounded in the real, current records',
+      ]},
+      { name: 'Quick Actions', tasks: [
+        'Type a natural-language command ("create a task for 10am tomorrow") and the assistant performs it',
+        'Every action the assistant takes still respects the user\'s normal permissions — it can\'t do anything the user couldn\'t do themselves',
+      ]},
+      { name: 'Usage Tracking', tasks: [
+        'An AI Tokens wallet shows remaining balance and usage history, with a low-balance warning',
+      ]},
+      { name: 'AI Call Analysis', tasks: [
+        'Call recordings are automatically summarized, with sentiment and suggested next steps shown on the lead record',
+      ]},
+    ],
+  },
+  {
+    name: 'Analytics Dashboards', route: '/crm-dashboard · /executive-performance · /task-dashboard',
+    scope: 'Visual, at-a-glance reporting for CRM, Task, Project, Complaint and executive-level performance.',
+    features: [
+      { name: 'CRM Dashboard', tasks: [
+        'Lead funnel, source performance, conversion rate and agent leaderboard, at a glance',
+      ]},
+      { name: 'Executive Performance Dashboard', tasks: [
+        'Cross-module KPI summary — revenue, task throughput, SLA compliance — with drill-down into detail',
+        'Visible only to Executive and Admin roles',
+      ]},
+      { name: 'Task Dashboard', tasks: [
+        'Task-status distribution, overdue trend, and workload by team',
+      ]},
+      { name: 'Project / Work Flow Dashboard', tasks: [
+        'Budget-vs-actual and milestone status for a specific project',
+      ]},
+      { name: 'Complaint & B2B Dashboards', tasks: [
+        'Complaint aging and resolution-time at a glance',
+        'B2B account health overview',
+      ]},
+      { name: 'Consistent Filtering', tasks: [
+        'Every dashboard shares the same date-range and branch filter, so results are easy to compare',
+      ]},
+    ],
+  },
+  {
+    name: 'Task Management', route: '/my-tasks · /delegated-tasks · /calendar · /screen-tracker',
+    scope: 'Create, assign, track and complete work — from a one-off task to a recurring schedule.',
+    features: [
+      { name: 'Task Creation — Instant / Scheduled / Repeat', tasks: [
+        'Create a task instantly, schedule it for later, or set it to repeat on a pattern',
+        'Choose branch, task type, priority, title, description, and search/add a party, participants and a host',
+        'Repeating tasks automatically generate their future occurrences',
+        'A user can only assign a host or party within their own branch',
+      ]},
+      { name: 'My Tasks / Delegated Tasks', tasks: [
+        'Tasks are grouped into Today / Delayed / Upcoming / Unscheduled / Completed tabs',
+        'Open, edit or delete a task from its row — the actions shown depend on what the user is allowed to do',
+      ]},
+      { name: 'Task Details', tasks: [
+        'Add notes and upload documents to a task',
+        'Edit the task, reschedule it, or add a lead — all from one menu on the task',
+      ]},
+      { name: 'Lifecycle — Start / Hold / Resume / End', tasks: [
+        'Start a task, put it on hold, resume it, or mark it ended — each with a confirmation step',
+        'The system only allows valid transitions (a task can\'t be "ended" before it\'s started)',
+      ]},
+      { name: 'Calendar, Timeline & Daily Activity Report', tasks: [
+        'Calendar and timeline views show everything scheduled for a user',
+        'Daily Activity Report summarizes what was completed each day',
+      ]},
+      { name: 'Screen Tracker', tasks: [
+        'Optional, consent-based tracking of active/idle time during a work session',
+      ]},
+    ],
+  },
+  {
+    name: 'CRM', route: '/leads · /enquiry · /quotation · /complaints',
+    scope: 'The sales pipeline — from first enquiry, through follow-up, to quotation, plus complaint handling.',
+    features: [
+      { name: 'Enquiry (Lead) Capture', tasks: [
+        'Capture a new enquiry — branch, customer (search or create new), assigned agent, follow-up status, items',
+        'Lead Quality only appears and is only required once the enquiry reaches an in-follow-up status',
+      ]},
+      { name: 'Follow-Up Workflow', tasks: [
+        'Schedule the next follow-up date and time, or mark it "Not Required"',
+        'Every follow-up is kept in the enquiry\'s history — nothing is overwritten',
+      ]},
+      { name: 'Quotation Generation', tasks: [
+        'Convert an enquiry straight into a quotation, with its items and customer already filled in',
+        'Totals are always calculated by the system, never typed in by hand',
+      ]},
+      { name: 'Leads Listing & Lead Operations', tasks: [
+        'Browse leads by tab and page; transfer a lead to another executive',
+        'Bulk-assign a task to multiple leads at once',
+      ]},
+      { name: 'Complaints', tasks: [
+        'Log a new complaint — type, branch, subject, description, priority, optional customer',
+        'A complaint automatically creates a linked task, so it gets followed up on',
+      ]},
+      { name: 'CRM Master Data & Settings', tasks: [
+        'Manage Lead Sources, Lead Status and Sales Targets — restricted to Admin/CRM-Admin roles',
+      ]},
+    ],
+  },
+  {
+    name: 'Project Management', route: '/workflows/{workflowId}',
+    scope: 'A configurable project engine — a project is an instance of a template an Admin defines, not a fixed one-size form.',
+    features: [
+      { name: 'Start & Track a Project', tasks: [
+        '"New Project" starts a project based on a configurable project template',
+        'A dashboard and a point-in-time status report for each project',
+      ]},
+      { name: 'Expenses & Collections', tasks: [
+        'Log project expenses and payments received, and track what\'s still pending collection',
+      ]},
+      { name: 'Attachments & Notes', tasks: [
+        'Attach files and keep running notes against a specific project',
+      ]},
+      { name: 'Maintenance Schedule', tasks: [
+        'Schedule recurring maintenance tied to a project',
+      ]},
+      { name: 'Project Templates', tasks: [
+        'Admins define what fields and tabs a given project type has — every new project of that type follows it',
+      ]},
+    ],
+  },
+  {
+    name: 'WhatsApp Integration', route: '/chat · /broadcasts · /chatbots · /whatsapp-accounts',
+    scope: 'A multi-channel messaging suite — WhatsApp and Instagram — for support, sales and bulk outreach.',
+    features: [
+      { name: 'Channel Connection', tasks: [
+        'Connect a WhatsApp Business account and an Instagram account to the platform',
+      ]},
+      { name: 'Live Chat Inbox', tasks: [
+        'A unified inbox for conversations across every connected channel',
+        'Assign a conversation to a team member',
+      ]},
+      { name: 'Chatbots & Knowledge Base', tasks: [
+        'Build automated reply flows for common questions',
+        'The bot falls back to a knowledge base it can search and answer from',
+      ]},
+      { name: 'Templates & Broadcasts', tasks: [
+        'Submit message templates for approval',
+        'Send a bulk broadcast to a customer list',
+      ]},
+      { name: 'Blocked Contacts & Compliance', tasks: [
+        'Block a contact so they never receive another message',
+      ]},
+      { name: 'Billing', tasks: [
+        'See message costs and configure rate cards',
+      ]},
+    ],
+  },
+  {
+    name: 'Excel Data Upload / Import Engine', route: '/business-customer-upload · /individual-customer-upload · /enquiry-upload',
+    scope: 'Bulk-import customers and enquiries from a spreadsheet instead of entering them one by one.',
+    features: [
+      { name: 'Upload & Templates', tasks: [
+        'Upload Business Customer, Individual Customer, or Enquiry data via Excel',
+        'A ready-made template shows exactly the columns expected',
+      ]},
+      { name: 'Validation', tasks: [
+        'Every row is checked for required fields and correct formatting before anything is imported',
+      ]},
+      { name: 'Duplicate Handling', tasks: [
+        'Rows matching an existing customer (by phone/email) are skipped, merged, or rejected, based on a configurable rule',
+      ]},
+      { name: 'Results & Error Reporting', tasks: [
+        'See which rows succeeded and which failed, with a downloadable error report explaining why',
+      ]},
+    ],
+  },
+  {
+    name: 'User Location Tracking / Management', route: '/user-locations',
+    scope: 'Opt-in location tracking for field staff, tied back to the work they were doing.',
+    features: [
+      { name: 'Location Capture', tasks: [
+        'Opt-in location capture from mobile or web, with a clear consent prompt before it starts',
+      ]},
+      { name: 'Location History & Map View', tasks: [
+        'View a user\'s movement over a chosen date range, on a map and as a timeline',
+      ]},
+      { name: 'Field-Visit Tie-In', tasks: [
+        'A captured location can be linked to the task or enquiry the user was working on at the time',
+      ]},
+      { name: 'Privacy & Access Control', tasks: [
+        'Tracking is off by default until a user or tenant turns it on',
+        'Only the user themself and their manager/admin can view their location history',
+      ]},
+    ],
+  },
+  {
+    name: 'User Activity Logs & Audit Trail', route: '/user-log',
+    scope: 'A record of who did what, and when, across the whole platform.',
+    features: [
+      { name: 'Activity Capture', tasks: [
+        'Every create, update and delete across the platform is recorded automatically — nothing needs to be turned on',
+      ]},
+      { name: 'Audit Log Viewer', tasks: [
+        'Filter by user, module, date range and action type',
+        'See exactly what changed on a record — before and after, side by side',
+      ]},
+      { name: 'Login & Session Tracking', tasks: [
+        'See login/logout history and every currently active session for a user',
+        '"Sign out all devices" for a user in one action',
+      ]},
+      { name: 'Retention & Export', tasks: [
+        'Export a filtered audit view for a compliance or legal request',
+        'The audit log itself can never be edited or deleted — not even by an Admin',
+      ]},
+    ],
+  },
+  {
+    name: 'Reports & Export Engine', route: '/reports',
+    scope: 'One place to run, build and schedule reports across every module.',
+    features: [
+      { name: 'Report Catalog', tasks: [
+        'A categorized list of every report a user\'s role is allowed to run',
+      ]},
+      { name: 'Run a Report', tasks: [
+        'Choose filters — date range, branch, status — and run a report on demand',
+      ]},
+      { name: 'Custom Report Builder', tasks: [
+        'Build a custom report by picking exactly the fields needed, without asking a developer',
+      ]},
+      { name: 'Export', tasks: [
+        'Export any report to PDF, Excel, or CSV',
+      ]},
+      { name: 'Scheduled Delivery', tasks: [
+        'Schedule a report to be delivered automatically on a recurring basis, to chosen recipients',
+      ]},
+    ],
+  },
+];
+
+const XCUT = [
+  { key: 'access', title: 'Access & Permissions', icon: 'shield', items: [
+    'What a role can see and do is consistent everywhere — a button or record a user can\'t touch simply never appears',
+    'One company\'s data is never visible to another, even though they share the same platform',
+    'Sensitive actions — deleting, approving, editing someone else\'s record — always require the right role',
+    'Every important action is recorded in the Audit Trail, so nothing happens without a trace',
+  ]},
+  { key: 'reliability', title: 'Speed & Reliability', icon: 'bolt', items: [
+    'Lists and dashboards load quickly, even with a large amount of data behind them',
+    'Long-running actions (a bulk import, a broadcast, a big export) run in the background instead of freezing the screen',
+    'A listing is always paged, filtered and searchable — never one giant, unbounded page',
+  ]},
+];
+
+const ICONS = {
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+};
+
+function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+
+function buildTaskRow(modIdx, featIdx, taskIdx, text) {
+  const row = el('li', 'task-row');
+  row.appendChild(el('span', 'task-num mono', `${modIdx+1}.${featIdx+1}.${taskIdx+1}`));
+  row.appendChild(el('span', 'task-text', text));
+  return row;
+}
+
+function renderModules() {
+  const wrap = document.getElementById('modules');
+  const tocDesktop = document.getElementById('tocList');
+  const tocMobile = document.getElementById('tocListMobile');
+  let totalFeatures = 0, totalTasks = 0;
+
+  MODULES.forEach((mod, mi) => {
+    totalFeatures += mod.features.length;
+    const details = el('details', 'module');
+    details.id = `mod-${mi+1}`;
+    if (mi === 0) details.open = true;
+
+    const summary = el('summary');
+    summary.appendChild(el('span', 'mod-num mono', `${mi+1}.0`));
+    const titles = el('div', 'mod-titles');
+    titles.appendChild(el('p', 'mod-name', mod.name));
+    titles.appendChild(el('p', 'mod-route mono', mod.route));
+    summary.appendChild(titles);
+    summary.appendChild(el('span', 'mod-count mono', `${mod.features.length} features`));
+    summary.appendChild(el('span', 'chevron', ICONS.chevron));
+    details.appendChild(summary);
+
+    const body = el('div', 'mod-body');
+    body.appendChild(el('p', 'mod-scope', mod.scope));
+
+    mod.features.forEach((feat, fi) => {
+      totalTasks += feat.tasks.length;
+      const fblock = el('div', 'feature');
+      const fhead = el('div', 'feat-head');
+      fhead.appendChild(el('span', 'feat-num mono', `${mi+1}.${fi+1}`));
+      fhead.appendChild(el('span', 'feat-name', feat.name));
+      fblock.appendChild(fhead);
+      const tlist = el('ul', 'task-list');
+      feat.tasks.forEach((text, ti) => tlist.appendChild(buildTaskRow(mi, fi, ti, text)));
+      fblock.appendChild(tlist);
+      body.appendChild(fblock);
+    });
+
+    details.appendChild(body);
+    wrap.appendChild(details);
+
+    [tocDesktop, tocMobile].forEach(toc => {
+      const a = el('a', null);
+      a.href = `#mod-${mi+1}`;
+      a.appendChild(el('span', 'toc-num mono', `${mi+1}.0`));
+      a.appendChild(document.createTextNode(mod.name));
+      a.appendChild(el('span', 'toc-count mono', String(mod.features.length)));
+      a.addEventListener('click', () => { details.open = true; });
+      const li = el('li'); li.appendChild(a);
+      toc.appendChild(li);
+    });
+  });
+
+  document.getElementById('featCount').textContent = totalFeatures;
+  document.getElementById('taskCount').textContent = totalTasks;
+}
+
+function renderXcut() {
+  const section = document.getElementById('xcut');
+  const head = el('div', 'xcut-head');
+  head.appendChild(el('p', 'eyebrow', 'Platform-Wide Behaviour'));
+  head.appendChild(el('h2', null, '12.0 What Every Module Guarantees'));
+  head.appendChild(el('p', null, 'Not tied to a single module — these hold true everywhere in the app.'));
+  section.appendChild(head);
+
+  const grid = el('div', 'xcut-grid');
+  XCUT.forEach(card => {
+    const c = el('div', 'xcard');
+    const ch = el('div', 'xcard-head');
+    ch.appendChild(el('div', 'xcard-icon', ICONS[card.icon]));
+    ch.appendChild(el('h3', null, card.title));
+    c.appendChild(ch);
+    const ul = el('ul');
+    card.items.forEach(txt => ul.appendChild(el('li', null, txt)));
+    c.appendChild(ul);
+    grid.appendChild(c);
+  });
+  section.appendChild(grid);
+
+  const toc = document.getElementById('tocList');
+  const tocM = document.getElementById('tocListMobile');
+  [toc, tocM].forEach(t => {
+    const a = el('a', null);
+    a.href = '#xcut';
+    a.appendChild(el('span', 'toc-num mono', '12.0'));
+    a.appendChild(document.createTextNode('Platform-Wide Behaviour'));
+    const li = el('li'); li.appendChild(a);
+    t.appendChild(li);
+  });
+}
+
+renderModules();
+renderXcut();
+
+document.getElementById('expandAll').addEventListener('click', () => {
+  document.querySelectorAll('.module').forEach(d => d.open = true);
+});
+document.getElementById('collapseAll').addEventListener('click', () => {
+  document.querySelectorAll('.module').forEach((d, i) => d.open = false);
+});
+</script>

@@ -1,5 +1,7 @@
 'use strict';
 
+const { tenant } = require('../../common/tenantData');
+
 /**
  * Inventory → Items  (/items list, /item create form "Product")
  * Linked to CRM (Enquiry/Quotation item selection). Create form: #item-name
@@ -9,25 +11,37 @@
 class ItemPage {
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
-    this.nameInput      = page.locator('#item-name');
-    this.categorySelect = page.locator('#category');
+    // Two shapes: a /item create PAGE (lesol_test) or a "New Item" MODAL on
+    // /crm-items (onetouch_test) — chosen by the tenant profile.
+    this.T = tenant();
+    this.modalMode = this.T.itemForm === 'modal';
+    this.modal = page.locator('#add-crm-item-modal');
+    this.nameInput      = this.modalMode ? page.locator('#crm-popup-item-name') : page.locator('#item-name');
+    this.categorySelect = this.modalMode ? this.modal.locator('#category') : page.locator('#category');
     // Prefer the explicit "Save Item"; else the VISIBLE "Save" (dev labels it
     // "Save" and also has hidden inline-save buttons we must avoid).
-    this.saveBtn        = page.locator('button:visible, a.btn:visible')
+    this.saveBtn        = this.modalMode ? page.locator('#btn-save-item') : page.locator('button:visible, a.btn:visible')
       .filter({ hasText: /save item|^\s*save\s*$/i }).last();
     this.search         = page.locator('#filter-name');
   }
 
   async gotoForm() {
+    if (this.modalMode) {
+      await this.gotoList();
+      await this.page.locator('button:visible').filter({ hasText: /^\s*New Item\s*$/i }).first().click();
+      await this.nameInput.waitFor({ state: 'visible', timeout: 15000 });
+      await this.page.waitForTimeout(500);
+      return;
+    }
     await this.page.goto(`${this.baseUrl}/item`, { waitUntil: 'domcontentloaded' });
     await this.page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     await this.nameInput.waitFor({ state: 'visible', timeout: 15000 });
   }
 
   async gotoList() {
-    await this.page.goto(`${this.baseUrl}/items`, { waitUntil: 'domcontentloaded' });
+    await this.page.goto(`${this.baseUrl}${this.T.routes.items}`, { waitUntil: 'domcontentloaded' });
     await this.page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
   }
@@ -74,7 +88,9 @@ class ItemPage {
   async _afterSaveOrValidation() {
     const swalMsg = await this._afterSave();
     if (swalMsg) return swalMsg;
-    if (/\/item(\b|$)/.test(this.page.url()) && !/\/items/.test(this.page.url())) {
+    const stillOnForm = this.modalMode ? await this.modal.isVisible().catch(() => false)
+      : (/\/item(\b|$)/.test(this.page.url()) && !/\/items/.test(this.page.url()));
+    if (stillOnForm) {
       const re = /please (provide|enter|choose|select)|required|cannot be (empty|blank)|invalid|not valid|valid (name|item)|already exist/i;
       for (let i = 0; i < 3; i++) {
         const inline = await this.page.evaluate((src) => {
@@ -100,6 +116,10 @@ class ItemPage {
     const { row, exists } = await this.findRow(name);
     if (!exists) throw new Error(`edit: item "${name}" not found`);
     const editBtn = row.locator('a:has(i[class*="pencil"]), a:has(i[class*="edit"]), [title*="edit" i], a.btn-primary-light, [data-bs-title="Edit" i]').first();
+    if (await editBtn.count() === 0) {
+      console.log('  ℹ️  No Edit control on the items list for this tenant');
+      return 'NO_EDIT';
+    }
     await editBtn.click().catch(() => {});
     await this.nameInput.waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
     await this.page.waitForTimeout(800);
@@ -115,7 +135,8 @@ class ItemPage {
   async cancelCreate(name) {
     await this.gotoForm();
     await this.nameInput.fill(name);
-    const cancel = this.page.locator('button:visible, a:visible').filter({ hasText: /^\s*cancel\s*$/i }).first();
+    const cancel = this.modalMode ? this.page.locator('#btn-close-item-modal')
+      : this.page.locator('button:visible, a:visible').filter({ hasText: /^\s*cancel\s*$/i }).first();
     if (!(await cancel.count())) return null;
     await cancel.click().catch(() => {});
     await this.page.waitForTimeout(1500);
@@ -133,6 +154,8 @@ class ItemPage {
       if (/success|saved|added|done|completed/i.test(msg)) msg = null;   // success ("You're done!!" on dev)
     } else if (/\/items(\b|$)/.test(this.page.url())) {
       msg = null;   // navigated back to the list → success
+    } else if (this.modalMode && !(await this.modal.isVisible().catch(() => false))) {
+      msg = null;   // the New Item modal closed → saved
     }
     await this.page.waitForTimeout(800);
     return msg;

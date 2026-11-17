@@ -15,17 +15,20 @@ require('dotenv').config();
 const { test, expect } = require('@playwright/test');
 const { LoginPage } = require('../../common/LoginPage');
 const { EnquiryPage } = require('../pages/EnquiryPage');
+const { dismissRateLimit } = require('../../common/helpers');
 const { screenshot } = require('../../common/helpers');
+const { tenant } = require('../../common/tenantData');
+const T = tenant();
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
 const uniqEnquiry = () => {
   const ts = Date.now();
   return { customerName: `ENQ Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `enq${ts}@example.com`,
-    source: 'Website', product: 'Inverter', description: `auto ${ts}`, quantity: '3', unitPrice: '1000' };
+    source: T.leadSource, product: T.item, description: `auto ${ts}`, quantity: '3', unitPrice: '1000' };
 };
 
 async function arrive(page) {
@@ -51,8 +54,10 @@ test.describe('CRM — Enquiry', () => {
   test('ENQ-02 | Add Enquiry form fields — Branch/Date/Number/Source (ENQ-02,03,04,15)', async ({ page }) => {
     const enq = await arrive(page);
     await enq.openAddForm();
-    const branches = await enq.branchOptions();
-    expect(branches.join(' ')).toMatch(/Kannur/);            // ENQ-02
+    // ENQ-02: Branch — single-branch tenants hide the field entirely
+    const branches = T.enquiryHasBranch ? await enq.branchOptions() : [];
+    if (T.enquiryHasBranch) expect(branches.join(' ')).toContain(T.branch);
+    else expect(await enq.branchSelect.count(), 'single-branch tenant: no Branch field expected').toBe(0);
     const date = await enq.enquiryDate();
     expect(date, 'enquiry date should be auto-populated').toBeTruthy();   // ENQ-03
     const no = await enq.enquiryNumber();
@@ -69,20 +74,33 @@ test.describe('CRM — Enquiry', () => {
     const opts = (await enq.followupStatusOptions()).map(s => s.trim());
     console.log('  🏷  followup options:', JSON.stringify(opts));
     // statuses map to natures: New Enquiry→New, Interested→In-Followup, Got the business→Won, Not interested→Lost
-    for (const o of ['New Enquiry', 'Interested', 'Got the business', 'Not interested']) expect(opts).toContain(o);
+    for (const o of Object.values(T.status)) expect(opts).toContain(o);
     console.log('  ✅ Followup Status options present');
   });
 
-  test('ENQ-09 | Lead Quality appears for In-Followup, hidden for New (ENQ-09,12)', async ({ page }) => {
+  test('ENQ-09 | Lead Quality optional for New, required for In-Followup (ENQ-09,12)', async ({ page }) => {
+    // Behaviour changed in the Sep-2026 build (confirmed live 2026-09-18):
+    // Lead Quality used to be hidden for "New Enquiry" and appear for
+    // In-Followup statuses. It is now ALWAYS visible; the status decides
+    // whether it is mandatory — "Lead Quality" (optional) for New Enquiry,
+    // "Lead Quality*" (required) for Interested. The test asserts the new
+    // contract rather than the retired show/hide one.
     const enq = await arrive(page);
     await enq.openAddForm();
-    await enq.selectFollowup('New Enquiry');
-    expect(await enq.leadQualityVisible(), 'Lead Quality should be hidden for New').toBeFalsy();   // ENQ-12
-    await enq.selectFollowup('Interested');
-    expect(await enq.leadQualityVisible(), 'Lead Quality should appear for In-Followup').toBeTruthy(); // ENQ-09
+    await enq.selectFollowup(T.status.new);
+    if (T.leadQualityForNew === 'hidden') {
+      // older build (e.g. onetouch_test): Lead Quality is not rendered for New at all
+      expect(await enq.leadQualityVisible(), 'Lead Quality should NOT be shown for New on this build').toBeFalsy();
+    } else {
+      expect(await enq.leadQualityVisible(), 'Lead Quality should be rendered for New').toBeTruthy();
+      expect(await enq.leadQualityRequired(), 'Lead Quality should be OPTIONAL for New').toBeFalsy();     // ENQ-12
+    }
+    await enq.selectFollowup(T.status.inFollowup);
+    expect(await enq.leadQualityVisible(), 'Lead Quality should be rendered for In-Followup').toBeTruthy();
+    expect(await enq.leadQualityRequired(), 'Lead Quality should be REQUIRED for In-Followup').toBeTruthy(); // ENQ-09
     const lq = (await enq.leadQualityOptions()).map(s => s.trim());
     console.log('  🎯 lead quality options:', JSON.stringify(lq));
-    expect(lq.join(' ')).toMatch(/Cold/); expect(lq.join(' ')).toMatch(/Warm/); expect(lq.join(' ')).toMatch(/Hot/);
+    for (const q of T.leadQuality) expect(lq).toContain(q);
     await screenshot(page, 'enq09_leadquality');
     console.log('  ✅ Lead Quality conditional behaviour verified');
   });
@@ -90,9 +108,9 @@ test.describe('CRM — Enquiry', () => {
   test('ENQ-10 | Description visible for Won and Lost (ENQ-10,11)', async ({ page }) => {
     const enq = await arrive(page);
     await enq.openAddForm();
-    await enq.selectFollowup('Got the business');                 // Won
+    await enq.selectFollowup(T.status.won);                       // Won
     expect(await enq.descriptionVisible(), 'Description should be visible for Won').toBeTruthy();  // ENQ-10
-    await enq.selectFollowup('Not interested');                   // Lost
+    await enq.selectFollowup(T.status.lost);                      // Lost
     expect(await enq.descriptionVisible(), 'Description should be visible for Lost').toBeTruthy(); // ENQ-11
     console.log('  ✅ Description visible for Won and Lost');
   });
@@ -115,28 +133,31 @@ test.describe('CRM — Enquiry', () => {
     test.setTimeout(300_000);
     const enq = await arrive(page);
     await enq.openAddForm();
-    // ENQ-16 — the item picker (#searchItemModal) opens slowly on this tenant; retry
-    // instead of swallowing the failure (a swallowed add made the old test vacuous).
+    // addItem() now throws on a real failure (it used to swallow, which made
+    // this test vacuous), so this retry is meaningful.
+    // Seen live 2026-09-21: a tight retry loop here can itself walk into the
+    // app's "Too many requests" throttle (several add-item POSTs in a few
+    // seconds). Check for and dismiss that dialog between attempts and back
+    // off longer than the normal 2.5s gap when it fires — retrying at the
+    // same cadence that triggered it just re-triggers it.
     let added = false;
+    let chosen = null;   // addItem falls back to another item if the tenant's item is missing
     for (let i = 0; i < 3 && !added; i++) {
-      added = await enq.addItem('Inverter', '2').then(() => true).catch(() => false);
-      if (!added) { console.log(`  ⏳ item picker retry ${i + 1}`); await page.waitForTimeout(2500); }
+      chosen = await enq.addItem(T.item, '2').catch(() => null);
+      added = !!chosen;
+      if (!added) {
+        const throttled = await dismissRateLimit(page);
+        console.log(`  ⏳ item picker retry ${i + 1}${throttled ? ' (was rate-limited)' : ''}`);
+        await page.waitForTimeout(throttled ? 8000 : 2500);
+      }
     }
-    expect(added, 'item picker never opened — could not add "Inverter"').toBeTruthy();
+    expect(added, `item picker failed — could not add "${T.item}"`).toBeTruthy();
     await screenshot(page, 'enq16_items');
-    // Data round-trip: the item name lands in an Enquired-For LINE input.
-    // EXCLUDE the #searchItemModal search box — it keeps the typed 'Inverter' value even
-    // when the row-add is a no-op, which would make this pass on a broken picker.
-    const shown = await page.evaluate(() => {
-      const modal = document.querySelector('#searchItemModal');
-      const inputVals = [...document.querySelectorAll('input')]
-        .filter(i => !modal || !modal.contains(i))
-        .map(i => i.value || '').join(' | ');
-      return { inputVals, hasInverter: /Inverter/i.test(inputVals) };
-    });
-    console.log('  📦 line-item input values:', shown.inputVals.slice(0, 120));
-    expect(shown.hasInverter, 'added item "Inverter" not present in an Enquired-For line input (excluding the search box)').toBeTruthy();
-    console.log('  ✅ ASSERT: item "Inverter" landed in an Enquired-For line input');
+    // Data round-trip. Since the Aug-2026 build the chosen item renders as TEXT
+    // in an Enquired-For grid row, not as an <input> value, so assert on the row.
+    const itemRow = page.locator('table tbody tr').filter({ hasText: chosen.text });
+    await expect(itemRow.first(), `added item "${chosen.text}" not present in an Enquired-For grid row`).toBeVisible();
+    console.log(`  ✅ ASSERT: item "${chosen.text}" landed in an Enquired-For grid row (${await itemRow.count()} matching row(s))`);
   });
 
   test('ENQ-05 | Customer search picker (ENQ-05)', async ({ page }) => {

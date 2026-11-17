@@ -2,7 +2,7 @@
 
 > **Auto-generated** by `scripts/gen-testcases.js` from the Playwright test titles.
 > Do not edit by hand — it regenerates before every `npm test` (the `pretest` hook), or run `npm run docs`.
-> Last generated: 2026-07-10T17:50:33.822Z · 103 test cases in 12 spec file(s).
+> Last generated: 2026-09-28T13:23:13.462Z · 103 test cases in 19 spec file(s).
 
 Run all (headless): `npm test` · Run all (visible browser): `npm run test:headed` · Interactive: `npx playwright test --ui`
 
@@ -11,7 +11,7 @@ Run all (headless): `npm test` · Run all (visible browser): `npm run test:heade
 | ENQ-01 | Access Enquiry from Create New | `npx playwright test -g "ENQ-01 \|"` | `npx playwright test --headed -g "ENQ-01 \|"` |
 | ENQ-02 | Add Enquiry form fields — Branch/Date/Number/Source (ENQ-02,03,04,15) | `npx playwright test -g "ENQ-02 \|"` | `npx playwright test --headed -g "ENQ-02 \|"` |
 | ENQ-08 | Followup Status dropdown options | `npx playwright test -g "ENQ-08 \|"` | `npx playwright test --headed -g "ENQ-08 \|"` |
-| ENQ-09 | Lead Quality appears for In-Followup, hidden for New (ENQ-09,12) | `npx playwright test -g "ENQ-09 \|"` | `npx playwright test --headed -g "ENQ-09 \|"` |
+| ENQ-09 | Lead Quality optional for New, required for In-Followup (ENQ-09,12) | `npx playwright test -g "ENQ-09 \|"` | `npx playwright test --headed -g "ENQ-09 \|"` |
 | ENQ-10 | Description visible for Won and Lost (ENQ-10,11) | `npx playwright test -g "ENQ-10 \|"` | `npx playwright test --headed -g "ENQ-10 \|"` |
 | ENQ-13 | Next Followup Date selection | `npx playwright test -g "ENQ-13 \|"` | `npx playwright test --headed -g "ENQ-13 \|"` |
 | ENQ-16 | Item selection + multiple items (ENQ-16,18) | `npx playwright test -g "ENQ-16 \|"` | `npx playwright test --headed -g "ENQ-16 \|"` |

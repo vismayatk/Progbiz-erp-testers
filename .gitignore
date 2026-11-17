@@ -19,3 +19,10 @@ git_max/
 *_shots/
 crm_shots/
 erp/screenshots/
+
+# Local .env backups (contain credentials)
+.env.bak.*
+
+# Regenerable QA data snapshots
+scripts/*_report.json
+scripts/discovery_report.json

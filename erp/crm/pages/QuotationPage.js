@@ -8,7 +8,7 @@ class QuotationPage {
    */
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // ── Quotation listing ──────────────────────────────────────────────────
     this.quotationRows = page.locator(
@@ -39,17 +39,49 @@ class QuotationPage {
   /** Whether we're on the create-quotation form. */
   onForm() { return /\/quotation\//.test(this.page.url()); }
 
+  /**
+   * A value from the quotation's totals, by label.
+   *
+   * Older builds rendered totals as inputs (#gross-total / #payable-total).
+   * The Sep-2026 build (2026-09-18 re-audit) replaced them with an id-less
+   * "Total Summary" card — label and value as sibling text elements:
+   *   Gross Amount    0.00
+   *   Total Payable   INR (₹) 0.00
+   * so `inputValue()` on the old ids returned "" and QT-010 read the totals
+   * as missing. Prefer the legacy input if it exists, else read the card.
+   */
+  async _summaryValue(label, legacy) {
+    if (await legacy.count().catch(() => 0)) return (await legacy.inputValue().catch(() => '')) || '';
+    return this.page.evaluate((label) => {
+      const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const lab = [...document.querySelectorAll('span, div, p, label, td, th')]
+        .find((e) => e.children.length === 0 && clean(e.textContent) === label);
+      if (!lab) return '';
+      const v = lab.nextElementSibling
+        || [...(lab.parentElement?.children || [])].find((c) => c !== lab);
+      return v ? clean(v.textContent) : '';
+    }, label).catch(() => '');
+  }
+
+  /** The customer on the form. Since 2026-10-24 it is a party-picker button (#quotation-party, name in
+   *  .pp-value); older builds had a text input #customerNameInput. */
+  async customerName() {
+    const picked = this.page.locator('#quotation-party .pp-value').first();
+    if (await picked.count()) return (await picked.innerText().catch(() => '')).replace(/\s+/g, ' ').trim();
+    return (await this.qCustomer.inputValue({ timeout: 3000 }).catch(() => '')) || '';
+  }
+
   /** Snapshot of auto-fill state (QT-010): which fields are prefilled vs empty. */
   async autoFillState() {
     const val = async (loc) => (await loc.inputValue().catch(() => '')) || '';
     return {
       number:    await val(this.qNumber),
-      customer:  await val(this.qCustomer),
+      customer:  await this.customerName(),
       date:      await val(this.qDate),
       validUpto: await val(this.qValidUpto),
       itemRows:  await this.qItemRows.count().catch(() => 0),
-      gross:     await val(this.qGross),
-      payable:   await val(this.qPayable),
+      gross:     await this._summaryValue('Gross Amount', this.qGross),
+      payable:   await this._summaryValue('Total Payable', this.qPayable),
     };
   }
 
@@ -68,6 +100,8 @@ class QuotationPage {
 
   /** Save the quotation. Returns the alert/redirect outcome. */
   async save() {
+    // the default Next FollowUp Date can sit below its own minimum (QT-F1) — set a future one
+    await require('./EnquiryPage').setFutureQuotationFollowup(this.page);
     await this.qSave.click().catch(() => {});
     await this.page.waitForTimeout(2500);
     return this.getSuccessMessage();
@@ -93,6 +127,9 @@ class QuotationPage {
     const dead = await this.page.evaluate(() =>
       /nothing at this address|page not found/i.test(document.body.innerText)).catch(() => false);
     if (!dead) {
+      // 12 Nov 2026: /quotations opens on a Board of cards; the grid with the QUO numbers is behind the "Table" toggle
+      const tableToggle = this.page.locator('#quot-view-table:visible');
+      if (await tableToggle.count().catch(() => 0)) { await tableToggle.click().catch(() => {}); await this.page.waitForTimeout(1500); }
       await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
       await this.page.waitForTimeout(1500);
       console.log('  📋 /quotations listing loaded');

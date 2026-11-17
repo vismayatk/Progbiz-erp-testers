@@ -6,7 +6,7 @@ class LoginPage {
    */
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // exact ids on this build: #companycode, #signin-username, #signin-password
     this.companyInput  = page.locator('#companycode').or(
@@ -31,8 +31,13 @@ class LoginPage {
 
   /** Navigate to /login and wait for the (slow, JS-rendered) form. Returns true if the 3 fields rendered. */
   async openLogin() {
-    await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 }).catch(() => {});
-    const ok = await this.companyInput.waitFor({ state: 'visible', timeout: 45000 }).then(() => true).catch(() => false);
+    // The form is drawn by the app runtime and now and then never appears on the first load (Login_07,
+    // 2026-10-22: 45 s wait, then the retry passed in 4 s), so reload once before giving up.
+    let ok = false;
+    for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+      await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 }).catch(() => {});
+      ok = await this.companyInput.waitFor({ state: 'visible', timeout: attempt ? 45000 : 25000 }).then(() => true).catch(() => false);
+    }
     await this.page.waitForTimeout(500);
     return ok;
   }
@@ -63,7 +68,7 @@ class LoginPage {
    * (rendered after ~58 scripts + a backend call) intermittently loads slowly
    * on the test/dev tenants.
    */
-  async login(company = 'lesol_test', username = 'admin', password = '123') {
+  async login(company = 'onetouch_test', username = 'admin', password = '123') {
     console.log(`\n  🔐 LoginPage: filling credentials for "${username}" @ "${company}"`);
     let lastErr;
     for (let attempt = 1; attempt <= 3; attempt++) {

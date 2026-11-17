@@ -6,7 +6,8 @@
  * (/quotation/0/{id}, prefilled). Fields: #branch · #date · #quotation-no (auto) ·
  * #customerNameInput · #agent (Sales Exec) · #quotation-quality · #currency ·
  * #expdate (Valid Upto — the only field NOT auto-filled) · #terms-and-condition ·
- * totals #gross-total/#payable-total · #btn-save-quotation.
+ * totals: "Total Summary" card (Gross Amount / Total Payable — id-less since the
+ * Sep-2026 build; older builds used #gross-total/#payable-total) · #btn-save-quotation.
  *
  * Run:  npx playwright test tests/crm_quotation.spec.js
  */
@@ -17,12 +18,15 @@ const { EnquiryPage } = require('../pages/EnquiryPage');
 const { QuotationPage } = require('../pages/QuotationPage');
 const { screenshot } = require('../../common/helpers');
 
+const { tenant } = require('../../common/tenantData');
+const T = tenant();
+
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
-const uniq = () => { const ts = Date.now(); return { customerName: `QT Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `qt${ts}@x.com`, source: 'Website', product: 'Inverter', description: 'qt', quantity: '2', unitPrice: '1000' }; };
+const uniq = () => { const ts = Date.now(); return { customerName: `QT Cust ${ts}`, mobile: '9' + String(ts).slice(-9), email: `qt${ts}@x.com`, source: T.leadSource, product: T.item, description: 'qt', quantity: '2', unitPrice: '1000' }; };
 
 /** Login, seed a fresh enquiry, open its prefilled Quotation form (not saved).
  *  Returns the QuotationPage; the seeded enquiry data is exposed as `qt.seed`. */
@@ -64,9 +68,10 @@ test.describe('CRM — Quotation', () => {
         }),
       })));
     const wantQty = Number(qt.seed.quantity);
-    const line = grid.find(r => /Inverter/i.test(r.text + ' ' + r.cells.join(' ')) &&
+    const itemName = qt.seed.product.toLowerCase();
+    const line = grid.find(r => (r.text + ' ' + r.cells.join(' ')).toLowerCase().includes(itemName) &&
       r.cells.some(c => parseFloat(c) === wantQty));
-    expect(line, `enquiry item "Inverter" (qty ${wantQty}) should carry into the quotation grid`).toBeTruthy();
+    expect(line, `enquiry item "${qt.seed.product}" (qty ${wantQty}) should carry into the quotation grid`).toBeTruthy();
     // QT-006: totals must RENDER as numbers (0.00 is correct until rates are typed —
     // prices don't carry from the enquiry, so a computed-from-price total can't be asserted)
     const grossNum = parseFloat(String(s.gross).replace(/[^\d.]/g, ''));
@@ -113,18 +118,40 @@ test.describe('CRM — Quotation', () => {
     console.log(`  ✅ Quotation ${before.number} saved and listed`);
   });
 
+  test('QT-F1 | Default Next FollowUp Date is not below its own minimum', async ({ page }) => {
+    // KNOWN DEFECT QT-F1 (onetouch_test, 2026-10-09): the quotation form pre-fills
+    // "Next FollowUp Date" from the tenant's clock (UAE) but sets its min from the
+    // browser's clock, so a browser ahead of UAE time (e.g. IST) opens a form that
+    // says "Follow-up date cannot be in the past." and will not save. The save tests
+    // set a future date; this one records the default as a user lands on it.
+    test.fail(T.knownDefects.includes('QT-F1'), 'QT-F1 — quotation follow-up default below its own minimum');
+    const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
+    await page.goto(`${process.env.BASE_URL}/quotation`, { waitUntil: 'domcontentloaded' });
+    const f = page.locator('#firstfollowupdate');
+    await f.waitFor({ state: 'visible', timeout: 30000 });
+    await page.waitForTimeout(1500);
+    const { value, min } = await f.evaluate(e => ({ value: e.value, min: e.min }));
+    console.log(`  📅 default=${value} min=${min}`);
+    expect(value, 'Next FollowUp Date should be pre-filled').toBeTruthy();
+    expect(!min || value >= min, `default ${value} is below its own minimum ${min}`).toBeTruthy();
+  });
+
   test('QT-001 | Create New → Quotation page (QT-001,002,009)', async ({ page }) => {
     const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
     await page.waitForTimeout(1500);
-    // Create New → Quotation. The redesigned home removed #new-quotation-item's
-    // id (the entry is a plain "Quotation" link now) — target the menu item by
-    // id OR text within the dropdown that contains #new-task-item.
-    const taskItem = page.locator('#new-task-item');
-    for (let i = 0; i < 6 && !(await taskItem.isVisible().catch(() => false)); i++) { await page.locator('#new-task, #new-lead-type').first().click().catch(() => {}); await page.waitForTimeout(600); }
-    const menu = page.locator('.dropdown-menu, ul').filter({ has: page.locator('#new-task-item') }).first();
-    const item = page.locator('#new-quotation-item')
-      .or(menu.locator('a, button').filter({ hasText: /^\s*Quotation\s*$/i }))
-      .first();
+    // Create New → Quotation. The entry lost its id (#new-quotation-item) in the
+    // Sep-2026 build — only "Task" still has one — so match it by label, SCOPED to
+    // the Create New menu (`:has(#new-task-item)`): the sidebar holds its own hidden
+    // `.dropdown-item` labelled "Quotation", which an unscoped match picks first and
+    // then waits on forever. Open state is read from #new-task-item for the same reason.
+    const menu = page.locator('.dropdown-menu:has(#new-task-item)');
+    const item = page.locator('#new-quotation-item')                 // older builds keep the id
+      .or(menu.locator('a').filter({ hasText: /^\s*Quotation\s*$/i })).first();
+    // The toggle is #new-task on some renders and #new-lead-type on others — match
+    // either (clicking only #new-task burned 6 × the 20s action timeout and the menu
+    // never opened), and cap each click so a wrong render fails fast.
+    const toggle = page.locator('#new-task, #new-lead-type').first();
+    for (let i = 0; i < 6 && !(await page.locator('#new-task-item').isVisible().catch(() => false)); i++) { await toggle.click({ timeout: 5000 }).catch(() => {}); await page.waitForTimeout(600); }
     // No direct-goto fallback: the Create-New → Quotation menu path itself is under test,
     // so a broken menu must fail rather than be masked by a forced page.goto('/quotation').
     await item.click();

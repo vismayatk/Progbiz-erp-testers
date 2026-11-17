@@ -1,5 +1,7 @@
 'use strict';
 
+const { tenant } = require('../../common/tenantData');
+
 /**
  * Inventory → Settings → Item Categories  (/item-categories)
  * Linked to CRM (the Enquiry/Dashboard "Item Category" filters). Uses an INLINE
@@ -9,7 +11,7 @@
 class ItemCategoryPage {
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     this.nameInput = page.locator('#categoryname');
     // Save button of the inline add form (first Save following the name field)
@@ -20,7 +22,7 @@ class ItemCategoryPage {
   }
 
   async goto() {
-    await this.page.goto(`${this.baseUrl}/item-categories`, { waitUntil: 'domcontentloaded' });
+    await this.page.goto(`${this.baseUrl}${tenant().routes.itemCategories}`, { waitUntil: 'domcontentloaded' });
     await this.page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     await this.nameInput.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
     console.log(`  📋 Item Categories loaded: ${this.page.url()}`);

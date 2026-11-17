@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Login page object for the HRMS ERP build (https://hrms-erp.progbiz.in).
+ * Login page object for the HRMS build (https://hrms-test.progbiz.in, company pbhrms).
  * Same 3-field SPA login as the other ProgBiz tenants:
  * #companycode / #signin-username / #signin-password.
  */
@@ -11,7 +11,7 @@ class HrmsLoginPage {
    */
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.HRMS_BASE_URL || 'https://hrms-erp.progbiz.in';
+    this.baseUrl = process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in';
 
     this.companyInput  = page.locator('#companycode').or(
                          page.locator('input[name="company_code"]')).or(
@@ -32,18 +32,35 @@ class HrmsLoginPage {
    * HRMS_COMPANY_CODE / HRMS_USERNAME / HRMS_PASSWORD.
    */
   async login(
-    // Prefer the HRMS_* vars; fall back to the shared CRM vars (COMPANY_CODE /
-    // CRM_USERNAME / PASSWORD) so a single .env credential set works for both.
-    company  = process.env.HRMS_COMPANY_CODE || process.env.COMPANY_CODE || 'Hrms',
-    username = process.env.HRMS_USERNAME     || process.env.CRM_USERNAME  || 'vismaya',
-    password = process.env.HRMS_PASSWORD     || process.env.PASSWORD      || '123',
+    // HRMS has its own tenant: never fall back to the ERP login (COMPANY_CODE /
+    // CRM_USERNAME / PASSWORD point at the ERP tenant, e.g. onetouch_test).
+    // Defaults match the tenant the HRMS suite targets: company pbhrms, user amit.
+    company  = process.env.HRMS_COMPANY_CODE || 'pbhrms',
+    username = process.env.HRMS_USERNAME     || 'amit',
+    password = process.env.HRMS_PASSWORD,
   ) {
+    if (!password) {
+      throw new Error(`HRMS_PASSWORD is not set — add it to .env (HRMS target: ${this.baseUrl}, company "${company}", user "${username}").`);
+    }
     console.log(`\n  🔐 HrmsLoginPage: logging in "${username}" @ "${company}"`);
     let lastErr;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-        await this.companyInput.waitFor({ state: 'visible', timeout: 45000 });
+        // The HRMS app downloads ~10 MB before it draws the form: usually ~5 s, but
+        // at slow moments 40 s+ (seen 2026-10-10). Wait generously, and treat a
+        // redirect away from /login as success — a slow earlier attempt may have
+        // signed in after all, and /login then never shows the form again.
+        await this.page.goto(`${this.baseUrl}/login`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+        // (each branch settles to a value, so the losing one can't fail later unhandled)
+        const state = await Promise.race([
+          this.companyInput.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'form', () => null),
+          this.page.waitForURL((u) => !/\/login/i.test(String(u)), { timeout: 120000 }).then(() => 'signed-in', () => null),
+        ]);
+        if (!state) throw new Error('HRMS login form did not appear within 120 s');
+        if (state === 'signed-in') {
+          console.log(`  ✅ Already signed in — URL: ${this.page.url()}`);
+          return;
+        }
         await this.companyInput.fill(company);
         await this.usernameInput.fill(username);
         await this.passwordInput.fill(password);

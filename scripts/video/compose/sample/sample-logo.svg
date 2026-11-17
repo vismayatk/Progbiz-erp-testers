@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Neutral placeholder mark for compositor tests. NOT a real brand logo. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B6CF6"/>
+      <stop offset="1" stop-color="#1E3FAE"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="108" height="108" rx="28" fill="url(#g)"/>
+  <path d="M36 80 L36 44 M36 44 L60 44 Q76 44 76 58 Q76 72 60 72 L36 72" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="88" cy="82" r="7" fill="#9DB8FF"/>
+</svg>

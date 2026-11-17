@@ -1,0 +1,4864 @@
+{
+ "_comment": "Progbiz ERP Knowledge Transfer videos. Every beat = narration (say_en / say_ml) + one visual. Footage times are SOURCE-recording seconds (times: source). Only facts marked verified in reports/video/kt/analysis/*/analysis.json are stated as fact; trainer explanations that are not shown are attributed to the trainer.",
+ "video_title_en": "Progbiz ERP: Complete Knowledge Transfer (English)",
+ "video_title_ml": "Progbiz ERP: Complete Knowledge Transfer (Malayalam)",
+ "output_names": {
+  "en": "Progbiz_ERP_Complete_KT_English",
+  "ml": "Progbiz_ERP_Complete_KT_Malayalam"
+ },
+ "times": "source",
+ "tagline": "Knowledge Transfer",
+ "labels": {
+  "module_en": "MODULE",
+  "module_ml": "MODULE",
+  "right_en": "Progbiz ERP  ·  Knowledge Transfer",
+  "right_ml": "Progbiz ERP  ·  Knowledge Transfer"
+ },
+ "camera0": {
+  "zoom": 1.0
+ },
+ "chapters": [
+  {
+   "id": "intro",
+   "title": "Introduction",
+   "beats": [
+    {
+     "id": "intro_1",
+     "say_en": "Welcome to the Progbiz ERP Knowledge Transfer session. In this video, we'll walk through the key ERP modules, understand their purpose, and see how each workflow is handled in the system. Everything you see comes from real training recordings, and where a step was not completed in a recording, we will say so.",
+     "say_ml": "നമസ്കാരം, Progbiz ERP Knowledge Transfer വീഡിയോയിലേക്ക് സ്വാഗതം. ഈ വീഡിയോയിൽ നമ്മുടെ ERP-യിലെ പ്രധാന modules ഓരോന്നായി പരിചയപ്പെടാം. ഓരോ module-ഉം എന്തിനാണ് ഉപയോഗിക്കുന്നത്, അതിലെ പ്രധാന fields എന്തൊക്കെയാണ്, workflow എങ്ങനെയാണ് നടക്കുന്നത് എന്നൊക്കെ screen-ലൂടെ നോക്കാം. ഇവിടെ കാണുന്നതെല്ലാം യഥാർത്ഥ training recordings-ൽ നിന്നാണ്. ഏതെങ്കിലും step recording-ൽ complete ചെയ്തിട്ടില്ലെങ്കിൽ അത് നമ്മൾ പറയും.",
+     "visual": {
+      "type": "motion",
+      "authored": 21.8,
+      "min": 18.0,
+      "source": {
+       "type": "motion",
+       "preset": "intro",
+       "seed": 11,
+       "images": {
+        "home": "reports/video/kt/assets/intro_window.jpg",
+        "logo": "reports/video/beta/cap/white-logo-1600.png"
+       },
+       "cards": [
+        {
+         "t": 0.9,
+         "title": "Purchase Invoice",
+         "sub": "Supplier bill read by AI",
+         "icon": "note",
+         "color": "#0068EE",
+         "x": 600,
+         "y": 300,
+         "sx": 340,
+         "sy": 195,
+         "rot": -5
+        },
+        {
+         "t": 1.9,
+         "title": "Project P&L",
+         "sub": "Revenue, cost, margin",
+         "icon": "chart",
+         "color": "#22C55E",
+         "x": 1330,
+         "y": 250,
+         "sx": 1590,
+         "sy": 175,
+         "rot": 4
+        },
+        {
+         "t": 3.0,
+         "title": "Cheque Collection",
+         "sub": "Ready for deposit",
+         "icon": "calendar",
+         "color": "#F59E0B",
+         "x": 1440,
+         "y": 525,
+         "sx": 1700,
+         "sy": 540,
+         "rot": 3
+        },
+        {
+         "t": 3.9,
+         "title": "Commission",
+         "sub": "Lead source payout",
+         "icon": "users",
+         "color": "#7C5CFF",
+         "x": 500,
+         "y": 560,
+         "sx": 235,
+         "sy": 555,
+         "rot": -3
+        },
+        {
+         "t": 4.8,
+         "title": "GSTR-3B",
+         "sub": "Eligible ITC",
+         "icon": "grid",
+         "color": "#0EA5A4",
+         "x": 700,
+         "y": 800,
+         "sx": 420,
+         "sy": 905,
+         "rot": 3
+        },
+        {
+         "t": 5.7,
+         "title": "Customer Collection",
+         "sub": "Bill-to-bill",
+         "icon": "user",
+         "color": "#F43F5E",
+         "x": 1290,
+         "y": 805,
+         "sx": 1580,
+         "sy": 905,
+         "rot": -4
+        },
+        {
+         "t": 7.6,
+         "title": "Credit Note",
+         "sub": "Against an invoice",
+         "icon": "check",
+         "color": "#16A34A",
+         "x": 975,
+         "y": 140,
+         "rot": 2
+        },
+        {
+         "t": 8.3,
+         "title": "Counter Sale",
+         "sub": "POS bill",
+         "icon": "spark",
+         "color": "#EAB308",
+         "x": 985,
+         "y": 948,
+         "rot": -2
+        }
+       ],
+       "scatter": [
+        9.2,
+        10.8
+       ],
+       "questions": [
+        {
+         "t": 11.8,
+         "text": "What does each module do?",
+         "text_ml": "ഓരോ module-ഉം എന്തിന്?"
+        },
+        {
+         "t": 12.8,
+         "text": "Which fields matter?",
+         "text_ml": "പ്രധാന fields ഏതൊക്കെ?"
+        },
+        {
+         "t": 13.9,
+         "text": "How does the workflow run?",
+         "text_ml": "Workflow എങ്ങനെ?"
+        }
+       ],
+       "question_size": 66,
+       "dim": [
+        11.5,
+        12.1
+       ],
+       "text_out": 15.6,
+       "converge": [
+        15.7,
+        17.0
+       ],
+       "logo_at": [
+        16.4,
+        20.2
+       ],
+       "logo_width": 780,
+       "tagline": "Knowledge Transfer",
+       "tagline_at": 18.4,
+       "window": [
+        20.2,
+        21.6
+       ],
+       "window_from": [
+        720,
+        660,
+        480,
+        270
+       ]
+      }
+     }
+    },
+    {
+     "id": "intro_2",
+     "say_en": "We'll cover fourteen modules: purchase, solar project billing and project profit and loss, cheque collection and cheque payment, commission, the receipt voucher, credit notes and GST reports, and then sales invoicing, customer collections, proforma invoices, settings and the counter sale screen. Let's begin with the first module.",
+     "say_ml": "പതിനാല് modules നോക്കാം: purchase, solar project billing, project P&L, cheque collection, cheque payment, commission, receipt voucher, credit note, GST reports, പിന്നെ sales invoice, customer collection, proforma invoice, settings, counter sale screen. ആദ്യം നമുക്ക് ആദ്യത്തെ module നോക്കാം.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "In this session",
+      "eyebrow_ml": "ഈ session-ൽ",
+      "title_en": "Fourteen modules",
+      "title_ml": "പതിനാല് modules",
+      "points": [
+       "1 Purchase  ·  2 Solar project billing  ·  3 Project P&L",
+       "4 Cheque Collection  ·  5 Cheque Payment  ·  6 Commission",
+       "7 Receipt Voucher & Journal  ·  8 Credit Note  ·  9 GST",
+       "10 Payment Terms & Sales Invoice  ·  11 Collection, Advance & Refund",
+       "12 Proforma Invoice  ·  13 Settings  ·  14 Counter Sale (POS)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m01",
+   "number": 1,
+   "title": "Purchase Management",
+   "beats": [
+    {
+     "id": "m01_intro",
+     "say_en": "Module one is Purchase Management. Before anything is bought, the items and warehouses have to be set up. Purchases are then recorded with a purchase invoice.",
+     "say_ml": "ഒന്നാമത്തെ module Purchase Management ആണ്. എന്തെങ്കിലും purchase ചെയ്യുന്നതിന് മുമ്പ് items-ഉം warehouses-ഉം set up ചെയ്യണം. അതിന് ശേഷം purchase invoice വഴിയാണ് purchase record ചെയ്യുന്നത്.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 1",
+      "title": "Purchase Management",
+      "subtitle_en": "Item master, warehouses, purchase enquiry and purchase invoice",
+      "subtitle_ml": "Item master, warehouses, purchase enquiry, purchase invoice"
+     }
+    },
+    {
+     "id": "m01_menu",
+     "say_en": "Search the menu for purchase. The Purchase group has Purchase Enquiries, Supplier Quotations, Purchase Invoices, Purchase Returns, Supplier Payment and Supplier Refund. But first, open the item master: Master, Inventory, Items.",
+     "say_ml": "Menu-വിൽ purchase എന്ന് search ചെയ്യുക. Purchase group-ൽ Purchase Enquiries, Supplier Quotations, Purchase Invoices, Purchase Returns, Supplier Payment, Supplier Refund ഇവ കാണാം. പക്ഷേ ആദ്യം item master open ചെയ്യാം: Master, Inventory, Items.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_a",
+      "from": 18.5,
+      "to": 34.0,
+      "hl": [
+       {
+        "from": 21.6,
+        "to": 30.1,
+        "label": "Supplier Refund",
+        "expand": [
+         24,
+         310,
+         140,
+         14
+        ]
+       },
+       {
+        "from": 31.6,
+        "to": 33.3,
+        "label": "Items",
+        "expand": [
+         30,
+         12,
+         120,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_item_basic",
+     "say_en": "Open an item to edit it. The basic details are the item type, here Product, the item name, the group and category, and the unit of measure, chosen here as PC.",
+     "say_ml": "Edit ചെയ്യാൻ ഒരു item open ചെയ്യുക. Basic details-ൽ item type, ഇവിടെ Product, item name, group, category, പിന്നെ unit, ഇവിടെ PC select ചെയ്യുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_a",
+      "from": 36.0,
+      "to": 56.3,
+      "hl": [
+       {
+        "from": 41.8,
+        "to": 48.5,
+        "label": "Item Type",
+        "expand": [
+         14,
+         10,
+         800,
+         70
+        ]
+       },
+       {
+        "from": 49.0,
+        "to": 53.3,
+        "label": "UOM Unit",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_tax",
+     "say_en": "The tax section holds the tax classification, the tax preference, here Taxable, and the GST rates: GST 18 percent within the state and IGST 18 percent between states.",
+     "say_ml": "Tax section-ൽ tax classification, tax preference, ഇവിടെ Taxable, പിന്നെ GST rates: state-നുള്ളിൽ GST 18 ശതമാനം, state-ന് പുറത്തേക്ക് IGST 18 ശതമാനം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_a",
+      "from": 53.5,
+      "to": 74.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 54.1,
+        "to": 56.3,
+        "label": "Tax Prefrence",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       },
+       {
+        "from": 60.0,
+        "to": 73.7,
+        "label": "Intra Tax",
+        "expand": [
+         14,
+         10,
+         600,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_flags",
+     "say_en": "Next come the item flags: Is Sellable, Show in shop, Is Purchasable, Need to maintain stock, and Choose purchase invoice on sale. Show in shop sends the item to the branch's WhatsApp catalogue, and the trainer explains that the catalogue updates overnight.",
+     "say_ml": "അടുത്തത് item flags ആണ്: Is Sellable, Show in shop, Is Purchasable, Need to maintain stock, Choose purchase invoice on sale. Show in shop tick ചെയ്താൽ item branch-ന്റെ WhatsApp catalogue-ലേക്ക് പോകും, catalogue രാത്രി update ആകും എന്ന് trainer പറയുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_a",
+      "from": 74.0,
+      "to": 104.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 77.6,
+        "to": 103.9,
+        "label": "Is Sellable",
+        "expand": [
+         14,
+         10,
+         520,
+         200
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_stock",
+     "say_en": "Tick Need to maintain stock to keep stock for the item. The branch grid then shows the opening cost and the reorder level for each branch.",
+     "say_ml": "Item-ന് stock maintain ചെയ്യണമെങ്കിൽ Need to maintain stock tick ചെയ്യുക. അപ്പോൾ ഓരോ branch-നും opening cost-ഉം reorder level-ഉം കാണിക്കുന്ന grid വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_b",
+      "from": 184.0,
+      "to": 200.0,
+      "hl": [
+       {
+        "from": 185.1,
+        "to": 192.1,
+        "label": "Need to maintain stock",
+        "expand": [
+         14,
+         10,
+         40,
+         10
+        ]
+       },
+       {
+        "from": 192.4,
+        "to": 200.0,
+        "label": "Reorder Level",
+        "expand": [
+         380,
+         10,
+         200,
+         120
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_pi_on_sale",
+     "say_en": "Choose purchase invoice on sale means that when this item is sold, the sale must pick the purchase invoice it came from. The trainer explains that this helps with warranty claims, because you know which supplier the item was bought from.",
+     "say_ml": "Choose purchase invoice on sale tick ചെയ്താൽ, ഈ item sell ചെയ്യുമ്പോൾ ഏത് purchase invoice-ൽ നിന്നാണ് വന്നത് എന്ന് select ചെയ്യണം. Warranty claim വരുമ്പോൾ ഏത് supplier-ൽ നിന്നാണ് വാങ്ങിയത് എന്ന് അറിയാൻ ഇത് സഹായിക്കും എന്ന് trainer പറയുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_b",
+      "from": 220.0,
+      "to": 236.0,
+      "hl": [
+       {
+        "from": 224.0,
+        "to": 228.7,
+        "label": "Choose purchase invoice on sale",
+        "expand": [
+         14,
+         10,
+         40,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_sku",
+     "say_en": "The item also has SKU, barcode and brand, one price, and for each branch an opening cost and a reorder level. Opening stock is entered per warehouse.",
+     "say_ml": "Item-ൽ SKU, barcode, brand, ഒരു price, പിന്നെ ഓരോ branch-നും opening cost, reorder level എന്നിവയും ഉണ്ട്. Opening stock ഓരോ warehouse-നും വേറെ കൊടുക്കാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_b",
+      "from": 236.9,
+      "to": 262.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 237.4,
+        "to": 246.0,
+        "label": "SKU",
+        "expand": [
+         14,
+         10,
+         1200,
+         70
+        ]
+       },
+       {
+        "from": 248.0,
+        "to": 257.9,
+        "label": "Opening Cost",
+        "expand": [
+         380,
+         10,
+         480,
+         120
+        ]
+       },
+       {
+        "from": 258.4,
+        "to": 262.0,
+        "label": "Opening Stock",
+        "expand": [
+         600,
+         10,
+         200,
+         120
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_wh_open",
+     "say_en": "Warehouses are kept under Master, Inventory, Warehouses. Click New Warehouse. Each warehouse belongs to one branch, chosen from the branch list.",
+     "say_ml": "Warehouses Master-ൽ Inventory-ക്ക് കീഴിൽ Warehouses-ൽ ആണ്. New Warehouse click ചെയ്യുക. ഓരോ warehouse-ഉം ഒരു branch-ന്റേതാണ്, branch list-ൽ നിന്ന് select ചെയ്യാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_b",
+      "from": 319.0,
+      "to": 346.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 325.4,
+        "to": 340.5,
+        "label": "New Warehouse",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 341.4,
+        "to": 346.0,
+        "label": "Warehouse Name",
+        "expand": [
+         14,
+         10,
+         380,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_wh_save",
+     "say_en": "Enter the warehouse name, choose the branch, fill in the address, and click Save. The message reads: warehouse saved successfully, and the new warehouse appears in the list.",
+     "say_ml": "Warehouse name കൊടുത്ത്, branch select ചെയ്ത്, address fill ചെയ്ത് Save click ചെയ്യുക. Warehouse saved successfully എന്ന message വരും, പുതിയ warehouse list-ൽ കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_b",
+      "from": 346.0,
+      "to": 384.0,
+      "max_speed": 2.8,
+      "hl": [
+       {
+        "from": 366.0,
+        "to": 373.1,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 374.1,
+        "to": 374.4,
+        "label": "Warehouse saved successfully",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       },
+       {
+        "from": 374.6,
+        "to": 384.0,
+        "label": "Thavakkara",
+        "expand": [
+         14,
+         10,
+         300,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_wh_item",
+     "say_en": "Back on the item, the new warehouse appears in the opening stock grid under its branch. Note that in the recording these item changes are not saved; to keep them, click Save Item.",
+     "say_ml": "Item-ലേക്ക് തിരിച്ചു വന്നാൽ പുതിയ warehouse അതിന്റെ branch-ന് കീഴിൽ opening stock grid-ൽ കാണാം. ശ്രദ്ധിക്കുക, recording-ൽ ഈ item changes save ചെയ്തിട്ടില്ല. Changes നിലനിർത്താൻ Save Item click ചെയ്യണം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_b",
+      "from": 398.0,
+      "to": 420.0,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 402.8,
+        "to": 417.5,
+        "label": "Thavakkara",
+        "expand": [
+         14,
+         10,
+         700,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_enquiry",
+     "say_en": "Purchase Enquiries let you ask several suppliers for rates, and Supplier Quotations record the rates they give. The trainer says these two steps are optional for a solar company. The purchase invoice is the step that is a must.",
+     "say_ml": "Purchase Enquiries വഴി പല suppliers-നോടും rate ചോദിക്കാം, Supplier Quotations-ൽ അവർ തരുന്ന rates record ചെയ്യാം. Solar company-ക്ക് ഈ രണ്ട് steps optional ആണെന്ന് trainer പറയുന്നു. Purchase invoice ആണ് നിർബന്ധമായും വേണ്ടത്.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_c",
+      "from": 445.0,
+      "to": 456.0,
+      "hl": [
+       {
+        "from": 445.8,
+        "to": 448.4,
+        "label": "Suppliers",
+        "expand": [
+         14,
+         10,
+         220,
+         90
+        ]
+       },
+       {
+        "from": 450.0,
+        "to": 455.4,
+        "label": "Send to Suppliers",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_invoice_form",
+     "say_en": "Open Purchase Invoices and click New Purchase Invoice. The header has the branch, date, supplier name, vendor invoice number and deliver to. Below it are the item grid, with rate, quantity and gross, and the total summary, with discount, charges and pay using.",
+     "say_ml": "Purchase Invoices open ചെയ്ത് New Purchase Invoice click ചെയ്യുക. Header-ൽ branch, date, supplier name, vendor invoice number, deliver to ഇവ ഉണ്ട്. താഴെ rate, quantity, gross ഉള്ള item grid, പിന്നെ discount, charges, pay using ഉള്ള total summary.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_c",
+      "from": 489.5,
+      "to": 506.5,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 490.4,
+        "to": 491.4,
+        "label": "New Purchase Invoice",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 493.7,
+        "to": 499.2,
+        "label": "Supplier Name",
+        "expand": [
+         14,
+         10,
+         1460,
+         70
+        ]
+       },
+       {
+        "from": 504.0,
+        "to": 506.0,
+        "label": "Pay Using",
+        "expand": [
+         14,
+         10,
+         400,
+         120
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_ai_upload",
+     "say_en": "Upload Supplier Bill reads a supplier's bill with AI. In the recording, the first attempt stops with a message that the AI tokens have run out.",
+     "say_ml": "Upload Supplier Bill, AI ഉപയോഗിച്ച് supplier bill read ചെയ്യും. Recording-ൽ ആദ്യ ശ്രമത്തിൽ AI tokens തീർന്നു എന്ന message വന്ന് നിന്നു.",
+     "visual": {
+      "type": "still",
+      "clip": "pu_d",
+      "at": 524.6,
+      "hl": []
+     }
+    },
+    {
+     "id": "m01_ai_read",
+     "say_en": "After a cut, a bill is shown already read. The supplier is matched by GSTIN, and warnings flag that this bill was already entered, and that the GSTIN does not match.",
+     "say_ml": "ഒരു cut-ന് ശേഷം ഒരു bill read ചെയ്ത നിലയിൽ കാണാം. Supplier, GSTIN വഴി match ആയി, ഈ bill already entry ചെയ്തതാണ് എന്നും GSTIN match ആകുന്നില്ല എന്നും warnings കാണിക്കുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_d",
+      "from": 530.7,
+      "to": 545.0,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 530.8,
+        "to": 538.0,
+        "label": "matched by GSTIN",
+        "expand": [
+         14,
+         10,
+         40,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_bill_lines",
+     "say_en": "The header is filled from the bill, and each bill line is matched to one of our items or to a charge, or it can be left out.",
+     "say_ml": "Bill-ൽ നിന്ന് header fill ആകും. ഓരോ bill line-ഉം നമ്മുടെ ഒരു item-നോടോ charge-നോടോ match ചെയ്യാം, വേണമെങ്കിൽ ഒഴിവാക്കാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_d",
+      "from": 545.0,
+      "to": 566.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 545.5,
+        "to": 560.0,
+        "label": "Supplier Name",
+        "expand": [
+         14,
+         10,
+         1460,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_bill_totals",
+     "say_en": "The totals are taxable 14,973.21, tax 2,651.20 and round off 0.59, giving 17,625. The recording ends here, before Fill Invoice is clicked, so saving the invoice is not shown.",
+     "say_ml": "Totals: taxable 14,973.21, tax 2,651.20, round off 0.59, total 17,625. Fill Invoice click ചെയ്യുന്നതിന് മുമ്പ് recording അവസാനിക്കുന്നു, അതുകൊണ്ട് invoice save ചെയ്യുന്നത് കാണിക്കുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "pu_d",
+      "from": 566.0,
+      "to": 576.0,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 568.8,
+        "to": 570.5,
+        "label": "Round off",
+        "expand": [
+         14,
+         10,
+         600,
+         50
+        ]
+       },
+       {
+        "from": 569.7,
+        "to": 569.9,
+        "label": "Fill Invoice",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 572.9,
+        "to": 573.3,
+        "label": "Leave this line out",
+        "expand": [
+         14,
+         10,
+         40,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m01_summary",
+     "say_en": "To sum up: set up the item, with its tax, stock flags and branch values, and the warehouses first. Purchase enquiry and quotation are optional. The purchase invoice records the purchase, and it can be filled from a supplier's bill with AI.",
+     "say_ml": "ചുരുക്കത്തിൽ: ആദ്യം item set up ചെയ്യുക, tax, stock flags, branch values ഉൾപ്പെടെ, പിന്നെ warehouses. Purchase enquiry, quotation എന്നിവ optional ആണ്. Purchase invoice ആണ് purchase record ചെയ്യുന്നത്, supplier bill-ൽ നിന്ന് AI ഉപയോഗിച്ച് fill ചെയ്യാനും പറ്റും.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 1 · Summary",
+      "eyebrow_ml": "Module 1 · Summary",
+      "title": "Purchase Management",
+      "points_en": [
+       "Master → Inventory → Items: type, unit, tax, flags, SKU, price, branch values",
+       "Need to maintain stock shows reorder level and warehouse opening stock",
+       "Master → Inventory → Warehouses: one branch per warehouse",
+       "Purchase enquiry and supplier quotation are optional (trainer)",
+       "Purchase Invoice: header, items, totals; Upload Supplier Bill uses AI tokens"
+      ],
+      "points_ml": [
+       "Master → Inventory → Items: type, unit, tax, flags, SKU, price, branch values",
+       "Need to maintain stock: reorder level, warehouse opening stock",
+       "Master → Inventory → Warehouses: ഓരോ warehouse-ഉം ഒരു branch-ൽ",
+       "Purchase enquiry, supplier quotation optional ആണ് (trainer)",
+       "Purchase Invoice: header, items, totals; Upload Supplier Bill-ന് AI tokens വേണം"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m02",
+   "number": 2,
+   "title": "Solar Project Billing & Collections",
+   "beats": [
+    {
+     "id": "m02_intro",
+     "say_en": "Module two covers billing and collections for a solar project. The recording is named Solar Invoice, but it shows how a won enquiry becomes a project, how the payment terms split the deal amount, and how collections are recorded and reach the accounts. Creating an invoice is not shown in it.",
+     "say_ml": "രണ്ടാമത്തെ module ഒരു solar project-ന്റെ billing-ഉം collections-ഉം ആണ്. Recording-ന്റെ പേര് Solar Invoice എന്നാണ്, പക്ഷേ അതിൽ കാണിക്കുന്നത് won ആയ enquiry എങ്ങനെ project ആകുന്നു, payment terms deal amount എങ്ങനെ split ചെയ്യുന്നു, collections എങ്ങനെ record ചെയ്ത് accounts-ലേക്ക് പോകുന്നു എന്നതാണ്. Invoice create ചെയ്യുന്നത് ഇതിൽ കാണിക്കുന്നില്ല.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 2",
+      "title": "Solar Project Billing & Collections",
+      "subtitle_en": "From the recording 'Solar Invoice': project, payment terms, collections",
+      "subtitle_ml": "'Solar Invoice' recording-ൽ നിന്ന്: project, payment terms, collections"
+     }
+    },
+    {
+     "id": "m02_enquiry",
+     "say_en": "Start in CRM, Leads, on the Won tab. Open the won enquiry, and from its menu choose Create Project. The same menu also offers Create Proforma Invoice and Create Invoice.",
+     "say_ml": "CRM-ൽ Leads open ചെയ്ത് Won tab നോക്കുക. Won ആയ enquiry open ചെയ്ത്, അതിന്റെ menu-വിൽ നിന്ന് Create Project select ചെയ്യുക. ഇതേ menu-വിൽ Create Proforma Invoice, Create Invoice എന്നിവയും ഉണ്ട്.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_a",
+      "from": 6.0,
+      "to": 18.0,
+      "hl": [
+       {
+        "from": 6.2,
+        "to": 12.0,
+        "label": "Won",
+        "expand": [
+         20,
+         10,
+         120,
+         10
+        ]
+       },
+       {
+        "from": 15.6,
+        "to": 17.2,
+        "label": "Create Proforma Invoice",
+        "expand": [
+         20,
+         70,
+         60,
+         60
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_project_form",
+     "say_en": "The new project form is filled from the enquiry: the branch, the enquiry number, the customer, the executive, the lead source and the deal amount. The solar section holds the capacity, panels, consumer number, EB section and brands, the KSEB charges with include switches, and the payment type.",
+     "say_ml": "പുതിയ project form enquiry-യിൽ നിന്ന് fill ആകും: branch, enquiry number, customer, executive, lead source, deal amount. Solar section-ൽ capacity, panels, consumer number, EB section, brands, include switches ഉള്ള KSEB charges, payment type ഇവ ഉണ്ട്.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_a",
+      "from": 18.0,
+      "to": 58.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 18.7,
+        "to": 20.0,
+        "label": "Deal Amount",
+        "expand": [
+         14,
+         380,
+         1460,
+         70
+        ]
+       },
+       {
+        "from": 40.0,
+        "to": 49.4,
+        "label": "Payment Type",
+        "expand": [
+         14,
+         10,
+         380,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_type",
+     "say_en": "Type is required. Clicking Create without it shows: please choose a type. Choose the project type, here NON SUBSIDY ONGRID, and click Create.",
+     "say_ml": "Type നിർബന്ധമാണ്. Type ഇല്ലാതെ Create click ചെയ്താൽ please choose a type എന്ന message വരും. Project type select ചെയ്യുക, ഇവിടെ NON SUBSIDY ONGRID, എന്നിട്ട് Create click ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_a",
+      "from": 58.0,
+      "to": 79.0,
+      "hl": [
+       {
+        "from": 60.6,
+        "to": 62.2,
+        "label": "Please choose a type",
+        "expand": [
+         30,
+         30,
+         30,
+         30
+        ]
+       },
+       {
+        "from": 64.2,
+        "to": 71.0,
+        "label": "NON SUBSIDY ONGRID",
+        "expand": [
+         14,
+         8,
+         60,
+         8
+        ]
+       },
+       {
+        "from": 76.0,
+        "to": 78.0,
+        "label": "Create",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_overview",
+     "say_en": "The project overview opens, linked to the enquiry, with the solar details in Basic Details. The Payment Summary splits the deal amount by the payment terms: 70 percent, 147,000, on start of order confirmation, and 30 percent, 63,000, on finish of meter replacement.",
+     "say_ml": "Enquiry-യുമായി link ചെയ്ത project overview open ആകും, Basic Details-ൽ solar details കാണാം. Payment Summary-യിൽ payment terms അനുസരിച്ച് deal amount split ചെയ്യുന്നു: order confirmation start ചെയ്യുമ്പോൾ 70 ശതമാനം, 147,000, meter replacement finish ചെയ്യുമ്പോൾ 30 ശതമാനം, 63,000.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_a",
+      "from": 79.0,
+      "to": 117.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 84.3,
+        "to": 94.8,
+        "label": "Solar Details",
+        "expand": [
+         14,
+         10,
+         900,
+         60
+        ]
+       },
+       {
+        "from": 100.7,
+        "to": 116.6,
+        "label": "On Start of ORDER CONFIRMATION",
+        "expand": [
+         14,
+         10,
+         940,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_opening",
+     "say_en": "The Collections tab has two buttons: Opening Collected and Add Collection. Opening Collected records money received before the project was entered, here 30,000 as on the twentieth of October, and it appears as an opening collection row. The trainer explains that an opening collection does not create an accounting entry.",
+     "say_ml": "Collections tab-ൽ രണ്ട് buttons ഉണ്ട്: Opening Collected, Add Collection. Project system-ൽ entry ചെയ്യുന്നതിന് മുമ്പ് കിട്ടിയ പണം Opening Collected-ൽ record ചെയ്യാം, ഇവിടെ ഒക്ടോബർ ഇരുപതിന് 30,000. അത് ഒരു opening collection row ആയി കാണാം. Opening collection-ന് accounting entry ഉണ്ടാകില്ല എന്ന് trainer പറയുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_b",
+      "from": 117.0,
+      "to": 160.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 118.0,
+        "to": 131.0,
+        "label": "Opening Collected",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 132.1,
+        "to": 140.4,
+        "label": "Amount Collected",
+        "expand": [
+         14,
+         10,
+         520,
+         200
+        ]
+       },
+       {
+        "from": 141.1,
+        "to": 159.8,
+        "label": "Opening Collection",
+        "expand": [
+         14,
+         10,
+         500,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_invoices",
+     "say_en": "The Invoices tab has a New Invoice button, but no invoice is created in this recording. Collections can also be entered from the menu, under Projects, Collections and Pending Collection.",
+     "say_ml": "Invoices tab-ൽ New Invoice button ഉണ്ട്, പക്ഷേ ഈ recording-ൽ invoice ഒന്നും create ചെയ്യുന്നില്ല. Menu-വിൽ Projects-ന് കീഴിൽ Collections, Pending Collection വഴിയും collections entry ചെയ്യാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_c",
+      "from": 196.0,
+      "to": 218.0,
+      "max_speed": 2.2,
+      "hl": [
+       {
+        "from": 197.0,
+        "to": 198.6,
+        "label": "New Invoice",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 211.5,
+        "to": 217.6,
+        "label": "Pending Collection",
+        "expand": [
+         30,
+         60,
+         60,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_exec_collection",
+     "say_en": "Here the project's executive records a collection with their own login. Open Projects, Collections, click Add Collection and search for the project. The collection summary shows what has been collected and what is due. Under Payment Through, the executive can only choose their own petty cash ledger. Enter 50,000 and click Add.",
+     "say_ml": "ഇവിടെ project-ന്റെ executive സ്വന്തം login ഉപയോഗിച്ച് collection record ചെയ്യുന്നു. Projects-ൽ Collections open ചെയ്ത് Add Collection click ചെയ്ത് project search ചെയ്യുക. Collection summary-യിൽ ഇതുവരെ collect ചെയ്തതും ഇനി വരാനുള്ളതും കാണാം. Payment Through-ൽ executive-ന് സ്വന്തം petty cash ledger മാത്രമേ select ചെയ്യാൻ പറ്റൂ. 50,000 കൊടുത്ത് Add click ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_d",
+      "from": 341.6,
+      "to": 371.0,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 343.1,
+        "to": 347.6,
+        "label": "Collection Summary",
+        "expand": [
+         14,
+         10,
+         380,
+         240
+        ]
+       },
+       {
+        "from": 350.0,
+        "to": 370.8,
+        "label": "Payment Through",
+        "expand": [
+         14,
+         10,
+         900,
+         160
+        ]
+       },
+       {
+        "from": 360.0,
+        "to": 370.8,
+        "label": "Balance After",
+        "expand": [
+         14,
+         10,
+         200,
+         60
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 347.6,
+        "to": 349.6,
+        "label": "Project Name",
+        "expand": [
+         30,
+         40,
+         1200,
+         400
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_exec_save",
+     "say_en": "Add a next follow-up date and a remark if needed, then Save. The message reads, You've done it, and a receipt is generated, R-22. It shows the total, the amount received earlier, the amount received now and the balance. The collection then appears in the list.",
+     "say_ml": "വേണമെങ്കിൽ next follow up date-ഉം remark-ഉം കൊടുത്ത് Save ചെയ്യുക. You've done it എന്ന message വരും, R-22 എന്ന receipt generate ആകും. അതിൽ total, നേരത്തെ കിട്ടിയത്, ഇപ്പോൾ കിട്ടിയത്, balance ഇവ കാണാം. പിന്നെ collection list-ൽ കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_d",
+      "from": 407.0,
+      "to": 431.0,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 407.2,
+        "to": 410.0,
+        "label": "Next Follow Up Date",
+        "expand": [
+         14,
+         10,
+         380,
+         200
+        ]
+       },
+       {
+        "from": 411.8,
+        "to": 413.0,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 414.0,
+        "to": 415.8,
+        "label": "You've done it!",
+        "expand": [
+         40,
+         14,
+         40,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_exec_view",
+     "say_en": "The executive's project view has fewer tabs: there is no Payment Summary, Invoices or Costing tab. The collections total is now 80,000: the opening 30,000 plus this 50,000.",
+     "say_ml": "Executive-ന്റെ project view-ൽ tabs കുറവാണ്: Payment Summary, Invoices, Costing tabs ഇല്ല. Collections total ഇപ്പോൾ 80,000 ആണ്: opening 30,000-ഉം ഇപ്പോഴത്തെ 50,000-ഉം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_e",
+      "from": 445.0,
+      "to": 465.0,
+      "hl": [
+       {
+        "from": 446.0,
+        "to": 454.0,
+        "label": "Collections",
+        "expand": [
+         40,
+         340,
+         200,
+         400
+        ]
+       },
+       {
+        "from": 455.0,
+        "to": 464.4,
+        "label": "80,000.00",
+        "expand": [
+         60,
+         14,
+         14,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_summary_after",
+     "say_en": "For the admin, the Payment Summary now shows 80,000 collected and 130,000 still collectable.",
+     "say_ml": "Admin-ന്റെ Payment Summary-യിൽ ഇപ്പോൾ collected 80,000, ഇനി collect ചെയ്യാനുള്ളത് 130,000.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_f",
+      "from": 494.0,
+      "to": 508.0,
+      "hl": [
+       {
+        "from": 494.7,
+        "to": 508.0,
+        "label": "Collected",
+        "expand": [
+         14,
+         10,
+         260,
+         50
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_contra",
+     "say_en": "The executive's collection sits in their petty cash ledger. To move it to the company's cash, a contra voucher is used: Accounts, Contras, New Contra Voucher. In the recording this contra voucher, C-10, is started but not saved.",
+     "say_ml": "Executive collect ചെയ്ത പണം അയാളുടെ petty cash ledger-ൽ ആണ് ഉള്ളത്. അത് company cash-ലേക്ക് മാറ്റാൻ contra voucher ഉപയോഗിക്കാം: Accounts, Contras, New Contra Voucher. Recording-ൽ C-10 എന്ന ഈ contra voucher തുടങ്ങുന്നുണ്ട്, പക്ഷേ save ചെയ്യുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_f",
+      "from": 508.0,
+      "to": 532.0,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 511.8,
+        "to": 512.4,
+        "label": "New Contra Voucher",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 513.5,
+        "to": 516.4,
+        "label": "Voucher Number",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       },
+       {
+        "from": 520.3,
+        "to": 527.2,
+        "label": "Account Name",
+        "expand": [
+         14,
+         10,
+         900,
+         90
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_ledger",
+     "say_en": "The General Ledger report for that petty cash ledger shows the collection received as 50,000 debit, and the balance rising to 150,800.",
+     "say_ml": "ആ petty cash ledger-ന്റെ General Ledger report-ൽ കിട്ടിയ collection 50,000 debit ആയി കാണാം, balance 150,800 ആയി കൂടി.",
+     "visual": {
+      "type": "footage",
+      "clip": "sol_f",
+      "from": 532.0,
+      "to": 569.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 536.1,
+        "to": 538.2,
+        "label": "General Ledger",
+        "expand": [
+         14,
+         10,
+         200,
+         40
+        ]
+       },
+       {
+        "from": 538.5,
+        "to": 546.4,
+        "label": "View Report",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 552.0,
+        "to": 568.8,
+        "label": "150800.00",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m02_summary",
+     "say_en": "To sum up: create the project from the won enquiry and choose its type. The payment terms set what is due and when. Opening collections record earlier receipts, and each collection creates a receipt that reaches the ledger.",
+     "say_ml": "ചുരുക്കത്തിൽ: won enquiry-യിൽ നിന്ന് project create ചെയ്ത് type select ചെയ്യുക. Payment terms ആണ് എപ്പോൾ എത്ര due ആകും എന്ന് തീരുമാനിക്കുന്നത്. നേരത്തെ കിട്ടിയ പണം opening collection ആയി record ചെയ്യാം, ഓരോ collection-ഉം ledger-ൽ എത്തുന്ന ഒരു receipt ഉണ്ടാക്കും.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 2 · Summary",
+      "eyebrow_ml": "Module 2 · Summary",
+      "title": "Solar Project Billing & Collections",
+      "points_en": [
+       "CRM → Leads → Won enquiry → Create Project (Type is required)",
+       "Payment Summary: deal amount split by payment terms (70% / 30%)",
+       "Opening Collected: money received before go-live",
+       "Projects → Collections → Add Collection → receipt (e.g. R-22)",
+       "Executive collects into own petty cash; contra moves it (not saved in recording)"
+      ],
+      "points_ml": [
+       "CRM → Leads → Won enquiry → Create Project (Type നിർബന്ധം)",
+       "Payment Summary: payment terms അനുസരിച്ച് split (70% / 30%)",
+       "Opening Collected: go-live-ന് മുമ്പ് കിട്ടിയ പണം",
+       "Projects → Collections → Add Collection → receipt (ഉദാ. R-22)",
+       "Executive സ്വന്തം petty cash-ൽ collect ചെയ്യുന്നു; contra (recording-ൽ save ചെയ്തില്ല)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m03",
+   "number": 3,
+   "title": "Project Profit & Loss",
+   "beats": [
+    {
+     "id": "m03_intro",
+     "say_en": "Module three is Project Profit and Loss. For every project, Progbiz shows the revenue, the cost incurred so far, and the margin, on the project's Costing tab.",
+     "say_ml": "മൂന്നാമത്തെ module Project P&L ആണ്. ഓരോ project-ന്റെയും revenue, ഇതുവരെ വന്ന cost, പിന്നെ margin, ഇതെല്ലാം project-ന്റെ Costing tab-ൽ കാണാം.",
+     "visual": {
+      "type": "section",
+      "eyebrow_en": "Module 3",
+      "eyebrow_ml": "Module 3",
+      "title": "Project Profit & Loss",
+      "subtitle_en": "Revenue, cost incurred and margin for each project",
+      "subtitle_ml": "ഓരോ project-ന്റെയും revenue, cost, margin"
+     }
+    },
+    {
+     "id": "m03_summary_tab",
+     "say_en": "We are on the overview of a solar project. The Payment Summary tab shows the deal amount of 210,000, the amount collected, 80,000, and the balance still collectable, 130,000.",
+     "say_ml": "ഇത് ഒരു solar project-ന്റെ overview ആണ്. Payment Summary tab-ൽ deal amount 210,000, ഇതുവരെ collect ചെയ്തത് 80,000, ഇനി collect ചെയ്യാനുള്ളത് 130,000, ഇങ്ങനെ കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_a",
+      "from": 8.0,
+      "to": 21.5,
+      "zoom": [
+       {
+        "at": 10.0,
+        "label": "Deal amount",
+        "expand": [
+         60,
+         50,
+         1000,
+         70
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 10.5,
+        "to": 17.0,
+        "label": "Collected",
+        "expand": [
+         14,
+         10,
+         70,
+         46
+        ]
+       },
+       {
+        "from": 12.0,
+        "to": 17.0,
+        "label": "Collectable",
+        "expand": [
+         14,
+         10,
+         70,
+         46
+        ]
+       }
+      ],
+      "callouts": [
+       {
+        "at": 12.5,
+        "to": 17.0,
+        "text_en": "Collectable = 210,000 − 80,000",
+        "text_ml": "Collectable = 210,000 − 80,000",
+        "label": "Collectable",
+        "expand": [
+         14,
+         10,
+         70,
+         46
+        ],
+        "placement": "bottom"
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_other_tabs",
+     "say_en": "Collections lists every payment received against the project. Invoices lists the confirmed invoices, and Expenses is still empty, because no expense has been recorded yet.",
+     "say_ml": "Collections tab-ൽ ഈ project-ന് കിട്ടിയ ഓരോ payment-ഉം കാണാം. Invoices tab-ൽ confirm ചെയ്ത invoices. Expenses tab ഇപ്പോൾ empty ആണ്, കാരണം ഇതുവരെ ഒരു expense-ഉം entry ചെയ്തിട്ടില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_a",
+      "from": 21.5,
+      "to": 38.4,
+      "hl": [
+       {
+        "from": 23.5,
+        "to": 28.6,
+        "label": "Collections",
+        "expand": [
+         40,
+         10,
+         120,
+         10
+        ]
+       },
+       {
+        "from": 29.0,
+        "to": 32.0,
+        "label": "Invoices",
+        "expand": [
+         40,
+         10,
+         120,
+         10
+        ]
+       },
+       {
+        "from": 34.2,
+        "to": 38.2,
+        "label": "Expenses",
+        "expand": [
+         40,
+         10,
+         120,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_costing",
+     "say_en": "Now open the Costing tab. Revenue is taken from the deal amount. Cost incurred is the total of all cost entries, here one entry of 2,500 for material from stock. The margin is revenue minus cost: 207,500, or 98.81 percent.",
+     "say_ml": "ഇനി Costing tab open ചെയ്യാം. Revenue എന്നത് deal amount തന്നെയാണ്. Cost incurred എന്നത് എല്ലാ cost entries-ന്റെയും total ആണ്, ഇവിടെ material from stock ആയി 2,500-ന്റെ ഒരു entry മാത്രം. Revenue-യിൽ നിന്ന് cost കുറച്ചാൽ margin കിട്ടും, അതായത് 207,500, 98.81 ശതമാനം.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_a",
+      "from": 38.4,
+      "to": 59.8,
+      "max_speed": 1.0,
+      "mode": "start",
+      "zoom": [
+       {
+        "at": 39.5,
+        "label": "Revenue",
+        "expand": [
+         40,
+         40,
+         1000,
+         380
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 40.0,
+        "to": 59.8,
+        "label": "Revenue",
+        "expand": [
+         16,
+         12,
+         120,
+         70
+        ]
+       },
+       {
+        "from": 44.0,
+        "to": 59.8,
+        "label": "Cost incurred",
+        "expand": [
+         16,
+         12,
+         70,
+         70
+        ]
+       },
+       {
+        "from": 50.0,
+        "to": 59.8,
+        "label": "Material - From Stock",
+        "expand": [
+         16,
+         10,
+         820,
+         12
+        ]
+       },
+       {
+        "from": 54.0,
+        "to": 59.8,
+        "label": "Margin",
+        "expand": [
+         16,
+         12,
+         170,
+         70
+        ]
+       }
+      ],
+      "callouts": [
+       {
+        "at": 54.5,
+        "to": 59.8,
+        "text_en": "Margin = Revenue − Cost incurred",
+        "text_ml": "Margin = Revenue − Cost incurred",
+        "label": "Margin",
+        "expand": [
+         16,
+         12,
+         170,
+         70
+        ],
+        "placement": "bottom"
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_cost_types",
+     "say_en": "Where do costs come from? Search the menu for cost. Under Master, Work Flow, you will find Work Flow Cost Types and Labour Cost Rates. The cost types list has KSEB Charge and Labour Cost, both with cost nature Other, and a built-in type, Material Direct Purchase.",
+     "say_ml": "Cost എവിടെ നിന്നാണ് വരുന്നത്? Menu-വിൽ cost എന്ന് search ചെയ്യാം. Master-ന് താഴെ Work Flow-ൽ Work Flow Cost Types, Labour Cost Rates എന്നിവ കാണാം. Cost Types list-ൽ KSEB Charge, Labour Cost എന്നിവ ഉണ്ട്, രണ്ടിന്റെയും cost nature Other ആണ്. Material Direct Purchase എന്നത് built-in type ആണ്.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_b",
+      "from": 78.0,
+      "to": 101.2,
+      "hl": [
+       {
+        "from": 78.3,
+        "to": 82.0,
+        "label": "Labour Cost Rates",
+        "expand": [
+         20,
+         60,
+         120,
+         12
+        ]
+       },
+       {
+        "from": 86.0,
+        "to": 101.2,
+        "label": "Cost Nature",
+        "expand": [
+         12,
+         8,
+         40,
+         140
+        ]
+       },
+       {
+        "from": 92.0,
+        "to": 101.2,
+        "label": "Built-in",
+        "expand": [
+         12,
+         8,
+         12,
+         8
+        ]
+       }
+      ],
+      "zoom": [
+       {
+        "at": 85.5,
+        "label": "Cost Nature",
+        "expand": [
+         760,
+         80,
+         600,
+         260
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_three_sources",
+     "say_en": "The trainer explains that cost reaches a project in three ways: material issued from stock, labour, and other expenses booked against a cost type. Material from stock is costed when it is used on the project, so it does not need a separate expense entry.",
+     "say_ml": "Trainer പറയുന്നത്, ഒരു project-ലേക്ക് cost മൂന്ന് വഴിയാണ് വരുന്നത്: stock-ൽ നിന്നുള്ള material, labour, പിന്നെ cost type-ൽ book ചെയ്യുന്ന മറ്റ് expenses. Stock-ൽ നിന്നുള്ള material project-ൽ ഉപയോഗിക്കുമ്പോൾ തന്നെ cost ആയി വരും, അതിന് separate expense entry വേണ്ട.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_b",
+      "from": 101.4,
+      "to": 106.0,
+      "max_speed": 1.0,
+      "zoom": [
+       {
+        "at": 102.5,
+        "label": "Material - From Stock",
+        "expand": [
+         40,
+         340,
+         1000,
+         160
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 102.8,
+        "to": 103.2,
+        "label": "Material - From Stock",
+        "expand": [
+         16,
+         10,
+         900,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_time_rates",
+     "say_en": "Labour can be costed from the time logged against the project. The Time tab shows the hours logged, none yet here. Hourly rates are kept in Labour Cost Rates. The page itself explains the rule: the hourly rate is the monthly cost divided by the monthly hours, 208 by default. In this system the staff rates are not set yet.",
+     "say_ml": "Labour cost, project-ൽ log ചെയ്ത time അനുസരിച്ച് കണക്കാക്കാം. Time tab-ൽ log ചെയ്ത hours കാണാം, ഇവിടെ ഇതുവരെ ഒന്നുമില്ല. Hourly rate Labour Cost Rates page-ൽ ആണ് set ചെയ്യുന്നത്. Monthly cost-നെ monthly hours കൊണ്ട് divide ചെയ്താൽ hourly rate കിട്ടും, default ആയി 208 hours. ഈ system-ൽ staff rates ഇതുവരെ set ചെയ്തിട്ടില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_b",
+      "from": 135.0,
+      "to": 168.8,
+      "hl": [
+       {
+        "from": 137.0,
+        "to": 148.5,
+        "label": "0 h logged",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 150.0,
+        "to": 168.8,
+        "label": "Standard hours per day",
+        "expand": [
+         14,
+         10,
+         900,
+         120
+        ]
+       },
+       {
+        "from": 160.0,
+        "to": 168.8,
+        "label": "Current rate / hr",
+        "expand": [
+         14,
+         10,
+         30,
+         120
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_log_time",
+     "say_en": "Time can also be entered by hand with Log time: choose the date, the person, the phase and the hours, then save. In the recording this form is opened, but it is not saved.",
+     "say_ml": "Log time ഉപയോഗിച്ച് time manually entry ചെയ്യാം: date, person, phase, hours ഇവ select ചെയ്ത് save ചെയ്യണം. Recording-ൽ ഈ form open ചെയ്യുന്നുണ്ട്, പക്ഷേ save ചെയ്യുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_c",
+      "from": 177.5,
+      "to": 196.0,
+      "zoom": [
+       {
+        "at": 179.0,
+        "label": "Person",
+        "expand": [
+         560,
+         120,
+         700,
+         80
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 179.0,
+        "to": 196.0,
+        "label": "Hours",
+        "expand": [
+         14,
+         10,
+         120,
+         60
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_add_expense",
+     "say_en": "Other costs, like KSEB charges or outside labour, are entered as a project expense. Go to Projects, Expenses, and click Add Expense. The voucher type is Payment. Search and select the project, and the voucher number is filled in for you.",
+     "say_ml": "KSEB charges, പുറത്തുനിന്നുള്ള labour പോലുള്ള മറ്റ് costs project expense ആയിട്ടാണ് entry ചെയ്യുന്നത്. Projects-ൽ Expenses open ചെയ്ത് Add Expense click ചെയ്യുക. Voucher type Payment ആണ്. Project search ചെയ്ത് select ചെയ്താൽ voucher number തനിയെ വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_c",
+      "from": 217.0,
+      "to": 226.5,
+      "max_speed": 1.2,
+      "hl": [
+       {
+        "from": 220.0,
+        "to": 221.0,
+        "label": "Add Expense",
+        "expand": [
+         14,
+         10,
+         50,
+         10
+        ]
+       },
+       {
+        "from": 221.8,
+        "to": 226.5,
+        "label": "Voucher Type",
+        "expand": [
+         14,
+         10,
+         200,
+         60
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_lines",
+     "say_en": "In the particulars, choose a cost type, then enter the quantity and the rate. Here, Labour Cost: 6 at 900 is 5,400, and 2 at 1,500 is 3,000. The payable amount adds up as you go.",
+     "say_ml": "Particulars-ൽ cost type select ചെയ്ത്, quantity-യും rate-ഉം കൊടുക്കുക. ഇവിടെ Labour Cost: 6 × 900 = 5,400, പിന്നെ 2 × 1,500 = 3,000. ഓരോ line ചേർക്കുമ്പോഴും payable amount കൂടി വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_c",
+      "from": 226.5,
+      "to": 258.2,
+      "max_speed": 2.6,
+      "zoom": [
+       {
+        "at": 227.0,
+        "label": "Cost Type",
+        "expand": [
+         30,
+         40,
+         1400,
+         260
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 227.0,
+        "to": 236.0,
+        "label": "Cost Type",
+        "expand": [
+         14,
+         10,
+         260,
+         70
+        ]
+       },
+       {
+        "from": 237.0,
+        "to": 258.2,
+        "label": "Qty",
+        "expand": [
+         14,
+         10,
+         260,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_pay_save",
+     "say_en": "Add a KSEB Charge of 5,900, and the payable becomes 14,300. Under Pay Using, choose the ledger the money is paid from, here Cash, and click Save. The message confirms: new project expense saved successfully.",
+     "say_ml": "5,900-ന്റെ KSEB Charge കൂടി ചേർത്താൽ payable 14,300 ആകും. Pay Using-ൽ ഏത് ledger-ൽ നിന്നാണ് പണം കൊടുക്കുന്നത് എന്ന് select ചെയ്യാം, ഇവിടെ Cash. എന്നിട്ട് Save click ചെയ്യുക. New project expense saved successfully എന്ന message വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_d",
+      "from": 264.0,
+      "to": 289.5,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 264.5,
+        "to": 272.0,
+        "label": "KSEB Charge",
+        "expand": [
+         14,
+         10,
+         900,
+         20
+        ]
+       },
+       {
+        "from": 283.8,
+        "to": 286.8,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 287.0,
+        "to": 288.2,
+        "label": "New project expense saved successfully",
+        "expand": [
+         60,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_costing_after",
+     "say_en": "Back on the Costing tab, cost incurred is now 16,800 from four entries, and the margin falls to 193,200, or 92 percent. Each cost type also shows its share: labour 50 percent, KSEB 35.1 percent, and material 14.9 percent.",
+     "say_ml": "ഇനി Costing tab വീണ്ടും നോക്കിയാൽ cost incurred ഇപ്പോൾ 16,800 ആണ്, നാല് entries. Margin 193,200 ആയി കുറഞ്ഞു, അതായത് 92 ശതമാനം. ഓരോ cost type-ന്റെയും share കൂടി കാണാം: labour 50 ശതമാനം, KSEB 35.1, material 14.9.",
+     "visual": {
+      "type": "footage",
+      "clip": "pnl_d",
+      "from": 294.0,
+      "to": 330.0,
+      "max_speed": 2.4,
+      "zoom": [
+       {
+        "at": 298.0,
+        "label": "Revenue",
+        "expand": [
+         40,
+         40,
+         1000,
+         380
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 299.0,
+        "to": 330.0,
+        "label": "Cost incurred",
+        "expand": [
+         16,
+         12,
+         70,
+         70
+        ]
+       },
+       {
+        "from": 305.0,
+        "to": 330.0,
+        "label": "Margin",
+        "expand": [
+         16,
+         12,
+         170,
+         70
+        ]
+       },
+       {
+        "from": 312.0,
+        "to": 330.0,
+        "label": "Share",
+        "expand": [
+         14,
+         10,
+         14,
+         230
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m03_summary",
+     "say_en": "To sum up: the Costing tab is the project's profit and loss. Revenue comes from the deal amount, costs come from stock, labour time and project expenses, and the margin updates as soon as a cost is saved.",
+     "say_ml": "ചുരുക്കത്തിൽ: Costing tab ആണ് project-ന്റെ P&L. Revenue deal amount-ൽ നിന്ന് വരുന്നു, cost stock, labour time, project expenses എന്നിവയിൽ നിന്ന് വരുന്നു. ഒരു cost save ചെയ്യുമ്പോൾ തന്നെ margin update ആകും.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 3 · Summary",
+      "eyebrow_ml": "Module 3 · Summary",
+      "title": "Project Profit & Loss",
+      "points_en": [
+       "Project overview → Costing tab = the project's P&L",
+       "Revenue = deal amount; Margin = revenue − cost incurred",
+       "Cost types and labour rates live under Master → Work Flow",
+       "Projects → Expenses → Add Expense: cost type, qty, rate, pay using, Save",
+       "Costing updates right after the expense is saved"
+      ],
+      "points_ml": [
+       "Project overview → Costing tab = project-ന്റെ P&L",
+       "Revenue = deal amount; Margin = revenue − cost incurred",
+       "Cost types, labour rates: Master → Work Flow",
+       "Projects → Expenses → Add Expense: cost type, qty, rate, pay using, Save",
+       "Expense save ചെയ്താൽ Costing ഉടനെ update ആകും"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m04",
+   "number": 4,
+   "title": "Cheque Collection",
+   "beats": [
+    {
+     "id": "m04_intro",
+     "say_en": "Module four is Cheque Collection. It tracks a customer's cheque from the day it is received, through the bank deposit, until the bank clears it.",
+     "say_ml": "നാലാമത്തെ module Cheque Collection ആണ്. Customer-ൽ നിന്ന് cheque കിട്ടുന്ന ദിവസം മുതൽ, bank-ൽ deposit ചെയ്ത്, bank clear ചെയ്യുന്നത് വരെ ഓരോ cheque-ഉം ഇവിടെ track ചെയ്യാം.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 4",
+      "title": "Cheque Collection",
+      "subtitle_en": "Received cheques: collect, deposit, clear or bounce",
+      "subtitle_ml": "കിട്ടിയ cheques: collect, deposit, clear അല്ലെങ്കിൽ bounce"
+     }
+    },
+    {
+     "id": "m04_menu",
+     "say_en": "Open Accounts, Cheque Collection. There are three lists: Cheques Collected, Ready for Deposit, and Deposited Cheques. To record a new cheque, click New Cheque Collection.",
+     "say_ml": "Accounts-ൽ Cheque Collection open ചെയ്യുക. ഇവിടെ മൂന്ന് lists ഉണ്ട്: Cheques Collected, Ready for Deposit, Deposited Cheques. പുതിയ cheque record ചെയ്യാൻ New Cheque Collection click ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_a",
+      "from": 42.5,
+      "to": 47.5,
+      "hl": [
+       {
+        "from": 43.8,
+        "to": 47.5,
+        "label": "Deposited Cheques",
+        "expand": [
+         40,
+         135,
+         160,
+         14
+        ]
+       },
+       {
+        "from": 45.7,
+        "to": 46.7,
+        "label": "New Cheque Collection",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_header",
+     "say_en": "The branch, acknowledgement number and collection date are filled in for you. Search for the customer and select them, then choose the customer's project. Branch, acknowledgement number, collection date and customer name are required.",
+     "say_ml": "Branch, acknowledgement number, collection date ഇവ തനിയെ fill ആകും. Customer search ചെയ്ത് select ചെയ്യുക, പിന്നെ ആ customer-ന്റെ project choose ചെയ്യാം. Branch, acknowledgement number, collection date, customer name ഇവ നിർബന്ധമാണ്.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_a",
+      "from": 47.7,
+      "to": 59.2,
+      "hl": [
+       {
+        "from": 47.8,
+        "to": 51.9,
+        "label": "Acknowledgement No",
+        "expand": [
+         500,
+         10,
+         600,
+         70
+        ]
+       },
+       {
+        "from": 55.1,
+        "to": 59.1,
+        "label": "Customer Name",
+        "expand": [
+         14,
+         10,
+         600,
+         70
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 52.0,
+        "to": 55.0,
+        "label": "Search Results",
+        "expand": [
+         30,
+         30,
+         1150,
+         560
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_cheques",
+     "say_en": "In Cheque Details, enter the cheque number, cheque date, bank name and amount, then click the plus button to add the row. One acknowledgement can hold several cheques, including post-dated ones, and the total amount adds up the rows you have added.",
+     "say_ml": "Cheque Details-ൽ cheque number, cheque date, bank name, amount ഇവ കൊടുത്ത് plus button click ചെയ്താൽ row add ആകും. ഒരു acknowledgement-ൽ ഒന്നിലധികം cheques ചേർക്കാം, post-dated cheques ഉൾപ്പെടെ. Add ചെയ്ത rows-ന്റെ total, Total Amount-ൽ കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_a",
+      "from": 59.8,
+      "to": 99.0,
+      "max_speed": 2.6,
+      "zoom": [
+       {
+        "at": 61.0,
+        "label": "Cheque Details",
+        "expand": [
+         40,
+         30,
+         1300,
+         360
+        ]
+       }
+      ],
+      "hl": [
+       {
+        "from": 61.0,
+        "to": 98.0,
+        "label": "Cheque No",
+        "expand": [
+         14,
+         10,
+         1000,
+         80
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_test_error",
+     "say_en": "On the test system, saving this form showed an error, so the trainer completed the same steps on another system. That is what you see next.",
+     "say_ml": "Test system-ൽ ഈ form save ചെയ്തപ്പോൾ error വന്നു. അതുകൊണ്ട് trainer ഇതേ steps മറ്റൊരു system-ൽ ചെയ്തു, അതാണ് ഇനി കാണുന്നത്.",
+     "visual": {
+      "type": "still",
+      "clip": "cc_a",
+      "at": 99.0
+     }
+    },
+    {
+     "id": "m04_save",
+     "say_en": "With the cheques added, click Save. The list shows one row for each cheque under the same acknowledgement, with the status Collected.",
+     "say_ml": "Cheques add ചെയ്ത ശേഷം Save click ചെയ്യുക. List-ൽ ഒരേ acknowledgement-ന് കീഴിൽ ഓരോ cheque-നും ഓരോ row കാണാം, status Collected.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_b",
+      "from": 172.5,
+      "to": 189.5,
+      "hl": [
+       {
+        "from": 176.7,
+        "to": 177.9,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 179.5,
+        "to": 181.3,
+        "label": "SaveSuccess",
+        "expand": [
+         40,
+         14,
+         40,
+         14
+        ]
+       },
+       {
+        "from": 181.0,
+        "to": 189.5,
+        "label": "Status",
+        "expand": [
+         14,
+         10,
+         40,
+         160
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_print",
+     "say_en": "Print acknowledgement gives the customer a receipt for the cheques. It lists the cheques and the total in words, and notes that it is subject to realisation of the cheques.",
+     "say_ml": "Print acknowledgement ഉപയോഗിച്ച് customer-ന് cheques കിട്ടിയതിന്റെ receipt കൊടുക്കാം. അതിൽ cheques-ന്റെ details, total amount words-ൽ, cheque realise ആകുന്നതിന് subject ആണെന്നും കാണിക്കും.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_b",
+      "from": 189.5,
+      "to": 206.0,
+      "hl": [
+       {
+        "from": 189.7,
+        "to": 191.7,
+        "label": "Print acknowledgement",
+        "expand": [
+         20,
+         14,
+         20,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_ready",
+     "say_en": "When a cheque is due, it appears in Ready for Deposit. In the recording only the cheques dated today are listed; the post-dated cheque is not. Click Deposit, select the company bank account, and confirm. The message reads: cheque marked as deposited.",
+     "say_ml": "Cheque date ആകുമ്പോൾ cheque Ready for Deposit list-ൽ വരും. Recording-ൽ ഇന്നത്തെ date ഉള്ള cheques മാത്രമാണ് ഇവിടെ കാണുന്നത്, post-dated cheque ഇല്ല. Deposit click ചെയ്ത്, company bank account select ചെയ്ത് confirm ചെയ്യുക. Cheque marked as deposited എന്ന message വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_c",
+      "from": 236.5,
+      "to": 262.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 238.2,
+        "to": 244.0,
+        "label": "Cheque Date",
+        "expand": [
+         14,
+         10,
+         40,
+         120
+        ]
+       },
+       {
+        "from": 244.4,
+        "to": 257.0,
+        "label": "Select Bank Account",
+        "expand": [
+         14,
+         10,
+         520,
+         70
+        ]
+       },
+       {
+        "from": 257.4,
+        "to": 258.9,
+        "label": "Confirm",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 259.5,
+        "to": 261.1,
+        "label": "Cheque marked as deposited",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_deposited",
+     "say_en": "Deposited Cheques shows when, and into which bank, each cheque was deposited. When the bank responds, choose Clear or Bounce.",
+     "say_ml": "Deposited Cheques-ൽ ഓരോ cheque-ഉം എന്ന്, ഏത് bank-ൽ deposit ചെയ്തു എന്ന് കാണാം. Bank-ൽ നിന്ന് result വന്നാൽ Clear അല്ലെങ്കിൽ Bounce choose ചെയ്യാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_c",
+      "from": 263.3,
+      "to": 272.0,
+      "hl": [
+       {
+        "from": 263.4,
+        "to": 272.0,
+        "label": "Deposited On",
+        "expand": [
+         14,
+         10,
+         330,
+         90
+        ]
+       },
+       {
+        "from": 266.0,
+        "to": 270.7,
+        "label": "Clear",
+        "expand": [
+         14,
+         10,
+         100,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_clearing",
+     "say_en": "Clear opens a receipt voucher that is already filled in: voucher type Receipt, the party, and the bank it was deposited in. Copy puts the cheque amount against the customer's bill, and the deposit bank is the debit account.",
+     "say_ml": "Clear click ചെയ്താൽ already fill ചെയ്ത ഒരു receipt voucher open ആകും: voucher type Receipt, party, deposit ചെയ്ത bank. Copy click ചെയ്താൽ cheque amount customer-ന്റെ bill-ന് എതിരെ വരും, debit account deposit bank ആയിരിക്കും.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_c",
+      "from": 272.3,
+      "to": 287.8,
+      "hl": [
+       {
+        "from": 274.3,
+        "to": 277.1,
+        "label": "Voucher Type",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       },
+       {
+        "from": 277.7,
+        "to": 279.1,
+        "label": "Copy >>",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 281.7,
+        "to": 287.7,
+        "label": "Debit Account Name",
+        "expand": [
+         14,
+         10,
+         300,
+         80
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_bounce",
+     "say_en": "Bounce opens Bounce Details: a journal entry with a bounce charge and a recover charge, each with an account and an amount. In the recording this form is only opened and cancelled; no bounce is saved.",
+     "say_ml": "Bounce click ചെയ്താൽ Bounce Details വരും: bounce charge, recover charge എന്നിവയുള്ള ഒരു journal entry, ഓരോന്നിനും account-ഉം amount-ഉം. Recording-ൽ ഈ form open ചെയ്ത് cancel ചെയ്യുക മാത്രമാണ്, bounce save ചെയ്തിട്ടില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_c",
+      "from": 288.0,
+      "to": 309.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 290.2,
+        "to": 307.9,
+        "label": "Recover Charge",
+        "expand": [
+         14,
+         150,
+         560,
+         80
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_project",
+     "say_en": "On the project's Collections tab, cheques that are not yet cleared are listed separately, as In Hand or Deposited, and they are not counted in the collection total.",
+     "say_ml": "Project-ന്റെ Collections tab-ൽ clear ആകാത്ത cheques വേറെ തന്നെ list ചെയ്യും, In Hand അല്ലെങ്കിൽ Deposited ആയി. ഇവ collection total-ൽ count ചെയ്യില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_d",
+      "from": 349.0,
+      "to": 369.0,
+      "hl": [
+       {
+        "from": 350.0,
+        "to": 369.0,
+        "label": "Cheques not yet cleared (not counted in the total)",
+        "expand": [
+         14,
+         10,
+         40,
+         260
+        ]
+       },
+       {
+        "from": 360.2,
+        "to": 369.0,
+        "label": "Total",
+        "expand": [
+         14,
+         10,
+         820,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_clear_save",
+     "say_en": "Back in Deposited Cheques, Clear and then Save posts the receipt. The message reads: cheque clearing entry saved successfully, and the cheque leaves the list.",
+     "say_ml": "Deposited Cheques-ൽ Clear ചെയ്ത് Save ചെയ്താൽ receipt post ആകും. Cheque clearing entry saved successfully എന്ന message വരും, cheque list-ൽ നിന്ന് മാറും.",
+     "visual": {
+      "type": "footage",
+      "clip": "cc_d",
+      "from": 369.2,
+      "to": 386.0,
+      "hl": [
+       {
+        "from": 376.8,
+        "to": 379.6,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 379.8,
+        "to": 381.8,
+        "label": "Cheque clearing entry saved successfully",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m04_summary",
+     "say_en": "To sum up: record the cheques on a collection, deposit them when they are due, then clear or bounce them. One thing to note: in the recording, after clearing, the cheque left the project's uncleared list, but it did not yet appear in the project's collection total, and the trainer pointed this out as not working.",
+     "say_ml": "ചുരുക്കത്തിൽ: cheques ഒരു collection-ൽ record ചെയ്യുക, date ആകുമ്പോൾ deposit ചെയ്യുക, പിന്നെ clear അല്ലെങ്കിൽ bounce ചെയ്യുക. ഒരു കാര്യം ശ്രദ്ധിക്കുക: recording-ൽ clear ചെയ്ത ശേഷം cheque project-ന്റെ uncleared list-ൽ നിന്ന് മാറി, പക്ഷേ project collection total-ൽ വന്നില്ല. ഇത് work ചെയ്യുന്നില്ല എന്ന് trainer തന്നെ പറയുന്നുണ്ട്.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 4 · Summary",
+      "eyebrow_ml": "Module 4 · Summary",
+      "title": "Cheque Collection",
+      "points_en": [
+       "Accounts → Cheque Collection → New Cheque Collection",
+       "One acknowledgement can hold several cheques (incl. post-dated)",
+       "Ready for Deposit → Deposit to a company bank → Deposited Cheques",
+       "Clear = receipt voucher against the bill; Bounce = journal with charges",
+       "Seen in recording: test save failed; cleared cheque not added to project total"
+      ],
+      "points_ml": [
+       "Accounts → Cheque Collection → New Cheque Collection",
+       "ഒരു acknowledgement-ൽ പല cheques (post-dated ഉൾപ്പെടെ)",
+       "Ready for Deposit → company bank-ൽ Deposit → Deposited Cheques",
+       "Clear = bill-ന് എതിരെ receipt voucher; Bounce = charges ഉള്ള journal",
+       "Recording-ൽ: test save fail ആയി; clear ചെയ്ത cheque project total-ൽ വന്നില്ല"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m05",
+   "number": 5,
+   "title": "Cheque Payment",
+   "beats": [
+    {
+     "id": "m05_intro",
+     "say_en": "Module five is Cheque Payment: the cheques the company issues. We will issue a cheque, clear it when the bank pays it, and then check the effect in the accounts.",
+     "say_ml": "അഞ്ചാമത്തെ module Cheque Payment ആണ്, അതായത് company കൊടുക്കുന്ന cheques. ഒരു cheque issue ചെയ്ത്, bank pay ചെയ്യുമ്പോൾ clear ചെയ്ത്, accounts-ൽ അതിന്റെ effect നോക്കാം.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 5",
+      "title": "Cheque Payment",
+      "subtitle_en": "Issued cheques: issue, clear, and their accounting",
+      "subtitle_ml": "Issue ചെയ്ത cheques: issue, clear, accounting"
+     }
+    },
+    {
+     "id": "m05_list",
+     "say_en": "Open Accounts, Cheque Issue, Issued Cheques. Each row shows the issue number, the party, the cheque date, the cheque number, the amount and the status. Click Issue New Cheque.",
+     "say_ml": "Accounts-ൽ Cheque Issue-ന് കീഴിൽ Issued Cheques open ചെയ്യുക. ഓരോ row-ലും issue number, party, cheque date, cheque number, amount, status ഇവ കാണാം. Issue New Cheque click ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_a",
+      "from": 0.0,
+      "to": 11.8,
+      "hl": [
+       {
+        "from": 1.0,
+        "to": 10.0,
+        "label": "Status",
+        "expand": [
+         14,
+         10,
+         40,
+         180
+        ]
+       },
+       {
+        "from": 8.0,
+        "to": 10.6,
+        "label": "Issue New Cheque",
+        "expand": [
+         20,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_party",
+     "say_en": "The branch, cheque issue number and date are filled in. For the party, type part of the name in Search Ledger and select it.",
+     "say_ml": "Branch, cheque issue number, date ഇവ തനിയെ വരും. Party-ക്ക് വേണ്ടി Search Ledger-ൽ പേരിന്റെ കുറച്ച് ഭാഗം type ചെയ്ത് select ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_a",
+      "from": 11.8,
+      "to": 30.0,
+      "hl": [
+       {
+        "from": 12.0,
+        "to": 16.6,
+        "label": "Cheque Issue No",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       },
+       {
+        "from": 23.0,
+        "to": 30.0,
+        "label": "Party",
+        "expand": [
+         14,
+         10,
+         600,
+         70
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 16.6,
+        "to": 29.2,
+        "label": "Search Ledger",
+        "expand": [
+         30,
+         30,
+         1150,
+         640
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_cheque",
+     "say_en": "In Cheque Details, pick the cheque leaf from the list, here hdfc 3001, enter the cheque date and the amount, and add the line. Click Save. The new cheque appears in Issued Cheques with the status Issued.",
+     "say_ml": "Cheque Details-ൽ list-ൽ നിന്ന് cheque leaf select ചെയ്യുക, ഇവിടെ hdfc 3001. Cheque date-ഉം amount-ഉം കൊടുത്ത് line add ചെയ്യുക. Save click ചെയ്താൽ പുതിയ cheque Issued Cheques-ൽ Issued status-ോടെ കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_a",
+      "from": 30.2,
+      "to": 46.8,
+      "hl": [
+       {
+        "from": 30.6,
+        "to": 42.5,
+        "label": "Cheque No",
+        "expand": [
+         14,
+         10,
+         900,
+         80
+        ]
+       },
+       {
+        "from": 42.0,
+        "to": 43.2,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 44.6,
+        "to": 46.2,
+        "label": "SaveSuccess",
+        "expand": [
+         40,
+         14,
+         40,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_uncleared",
+     "say_en": "Until the bank pays it, an issued cheque stays in Uncleared Cheques, with a Clear button and a Bounce button.",
+     "say_ml": "Bank pay ചെയ്യുന്നത് വരെ issue ചെയ്ത cheque Uncleared Cheques-ൽ ഉണ്ടാകും, Clear, Bounce buttons-ഓടെ.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_b",
+      "from": 88.5,
+      "to": 107.3,
+      "hl": [
+       {
+        "from": 90.0,
+        "to": 103.5,
+        "label": "Party Ledger",
+        "expand": [
+         14,
+         10,
+         40,
+         90
+        ]
+       },
+       {
+        "from": 100.0,
+        "to": 103.7,
+        "label": "Clear",
+        "expand": [
+         14,
+         10,
+         100,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_clear",
+     "say_en": "Clear opens a payment voucher that is already filled in: voucher type Payment, the party, and the bank. Allocate the amount, here to Advance, with the HDFC Kannur bank ledger, and Save. The cheque clearing entry is saved.",
+     "say_ml": "Clear click ചെയ്താൽ already fill ചെയ്ത payment voucher open ആകും: voucher type Payment, party, bank. Amount allocate ചെയ്യുക, ഇവിടെ Advance-ലേക്ക്, HDFC Kannur bank ledger-ോടെ. Save ചെയ്താൽ cheque clearing entry save ആകും.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_b",
+      "from": 107.5,
+      "to": 125.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 107.6,
+        "to": 111.3,
+        "label": "Voucher Type",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       },
+       {
+        "from": 111.6,
+        "to": 123.3,
+        "label": "Advance",
+        "expand": [
+         14,
+         10,
+         1000,
+         14
+        ]
+       },
+       {
+        "from": 123.7,
+        "to": 124.9,
+        "label": "Cheque clearing entry saved successfully",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_journal",
+     "say_en": "To check the accounting, open Reports and search for Journal Report. Voucher P-7 shows the party debited and HDFC Kannur credited with 35,000. Back in Uncleared Cheques, cheque 3001 is gone.",
+     "say_ml": "Accounting check ചെയ്യാൻ Reports-ൽ Journal Report search ചെയ്ത് open ചെയ്യുക. Voucher P-7-ൽ party debit, HDFC Kannur credit, 35,000. Uncleared Cheques വീണ്ടും നോക്കിയാൽ cheque 3001 അവിടെ ഇല്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_b",
+      "from": 143.5,
+      "to": 167.3,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 148.9,
+        "to": 155.3,
+        "label": "P-7",
+        "expand": [
+         14,
+         10,
+         1100,
+         90
+        ]
+       },
+       {
+        "from": 165.1,
+        "to": 167.0,
+        "label": "Party Ledger",
+        "expand": [
+         14,
+         10,
+         40,
+         90
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_bounce",
+     "say_en": "For a cheque that comes back, Bounce opens a journal form with a bounce charge and a recover charge. In the recording this form is explained but not saved.",
+     "say_ml": "Cheque തിരിച്ചു വന്നാൽ Bounce click ചെയ്യാം, bounce charge-ഉം recover charge-ഉം ഉള്ള journal form വരും. Recording-ൽ ഈ form explain ചെയ്യുന്നു, പക്ഷേ save ചെയ്യുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_c",
+      "from": 167.2,
+      "to": 204.0,
+      "max_speed": 3.0,
+      "hl": [
+       {
+        "from": 168.0,
+        "to": 204.0,
+        "label": "Recover Charge",
+        "expand": [
+         14,
+         150,
+         560,
+         80
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 203.5,
+        "to": 207.0,
+        "label": "Recover Charge",
+        "expand": [
+         10,
+         0,
+         600,
+         420
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_dashboard",
+     "say_en": "The Accounts dashboard shows bank and cash balances, here HDFC Kannur at 24,876, and a cheque summary that lists the issued cheques.",
+     "say_ml": "Accounts dashboard-ൽ bank, cash balances കാണാം, ഇവിടെ HDFC Kannur 24,876. Cheque Summary-യിൽ issue ചെയ്ത cheques-ഉം കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_d",
+      "from": 211.5,
+      "to": 231.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 212.1,
+        "to": 213.1,
+        "label": "HDFC Kannur",
+        "expand": [
+         14,
+         10,
+         400,
+         40
+        ]
+       },
+       {
+        "from": 225.1,
+        "to": 230.7,
+        "label": "Issued Cheques",
+        "expand": [
+         14,
+         10,
+         500,
+         260
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_cashflow",
+     "say_en": "The Cash Flow Statement shows how cash and bank moved in the period. Switch on Show ledgers to see each party line under its heading, including this 35,000 payment.",
+     "say_ml": "Cash Flow Statement-ൽ ആ period-ൽ cash-ഉം bank-ഉം എങ്ങനെ മാറി എന്ന് കാണാം. Show ledgers on ചെയ്താൽ ഓരോ heading-ന് കീഴിലും party lines കാണാം, ഈ 35,000 payment ഉൾപ്പെടെ.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_d",
+      "from": 232.5,
+      "to": 260.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 239.0,
+        "to": 249.0,
+        "label": "Received from customers",
+        "expand": [
+         14,
+         10,
+         1200,
+         40
+        ]
+       },
+       {
+        "from": 252.6,
+        "to": 254.7,
+        "label": "Show ledgers",
+        "expand": [
+         14,
+         10,
+         40,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_balance_sheet",
+     "say_en": "The Balance Sheet is generated for a date. Here it shows a warning that a ledger has no account group, so the balance sheet will not tally until that ledger is given a group.",
+     "say_ml": "Balance Sheet ഒരു date-ന് generate ചെയ്യാം. ഇവിടെ ഒരു ledger-ന് account group ഇല്ല എന്ന warning കാണാം. ആ ledger-ന് group കൊടുക്കുന്നത് വരെ balance sheet tally ആകില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "cp_d",
+      "from": 262.5,
+      "to": 266.0,
+      "hl": [
+       {
+        "from": 263.2,
+        "to": 265.3,
+        "label": "Generate",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 265.5,
+        "to": 266.0,
+        "label": "These ledgers have no account group",
+        "expand": [
+         20,
+         14,
+         30,
+         20
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m05_summary",
+     "say_en": "To sum up: issue the cheque with the party and the cheque leaf, clear it from Uncleared Cheques when the bank pays, and check the journal. A bounce is entered as a journal with charges.",
+     "say_ml": "ചുരുക്കത്തിൽ: party-യും cheque leaf-ഉം കൊടുത്ത് cheque issue ചെയ്യുക, bank pay ചെയ്യുമ്പോൾ Uncleared Cheques-ൽ നിന്ന് clear ചെയ്യുക, journal check ചെയ്യുക. Bounce, charges ഉള്ള ഒരു journal ആയിട്ടാണ് entry ചെയ്യുന്നത്.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 5 · Summary",
+      "eyebrow_ml": "Module 5 · Summary",
+      "title": "Cheque Payment",
+      "points_en": [
+       "Accounts → Cheque Issue → Issue New Cheque: party, cheque leaf, date, amount",
+       "Uncleared Cheques → Clear = payment voucher (e.g. P-7)",
+       "Journal Report: party Dr, bank Cr",
+       "Bounce = journal with bounce and recover charges (not saved in recording)",
+       "Dashboard, Cash Flow and Balance Sheet reflect the payment"
+      ],
+      "points_ml": [
+       "Accounts → Cheque Issue → Issue New Cheque: party, cheque leaf, date, amount",
+       "Uncleared Cheques → Clear = payment voucher (ഉദാ. P-7)",
+       "Journal Report: party Dr, bank Cr",
+       "Bounce = bounce, recover charges ഉള്ള journal (recording-ൽ save ചെയ്തില്ല)",
+       "Dashboard, Cash Flow, Balance Sheet-ൽ payment കാണാം"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m06",
+   "number": 6,
+   "title": "Commission Management",
+   "beats": [
+    {
+     "id": "m06_intro",
+     "say_en": "Module six is Commission Management. When an enquiry that came from a lead source is won, that lead source earns a commission, which can then be paid out.",
+     "say_ml": "ആറാമത്തെ module Commission Management ആണ്. ഒരു lead source വഴി വന്ന enquiry won ആയാൽ ആ lead source-ന് commission കിട്ടും, അത് പിന്നീട് pay ചെയ്യാം.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 6",
+      "title": "Commission Management",
+      "subtitle_en": "Lead source commission: earned, paid and balance",
+      "subtitle_ml": "Lead source commission: earned, paid, balance"
+     }
+    },
+    {
+     "id": "m06_enquiry",
+     "say_en": "In a new enquiry, choose the lead source from the list, here the person who referred the customer. Add the item enquired for and its quantity, and save the enquiry.",
+     "say_ml": "പുതിയ enquiry-യിൽ list-ൽ നിന്ന് lead source select ചെയ്യുക, ഇവിടെ customer-നെ refer ചെയ്ത ആൾ. Enquired for-ൽ item-ഉം quantity-യും add ചെയ്ത് enquiry save ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "com_a",
+      "from": 2.0,
+      "to": 23.4,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 3.7,
+        "to": 8.8,
+        "label": "Lead Source",
+        "expand": [
+         14,
+         10,
+         560,
+         70
+        ]
+       },
+       {
+        "from": 14.0,
+        "to": 19.2,
+        "label": "Enquired For",
+        "expand": [
+         14,
+         10,
+         1300,
+         140
+        ]
+       },
+       {
+        "from": 19.5,
+        "to": 21.4,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 21.8,
+        "to": 23.4,
+        "label": "Enquiry saved successfully",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 6.8,
+        "to": 8.8,
+        "label": "Lead Source",
+        "expand": [
+         20,
+         -24,
+         800,
+         700
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m06_followup",
+     "say_en": "Then add a follow-up. Set the follow-up status to Got the business, and enter the business value, here 210,000. The enquiry now shows Got the business, with its business value.",
+     "say_ml": "പിന്നെ ഒരു follow-up add ചെയ്യുക. Followup Status Got the business ആക്കി business value കൊടുക്കുക, ഇവിടെ 210,000. ഇപ്പോൾ enquiry-യിൽ Got the business-ഉം business value-ഉം കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "com_a",
+      "from": 22.5,
+      "to": 46.0,
+      "max_speed": 2.2,
+      "hl": [
+       {
+        "from": 22.7,
+        "to": 23.2,
+        "label": "Followup",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 27.7,
+        "to": 38.0,
+        "label": "Got the business",
+        "expand": [
+         14,
+         10,
+         300,
+         14
+        ]
+       },
+       {
+        "from": 28.0,
+        "to": 38.0,
+        "label": "Business Value",
+        "expand": [
+         14,
+         10,
+         520,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m06_overview",
+     "say_en": "Open CRM, Lead Source Commission. The cards show the total earned, the total paid and the balance to pay: here 42,000 earned and nothing paid yet. Each commissioned lead source is listed with its rate, 10 percent of the lead value.",
+     "say_ml": "CRM-ൽ Lead Source Commission open ചെയ്യുക. Cards-ൽ total earned, total paid, balance to pay ഇവ കാണാം: ഇവിടെ 42,000 earned, ഇതുവരെ ഒന്നും paid ഇല്ല. Commission ഉള്ള ഓരോ lead source-ഉം അതിന്റെ rate-ഉം list-ൽ ഉണ്ട്, lead value-ന്റെ 10 ശതമാനം.",
+     "visual": {
+      "type": "footage",
+      "clip": "com_a",
+      "from": 47.0,
+      "to": 59.8,
+      "hl": [
+       {
+        "from": 49.9,
+        "to": 59.8,
+        "label": "Total Earned",
+        "expand": [
+         14,
+         10,
+         1400,
+         70
+        ]
+       },
+       {
+        "from": 53.0,
+        "to": 59.8,
+        "label": "Commissioned Lead Sources",
+        "expand": [
+         14,
+         10,
+         1300,
+         200
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m06_profile",
+     "say_en": "Open a lead source to see its profile. While it loads, the page explains that commission is added when a lead from this source is marked Won. This one has one won lead, and a total commission of 21,000: 10 percent of 210,000.",
+     "say_ml": "ഒരു lead source open ചെയ്താൽ അതിന്റെ profile കാണാം. Load ആകുമ്പോൾ, ഈ source-ൽ നിന്നുള്ള lead Won ആകുമ്പോഴാണ് commission add ആകുന്നത് എന്ന് page-ൽ തന്നെ കാണിക്കുന്നു. ഇതിന് ഒരു won lead ഉണ്ട്, total commission 21,000: 210,000-ന്റെ 10 ശതമാനം.",
+     "visual": {
+      "type": "footage",
+      "clip": "com_a",
+      "from": 59.6,
+      "to": 68.0,
+      "max_speed": 1.2,
+      "hl": [
+       {
+        "from": 60.3,
+        "to": 67.8,
+        "label": "Won Leads",
+        "expand": [
+         14,
+         10,
+         1300,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m06_pay",
+     "say_en": "Click Pay Commission. The amount defaults to the full balance, and the debit ledger is fixed as Commission Paid. Add the Pay Using rows; their total must match the amount. In the recording, the first attempt is refused for that reason, and the trainer then pays 10,000 in cash.",
+     "say_ml": "Pay Commission click ചെയ്യുക. Amount default ആയി full balance ആയിരിക്കും, debit ledger Commission Paid ആയി fix ആണ്. Pay Using rows add ചെയ്യുക, അവയുടെ total amount-ന് തുല്യമായിരിക്കണം. Recording-ൽ ആദ്യ ശ്രമം ഈ കാരണം കൊണ്ട് refuse ചെയ്തു, പിന്നെ trainer 10,000 cash ആയി pay ചെയ്യുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "com_a",
+      "from": 67.8,
+      "to": 88.8,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 68.1,
+        "to": 73.4,
+        "label": "Debit Ledger",
+        "expand": [
+         14,
+         10,
+         800,
+         70
+        ]
+       },
+       {
+        "from": 80.7,
+        "to": 82.2,
+        "label": "Pay Using",
+        "expand": [
+         14,
+         10,
+         900,
+         160
+        ]
+       },
+       {
+        "from": 84.3,
+        "to": 87.8,
+        "label": "Pay",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m06_result",
+     "say_en": "The payout of 10,000 is recorded as payment P-5. Paid is now 10,000, and the balance to pay is 11,000. The history lists the commission and the payment.",
+     "say_ml": "10,000-ന്റെ payout P-5 എന്ന payment ആയി record ആകും. ഇപ്പോൾ paid 10,000, balance to pay 11,000. History-യിൽ commission-ഉം payment-ഉം കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "com_a",
+      "from": 88.8,
+      "to": 92.0,
+      "max_speed": 1.0,
+      "hl": [
+       {
+        "from": 89.1,
+        "to": 91.8,
+        "label": "Total Commission",
+        "expand": [
+         420,
+         10,
+         900,
+         70
+        ]
+       },
+       {
+        "from": 89.1,
+        "to": 91.8,
+        "label": "History",
+        "expand": [
+         14,
+         10,
+         1300,
+         200
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m06_summary",
+     "say_en": "To sum up: the lead source on the enquiry decides who earns. Marking the enquiry Got the business with a business value creates the commission, and Pay Commission records the payout from Lead Source Commission.",
+     "say_ml": "ചുരുക്കത്തിൽ: enquiry-യിലെ lead source ആണ് ആർക്ക് commission കിട്ടും എന്ന് തീരുമാനിക്കുന്നത്. Business value-ഓടെ Got the business ആക്കുമ്പോൾ commission ഉണ്ടാകും. Lead Source Commission-ൽ Pay Commission വഴി payout record ചെയ്യാം.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 6 · Summary",
+      "eyebrow_ml": "Module 6 · Summary",
+      "title": "Commission Management",
+      "points_en": [
+       "Enquiry: choose the Lead Source",
+       "Follow-up: Got the business + Business Value → commission earned",
+       "CRM → Lead Source Commission: earned, paid, balance",
+       "Pay Commission: debit Commission Paid; Pay Using total must equal the amount",
+       "Payout recorded as a payment voucher (P-5 in the recording)"
+      ],
+      "points_ml": [
+       "Enquiry: Lead Source select ചെയ്യുക",
+       "Follow-up: Got the business + Business Value → commission earned",
+       "CRM → Lead Source Commission: earned, paid, balance",
+       "Pay Commission: Commission Paid debit; Pay Using total = amount",
+       "Payout ഒരു payment voucher ആയി (recording-ൽ P-5)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m07",
+   "number": 7,
+   "title": "Receipt Voucher & Journal Report",
+   "beats": [
+    {
+     "id": "m07_intro",
+     "say_en": "Module seven is the Receipt Voucher and the Journal Report. A receipt voucher records money received straight against an account, for example service income without an invoice.",
+     "say_ml": "ഏഴാമത്തെ module Receipt Voucher-ഉം Journal Report-ഉം ആണ്. Receipt voucher ഉപയോഗിച്ച് കിട്ടിയ പണം നേരിട്ട് ഒരു account-ൽ record ചെയ്യാം, ഉദാഹരണത്തിന് invoice ഇല്ലാത്ത service income.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 7",
+      "title": "Receipt Voucher & Journal Report",
+      "subtitle_en": "Record money received, then check the journal",
+      "subtitle_ml": "കിട്ടിയ പണം record ചെയ്യുക, journal-ൽ check ചെയ്യുക"
+     }
+    },
+    {
+     "id": "m07_header",
+     "say_en": "In Receipt Voucher Entry, the branch, date, voucher type Receipt and the voucher number, here R-24, are filled in. Here the party and the narration are left empty, and the voucher still saves.",
+     "say_ml": "Receipt Voucher Entry-യിൽ branch, date, voucher type Receipt, voucher number, ഇവിടെ R-24, ഇവ fill ആയിരിക്കും. ഇവിടെ party-യും narration-ഉം empty ആണ്, എന്നിട്ടും voucher save ആകുന്നുണ്ട്.",
+     "visual": {
+      "type": "footage",
+      "clip": "rv_a",
+      "from": 0.0,
+      "to": 15.2,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 0.5,
+        "to": 8.0,
+        "label": "Voucher Type",
+        "expand": [
+         14,
+         10,
+         1300,
+         70
+        ]
+       },
+       {
+        "from": 12.3,
+        "to": 15.2,
+        "label": "Party",
+        "expand": [
+         14,
+         10,
+         1300,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m07_line",
+     "say_en": "In the line, search for the account, here Sales, choose the tax category, GST 18 percent, and enter the amount, 10,000, with Inc Tax unticked. Click plus to add the line, and the tax, 1,800, is added on top.",
+     "say_ml": "Line-ൽ account search ചെയ്യുക, ഇവിടെ Sales. Tax category GST 18 ശതമാനം select ചെയ്ത്, amount 10,000 കൊടുക്കുക, Inc Tax tick ചെയ്യാതെ. Plus click ചെയ്ത് line add ചെയ്യുക, 1,800 tax മുകളിൽ കൂടി വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "rv_a",
+      "from": 15.2,
+      "to": 39.8,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 17.6,
+        "to": 39.8,
+        "label": "Inc Tax",
+        "expand": [
+         1300,
+         10,
+         40,
+         90
+        ]
+       },
+       {
+        "from": 33.0,
+        "to": 39.2,
+        "label": "Total Payable",
+        "expand": [
+         14,
+         60,
+         600,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m07_pay_save",
+     "say_en": "The total payable is 11,800. Under Pay Using, choose where the money came in, here HDFC Kannur, and click Save. The message reads, voucher entry added, and R-24 appears at the top of the receipts list.",
+     "say_ml": "Total payable 11,800 ആണ്. Pay Using-ൽ പണം എവിടെയാണ് വന്നത് എന്ന് select ചെയ്യുക, ഇവിടെ HDFC Kannur, എന്നിട്ട് Save. Voucher entry added എന്ന message വരും, receipts list-ൽ ഏറ്റവും മുകളിൽ R-24 കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "rv_a",
+      "from": 39.4,
+      "to": 60.0,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 39.5,
+        "to": 39.8,
+        "label": "Pay Using",
+        "expand": [
+         14,
+         10,
+         520,
+         140
+        ]
+       },
+       {
+        "from": 52.7,
+        "to": 54.8,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 57.4,
+        "to": 58.8,
+        "label": "Voucher entry added",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m07_journal",
+     "say_en": "To see the accounting, open Reports and then Journal Report. For R-24, HDFC Kannur is debited 11,800, Sales is credited 10,000, and output CGST and output SGST are credited 900 each.",
+     "say_ml": "Accounting കാണാൻ Reports open ചെയ്ത് Journal Report എടുക്കുക. R-24-ൽ HDFC Kannur 11,800 debit, Sales 10,000 credit, Output CGST, Output SGST 900 വീതം credit.",
+     "visual": {
+      "type": "footage",
+      "clip": "rv_a",
+      "from": 60.0,
+      "to": 100.0,
+      "max_speed": 3.0,
+      "hl": [
+       {
+        "from": 66.9,
+        "to": 67.8,
+        "label": "Journal Report",
+        "expand": [
+         14,
+         10,
+         200,
+         40
+        ]
+       },
+       {
+        "from": 76.0,
+        "to": 99.8,
+        "label": "R-24",
+        "expand": [
+         20,
+         12,
+         1350,
+         130
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m07_summary",
+     "say_en": "The trainer's advice: a receipt voucher is enough for simple service income, but use invoices when you need item-wise sales reports. Every voucher can be checked in the Journal Report.",
+     "say_ml": "Trainer പറയുന്നത്: simple service income-ന് receipt voucher മതി, പക്ഷേ item-wise sales report വേണമെങ്കിൽ invoice ഉപയോഗിക്കണം. ഓരോ voucher-ഉം Journal Report-ൽ check ചെയ്യാം.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 7 · Summary",
+      "eyebrow_ml": "Module 7 · Summary",
+      "title": "Receipt Voucher & Journal Report",
+      "points_en": [
+       "Receipt Voucher Entry: branch, date, type and number are filled in",
+       "Line: account, tax category, amount (Inc Tax on/off), +",
+       "Pay Using: where the money was received → Save",
+       "Reports → Journal Report: bank Dr, income and output tax Cr",
+       "Use invoices when item-wise reporting is needed (trainer)"
+      ],
+      "points_ml": [
+       "Receipt Voucher Entry: branch, date, type, number fill ആകും",
+       "Line: account, tax category, amount (Inc Tax on/off), +",
+       "Pay Using: പണം വന്ന account → Save",
+       "Reports → Journal Report: bank Dr, income, output tax Cr",
+       "Item-wise report വേണമെങ്കിൽ invoice (trainer)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m08",
+   "number": 8,
+   "title": "Credit Note",
+   "beats": [
+    {
+     "id": "m08_intro",
+     "say_en": "Module eight is the Credit Note, which reduces what a customer owes against an invoice, for example for a price reduction.",
+     "say_ml": "എട്ടാമത്തെ module Credit Note ആണ്. ഒരു invoice-ന് എതിരെ customer തരാനുള്ള തുക കുറയ്ക്കാൻ ഇത് ഉപയോഗിക്കാം, ഉദാഹരണത്തിന് price reduction.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 8",
+      "title": "Credit Note",
+      "subtitle_en": "Reduce a customer's balance against an invoice",
+      "subtitle_ml": "Invoice-ന് എതിരെ customer balance കുറയ്ക്കാം"
+     }
+    },
+    {
+     "id": "m08_form",
+     "say_en": "The credit note form has the branch, the date, the party type, Customer or Supplier, and the reason, here Price reduction. Search for the customer, then pick the invoice it applies to. The list shows each invoice with its total and the amount still open.",
+     "say_ml": "Credit note form-ൽ branch, date, party type, അതായത് Customer അല്ലെങ്കിൽ Supplier, പിന്നെ reason, ഇവിടെ Price reduction. Customer search ചെയ്ത് select ചെയ്യുക, പിന്നെ ഏത് invoice-ന് എതിരെയാണ് എന്ന് choose ചെയ്യുക. List-ൽ ഓരോ invoice-ന്റെയും total-ഉം ഇനിയും open ആയ amount-ഉം കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "cn_a",
+      "from": 0.0,
+      "to": 34.0,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 1.0,
+        "to": 19.8,
+        "label": "Party Type",
+        "expand": [
+         14,
+         10,
+         760,
+         70
+        ]
+       },
+       {
+        "from": 27.3,
+        "to": 34.0,
+        "label": "Against Invoice",
+        "expand": [
+         14,
+         10,
+         600,
+         70
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 19.8,
+        "to": 23.0,
+        "label": "Search Results",
+        "expand": [
+         30,
+         30,
+         1150,
+         640
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m08_lines",
+     "say_en": "Each line has a description, HSN or SAC, a ledger, an amount and tax, with the sub total and total below, and two buttons: Save Draft, and Save and Confirm. In the recording no line is entered and the credit note is not saved.",
+     "say_ml": "ഓരോ line-ലും description, HSN അല്ലെങ്കിൽ SAC, ledger, amount, tax ഇവ ഉണ്ട്. താഴെ sub total-ഉം total-ഉം, പിന്നെ Save Draft, Save & Confirm എന്ന രണ്ട് buttons. Recording-ൽ line ഒന്നും entry ചെയ്യുന്നില്ല, credit note save ചെയ്യുന്നുമില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "cn_a",
+      "from": 34.0,
+      "to": 57.2,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 34.2,
+        "to": 43.0,
+        "label": "Description",
+        "expand": [
+         14,
+         10,
+         1300,
+         90
+        ]
+       },
+       {
+        "from": 44.5,
+        "to": 57.2,
+        "label": "Save Draft",
+        "expand": [
+         14,
+         10,
+         300,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m08_summary",
+     "say_en": "To sum up: a credit note links a customer, an invoice and a reason, and its lines carry the ledger, amount and tax. Saving one is not shown in the recording.",
+     "say_ml": "ചുരുക്കത്തിൽ: credit note-ൽ customer, invoice, reason ഇവ link ചെയ്യുന്നു, lines-ൽ ledger, amount, tax. Save ചെയ്യുന്നത് recording-ൽ കാണിക്കുന്നില്ല.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 8 · Summary",
+      "eyebrow_ml": "Module 8 · Summary",
+      "title": "Credit Note",
+      "points_en": [
+       "Branch, date, party type (Customer / Supplier), reason",
+       "Customer search → Against Invoice (total and open amount shown)",
+       "Lines: description, HSN/SAC, ledger, amount, tax",
+       "Save Draft or Save & Confirm (not done in the recording)"
+      ],
+      "points_ml": [
+       "Branch, date, party type (Customer / Supplier), reason",
+       "Customer search → Against Invoice (total, open amount)",
+       "Lines: description, HSN/SAC, ledger, amount, tax",
+       "Save Draft / Save & Confirm (recording-ൽ ചെയ്തിട്ടില്ല)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m09",
+   "number": 9,
+   "title": "GST Reporting",
+   "beats": [
+    {
+     "id": "m09_intro",
+     "say_en": "Module nine is GST reporting: the GSTR-1 and GSTR-3B reports.",
+     "say_ml": "ഒമ്പതാമത്തെ module GST reporting ആണ്: GSTR-1, GSTR-3B reports.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 9",
+      "title": "GST Reporting",
+      "subtitle_en": "GSTR-1 and GSTR-3B under Reports",
+      "subtitle_ml": "Reports-ൽ GSTR-1, GSTR-3B"
+     }
+    },
+    {
+     "id": "m09_select",
+     "say_en": "Open Reports and scroll to the Accounts group, where GSTR-1, GSTR-3B and the other GST reports are listed. Choose the GSTIN, the month and the year, and click View Report.",
+     "say_ml": "Reports open ചെയ്ത് Accounts group വരെ scroll ചെയ്യുക, അവിടെ GSTR-1, GSTR-3B, മറ്റ് GST reports കാണാം. GSTIN, month, year select ചെയ്ത് View Report click ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "gst_a",
+      "from": 57.5,
+      "to": 72.2,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 62.9,
+        "to": 69.9,
+        "label": "GSTR-1",
+        "expand": [
+         14,
+         10,
+         700,
+         40
+        ]
+       },
+       {
+        "from": 70.5,
+        "to": 72.1,
+        "label": "Month",
+        "expand": [
+         14,
+         10,
+         520,
+         60
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m09_gstr1",
+     "say_en": "GSTR-1 shows the taxable value and the IGST, CGST, SGST, UTGST and cess totals, with tabs for B2B, B2C large and small, exports, credit and debit notes, HSN and documents. It was run for September 2026, and every figure is zero for that month.",
+     "say_ml": "GSTR-1-ൽ taxable value, IGST, CGST, SGST, UTGST, cess totals ഇവ കാണാം, B2B, B2C large, small, exports, credit, debit notes, HSN, documents എന്നിവയ്ക്ക് tabs ഉണ്ട്. ഇത് September 2026-ന് വേണ്ടിയാണ് run ചെയ്തത്, ആ മാസത്തേക്ക് എല്ലാ figures-ഉം zero ആണ്.",
+     "visual": {
+      "type": "footage",
+      "clip": "gst_a",
+      "from": 72.3,
+      "to": 84.3,
+      "hl": [
+       {
+        "from": 73.2,
+        "to": 76.1,
+        "label": "TAXABLE VALUE",
+        "expand": [
+         14,
+         10,
+         1300,
+         60
+        ]
+       },
+       {
+        "from": 73.2,
+        "to": 76.1,
+        "label": "B2B",
+        "expand": [
+         14,
+         10,
+         900,
+         70
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m09_gstr3b",
+     "say_en": "GSTR-3B follows the sections of the return: outward supplies, inter-state supplies, eligible ITC, and tax payable. For September 2026 the eligible ITC is 3,860.97 each for CGST and SGST, and it is carried forward. The trainer says he will explain these reports in more detail later.",
+     "say_ml": "GSTR-3B return-ന്റെ sections അനുസരിച്ചാണ്: outward supplies, inter-state supplies, eligible ITC, tax payable. September 2026-ന് CGST-നും SGST-നും eligible ITC 3,860.97 വീതം, അത് carry forward ചെയ്യുന്നു. ഈ reports പിന്നീട് കൂടുതൽ വിശദമായി explain ചെയ്യാം എന്ന് trainer പറയുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "gst_a",
+      "from": 84.3,
+      "to": 97.0,
+      "max_speed": 1.2,
+      "hl": [
+       {
+        "from": 84.5,
+        "to": 86.7,
+        "label": "View Report",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 87.0,
+        "to": 97.0,
+        "label": "Eligible ITC",
+        "expand": [
+         14,
+         10,
+         900,
+         160
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m09_summary",
+     "say_en": "To sum up: both GST reports are under Reports, and each is run for a GSTIN, a month and a year. Make sure to choose the month that has the transactions you want to check.",
+     "say_ml": "ചുരുക്കത്തിൽ: രണ്ട് GST reports-ഉം Reports-ൽ ആണ്, ഓരോന്നും ഒരു GSTIN, month, year-ന് run ചെയ്യാം. Check ചെയ്യേണ്ട transactions ഉള്ള month തന്നെ select ചെയ്യാൻ ശ്രദ്ധിക്കുക.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 9 · Summary",
+      "eyebrow_ml": "Module 9 · Summary",
+      "title": "GST Reporting",
+      "points_en": [
+       "Reports → Accounts → GSTR-1 / GSTR-3B",
+       "Select GSTIN, month and year → View Report",
+       "GSTR-1: totals and tabs by section (B2B, B2C, exports, notes, HSN)",
+       "GSTR-3B: outward supplies, eligible ITC, tax payable",
+       "Recording used September 2026, so October entries do not appear"
+      ],
+      "points_ml": [
+       "Reports → Accounts → GSTR-1 / GSTR-3B",
+       "GSTIN, month, year select ചെയ്ത് View Report",
+       "GSTR-1: totals, section tabs (B2B, B2C, exports, notes, HSN)",
+       "GSTR-3B: outward supplies, eligible ITC, tax payable",
+       "Recording September 2026 ആണ്, October entries കാണില്ല"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m10",
+   "number": 10,
+   "title": "Payment Terms & Sales Invoice",
+   "beats": [
+    {
+     "id": "m10_intro",
+     "say_en": "Module ten covers payment terms and the sales invoice. A payment term splits an invoice into instalments, each with its own due date.",
+     "say_ml": "പത്താമത്തെ module payment terms-ഉം sales invoice-ഉം ആണ്. Payment term ഒരു invoice-നെ instalments ആയി split ചെയ്യും, ഓരോന്നിനും സ്വന്തം due date.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 10",
+      "title": "Payment Terms & Sales Invoice",
+      "subtitle_en": "Credit terms, instalments and the tax invoice",
+      "subtitle_ml": "Credit terms, instalments, tax invoice"
+     }
+    },
+    {
+     "id": "m10_terms",
+     "say_en": "Open Master, Payment Terms, and click New Payment Term. Give it a name, here 60 Days, and add one slab for each instalment, with a slab name, due after, and a percentage: here 50 percent after 30 days, and 50 percent after 60 days. Save it, and the term can be chosen on invoices and proformas.",
+     "say_ml": "Master-ൽ Payment Terms open ചെയ്ത് New Payment Term click ചെയ്യുക. ഒരു പേര് കൊടുക്കുക, ഇവിടെ 60 Days. ഓരോ instalment-നും ഒരു slab add ചെയ്യുക: slab name, due after, percentage. ഇവിടെ 30 ദിവസം കഴിഞ്ഞ് 50 ശതമാനം, 60 ദിവസം കഴിഞ്ഞ് 50 ശതമാനം. Save ചെയ്താൽ ഈ term invoices-ലും proformas-ലും select ചെയ്യാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_a",
+      "from": 80.8,
+      "to": 122.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 84.2,
+        "to": 86.6,
+        "label": "New Payment Term",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 87.0,
+        "to": 113.8,
+        "label": "Slab Name",
+        "expand": [
+         14,
+         10,
+         760,
+         120
+        ]
+       },
+       {
+        "from": 114.0,
+        "to": 117.4,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m10_header",
+     "say_en": "Open Sales, Invoices, and click New Invoice. The branch and date are filled in, and the invoice number shows New until it is saved. Select the customer, and the sales executive is filled in. Then choose the warehouse and the supply type.",
+     "say_ml": "Sales-ൽ Invoices open ചെയ്ത് New Invoice click ചെയ്യുക. Branch-ഉം date-ഉം fill ആയിരിക്കും, save ചെയ്യുന്നത് വരെ invoice number New എന്ന് കാണിക്കും. Customer select ചെയ്താൽ sales executive fill ആകും. പിന്നെ warehouse-ഉം supply type-ഉം select ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_b",
+      "from": 122.0,
+      "to": 140.6,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 127.3,
+        "to": 130.2,
+        "label": "Customer Name",
+        "expand": [
+         14,
+         10,
+         1300,
+         70
+        ]
+       },
+       {
+        "from": 133.5,
+        "to": 138.0,
+        "label": "Warehouse",
+        "expand": [
+         14,
+         10,
+         400,
+         140
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 133.0,
+        "to": 138.4,
+        "label": "Customer Name",
+        "expand": [
+         20,
+         -60,
+         1300,
+         420
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m10_items",
+     "say_en": "Add the items: choose the item and enter the quantity. The rate and the tax, GST 18 percent, come in, and the gross is rate times quantity. The stock available in the warehouse is shown under the quantity. Click plus to add each line.",
+     "say_ml": "Items add ചെയ്യുക: item select ചെയ്ത് quantity കൊടുക്കുക. Rate-ഉം tax-ഉം, GST 18 ശതമാനം, വരും, gross എന്നത് rate × quantity ആണ്. Warehouse-ൽ ഉള്ള stock quantity-യുടെ താഴെ കാണാം. ഓരോ line-ഉം plus click ചെയ്ത് add ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_b",
+      "from": 140.8,
+      "to": 179.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 141.0,
+        "to": 154.8,
+        "label": "Rate",
+        "expand": [
+         14,
+         10,
+         560,
+         90
+        ]
+       },
+       {
+        "from": 171.0,
+        "to": 178.8,
+        "label": "Stock",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m10_credit",
+     "say_en": "The total summary shows the quantity, gross, tax and total payable, here 9,853. For a credit sale, set Pay Using to Credit, and choose the credit term, 60 Days. The instalments appear: 4,926.50 due on 20 November, and 4,926.50 due on 20 December.",
+     "say_ml": "Total summary-യിൽ quantity, gross, tax, total payable ഇവ കാണാം, ഇവിടെ 9,853. Credit sale ആണെങ്കിൽ Pay Using Credit ആക്കി credit term select ചെയ്യുക, 60 Days. Instalments വരും: നവംബർ 20-ന് 4,926.50, ഡിസംബർ 20-ന് 4,926.50.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_b",
+      "from": 179.0,
+      "to": 211.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 180.6,
+        "to": 190.2,
+        "label": "Total Payable",
+        "expand": [
+         14,
+         60,
+         600,
+         14
+        ]
+       },
+       {
+        "from": 190.7,
+        "to": 209.8,
+        "label": "Credit Term",
+        "expand": [
+         14,
+         10,
+         420,
+         70
+        ]
+       },
+       {
+        "from": 195.0,
+        "to": 209.8,
+        "label": "Due Date",
+        "expand": [
+         14,
+         10,
+         380,
+         90
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m10_save",
+     "say_en": "Click Save. The tax invoice opens in a new tab for printing, and the invoice is added to the list. Note: in the recording, the printed copy shows a different invoice number and the term Due on Receipt, which does not match the saved invoice.",
+     "say_ml": "Save click ചെയ്യുക. Print ചെയ്യാൻ tax invoice പുതിയ tab-ൽ open ആകും, invoice list-ൽ add ആകും. ശ്രദ്ധിക്കുക: recording-ൽ print copy-യിൽ വേറെ invoice number-ഉം Due on Receipt എന്ന term-ഉം ആണ് കാണിക്കുന്നത്, അത് save ചെയ്ത invoice-മായി match ആകുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_b",
+      "from": 211.0,
+      "to": 228.0,
+      "max_speed": 1.6,
+      "hl": [
+       {
+        "from": 211.8,
+        "to": 214.0,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 216.0,
+        "to": 217.0,
+        "label": "TAX INVOICE",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m10_summary",
+     "say_en": "To sum up: create payment terms with slabs once, then on a credit invoice choose the term, and the due dates and amounts are worked out for you.",
+     "say_ml": "ചുരുക്കത്തിൽ: slabs ഉള്ള payment terms ഒരിക്കൽ create ചെയ്യുക. Credit invoice-ൽ term select ചെയ്താൽ due dates-ഉം amounts-ഉം തനിയെ കണക്കാക്കും.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 10 · Summary",
+      "eyebrow_ml": "Module 10 · Summary",
+      "title": "Payment Terms & Sales Invoice",
+      "points_en": [
+       "Master → Payment Terms: slabs of 'due after' days and %",
+       "Sales → Invoices → New Invoice: customer, warehouse, supply type",
+       "Items: rate and GST from the item; gross = rate × qty; stock shown",
+       "Pay Using = Credit → Credit Term → instalments with due dates",
+       "Seen in recording: printed copy's number and term differ from the saved invoice"
+      ],
+      "points_ml": [
+       "Master → Payment Terms: 'due after' days, % ഉള്ള slabs",
+       "Sales → Invoices → New Invoice: customer, warehouse, supply type",
+       "Items: rate, GST item-ൽ നിന്ന്; gross = rate × qty; stock കാണാം",
+       "Pay Using = Credit → Credit Term → due dates ഉള്ള instalments",
+       "Recording-ൽ: print copy-യിലെ number, term save ചെയ്തതുമായി വ്യത്യാസം"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m11",
+   "number": 11,
+   "title": "Customer Collection, Advance & Refund",
+   "beats": [
+    {
+     "id": "m11_intro",
+     "say_en": "Module eleven is customer collection: the money received from customers, advances, and refunds.",
+     "say_ml": "പതിനൊന്നാമത്തെ module customer collection ആണ്: customers-ൽ നിന്ന് കിട്ടുന്ന പണം, advances, refunds.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 11",
+      "title": "Customer Collection, Advance & Refund",
+      "subtitle_en": "Bill-to-bill collection, advances and customer refunds",
+      "subtitle_ml": "Bill-to-bill collection, advance, customer refund"
+     }
+    },
+    {
+     "id": "m11_where",
+     "say_en": "Money from a customer is entered in Sales, Customer Collection, not as a plain receipt. Receipts are for other money coming in. A customer collection is itself a receipt voucher, in the same R number series.",
+     "say_ml": "Customer തരുന്ന പണം Sales-ൽ Customer Collection-ൽ ആണ് entry ചെയ്യേണ്ടത്, plain receipt ആയിട്ടല്ല. Receipts മറ്റ് വരവുകൾക്കാണ്. Customer collection-ഉം ഒരു receipt voucher തന്നെയാണ്, അതേ R number series-ൽ.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_a",
+      "from": 19.0,
+      "to": 36.0,
+      "max_speed": 1.8,
+      "hl": [
+       {
+        "from": 19.2,
+        "to": 25.2,
+        "label": "Receipt Vouchers",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 21.8,
+        "to": 25.2,
+        "label": "Customer Collection",
+        "expand": [
+         30,
+         12,
+         120,
+         12
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m11_bills",
+     "say_en": "Select the customer, and every open bill is listed with its due date and balance: this is bill-to-bill collection. The invoice on the 60 days term appears as two instalments. Below the party, the current ledger balance is shown.",
+     "say_ml": "Customer select ചെയ്താൽ open ആയ ഓരോ bill-ഉം അതിന്റെ due date-ഉം balance-ഉം list ചെയ്യും: ഇതാണ് bill-to-bill collection. 60 days term-ലുള്ള invoice രണ്ട് instalments ആയി കാണാം. Party-യുടെ താഴെ current ledger balance-ഉം കാണിക്കും.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_d",
+      "from": 348.0,
+      "to": 376.4,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 352.0,
+        "to": 376.4,
+        "label": "Reference",
+        "expand": [
+         14,
+         10,
+         1100,
+         120
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 348.5,
+        "to": 351.2,
+        "label": "Party",
+        "expand": [
+         20,
+         -60,
+         1300,
+         520
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m11_advance",
+     "say_en": "Enter the amount against a bill, or, if it is not against any bill, in the Advance row. Here 5,000 is taken as an advance, in cash. Click Save; the message reads voucher entry added, and the collection is R-23.",
+     "say_ml": "Amount ഒരു bill-ന് എതിരെ കൊടുക്കാം, ഒരു bill-നും എതിരെ അല്ലെങ്കിൽ Advance row-ൽ കൊടുക്കാം. ഇവിടെ 5,000 advance ആയി cash-ൽ വാങ്ങുന്നു. Save click ചെയ്താൽ voucher entry added എന്ന message വരും, collection R-23.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_d",
+      "from": 376.6,
+      "to": 419.0,
+      "max_speed": 2.8,
+      "hl": [
+       {
+        "from": 377.6,
+        "to": 392.2,
+        "label": "Advance",
+        "expand": [
+         14,
+         10,
+         1200,
+         14
+        ]
+       },
+       {
+        "from": 384.2,
+        "to": 390.0,
+        "label": "Pay Using",
+        "expand": [
+         14,
+         10,
+         520,
+         120
+        ]
+       },
+       {
+        "from": 415.8,
+        "to": 417.2,
+        "label": "Voucher entry added",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m11_on_invoice",
+     "say_en": "On the customer's next invoice, the advance that is not yet adjusted is offered under Pay Using, as R-23 with its balance. Ticking it applies it to the invoice.",
+     "say_ml": "ആ customer-ന്റെ അടുത്ത invoice-ൽ adjust ചെയ്യാത്ത advance, Pay Using-ൽ R-23 അതിന്റെ balance-ഓടെ കാണിക്കും. Tick ചെയ്താൽ invoice-ൽ apply ആകും.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_d",
+      "from": 425.0,
+      "to": 466.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 440.0,
+        "to": 466.0,
+        "label": "Advance",
+        "expand": [
+         14,
+         10,
+         400,
+         40
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m11_refund",
+     "say_en": "To return part of an advance, use Sales, Customer Refund. It is a payment voucher, here P-8. The customer's advance receipt is listed; enter the refund amount, here 2,500, choose the paying account, and save.",
+     "say_ml": "Advance-ന്റെ ഒരു ഭാഗം തിരിച്ചു കൊടുക്കാൻ Sales-ൽ Customer Refund ഉപയോഗിക്കുക. ഇത് ഒരു payment voucher ആണ്, ഇവിടെ P-8. Customer-ന്റെ advance receipt list ചെയ്യും; refund amount കൊടുക്കുക, ഇവിടെ 2,500, paying account select ചെയ്ത് save ചെയ്യുക.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_d",
+      "from": 466.0,
+      "to": 497.0,
+      "max_speed": 2.0,
+      "hl": [
+       {
+        "from": 472.5,
+        "to": 475.2,
+        "label": "New Customer Refund",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 475.5,
+        "to": 476.0,
+        "label": "Payment Voucher Entry",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 492.5,
+        "to": 493.8,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 494.4,
+        "to": 496.0,
+        "label": "Voucher entry added",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 476.0,
+        "to": 480.0,
+        "label": "Party",
+        "expand": [
+         20,
+         -60,
+         1300,
+         520
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m11_after",
+     "say_en": "On the next invoice, only the remaining 2,500 of the advance is now offered.",
+     "say_ml": "അടുത്ത invoice-ൽ ഇപ്പോൾ advance-ന്റെ ബാക്കിയുള്ള 2,500 മാത്രമേ കാണിക്കുന്നുള്ളൂ.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_d",
+      "from": 505.0,
+      "to": 520.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 510.0,
+        "to": 520.0,
+        "label": "Advance",
+        "expand": [
+         14,
+         10,
+         400,
+         40
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m11_summary",
+     "say_en": "To sum up: collect customer money bill to bill in Customer Collection, keep anything extra as an advance, use the advance on later invoices, and return it with Customer Refund when needed.",
+     "say_ml": "ചുരുക്കത്തിൽ: customer-ന്റെ പണം Customer Collection-ൽ bill-to-bill ആയി collect ചെയ്യുക, അധികമുള്ളത് advance ആയി വെക്കുക, പിന്നീടുള്ള invoices-ൽ ആ advance ഉപയോഗിക്കുക, വേണമെങ്കിൽ Customer Refund വഴി തിരിച്ചു കൊടുക്കുക.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 11 · Summary",
+      "eyebrow_ml": "Module 11 · Summary",
+      "title": "Customer Collection, Advance & Refund",
+      "points_en": [
+       "Customer money → Sales → Customer Collection (a receipt voucher, R-series)",
+       "Open bills and instalments listed with due date and balance",
+       "Amount not against a bill → Advance row",
+       "Advance is offered on the next invoice under Pay Using",
+       "Sales → Customer Refund: payment voucher (P-8) against the advance"
+      ],
+      "points_ml": [
+       "Customer-ന്റെ പണം → Sales → Customer Collection (receipt voucher, R-series)",
+       "Open bills, instalments: due date, balance ഉൾപ്പെടെ",
+       "Bill-ന് എതിരെ അല്ലാത്ത amount → Advance row",
+       "അടുത്ത invoice-ൽ Pay Using-ൽ advance കാണിക്കും",
+       "Sales → Customer Refund: advance-ന് എതിരെ payment voucher (P-8)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m12",
+   "number": 12,
+   "title": "Proforma Invoice",
+   "beats": [
+    {
+     "id": "m12_intro",
+     "say_en": "Module twelve is the proforma invoice. The trainer explains it as a request for payment before the tax invoice is raised. Once the customer pays, it is converted into the sales invoice.",
+     "say_ml": "പന്ത്രണ്ടാമത്തെ module proforma invoice ആണ്. Tax invoice ഉണ്ടാക്കുന്നതിന് മുമ്പ് payment ചോദിക്കാനുള്ളതാണ് ഇത് എന്ന് trainer പറയുന്നു. Customer pay ചെയ്താൽ ഇത് sales invoice ആക്കി മാറ്റാം.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 12",
+      "title": "Proforma Invoice",
+      "subtitle_en": "Draft, confirm, print, then convert to an invoice",
+      "subtitle_ml": "Draft, confirm, print, പിന്നെ invoice ആക്കുക"
+     }
+    },
+    {
+     "id": "m12_create",
+     "say_en": "Open Sales, Proforma Invoices, and click New Proforma. Fill in the branch, the date, an optional expiry date, the type Sales, and the customer, then add the items just as on an invoice. Here the total payable is 2,124. Save, and it is listed as Draft.",
+     "say_ml": "Sales-ൽ Proforma Invoices open ചെയ്ത് New Proforma click ചെയ്യുക. Branch, date, വേണമെങ്കിൽ expiry date, type Sales, customer ഇവ കൊടുത്ത്, invoice-ൽ ചെയ്യുന്നത് പോലെ items add ചെയ്യുക. ഇവിടെ total payable 2,124. Save ചെയ്താൽ Draft ആയി list-ൽ കാണാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_e",
+      "from": 722.0,
+      "to": 772.0,
+      "max_speed": 3.0,
+      "hl": [
+       {
+        "from": 722.1,
+        "to": 723.0,
+        "label": "New Proforma",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 725.5,
+        "to": 738.4,
+        "label": "Expiry Date",
+        "expand": [
+         14,
+         10,
+         300,
+         70
+        ]
+       },
+       {
+        "from": 756.6,
+        "to": 763.8,
+        "label": "Total Payable",
+        "expand": [
+         14,
+         60,
+         600,
+         14
+        ]
+       },
+       {
+        "from": 767.9,
+        "to": 772.0,
+        "label": "Draft",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 733.2,
+        "to": 740.6,
+        "label": "Customer Name",
+        "expand": [
+         20,
+         -60,
+         1300,
+         420
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m12_confirm",
+     "say_en": "Use the green check in Action to confirm it; the status becomes Confirmed. The print icon gives the proforma invoice to send to the customer.",
+     "say_ml": "Action-ലെ green check ഉപയോഗിച്ച് confirm ചെയ്യുക, status Confirmed ആകും. Print icon വഴി customer-ന് അയക്കാനുള്ള proforma invoice കിട്ടും.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_e",
+      "from": 772.0,
+      "to": 794.0,
+      "max_speed": 1.8,
+      "hl": [
+       {
+        "from": 772.2,
+        "to": 775.8,
+        "label": "Action",
+        "expand": [
+         14,
+         10,
+         40,
+         80
+        ]
+       },
+       {
+        "from": 776.5,
+        "to": 786.4,
+        "label": "PROFORMA INVOICE",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m12_convert",
+     "say_en": "When the customer pays, click Create Invoice. The invoice opens with the customer, the sales executive and the items copied from the proforma. Choose the warehouse, apply any advance, and save; the tax invoice is printed.",
+     "say_ml": "Customer pay ചെയ്താൽ Create Invoice click ചെയ്യുക. Proforma-യിൽ നിന്ന് customer, sales executive, items ഇവ copy ചെയ്ത് invoice open ആകും. Warehouse select ചെയ്ത്, advance ഉണ്ടെങ്കിൽ apply ചെയ്ത് save ചെയ്യുക; tax invoice print ആകും.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_e",
+      "from": 794.0,
+      "to": 830.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 794.3,
+        "to": 798.2,
+        "label": "Create Invoice",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 800.4,
+        "to": 808.8,
+        "label": "Warehouse",
+        "expand": [
+         14,
+         10,
+         400,
+         70
+        ]
+       },
+       {
+        "from": 810.6,
+        "to": 819.4,
+        "label": "Advance",
+        "expand": [
+         14,
+         10,
+         400,
+         40
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m12_after",
+     "say_en": "That invoice used 2,124 of the customer's advance, so the next invoice now offers 376.",
+     "say_ml": "ആ invoice customer-ന്റെ advance-ൽ നിന്ന് 2,124 ഉപയോഗിച്ചു, അതുകൊണ്ട് അടുത്ത invoice-ൽ ഇപ്പോൾ 376 മാത്രം കാണിക്കുന്നു.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_e",
+      "from": 841.0,
+      "to": 858.0,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 845.0,
+        "to": 858.0,
+        "label": "Advance",
+        "expand": [
+         14,
+         10,
+         400,
+         40
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m12_summary",
+     "say_en": "To sum up: a proforma is saved as Draft, confirmed, printed for the customer, and turned into the sales invoice with Create Invoice once payment comes in.",
+     "say_ml": "ചുരുക്കത്തിൽ: proforma Draft ആയി save ചെയ്യുക, confirm ചെയ്യുക, customer-ന് print ചെയ്ത് കൊടുക്കുക, payment വന്നാൽ Create Invoice വഴി sales invoice ആക്കുക.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 12 · Summary",
+      "eyebrow_ml": "Module 12 · Summary",
+      "title": "Proforma Invoice",
+      "points_en": [
+       "Sales → Proforma Invoices → New Proforma (type Sales)",
+       "Items and totals work exactly like an invoice",
+       "Saved as Draft → green check = Confirmed → Print",
+       "Create Invoice copies customer, executive and items into a tax invoice",
+       "Advance can be applied on the converted invoice"
+      ],
+      "points_ml": [
+       "Sales → Proforma Invoices → New Proforma (type Sales)",
+       "Items, totals invoice പോലെ തന്നെ",
+       "Draft → green check = Confirmed → Print",
+       "Create Invoice: customer, executive, items tax invoice-ലേക്ക് copy",
+       "Convert ചെയ്ത invoice-ൽ advance apply ചെയ്യാം"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m13",
+   "number": 13,
+   "title": "Accounts & Inventory Settings",
+   "beats": [
+    {
+     "id": "m13_intro",
+     "say_en": "Module thirteen covers two groups of tenant settings that change how accounts and sales work.",
+     "say_ml": "പതിമൂന്നാമത്തെ module accounts-ഉം sales-ഉം എങ്ങനെ work ചെയ്യണം എന്ന് തീരുമാനിക്കുന്ന രണ്ട് tenant settings groups ആണ്.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 13",
+      "title": "Accounts & Inventory Settings",
+      "subtitle_en": "Receivable ageing, and which sales documents are used",
+      "subtitle_ml": "Receivable ageing, ഏതൊക്കെ sales documents വേണം"
+     }
+    },
+    {
+     "id": "m13_accounts",
+     "say_en": "Open Master, Tenant Settings, Accounts Settings. The default ledgers are set here, and the receivable settings set the red, yellow and green periods for ageing: here red at 2 months, yellow at 1 month and green at 1 week. Save the section; the message confirms the accounts settings are saved.",
+     "say_ml": "Master-ൽ Tenant Settings-ൽ Accounts Settings open ചെയ്യുക. Default ledgers ഇവിടെ set ചെയ്യാം. Receivable settings-ൽ ageing-നുള്ള red, yellow, green periods: ഇവിടെ red 2 months, yellow 1 month, green 1 week. Section save ചെയ്താൽ accounts settings saved എന്ന message വരും.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_c",
+      "from": 230.0,
+      "to": 279.0,
+      "max_speed": 3.0,
+      "hl": [
+       {
+        "from": 230.7,
+        "to": 231.4,
+        "label": "DEFAULT LEDGERS",
+        "expand": [
+         14,
+         10,
+         300,
+         14
+        ]
+       },
+       {
+        "from": 232.2,
+        "to": 271.6,
+        "label": "RECEIVABLE SETTINGS",
+        "expand": [
+         14,
+         10,
+         1200,
+         260
+        ]
+       },
+       {
+        "from": 275.2,
+        "to": 275.6,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 277.0,
+        "to": 278.6,
+        "label": "Accounts settings saved successfully",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m13_dashboard",
+     "say_en": "The Accounts dashboard shows total receivables and total payables, split into coloured boxes, with overdue, upcoming and advance totals. How the amounts are sorted into the colours is not explained in the recording.",
+     "say_ml": "Accounts dashboard-ൽ total receivables-ഉം total payables-ഉം coloured boxes ആയി കാണാം, overdue, upcoming, advance totals ഉൾപ്പെടെ. Amounts ഓരോ colour-ലേക്ക് എങ്ങനെ വരുന്നു എന്ന് recording-ൽ explain ചെയ്യുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_c",
+      "from": 299.0,
+      "to": 330.0,
+      "max_speed": 2.6,
+      "hl": [
+       {
+        "from": 303.7,
+        "to": 325.4,
+        "label": "Total Receivables",
+        "expand": [
+         14,
+         10,
+         700,
+         420
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m13_flow",
+     "say_en": "Inventory Settings, Sales and Purchase Flow, decides which documents the business uses: sales order, proforma invoice, delivery or dispatch, and counter sale POS. Stock options include allow backorder, and allow negative stock, which lets goods ship beyond the quantity on hand.",
+     "say_ml": "Inventory Settings-ൽ Sales & Purchase Flow-ൽ business ഏതൊക്കെ documents ഉപയോഗിക്കും എന്ന് തീരുമാനിക്കാം: sales order, proforma invoice, delivery അല്ലെങ്കിൽ dispatch, counter sale POS. Stock options-ൽ allow backorder, പിന്നെ allow negative stock, അതായത് കയ്യിലുള്ള stock-നേക്കാൾ കൂടുതൽ goods അയക്കാൻ അനുവദിക്കും.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_f1",
+      "from": 861.5,
+      "to": 1001.0,
+      "max_speed": 6.0,
+      "hl": [
+       {
+        "from": 863.2,
+        "to": 943.7,
+        "label": "Enable Sales Order",
+        "expand": [
+         14,
+         10,
+         1200,
+         130
+        ]
+       },
+       {
+        "from": 947.7,
+        "to": 1000.9,
+        "label": "Allow Negative Stock",
+        "expand": [
+         14,
+         10,
+         40,
+         10
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m13_save",
+     "say_en": "Save the section. After a reload, the Sales menu shows the newly enabled entries: Sales Orders, Delivery Notes and Counter Sale POS.",
+     "say_ml": "Section save ചെയ്യുക. Reload ചെയ്ത ശേഷം Sales menu-വിൽ പുതുതായി enable ചെയ്ത entries കാണാം: Sales Orders, Delivery Notes, Counter Sale POS.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_f2",
+      "from": 1131.0,
+      "to": 1171.0,
+      "max_speed": 3.6,
+      "hl": [
+       {
+        "from": 1131.1,
+        "to": 1137.6,
+        "label": "Save",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 1138.6,
+        "to": 1140.4,
+        "label": "Inventory settings saved successfully",
+        "expand": [
+         50,
+         14,
+         30,
+         14
+        ]
+       },
+       {
+        "from": 1165.1,
+        "to": 1170.8,
+        "label": "Delivery Notes",
+        "expand": [
+         30,
+         130,
+         120,
+         130
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m13_summary",
+     "say_en": "To sum up: Accounts Settings hold the default ledgers and the ageing periods, and Inventory Settings switch the sales documents and stock options on or off, which also changes the menu.",
+     "say_ml": "ചുരുക്കത്തിൽ: Accounts Settings-ൽ default ledgers-ഉം ageing periods-ഉം, Inventory Settings-ൽ sales documents-ഉം stock options-ഉം on/off ചെയ്യാം, അതനുസരിച്ച് menu-വും മാറും.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 13 · Summary",
+      "eyebrow_ml": "Module 13 · Summary",
+      "title": "Accounts & Inventory Settings",
+      "points_en": [
+       "Master → Tenant Settings → Accounts Settings: default ledgers, receivable / payable ageing",
+       "Dashboards → Accounts: receivables and payables by colour, overdue, upcoming, advance",
+       "Inventory Settings → Sales & Purchase Flow: sales order, proforma, delivery, POS",
+       "Stock options: allow backorder, allow negative stock",
+       "Saving changes the Sales menu"
+      ],
+      "points_ml": [
+       "Master → Tenant Settings → Accounts Settings: default ledgers, ageing",
+       "Dashboards → Accounts: colour അനുസരിച്ച് receivables, payables",
+       "Inventory Settings → Sales & Purchase Flow: sales order, proforma, delivery, POS",
+       "Stock options: allow backorder, allow negative stock",
+       "Save ചെയ്താൽ Sales menu മാറും"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "m14",
+   "number": 14,
+   "title": "Counter Sale (POS)",
+   "beats": [
+    {
+     "id": "m14_intro",
+     "say_en": "Module fourteen is the counter sale, or POS, screen for quick walk-in billing.",
+     "say_ml": "പതിനാലാമത്തെ module counter sale, അതായത് POS screen ആണ്, walk-in customers-ന് വേഗത്തിൽ bill ചെയ്യാൻ.",
+     "visual": {
+      "type": "section",
+      "eyebrow": "Module 14",
+      "title": "Counter Sale (POS)",
+      "subtitle_en": "Quick walk-in billing with split payment",
+      "subtitle_ml": "Walk-in billing, split payment"
+     }
+    },
+    {
+     "id": "m14_screen",
+     "say_en": "Open Sales, Counter Sale POS. The branch, sales type, date and warehouse are set, and the customer defaults to Cash or Walk-in. Tick Prices include tax if your rates include tax. Pick items from the list, and change the quantity with the minus and plus buttons.",
+     "say_ml": "Sales-ൽ Counter Sale POS open ചെയ്യുക. Branch, sales type, date, warehouse ഇവ set ആയിരിക്കും, customer default ആയി Cash / Walk-in. Rates tax ഉൾപ്പെടെയാണെങ്കിൽ Prices include tax tick ചെയ്യുക. List-ൽ നിന്ന് items select ചെയ്ത്, minus, plus buttons ഉപയോഗിച്ച് quantity മാറ്റാം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_g1",
+      "from": 1166.0,
+      "to": 1190.2,
+      "max_speed": 1.8,
+      "hl": [
+       {
+        "from": 1169.0,
+        "to": 1175.4,
+        "label": "Cash / Walk-in",
+        "expand": [
+         14,
+         50,
+         200,
+         14
+        ]
+       },
+       {
+        "from": 1172.5,
+        "to": 1175.4,
+        "label": "Prices include tax",
+        "expand": [
+         40,
+         10,
+         14,
+         10
+        ]
+       },
+       {
+        "from": 1177.0,
+        "to": 1190.2,
+        "label": "Select Item",
+        "expand": [
+         14,
+         10,
+         900,
+         20
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m14_totals",
+     "say_en": "Each line shows the unit rate, quantity, discount and net with tax. The bill summary shows the gross, taxable, tax, round off and payable amount, here 4,042.",
+     "say_ml": "ഓരോ line-ലും unit rate, quantity, discount, tax ഉൾപ്പെടെ net ഇവ കാണാം. Bill summary-യിൽ gross, taxable, tax, round off, payable amount, ഇവിടെ 4,042.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_g2",
+      "from": 1202.6,
+      "to": 1216.2,
+      "hl": [
+       {
+        "from": 1202.7,
+        "to": 1211.4,
+        "label": "Unit Rate",
+        "expand": [
+         300,
+         10,
+         420,
+         120
+        ]
+       },
+       {
+        "from": 1206.0,
+        "to": 1216.2,
+        "label": "Bill Summary",
+        "expand": [
+         14,
+         10,
+         400,
+         260
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m14_split",
+     "say_en": "The tender defaults to cash for the full amount. Use Split payment to take part of it in another account, here 1,000 in cash and the rest by bank.",
+     "say_ml": "Tender default ആയി full amount cash ആണ്. Split payment ഉപയോഗിച്ച് ഒരു ഭാഗം മറ്റൊരു account-ൽ വാങ്ങാം, ഇവിടെ 1,000 cash-ഉം ബാക്കി bank-ഉം.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_g3",
+      "from": 1224.6,
+      "to": 1244.2,
+      "max_speed": 2.4,
+      "hl": [
+       {
+        "from": 1225.0,
+        "to": 1244.2,
+        "label": "Tender",
+        "expand": [
+         14,
+         10,
+         400,
+         160
+        ]
+       },
+       {
+        "from": 1234.8,
+        "to": 1238.6,
+        "label": "Split payment",
+        "expand": [
+         14,
+         10,
+         14,
+         10
+        ]
+       }
+      ],
+      "masks": [
+       {
+        "from": 1231.6,
+        "to": 1236.0,
+        "label": "Split payment",
+        "expand": [
+         400,
+         -20,
+         300,
+         420
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m14_fail",
+     "say_en": "In the recording, Pay and Print fails twice with the message, invoice already confirmed, so a completed POS sale is not shown.",
+     "say_ml": "Recording-ൽ Pay & Print രണ്ട് തവണയും invoice already confirmed എന്ന message-ഓടെ fail ആകുന്നു, അതുകൊണ്ട് complete ആയ POS sale കാണിക്കുന്നില്ല.",
+     "visual": {
+      "type": "footage",
+      "clip": "sa_g3",
+      "from": 1243.6,
+      "to": 1246.8,
+      "mode": "start",
+      "hl": [
+       {
+        "from": 1244.4,
+        "to": 1246.8,
+        "label": "Invoice already confirmed",
+        "expand": [
+         60,
+         50,
+         60,
+         60
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "m14_summary",
+     "say_en": "To sum up: the POS screen bills walk-in customers quickly, with tax-inclusive or exclusive prices and split payments. Saving a POS bill did not work in the recording, so check it before using it live.",
+     "say_ml": "ചുരുക്കത്തിൽ: POS screen-ൽ walk-in customers-ന് വേഗത്തിൽ bill ചെയ്യാം, tax ഉൾപ്പെടെയോ അല്ലാതെയോ prices, split payment ഉൾപ്പെടെ. Recording-ൽ POS bill save ആയില്ല, അതുകൊണ്ട് live ആയി ഉപയോഗിക്കുന്നതിന് മുമ്പ് check ചെയ്യുക.",
+     "visual": {
+      "type": "summary",
+      "eyebrow_en": "Module 14 · Summary",
+      "eyebrow_ml": "Module 14 · Summary",
+      "title": "Counter Sale (POS)",
+      "points_en": [
+       "Sales → Counter Sale (POS); customer defaults to Cash / Walk-in",
+       "Prices include tax: tick if rates are tax-inclusive",
+       "Lines: unit rate, qty (− / +), discount, net with tax",
+       "Bill summary with round off; tender can be split across accounts",
+       "Seen in recording: Pay & Print failed ('Invoice already confirmed')"
+      ],
+      "points_ml": [
+       "Sales → Counter Sale (POS); customer default Cash / Walk-in",
+       "Rates tax ഉൾപ്പെടെയാണെങ്കിൽ Prices include tax tick",
+       "Lines: unit rate, qty (− / +), discount, net (tax ഉൾപ്പെടെ)",
+       "Round off ഉള്ള bill summary; tender split ചെയ്യാം",
+       "Recording-ൽ: Pay & Print fail ആയി ('Invoice already confirmed')"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "outro",
+   "title": "Closing",
+   "beats": [
+    {
+     "id": "outro_1",
+     "say_en": "That completes the Progbiz ERP Knowledge Transfer. Use the chapters to come back to any module, and refer to the workflow summary document for the step-by-step lists. Thank you for watching.",
+     "say_ml": "Progbiz ERP Knowledge Transfer ഇവിടെ പൂർത്തിയായി. ഏത് module-ലേക്കും തിരിച്ചു പോകാൻ chapters ഉപയോഗിക്കാം, step-by-step lists-ന് workflow summary document നോക്കാം. കണ്ടതിന് നന്ദി.",
+     "visual": {
+      "type": "motion",
+      "authored": 11.0,
+      "min": 9.0,
+      "source": {
+       "type": "motion",
+       "preset": "intro",
+       "seed": 5,
+       "pings": false,
+       "images": {
+        "logo": "reports/video/beta/cap/white-logo-1600.png"
+       },
+       "questions": [
+        {
+         "t": 0.3,
+         "text": "Know the screen.",
+         "text_ml": "Screen അറിയുക.",
+         "y": 330
+        },
+        {
+         "t": 1.8,
+         "text": "Follow the workflow.",
+         "text_ml": "Workflow പിന്തുടരുക.",
+         "y": 446
+        },
+        {
+         "t": 3.2,
+         "text": "Check the result.",
+         "text_ml": "Result check ചെയ്യുക.",
+         "y": 562
+        }
+       ],
+       "question_size": 76,
+       "text_out": 4.75,
+       "logo_at": [
+        5.05,
+        1000000
+       ],
+       "logo_width": 820,
+       "tagline": "Knowledge Transfer",
+       "tagline_at": 5.65,
+       "tagline_size": 40
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -28,7 +28,7 @@ async function loginAs(browser, { username, password }, { recordVideoDir } = {})
     ...(recordVideoDir ? { recordVideo: { dir: recordVideoDir, size: VIDEO_SIZE } } : {}),
   });
   const page = await context.newPage();
-  const company = process.env.HRMS_COMPANY_CODE || process.env.COMPANY_CODE;
+  const company = process.env.HRMS_COMPANY_CODE || 'pbhrms';
   await new HrmsLoginPage(page).login(company, username, password);
   await expect(page, `${username} should be signed in (left the login page)`).not.toHaveURL(/\/login/i);
   return { context, page };

@@ -10,7 +10,7 @@
 class ProjectPage {
   constructor(page) {
     this.page = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
   }
 
   async goto(path) {

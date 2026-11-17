@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sample CRM - Leads (compositor test material)</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body>
+<div class="app">
+  <nav class="side">
+    <div class="brand"><i></i>Sample CRM</div>
+    <h6>Workspace</h6>
+    <a href="#"><b></b>Home</a>
+    <a href="#"><b></b>CRM Dashboard</a>
+    <a href="#" class="on"><b></b>Leads</a>
+    <a href="#"><b></b>Follow-ups</a>
+    <a href="#"><b></b>Quotations</a>
+    <h6>Reports</h6>
+    <a href="#"><b></b>Sales Targets</a>
+    <a href="#"><b></b>Activity</a>
+  </nav>
+  <section class="main">
+    <header class="top">
+      <div><div class="crumb">CRM</div><h1>Leads</h1></div>
+      <div class="sp"></div>
+      <div class="user" id="user">
+        <div class="av">DA</div>
+        <div><div class="nm">Demo Admin</div><div class="em" id="email">demo.admin@sample-crm.test</div></div>
+      </div>
+    </header>
+    <div class="body">
+      <div class="tools" id="tools">
+        <input class="search" id="search" placeholder="Search leads by name, phone or source" autocomplete="off" spellcheck="false">
+        <button class="btn">Stage: All</button>
+        <button class="btn">Source: All</button>
+        <div style="flex:1"></div>
+        <button class="btn pri">+ New lead</button>
+      </div>
+      <div class="split">
+        <div class="card" style="padding:6px 8px 8px">
+          <table class="tbl" id="tbl">
+            <thead><tr><th>Lead</th><th>Phone</th><th>Source</th><th>Stage</th><th>Assigned to</th><th>Next follow-up</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <aside class="panel" id="panel">
+          <h2 id="p-name">Demo Customer</h2>
+          <div class="sub" id="p-sub">Lead #L-1042 - created 3 days ago</div>
+          <dl>
+            <dt>Enquiry</dt><dd>Solar rooftop, 5 kW</dd>
+            <dt>Source</dt><dd>Website form</dd>
+            <dt>Stage</dt><dd><span class="pill warm">Warm</span></dd>
+            <dt>Phone</dt><dd id="p-phone">+00 555 010 1042</dd>
+            <dt>Next follow-up</dt><dd>Tomorrow, 10:30</dd>
+          </dl>
+          <div style="color:#7b869c;font-size:13px;font-weight:600;letter-spacing:.04em;margin-bottom:8px">ASSIGNED TO</div>
+          <div class="assign" id="assign"><div class="av">SE</div><div><div style="font-weight:650">Sales Executive 2</div><div style="color:#7b869c;font-size:13px">West region team</div></div></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  // Demo/test data only.
+  const DATA = [
+    ['Demo Customer', '+00 555 010 1042', 'Website form', 'warm', 'Sales Executive 2', 'Tomorrow, 10:30'],
+    ['Test Enquiry A', '+00 555 010 1043', 'Phone call', 'new', 'Sales Executive 1', 'Today, 16:00'],
+    ['Sample Traders', '+00 555 010 1044', 'Referral', 'hot', 'Sales Executive 3', 'Today, 17:30'],
+    ['Demo Builders', '+00 555 010 1045', 'Exhibition', 'cold', 'Sales Executive 1', 'Fri, 11:00'],
+    ['Example Foods', '+00 555 010 1046', 'Website form', 'won', 'Sales Executive 2', '-'],
+    ['Test Enquiry B', '+00 555 010 1047', 'Walk-in', 'new', 'Sales Executive 4', 'Mon, 09:30'],
+    ['Sample Logistics', '+00 555 010 1048', 'Referral', 'warm', 'Sales Executive 3', 'Tue, 14:00'],
+    ['Demo Textiles', '+00 555 010 1049', 'Phone call', 'hot', 'Sales Executive 4', 'Wed, 12:15'],
+    ['Example Motors', '+00 555 010 1050', 'Exhibition', 'cold', 'Sales Executive 1', 'Thu, 15:45'],
+    ['Test Enquiry C', '+00 555 010 1051', 'Website form', 'new', 'Sales Executive 2', 'Fri, 10:00'],
+    ['Demo Interiors', '+00 555 010 1052', 'Walk-in', 'warm', 'Sales Executive 3', 'Next week'],
+  ];
+  const rows = document.getElementById('rows');
+  function draw(filter) {
+    const f = (filter || '').toLowerCase();
+    rows.innerHTML = '';
+    DATA.filter(r => !f || r.join(' ').toLowerCase().includes(f)).forEach((r, i) => {
+      const tr = document.createElement('tr');
+      tr.dataset.name = r[0];
+      tr.innerHTML = `<td style="font-weight:650">${r[0]}</td><td class="ph">${r[1]}</td><td>${r[2]}</td>` +
+        `<td><span class="pill ${r[3]}">${r[3][0].toUpperCase() + r[3].slice(1)}</span></td><td>${r[4]}</td><td>${r[5]}</td>`;
+      tr.addEventListener('mouseenter', () => tr.classList.add('hov'));
+      tr.addEventListener('mouseleave', () => tr.classList.remove('hov'));
+      tr.addEventListener('click', () => {
+        document.querySelectorAll('tr.sel').forEach(e => e.classList.remove('sel'));
+        tr.classList.add('sel');
+        document.getElementById('p-name').textContent = r[0];
+        document.getElementById('p-phone').textContent = r[1];
+        document.getElementById('panel').classList.add('open');
+      });
+      rows.appendChild(tr);
+    });
+  }
+  draw('');
+  document.getElementById('search').addEventListener('input', e => draw(e.target.value));
+</script>
+</body>
+</html>

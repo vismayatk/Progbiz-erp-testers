@@ -1,0 +1,138 @@
+{
+  "_source": "Work Flow module marketing video (request of 2026-10-01: 'next workflow module video ... highlight the pages ... how it is useful for business users ... just the module and the module features'). Every claim is checked against the live pages of the Work Flow module on test.erp.progbiz.in (tenant lesol_test, menu name 'Projects'): Projects Dashboard, project list with the phase view, Types and their template (phases, tasks, payment terms, members, maintenance schedule), New Project form, project overview with phases advancing automatically, Tasks, Status Report with PDF export, Payment Summary, Collections, Pending Collection, Costing, Cost Rates, Labour Cost Actualisation, Material Used, Maintenance Schedule. Brand is written 'Progbiz' (lower-case b).",
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_s": 215,
+    "codec": "H.264 MP4",
+    "pace_wpm": [145, 160]
+  },
+  "sections": [
+    {
+      "id": "01_intro",
+      "title": "Introduction",
+      "slot": [0, 60],
+      "sentences": [
+        "Every job your business delivers is really a chain of steps: approvals, purchases, installation, payments and service.",
+        "When that chain lives in phone calls and spreadsheets, deadlines slip, money is chased late, and nobody is sure who is waiting on whom.",
+        "Progbiz Workflow turns every project into one clear, trackable process."
+      ]
+    },
+    {
+      "id": "02_dashboard",
+      "title": "Projects Dashboard",
+      "slot": [0, 60],
+      "sentences": [
+        "Start with the big picture.",
+        "The Projects Dashboard shows how many jobs are ongoing, on hold or finished, which phase they are in, and how many tasks are overdue, for any branch, project type or executive.",
+        "Collections, receivables and upcoming maintenance visits sit on the same screen."
+      ]
+    },
+    {
+      "id": "03_projects",
+      "title": "Projects",
+      "slot": [0, 60],
+      "sentences": [
+        "Every project lives in one list.",
+        "Created, ongoing, on hold, finished or dropped, each with its type, its owner and its current phase.",
+        "Switch to the phase view, and see exactly how many jobs are waiting at each stage."
+      ]
+    },
+    {
+      "id": "04_types",
+      "title": "Project Types",
+      "slot": [0, 60],
+      "sentences": [
+        "Different jobs need different processes.",
+        "Set up each project type once, with its phases, tasks, payment terms and team, and every new project starts with the right plan.",
+        "Start from a ready template, or build your own."
+      ]
+    },
+    {
+      "id": "05_new_project",
+      "title": "New Project",
+      "slot": [0, 60],
+      "sentences": [
+        "Starting a project takes one form.",
+        "Choose the customer, the executive and the deal value, and start directly, from a quotation, or from an enquiry.",
+        "Industry details, such as panel and inverter specifications for solar, are captured from day one."
+      ]
+    },
+    {
+      "id": "06_overview",
+      "title": "Project Overview",
+      "slot": [0, 60],
+      "sentences": [
+        "Open any project, and the whole story is in front of you.",
+        "Phases move forward automatically as tasks finish, so progress is never a guess.",
+        "Tasks, checklists, payments, costing, materials, time, maintenance, notes and attachments all stay together, in one record."
+      ]
+    },
+    {
+      "id": "07_tasks",
+      "title": "Tasks",
+      "slot": [0, 60],
+      "sentences": [
+        "Every phase breaks down into tasks, each with an owner.",
+        "Assign them to the right team, schedule them, set deadlines, and see what is running, what is still to do, and what is finished."
+      ]
+    },
+    {
+      "id": "08_status",
+      "title": "Status Report",
+      "slot": [0, 60],
+      "sentences": [
+        "Managers get one status report across every project.",
+        "See the current and next task for each job, who it is assigned to, and which tasks are running, scheduled, or still unscheduled.",
+        "Filter by branch or type, and export it as a PDF for your review meeting."
+      ]
+    },
+    {
+      "id": "09_money",
+      "title": "Payments and Collections",
+      "slot": [0, 60],
+      "sentences": [
+        "Money is tracked from the first day.",
+        "Payment terms tie each instalment to a phase, so the money follows the work.",
+        "Collections are recorded against each project, and the pending collection list shows who owes what, with a follow-up and collect action beside every line."
+      ]
+    },
+    {
+      "id": "10_cost",
+      "title": "Costing",
+      "slot": [0, 60],
+      "sentences": [
+        "And you can see margin while the work is still in progress.",
+        "Costing shows revenue, cost, budget and margin for every project, and how many are over budget.",
+        "Set cost rates from salaries, run labour cost actualisation each month, and record the materials used on every job."
+      ]
+    },
+    {
+      "id": "11_maintenance",
+      "title": "Maintenance",
+      "slot": [0, 60],
+      "sentences": [
+        "The relationship does not end when the job does.",
+        "Set a maintenance schedule on the project type, for example a visit every four months for five years, and it starts automatically when the project finishes.",
+        "Every visit appears in one schedule, so service is never forgotten."
+      ]
+    },
+    {
+      "id": "12_closing",
+      "title": "Closing",
+      "slot": [0, 60],
+      "sentences": [
+        "From the first enquiry to the last service visit, Progbiz Workflow keeps every project on track.",
+        "One process.",
+        "Clear ownership.",
+        "Better control.",
+        "Progbiz ERP."
+      ],
+      "end_card": {
+        "title": "PROGBIZ ERP",
+        "cta": "Every project, on track."
+      }
+    }
+  ]
+}

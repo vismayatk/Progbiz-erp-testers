@@ -18,11 +18,11 @@ const { LoginPage } = require('../../common/LoginPage');
 const { screenshot } = require('../../common/helpers');
 
 const C = {
-  company:  process.env.COMPANY_CODE || 'lesol_test',
+  company:  process.env.COMPANY_CODE || 'onetouch_test',
   username: process.env.CRM_USERNAME || 'admin',
   password: process.env.PASSWORD     || '123',
 };
-const BASE = process.env.BASE_URL || 'https://erptest.progbiz.in';
+const BASE = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
 async function arrive(page) {
   const lp = new LoginPage(page); await lp.goto(); await lp.login(C.company, C.username, C.password);
@@ -47,7 +47,7 @@ test.describe('CRM — Homepage', () => {
     expect(page.url()).toMatch(/home|dashboard/i);                          // Home_01
     const body = (await page.locator('body').textContent()) || '';
     expect(body).toMatch(/Hey,?\s*\w+/i);                                   // Home_02 (welcome + name)
-    await expect(page.locator('#new-task, :text("Create New")').first()).toBeVisible(); // Home_24
+    await expect(page.locator('#new-task, #new-lead-type, :text("Create New")').first()).toBeVisible(); // Home_24
     await screenshot(page, 'home01_loaded');
     console.log('  ✅ Homepage loads with welcome + Create New');
   });
@@ -77,6 +77,14 @@ test.describe('CRM — Homepage', () => {
     await arrive(page);
     await go(page, 'followups');
     expect(page.url()).toContain('/followups');
+    // Nov 2026: /followups opens on an Agenda (a week strip + one day's follow-ups). Read its "Missed" count,
+    // then switch to List View, where the Today's / Delayed / Upcoming chips and the grid live.
+    const agendaMissed = await page.evaluate(() => {
+      const b = document.getElementById('btn-agenda-missed'); if (!b) return null;
+      const m = (b.textContent || '').match(/(\d+)/); return m ? Number(m[1]) : null;
+    });
+    const listView = page.locator('#btn-view-list');
+    if (await listView.count()) { await listView.click(); await page.waitForTimeout(2500); }
     for (const id of ['tab-followup-today', 'tab-followup-overdue', 'tab-followup-upcoming']) {
       await expect(page.locator(`#${id}`), `${id} missing`).toBeVisible();
     }
@@ -85,12 +93,16 @@ test.describe('CRM — Homepage', () => {
     console.log('  📊 Today followups:', today, '| Overdue (Delayed):', overdue);
     expect(today, 'Today count did not render').not.toBeNull();
     expect(overdue, 'Overdue count did not render').not.toBeNull();
+    // the Agenda's "Missed" and the List View's "Delayed" are the same follow-ups
+    if (agendaMissed !== null) expect(agendaMissed, `Agenda "Missed" (${agendaMissed}) vs List View "Delayed" (${overdue})`).toBe(overdue);
     // Home_08 drill-down: click must work (no swallow) and, for a nonzero count, render rows
     await page.locator('#tab-followup-overdue').click();
     await page.waitForTimeout(1500);
     const overdueRows = await page.evaluate(() => document.querySelectorAll('table tbody tr').length);
     console.log('  📊 Overdue drill-down rows:', overdueRows);
     if (overdue > 0) expect(overdueRows, 'Overdue badge > 0 but the drill-down rendered no rows').toBeGreaterThan(0);
+    // 10 rows a page: a Delayed count that fits on one page must list exactly that many
+    if (overdue > 0 && overdue < 10) expect(overdueRows, `Delayed says ${overdue} but ${overdueRows} row(s) are listed`).toBe(overdue);
     await screenshot(page, 'home05_followups');
     console.log('  ✅ Followups Today + Overdue counts AND the drill-down opens rows');
   });
@@ -198,9 +210,13 @@ test.describe('CRM — Homepage', () => {
     await go(page, 'home');
     // open Create New and confirm Enquiry + Quotation options
     const item = page.locator('#new-task-item');
-    for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await page.locator('#new-task, #new-lead-type').first().click().catch(() => {}); await page.waitForTimeout(600); }
-    // Redesigned home dropped the ids on Enquiry/Quotation entries (plain hrefs)
-    // — read every item of the dropdown containing #new-task-item instead.
+    // Toggle is #new-task on some renders, #new-lead-type on others — match either,
+    // with a short click timeout so a wrong render doesn't cost 6 × 20s.
+    const toggle = page.locator('#new-task, #new-lead-type').first();
+    for (let i = 0; i < 6 && !(await item.isVisible().catch(() => false)); i++) { await toggle.click({ timeout: 5000 }).catch(() => {}); await page.waitForTimeout(600); }
+    // Read the menu itself, not a fixed id list: since the Sep-2026 build only
+    // "Task" carries an id (#new-task-item); Enquiry and Quotation are still in
+    // the menu but lost #new-enquiry-item / #new-quotation-item.
     const opts = await page.evaluate(() => {
       const anchor = document.getElementById('new-task-item');
       const menu = anchor && anchor.closest('.dropdown-menu, ul');

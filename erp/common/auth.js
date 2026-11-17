@@ -11,11 +11,11 @@
  * @param {string} [creds.password]
  */
 async function login(page, creds = {}) {
-  const company  = creds.company  || process.env.COMPANY_CODE || 'skiolo_test';
+  const company  = creds.company  || process.env.COMPANY_CODE || 'onetouch_test';
   const username = creds.username || process.env.CRM_USERNAME   || 'admin';
 
   const password = creds.password || process.env.PASSWORD      || '123';
-  const baseUrl  = process.env.BASE_URL || 'https://erptest.progbiz.in';
+  const baseUrl  = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
   console.log(`\n  🔐 Logging in as "${username}" @ "${company}" ...`);
 

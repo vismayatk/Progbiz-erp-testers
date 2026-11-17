@@ -10,7 +10,7 @@ const { throwIfServerError } = require('../../common/helpers');
 class LeadSourcesPage {
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     this.newBtn    = page.locator('a, button').filter({ hasText: /new lead source/i }).first();
     this.modal     = page.locator('#lead-source');

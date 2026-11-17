@@ -1,0 +1,124 @@
+{
+  "_source": "V4 business marketing video (brief of 2026-09-29: 'PROGBIZ ERP CRM - FINAL 4-MINUTE BUSINESS MARKETING VIDEO'). Narration is the brief's wording with three corrections: the brand is written 'Progbiz' (lower-case b); page names follow the product ('the AI Assistant', 'CRM Dashboard', 'Executive Performance'); one sentence each was added to AI Call Analysis and WhatsApp naming capabilities confirmed on the live pages (lead score, agent score, sentiment, AI summary, coaching note; broadcasts; chatbot). Pictures come from the existing captures in reports/video/beta/cap (no new visit to the ERP).",
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_s": 240,
+    "codec": "H.264 MP4",
+    "pace_wpm": [145, 160]
+  },
+  "sections": [
+    {
+      "id": "01_intro",
+      "title": "Introduction",
+      "slot": [0, 60],
+      "sentences": [
+        "Running a growing business means keeping track of customers, sales, follow-ups and your team, all at the same time.",
+        "But when that information is spread across different places, it becomes difficult to know what is happening, what needs attention, and where your team stands.",
+        "Progbiz ERP brings that visibility together in one connected workspace."
+      ]
+    },
+    {
+      "id": "02_home",
+      "title": "Home",
+      "slot": [0, 60],
+      "sentences": [
+        "Start with a clear view of your business.",
+        "Progbiz gives you a quick overview of the information that matters most, helping you understand what is happening today and where attention is needed."
+      ]
+    },
+    {
+      "id": "03_ai",
+      "title": "AI Assistant",
+      "slot": [0, 60],
+      "sentences": [
+        "And when you need answers quickly, the AI Assistant brings important business information closer to you.",
+        "With a single interaction, get visibility into lead status, employee work status and attendance, without having to search through multiple areas of the system."
+      ]
+    },
+    {
+      "id": "04_leads",
+      "title": "Leads",
+      "slot": [0, 60],
+      "sentences": [
+        "Every enquiry is an opportunity.",
+        "Progbiz keeps your leads organized, giving your sales team a clear view of the customers and opportunities they need to work on.",
+        "With the right information available at the right time, your team can focus less on searching, and more on engaging customers."
+      ]
+    },
+    {
+      "id": "05_dashboard",
+      "title": "CRM Dashboard",
+      "slot": [0, 60],
+      "sentences": [
+        "For managers, the CRM Dashboard turns individual opportunities into a bigger picture.",
+        "See lead distribution, pipeline activity and key sales indicators at a glance, helping you understand where the business stands."
+      ]
+    },
+    {
+      "id": "06_executives",
+      "title": "Executive Performance",
+      "slot": [0, 60],
+      "sentences": [
+        "Business visibility also means knowing how your team is performing.",
+        "Executive Performance gives managers a clearer view of activity across executives, helping you understand individual progress, and where attention may be needed."
+      ]
+    },
+    {
+      "id": "07_calls",
+      "title": "AI Call Analysis",
+      "slot": [0, 60],
+      "sentences": [
+        "Customer conversations contain valuable information.",
+        "With AI Call Analysis, conversations can become useful business insights, helping teams understand customer interactions and giving managers better visibility into call activity.",
+        "See a lead score, an agent score and the customer's sentiment for every call, with a short AI summary and a coaching note."
+      ]
+    },
+    {
+      "id": "08_followups",
+      "title": "Follow-ups",
+      "slot": [0, 60],
+      "sentences": [
+        "A lead is valuable only when the next action happens.",
+        "Progbiz keeps follow-up activity visible, showing what needs attention today, what has been delayed, and what is coming next.",
+        "So your team can stay consistent, and important customer conversations don't get lost."
+      ]
+    },
+    {
+      "id": "09_transfer",
+      "title": "Lead Transfer",
+      "slot": [0, 60],
+      "sentences": [
+        "Business priorities can change.",
+        "When an opportunity needs a different executive, Progbiz makes it easier to transfer the lead to the right person, and keep the sales process moving."
+      ]
+    },
+    {
+      "id": "10_whatsapp",
+      "title": "WhatsApp",
+      "slot": [0, 60],
+      "sentences": [
+        "Customer communication should be simple, and connected to the sales process.",
+        "With WhatsApp integrated into the workflow, your team can communicate with customers faster, keep conversations connected to business activity, and make follow-up communication more convenient.",
+        "Reach many customers at once with broadcasts, while a chatbot welcomes new enquiries, day and night."
+      ]
+    },
+    {
+      "id": "11_closing",
+      "title": "Closing",
+      "slot": [0, 60],
+      "sentences": [
+        "From your business overview to leads, team activity, AI insights, follow-ups and customer communication, Progbiz keeps your workflow connected.",
+        "One platform.",
+        "Clearer visibility.",
+        "Better control.",
+        "Progbiz ERP."
+      ],
+      "end_card": {
+        "title": "PROGBIZ ERP",
+        "cta": "One connected workspace for your business."
+      }
+    }
+  ]
+}

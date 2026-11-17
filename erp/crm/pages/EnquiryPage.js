@@ -1,6 +1,7 @@
 'use strict';
 
 const { getAlertText, waitOverviewReady, throwIfServerError } = require('../../common/helpers');
+const { tenant, AUTOMATION_NAME, JUNK_SOURCE } = require('../../common/tenantData');
 
 class EnquiryPage {
   /**
@@ -8,7 +9,7 @@ class EnquiryPage {
    */
   constructor(page) {
     this.page    = page;
-    this.baseUrl = process.env.BASE_URL || 'https://erptest.progbiz.in';
+    this.baseUrl = process.env.BASE_URL || 'https://test.erp.progbiz.in';
 
     // ── Listing (Leads) — "Add New" dropdown ───────────────────────────────
     // The Leads page (/leads) is the listing; "Add New" opens New Enquiry / New
@@ -25,8 +26,9 @@ class EnquiryPage {
     this.businessValueInput= page.locator('#business-value');
     this.noFollowupChk     = page.locator('#no-next-followup-enquiry');
     this.descriptionInput  = page.locator('#enquiry-description');
-    this.itemSearchInput   = page.locator('#item-search-input');
+    this.itemSearchInput   = page.locator('#item-search-input');   // <select> on the Aug-2026 build, text input + search modal on older ones — see addItem()
     this.quantityInput     = page.locator('#new-item-quantity');
+    this.addItemBtn        = page.locator('#btn-add-item');
 
     this.saveBtn   = page.locator('#btn-save-enquiry');
     this.cancelBtn = page.locator('#btn-cancel-enquiry');
@@ -86,9 +88,37 @@ class EnquiryPage {
     await this.page.waitForTimeout(900);
   }
 
-  /** Whether the Lead Quality (Cold/Warm/Hot) field is visible (appears only for In-Followup). */
+  /**
+   * Whether the Lead Quality (Cold/Warm/Hot) field is visible (appears only
+   * for In-Followup statuses; conditionally rendered, not just css-hidden —
+   * it's absent from the DOM entirely for New Enquiry).
+   *
+   * Was `'#lead-quality, [id*="quality" i]'` — that broad fallback meant
+   * once #lead-quality stopped existing in the DOM, `.first()` fell through
+   * to whatever ELSE on the page happened to have "quality" in its id, which
+   * is how this started reporting Lead Quality as visible for New Enquiry
+   * (2026-09-18 re-audit). #lead-quality is the field; if it isn't there,
+   * it isn't visible — no substring fallback needed.
+   */
   leadQualityVisible() {
-    return this.page.locator('#lead-quality, [id*="quality" i]').first().isVisible().catch(() => false);
+    const lq = this.page.locator('#lead-quality');
+    return lq.count().then((n) => n > 0 && lq.first().isVisible()).catch(() => false);
+  }
+
+  /**
+   * Whether Lead Quality is currently REQUIRED (label "Lead Quality*" or the
+   * control's own `required`). As of the 2026-09-18 re-audit the field is
+   * always rendered and visible; what the Followup Status changes is whether
+   * it's mandatory — optional for "New Enquiry", required for In-Followup
+   * statuses such as "Interested".
+   */
+  leadQualityRequired() {
+    return this.page.evaluate(() => {
+      const e = document.querySelector('#lead-quality');
+      if (!e) return false;
+      const label = e.closest('.form-group,.mb-3,.col,.col-md-3,.col-md-4,.col-md-6,div')?.querySelector('label')?.innerText || '';
+      return e.required || /\*/.test(label);
+    }).catch(() => false);
   }
 
   /** Lead Quality option labels (when visible). */
@@ -134,10 +164,10 @@ class EnquiryPage {
 
     await this._safeFill(this.businessValueInput, data.unitPrice);
     await this._safeFill(this.descriptionInput,   data.description);
-    await this._selectFirstReal(this.sourceSelect, 'Lead Source');
+    await this.selectLeadSource();
 
     // At least one item is REQUIRED ("Please choose at least one item")
-    await this.addItem(data.product || 'Inverter', data.quantity || '1');
+    await this.addItem(data.product || tenant().item, data.quantity || '1');
 
     // Avoid the "next follow-up date" requirement by marking it Not Required
     try {
@@ -222,58 +252,172 @@ class EnquiryPage {
   }
 
   /**
-   * Add a line item to the enquiry via the "Search Results" modal.
-   * Opens #searchItemModal, searches by name, clicks the first result row,
-   * then sets the quantity. The item is required for the enquiry to save.
+   * Add a line item to the enquiry.
+   *
+   * The item picker has three shapes depending on the tenant's build, and this
+   * handles all by looking at what #item-search-input actually is:
+   *   - type-ahead `.item-picker` (Oct-2026 build, onetouch_test from 2026-10-24):
+   *     type in the box, click a row (.ip-option) of #item-search-input-panel,
+   *     then commit with #btn-add-item.
+   *   - <select> (Aug-2026 build, e.g. lesol_test): a plain list of the
+   *     tenant's items, committed with #btn-add-item.
+   *   - <input type=text> + magnifier (older build, e.g. onetouch_test): the
+   *     magnifier opens #searchItemModal, you search and click a result row,
+   *     then commit with #btn-add-item.
+   *
+   * Flow: choose item -> set quantity -> click add -> confirm the row landed.
+   * The item is required for the enquiry to save, so this THROWS on failure
+   * rather than logging and continuing — a silent miss here used to surface
+   * as an unrelated assertion failure several steps later.
    */
   async addItem(itemName, quantity) {
-    const page = this.page;
     console.log(`  📦 Adding item "${itemName}" x${quantity}`);
-    try {
-      // Open the item-search modal via the magnifier (ri-search-line) INSIDE
-      // the item search input-group. (The "+"/ri-add-fill opens a different
-      // "add CRM item" modal; the magnifier opens #searchItemModal to pick an
-      // existing inventory item.)
-      await page.locator('#item-search-input').scrollIntoViewIfNeeded();
-      const itemGrp = page.locator('#item-search-input')
-        .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
-      await itemGrp.locator('i.ri-search-line').first().click({ timeout: 8000 });
 
-      const modal = page.locator('#searchItemModal');
-      await modal.waitFor({ state: 'visible', timeout: 10000 });
+    await this.itemSearchInput.waitFor({ state: 'visible', timeout: 20000 });
+    await this.itemSearchInput.scrollIntoViewIfNeeded();
 
-      await page.locator('#item-search-modal-input').fill(itemName);
-      // Trigger the modal search (search icon inside the modal)
-      await modal.locator('i.ri-search-line').first().click().catch(() => {});
+    const { tag, picker } = await this.itemSearchInput.evaluate((el) => ({ tag: el.tagName, picker: !!el.closest('.item-picker') }));
+    if (picker) return this._addItemFromPicker(itemName, quantity);
+    return tag === 'SELECT'
+      ? this._addItemFromSelect(itemName, quantity)
+      : this._addItemFromModal(itemName, quantity);
+  }
 
-      // Wait for a result row; if the term matched nothing, fall back to
-      // listing all items (empty search) and take the first.
-      const firstRow = modal.locator('table tbody tr').first();
-      try {
-        await firstRow.waitFor({ state: 'visible', timeout: 6000 });
-      } catch {
-        console.log(`  ↩️  "${itemName}" matched no item — listing all`);
-        await page.locator('#item-search-modal-input').fill('');
-        await modal.locator('i.ri-search-line').first().click().catch(() => {});
-        await firstRow.waitFor({ state: 'visible', timeout: 8000 });
-      }
-      const rowBtn = firstRow.locator('button, a, i.ri-add-fill, [class*="add"]').first();
-      if (await rowBtn.count() > 0) { await rowBtn.click(); }
-      else { await firstRow.click(); }
+  /**
+   * Newest picker: a type-ahead. Typing in #item-search-input opens #item-search-input-panel with one
+   * [role=option] per item. The panel's "New Item" footer opens a different modal — never click it.
+   * Like the other paths, a name the tenant doesn't have falls back to the first real entry.
+   */
+  async _addItemFromPicker(itemName, quantity) {
+    const page = this.page;
+    const panel = page.locator('#item-search-input-panel');
+    const options = panel.locator('[role="option"]');
 
-      // Close the modal if it is still open
-      if (await modal.isVisible().catch(() => false)) {
-        await modal.locator('.btn-close').first().click().catch(() => {});
-      }
-      await page.waitForTimeout(800);
+    const search = async (term) => {
+      await this.itemSearchInput.click();
+      await this.itemSearchInput.fill(term);
+      await options.first().waitFor({ state: 'visible', timeout: 6000 }).catch(() => {});
+      await page.waitForTimeout(600);
+      return options.count();
+    };
 
-      // Set quantity on the added line
-      const qty = this.quantityInput;
-      if (await qty.count() > 0) { await qty.fill(String(quantity)); }
-      console.log('  ✅ Item added');
-    } catch (e) {
-      console.log(`  ⚠️  addItem failed: ${e.message}`);
+    let found = await search(String(itemName));
+    if (!found) found = await search('');          // not in this tenant -> list all
+    if (!found) throw new Error('item picker (#item-search-input-panel) lists no items');
+
+    const names = (await options.locator('.ip-name').allInnerTexts()).map((t) => t.replace(/\s+/g, ' ').trim());
+    const want = String(itemName).replace(/\s+/g, ' ').trim().toLowerCase();
+    let idx = names.findIndex((n) => n.toLowerCase() === want);
+    if (idx < 0) idx = names.findIndex((n) => n.toLowerCase().includes(want));
+    if (idx < 0) idx = 0;
+    const choice = { value: names[idx], text: names[idx] };
+    if (choice.text.toLowerCase() !== want) {
+      console.log(`  ↩️  "${itemName}" not in this tenant's list — using "${choice.text}"`);
     }
+
+    await options.nth(idx).click({ timeout: 15000 });
+    await panel.waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});   // picking a row closes it
+
+    await this.quantityInput.fill(String(quantity));
+    await this.addItemBtn.click({ timeout: 15000 });
+
+    const row = page.locator('table tbody tr').filter({ hasText: choice.text }).first();
+    await row.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`  ✅ Item added: ${choice.text} x${quantity}`);
+    return choice;
+  }
+
+  /**
+   * Older picker: type-less input + magnifier -> "Search Results" modal.
+   * The modal's search box id differs between builds (#item-search-modal-input
+   * once, #searchItemModal-modal-input now), so it is found by position.
+   * Like the <select> path, a name the tenant doesn't have falls back to the
+   * first real entry (an empty search lists every item).
+   */
+  async _addItemFromModal(itemName, quantity) {
+    const page = this.page;
+
+    // The magnifier is inside the item input-group. (The "+" beside it,
+    // ri-add-fill, opens a different "New Item" modal — never click that.)
+    const group = this.itemSearchInput
+      .locator('xpath=ancestor::div[contains(@class,"input-group")][1]');
+    await group.locator('i.ri-search-line').first().click({ timeout: 15000 });
+
+    const modal = page.locator('#searchItemModal');
+    await modal.waitFor({ state: 'visible', timeout: 10000 });
+    const searchBox = modal.locator('input[type="text"]').first();
+    const searchIcon = modal.locator('i.ri-search-line').first();
+    const rows = modal.locator('table tbody tr');
+
+    const search = async (term) => {
+      await searchBox.fill(term);
+      await searchIcon.click().catch(() => {});
+      await page.waitForTimeout(1500);
+      return rows.count();
+    };
+
+    let found = await search(String(itemName));
+    if (!found) found = await search('');          // not in this tenant -> list all
+    if (!found) throw new Error('item search modal (#searchItemModal) lists no items');
+
+    // Exact name, else first containing it, else the first row. The name is the
+    // first cell (the others are Price and IsIncTax).
+    const names = (await rows.locator('td:first-child').allInnerTexts())
+      .map((t) => t.replace(/\s+/g, ' ').trim());
+    const want = String(itemName).replace(/\s+/g, ' ').trim().toLowerCase();
+    let idx = names.findIndex((n) => n.toLowerCase() === want);
+    if (idx < 0) idx = names.findIndex((n) => n.toLowerCase().includes(want));
+    if (idx < 0) idx = 0;
+    const choice = { value: names[idx], text: names[idx] };
+    if (choice.text.toLowerCase() !== want) {
+      console.log(`  ↩️  "${itemName}" not in this tenant's list — using "${choice.text}"`);
+    }
+
+    await rows.nth(idx).click({ timeout: 15000 });
+    await modal.waitFor({ state: 'hidden', timeout: 10000 });   // picking a row closes it
+
+    await this.quantityInput.fill(String(quantity));
+    await this.addItemBtn.click({ timeout: 15000 });
+
+    // Confirm the line landed in the enquiry's own grid. Direct-child selectors
+    // matter: the search modal sits inside this table and has rows of its own.
+    const line = page.locator('table:has(#item-search-input) > tbody > tr')
+      .filter({ hasText: choice.text }).first();
+    await line.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`  ✅ Item added: ${choice.text} x${quantity}`);
+    return choice;
+  }
+
+  /** Newer picker: a plain <select> of the tenant's items. */
+  async _addItemFromSelect(itemName, quantity) {
+    // Resolve the option: exact label, else first containing the name, else
+    // the first real entry (value "0" is the "-- Select Item --" placeholder).
+    const choice = await this.itemSearchInput.evaluate((sel, wanted) => {
+      const opts = [...sel.options].filter((o) => o.value && o.value !== '0');
+      if (!opts.length) return null;
+      const norm = (s) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+      const target = norm(wanted || '');
+      const hit =
+        opts.find((o) => norm(o.text) === target) ||
+        opts.find((o) => norm(o.text).includes(target)) ||
+        opts[0];
+      return { value: hit.value, text: hit.text.replace(/\s+/g, ' ').trim() };
+    }, itemName);
+
+    if (!choice) throw new Error('item picker (#item-search-input) has no selectable items');
+    if (choice.text.toLowerCase() !== String(itemName).toLowerCase()) {
+      console.log(`  ↩️  "${itemName}" not in this tenant's list — using "${choice.text}"`);
+    }
+
+    await this.itemSearchInput.selectOption(choice.value);
+    await this.quantityInput.fill(String(quantity));
+    await this.addItemBtn.click({ timeout: 15000 });
+
+    // Confirm the line actually landed in the grid before moving on.
+    const row = this.page.locator('table tbody tr').filter({ hasText: choice.text }).first();
+    await row.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`  ✅ Item added: ${choice.text} x${quantity}`);
+    return choice;
   }
 
   /**
@@ -282,16 +426,44 @@ class EnquiryPage {
    * @returns {Promise<{name:string, phone:string}|null>}
    */
   async getExistingCustomerFromLeads() {
+    // Only customers this suite created may be reused — a real client must never
+    // get test enquiries (and Won/Lost statuses) attached to their record.
     await this.page.goto(`${this.baseUrl}/leads`, { waitUntil: 'domcontentloaded' });
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+    // the grid draws skeleton rows first (TC-02B read one on 2026-10-24); wait for rows with real cell text
+    await this.page.waitForFunction(() => [...document.querySelectorAll('table tbody tr')].some((r) => [...r.querySelectorAll('td')].filter((c) => (c.textContent || '').trim()).length >= 4), null, { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1200);
-    return this.page.evaluate(() => {
-      // Leads columns: SlNo, Number, Customer Name, Phone, ...
-      const r = document.querySelector('table tbody tr');
-      if (!r) return null;
-      const c = [...r.querySelectorAll('td')].map(e => (e.textContent || '').trim());
-      return { name: c[2] || '', phone: (c[3] || '').replace(/\D/g, '').slice(-10) };
-    });
+    const hit = await this.page.evaluate((src) => {
+      const auto = new RegExp(src, 'i');
+      const heads = [...document.querySelectorAll('table thead th')].map(e => (e.textContent || '').trim().toLowerCase());
+      const iName = heads.findIndex(h => /customer name/.test(h));
+      const iPhone = heads.findIndex(h => /phone/.test(h));
+      for (const r of document.querySelectorAll('table tbody tr')) {
+        const c = [...r.querySelectorAll('td')].map(e => (e.textContent || '').trim());
+        const name = c[iName] || '';
+        if (auto.test(name)) return { name, phone: (c[iPhone] || '').replace(/\D/g, '').slice(-10) };
+      }
+      return null;
+    }, AUTOMATION_NAME.source);
+    if (!hit) console.log('  ℹ️  No automation-created customer on /leads page 1 — a new one will be created');
+    return hit;
+  }
+
+  /** Lead Source: the tenant's configured source, else the first REAL one (never "All"/blank). */
+  async selectLeadSource() {
+    try {
+      await this.sourceSelect.waitFor({ state: 'visible', timeout: 5000 });
+      const want = tenant().leadSource;
+      const value = await this.sourceSelect.evaluate((sel, { want, junk }) => {
+        const j = new RegExp(junk, 'i');
+        const opts = [...sel.options].filter(o => o.value && o.value !== '0' && !j.test(o.text.trim()));
+        const hit = (want && opts.find(o => o.text.trim().toLowerCase() === want.toLowerCase())) || opts[0];
+        return hit ? hit.value : '';
+      }, { want, junk: JUNK_SOURCE.source });
+      if (value) { await this.sourceSelect.selectOption(value); console.log('  🔽 Lead Source = selected'); }
+    } catch {
+      console.log('  ⚠️  Lead Source select not found — skipping');
+    }
   }
 
   /**
@@ -369,8 +541,8 @@ class EnquiryPage {
     await this._selectFirstReal(this.assignToSelect, 'Assign To');
     await this._safeFill(this.businessValueInput, data.unitPrice);
     await this._safeFill(this.descriptionInput,   data.description);
-    await this._selectFirstReal(this.sourceSelect, 'Lead Source');
-    await this.addItem(data.product || 'Inverter', data.quantity || '1');
+    await this.selectLeadSource();
+    await this.addItem(data.product || tenant().item, data.quantity || '1');
     try {
       if (await this.noFollowupChk.count() && !(await this.noFollowupChk.isChecked())) {
         await this.noFollowupChk.check();
@@ -415,13 +587,31 @@ class EnquiryPage {
     // ENQ-number / customer-name CELLS. Clicking the row body or hunting for <a> does
     // nothing (the old anchor-based strategies silently left us on /leads).
     await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 });
-    for (const nth of [1, 2]) {              // td[1] = ENQ number, td[2] = customer name
-      await this.page.locator('table tbody tr').first().locator('td').nth(nth).click().catch(() => {});
+    // Find those cells by their column headings, not by position: the Nov 2026 listing gained a
+    // checkbox column in front. And take the first row that IS an enquiry: the listing also holds
+    // quotations (number "QUO-…"), whose cells open /quotation-view instead.
+    const target = await this.page.evaluate(() => {
+      const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      const t = [...document.querySelectorAll('table')].filter((x) => x.getClientRects().length)
+        .sort((a, b) => b.querySelectorAll('thead th').length - a.querySelectorAll('thead th').length)[0];
+      if (!t) return null;
+      const hs = [...t.querySelectorAll('thead th')].map((h) => clean(h.innerText));
+      const ni = hs.findIndex((h) => /^number$/i.test(h));
+      const ci = hs.findIndex((h) => /^customer name$/i.test(h));
+      const rows = [...t.querySelectorAll('tbody tr')];
+      const ri = ni < 0 ? -1 : rows.findIndex((r) => /ENQ-?\d/i.test(clean((r.querySelectorAll('td')[ni] || {}).innerText)));
+      return { ni, ci, ri };
+    }).catch(() => null);
+    const row = this.page.locator('table tbody tr').nth(target && target.ri >= 0 ? target.ri : 0);
+    const cells = target && target.ni >= 0 ? [target.ni, target.ci].filter((n) => n >= 0) : [1, 2];
+    for (const nth of cells) {
+      await row.locator('td').nth(nth).click().catch(() => {});
       const ok = await this.page.waitForURL(/enquiry-overview/i, { timeout: 8000 }).then(() => true).catch(() => false);
       if (ok) {
         console.log(`  🔗 Opened first enquiry via td[${nth}] — URL: ${this.page.url()}`);
         return;
       }
+      if (!/\/leads/.test(this.page.url())) { await this.gotoList(); await this.page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {}); }
     }
     throw new Error(`openFirstEnquiry: clicking ENQ/customer cells did not reach enquiry-overview (still on ${this.page.url()})`);
   }
@@ -431,13 +621,32 @@ class EnquiryPage {
    * "Create Quotation" header button, which navigates to /quotation/0/{id}
    * (prefilled) where it is saved via #btn-save-quotation.
    */
+  /**
+   * "Create Quotation" is NOT a top-level button on this build — it's
+   * `<a id="btn-create-quotation" class="dropdown-item">` inside the
+   * #btn-enquiry-actions menu (alongside Edit Enquiry, Transfer To Branch,
+   * Merge Duplicate), so it stays `hidden` until that dropdown is opened.
+   * Waiting on #btn-create-quotation directly times out — "resolved to
+   * hidden" — every time (2026-09-18 re-audit: crm_enquiry.spec.js ENQ-28).
+   * crm_chain.spec.js's CH-06 already opens the dropdown first; this gives
+   * both page-object methods below the same fix so every caller gets it.
+   */
+  async _openCreateQuotationMenuItem() {
+    await this.page.locator('#btn-enquiry-actions').click({ timeout: 10000 });
+    await this.page.waitForTimeout(2200);
+    const item = this.page.locator('.dropdown-menu.show a, .dropdown-menu.show button')
+      .filter({ hasText: /create quotation/i }).first();
+    await item.waitFor({ state: 'visible', timeout: 10000 });
+    return item;
+  }
+
   /** Click "Create Quotation" and land on the prefilled /quotation/0/{id} form
    *  WITHOUT saving (so the form can be inspected/edited first). */
   async openQuotationForm() {
     console.log('  🔄 Opening Quotation form from enquiry');
     await waitOverviewReady(this.page);
-    await this.page.locator('#btn-create-quotation').waitFor({ state: 'visible', timeout: 15000 });
-    await this.page.locator('#btn-create-quotation').click();
+    const item = await this._openCreateQuotationMenuItem();
+    await item.click();
     await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
     await this.page.locator('#btn-save-quotation').waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
     await this.page.waitForTimeout(1500);
@@ -446,8 +655,8 @@ class EnquiryPage {
   async convertToQuotation() {
     console.log('  🔄 Clicking "Create Quotation"');
     await waitOverviewReady(this.page);
-    await this.page.locator('#btn-create-quotation').waitFor({ state: 'visible', timeout: 15000 });
-    await this.page.locator('#btn-create-quotation').click();
+    const item = await this._openCreateQuotationMenuItem();
+    await item.click();
     await this.page.waitForURL(/\/quotation\//, { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1500);
 
@@ -456,7 +665,8 @@ class EnquiryPage {
     const validUpto = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
     await this.page.locator('#expdate').fill(validUpto).catch(() => {});
     await this.page.locator('#quotation-quality').selectOption({ index: 1 }).catch(() => {});
-    console.log(`  📅 Valid Upto ${validUpto} + Lead Quality selected`);
+    await setFutureQuotationFollowup(this.page);
+    console.log(`  📅 Valid Upto ${validUpto} + Lead Quality + future follow-up date set`);
 
     const saveQ = this.page.locator('#btn-save-quotation');
     try {
@@ -478,11 +688,10 @@ class EnquiryPage {
    * separate dropdown. ("In Follow-up" → an ongoing status.)
    */
   statusLabelFor(status) {
+    const st = tenant().status;
     const map = {
-      'in follow-up': 'Interested',
-      'in followup':  'Interested',
-      'won':          'Got the business',
-      'lost':         'Not interested',
+      'new': st.new, 'in follow-up': st.inFollowup, 'in followup': st.inFollowup,
+      'won': st.won, 'lost': st.lost,
     };
     return map[String(status).toLowerCase()] || status;
   }
@@ -517,6 +726,16 @@ class EnquiryPage {
       if (v) await lq.selectOption(v);
     } catch { /* not required for this status */ }
 
+    // Closing as Won on a lead source that earns a commission is refused without a Business Value
+    // ("Please enter the business value — this lead source earns a commission", seen 2026-10-22).
+    // A Won status shows its own #won-business-value (plus an "After Sale" status); other statuses use #business-value.
+    if (/^won$/i.test(status)) {
+      const bv = modal.locator('#won-business-value, #business-value').filter({ visible: true }).first();
+      if (await bv.count() && !Number(await bv.inputValue().catch(() => '0'))) {
+        await bv.fill('15000');
+      }
+    }
+
     try {
       const c = this.page.locator('#no-next-followup');
       if (await c.count() && !(await c.isChecked())) await c.check();
@@ -524,7 +743,18 @@ class EnquiryPage {
 
     await this.page.locator('#followup-description').fill(`Status → ${status}`).catch(() => {});
     await this.page.locator('#btn-save-followup').click();
-    await modal.waitFor({ state: 'hidden', timeout: 12000 }).catch(() => {});
+    // A refused save keeps the modal open and raises an error SweetAlert; surface its text instead of
+    // letting the test fail later on an unchanged status.
+    const refused = this.page.locator('.swal2-popup:has(.swal2-icon.swal2-error)');
+    await Promise.race([
+      modal.waitFor({ state: 'hidden', timeout: 12000 }),
+      refused.waitFor({ state: 'visible', timeout: 12000 }),
+    ]).catch(() => {});
+    if (await refused.isVisible().catch(() => false)) {
+      const why = (await refused.locator('.swal2-html-container, .swal2-title').allTextContents().catch(() => [])).join(' ').replace(/\s+/g, ' ').trim();
+      await this.page.locator('.swal2-confirm').click().catch(() => {});
+      throw new Error(`Follow-up "${label}" was not saved — the app said: "${why}"`);
+    }
     await this.page.waitForTimeout(1200);
     console.log(`  ✅ Follow-up recorded for "${status}"`);
   }
@@ -549,6 +779,17 @@ class EnquiryPage {
               .replace(/\s+/g, ' ').trim().slice(0, 120);
             out.push(line);
           }
+        }
+        // Nov 2026 overview: label / value pairs with no colon —
+        //   <span class="k">Status</span><span class="badge">New Enquiry</span>   (summary strip)
+        //   <span class="k">Status</span><span class="v">New Enquiry</span>       (Enquiry Details card)
+        for (const k of document.querySelectorAll('span.k')) {
+          if (!k.getClientRects().length) continue;
+          const label = (k.textContent || '').replace(/\s+/g, ' ').trim();
+          if (!/^(followup\s*)?status$/i.test(label)) continue;
+          const v = k.nextElementSibling;
+          const val = v ? (v.textContent || '').replace(/\s+/g, ' ').trim() : '';
+          if (val && val !== '--') out.push(`${label} : ${val}`);
         }
         return [...new Set(out)].join(' | ');
       }).catch(() => '');
@@ -582,3 +823,21 @@ class EnquiryPage {
 }
 
 module.exports = { EnquiryPage };
+
+/**
+ * Quotation form: set "Next FollowUp Date" (#firstfollowupdate) 2 days ahead.
+ * Its default can sit below the field's own minimum (QT-F1), which blocks Save
+ * with "Follow-up date cannot be in the past." — a save test must not depend on it.
+ */
+async function setFutureQuotationFollowup(page) {
+  const f = page.locator('#firstfollowupdate');
+  if (!(await f.count().catch(() => 0))) return false;
+  const d = new Date(Date.now() + 2 * 86400000);
+  const pad = (n) => String(n).padStart(2, '0');
+  const v = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:00`;
+  await f.fill(v).catch(() => {});
+  await page.waitForTimeout(300);
+  return true;
+}
+
+module.exports.setFutureQuotationFollowup = setFutureQuotationFollowup;

@@ -24,17 +24,20 @@ const { QuotationPage }= require('../pages/QuotationPage');
 const { LeadTransferPage } = require('../pages/LeadTransferPage');
 const { LeadSourcesPage }  = require('../pages/LeadSourcesPage');
 const { LeadStatusPage }   = require('../pages/LeadStatusPage');
+const { CrmChainPage }     = require('../pages/CrmChainPage');
 const { ItemCategoryPage } = require('../../item/pages/ItemCategoryPage');
 const { ItemPage }         = require('../../item/pages/ItemPage');
 const { screenshot }   = require('../../common/helpers');
 const { testData }     = require('../../common/testData');
+const { tenant }       = require('../../common/tenantData');
+const T = tenant();
 
 // ── Shared state across tests in this file ──────────────────────────────────
 let enquiryUrl = '';
 
 // ── Credentials ─────────────────────────────────────────────────────────────
 const CREDS = {
-  company:  process.env.COMPANY_CODE  || 'skiolo_test',
+  company:  process.env.COMPANY_CODE  || 'onetouch_test',
   username: process.env.CRM_USERNAME  || 'admin',
   password: process.env.PASSWORD      || '123',
 };
@@ -175,8 +178,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
       console.log(`  🔗 Navigating directly to enquiry: ${enquiryUrl}`);
       await page.goto(enquiryUrl, { waitUntil: 'domcontentloaded' });
     } else {
-      // Fallback: open first row from listing
-      await enquiryPage.openFirstEnquiry();
+      test.skip(true, 'TC-02/02B created no enquiry — not opening (or changing) someone else\'s record');
     }
 
     // The old ternary fed toMatch a regex that matches any string (tautology), and
@@ -208,10 +210,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     if (enquiryUrl && !enquiryUrl.includes('/login')) {
       await page.goto(enquiryUrl, { waitUntil: 'domcontentloaded' });
     } else {
-      await enquiryPage.openFirstEnquiry();
-      // record which enquiry we used — adding a follow-up re-orders /leads, so
-      // TC-05 must revisit THIS enquiry, not whatever floats to the top next
-      enquiryUrl = page.url();
+      test.skip(true, 'TC-02/02B created no enquiry — not opening (or changing) someone else\'s record');
     }
 
     const beforeCount = await followUpPage.getFollowUpCount();
@@ -255,7 +254,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     if (enquiryUrl && !enquiryUrl.includes('/login')) {
       await page.goto(enquiryUrl, { waitUntil: 'domcontentloaded' });
     } else {
-      await enquiryPage.openFirstEnquiry();
+      test.skip(true, 'TC-02/02B created no enquiry — not opening (or changing) someone else\'s record');
     }
 
     // count>0 also matches an empty-state placeholder li. Assert the LATEST entry carries
@@ -286,7 +285,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     if (enquiryUrl && !enquiryUrl.includes('/login')) {
       await page.goto(enquiryUrl, { waitUntil: 'domcontentloaded' });
     } else {
-      await enquiryPage.openFirstEnquiry();
+      test.skip(true, 'TC-02/02B created no enquiry — not opening (or changing) someone else\'s record');
     }
 
     await enquiryPage.convertToQuotation();
@@ -374,27 +373,24 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
     console.log('═══════════════════════════════════════');
 
     const loginPage   = new LoginPage(page);
-    const enquiryPage = new EnquiryPage(page);
 
     await loginPage.goto();
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
-    await enquiryPage.gotoList();
 
     // /leads is always pre-populated, so count>0 proved nothing about this run. Require the
     // specific enquiry created in TC-02 (unique "Test Customer <ts>") to be listed.
-    // The table AJAX-loads several seconds after domcontentloaded — poll for it.
+    // /leads is tab-scoped (New / In Follow Up / Won / Lost) and pages at 10 rows; by
+    // the time TC-11 runs, TC-03..10 have created newer enquiries that push TC-02's off
+    // page 1 of the default tab (2026-09-18 re-audit: "listed in /leads: false"). Search
+    // every tab at page size 100 — the same helper crm_chain.spec.js CH-02 uses.
     const wanted = testData.enquiry.customerName;
-    let found = false;
-    for (let i = 0; i < 8 && !found; i++) {
-      found = await page.evaluate((name) =>
-        [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
-      if (!found) await page.waitForTimeout(1500);
-    }
+    const hit = await new CrmChainPage(page).findAcrossTabs('/leads', wanted);
+    let found = !!hit;
     if (!found) {
-      // The listing paginates (10 rows/page) and the DEV build buckets new
-      // enquiries with a followup status under "In Follow Up" — use the list's
-      // search box instead of relying on page 1 of the default tab.
-      console.log('  🔍 not on page 1 — searching the listing by customer name');
+      // Fallback: the listing's own search box (some builds bucket new enquiries
+      // under a tab the scan misses, or page beyond 100 rows).
+      console.log('  🔍 not found in any tab — searching the listing by customer name');
+      await new EnquiryPage(page).gotoList();
       const search = page.locator('#filter-name, input[placeholder="Search here"]').first();
       await search.fill(wanted).catch(() => {});
       await search.press('Enter').catch(() => {});
@@ -404,7 +400,7 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
           [...document.querySelectorAll('table tbody tr')].some(tr => (tr.textContent || '').includes(name)), wanted);
       }
     }
-    console.log(`  🔎 "${wanted}" listed in /leads: ${found}`);
+    console.log(`  🔎 "${wanted}" listed in /leads: ${found}${hit ? ` (tab "${hit.tab}")` : ''}`);
     expect(found, `Enquiry for "${wanted}" (created in TC-02) not visible in /leads listing`).toBeTruthy();
     console.log('  ✅ ASSERT: created enquiry is visible in the /leads listing');
 
@@ -417,40 +413,64 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
   test('TC-12 | Lead Transfer — transfer a lead to an executive and verify the new assignee', async ({ page }) => {
     test.setTimeout(240_000);   // page is slow + Apply-Filters retries through intermittent backend errors
     console.log('\n═══════════════════════════════════════');
-    console.log('TC-12 | Lead Transfer (CRM → Lead Transfer)');
+    console.log('TC-12 | Lead Transfer (Leads list → tick → Transfer; the /bulk-lead-transfer page was removed in Nov 2026)');
     console.log('═══════════════════════════════════════');
 
-    const loginPage = new LoginPage(page);
-    const transfer  = new LeadTransferPage(page);
+    const loginPage   = new LoginPage(page);
+    const enquiryPage = new EnquiryPage(page);
+    const transfer    = new LeadTransferPage(page);
 
     await loginPage.goto();
     await loginPage.login(CREDS.company, CREDS.username, CREDS.password);
 
-    await transfer.goto();
-    const rows = await transfer.applyFilters();
-    expect(rows, 'Lead Transfer list did not load (backend ExpectedStartOfValueNotFound?)').toBeGreaterThan(0);
+    // Transfer ONLY a lead this run owns — never a real client's lead.
+    const uniq = `${Date.now()}`;
+    const data = { ...testData.enquiry, customerName: `Test Customer ${uniq}`,
+      mobile: '9' + uniq.slice(-9), email: `xfer${uniq}@example.com` };
+    await enquiryPage.gotoList();
+    await enquiryPage.clickAddNew();
+    await enquiryPage.fillAndCreate(data);
+    await page.waitForTimeout(2000);
+    expect(page.url(), 'the lead to transfer was not created').toMatch(/enquiry-overview\/\d+/i);
 
-    // Pick the first lead and a target executive different from its current assignee
-    const lead = await transfer.getFirstLead();
+    await transfer.goto();
+    await transfer.chooseBranch(T.branch);
+    const rows = await transfer.applyFilters();
+    expect(rows, 'the list of leads to transfer did not load').toBeGreaterThan(0);
+
+    const lead = await transfer.findLead(data.mobile);
+    expect(lead, `our lead ${data.customerName} is not in the Lead Transfer list`).toBeTruthy();
     console.log(`  🎯 Lead ${lead.number} (${lead.phone}) currently assigned to "${lead.assignee}"`);
-    const execs = ['VIGNESH', 'SHAMAL', 'JASEEM', 'Biju', 'Arshida', 'Shaju Ummar'];
-    const target = execs.find(e => e.toLowerCase() !== (lead.assignee || '').toLowerCase()) || 'VIGNESH';
+    const target = T.executives.find(e => !(lead.assignee || '').toLowerCase().includes(e.toLowerCase()));
     console.log(`  ➡️  Transferring to "${target}"`);
 
-    const result = await transfer.transferFirstLeadTo(target);
+    const result = await transfer.transferLeadTo(data.mobile, target);
     await screenshot(page, 'tc12_transfer_result');
     // A backend error on transfer is a real (backend) failure — surface it.
     if (result && /oops|something went wrong|error code/i.test(result)) {
       throw new Error(`Lead transfer failed (backend): "${result}"`);
     }
 
-    // PRIMARY assertion: re-search the lead and confirm its Current Assignee changed.
-    const newAssignee = await transfer.assigneeOf(lead.phone);
+    // PRIMARY assertion: re-search the lead and read its assignee again.
+    const newAssignee = await transfer.assigneeOf(data.mobile);
     console.log(`  🔎 After transfer, ${lead.number} assignee = "${newAssignee}" (toast: ${JSON.stringify(result)})`);
-    expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()),
-      `Expected assignee "${target}" but found "${newAssignee}". Transfer toast: "${result}"`
-    ).toBeTruthy();
-    console.log(`  ✅ ASSERT: ${lead.number} reassigned "${lead.assignee}" → "${newAssignee}"`);
+    if (/sent for approval/i.test(result || '')) {
+      // Nov 2026 build: a transfer is a REQUEST. The app answers "The transfer has been sent for approval. The leads
+      // stay with their current executive until it is approved", and the lead's Assignee cell reads
+      // "<current executive> Transfer Awaiting Approval". Check exactly that; the approval step itself is not automated
+      // yet (who approves, and where, is an open question in reports/qa/changes-onetouch_test-2026-11-14.md).
+      expect(newAssignee || '', `the lead should be marked "Transfer Awaiting Approval", found "${newAssignee}"`).toMatch(/transfer awaiting approval/i);
+      expect((newAssignee || '').toLowerCase(), `the lead should stay with "${lead.assignee}" until the transfer is approved, found "${newAssignee}"`)
+        .toContain((lead.assignee || '').toLowerCase());
+      expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()), `the lead moved to "${target}" although the transfer is only awaiting approval`).toBe(false);
+      test.info().annotations.push({ type: 'open-question', description: `A lead transfer by ${CREDS.username} now waits for approval: who approves it, and where?` });
+      console.log(`  ✅ ASSERT: transfer of ${lead.number} to "${target}" was raised and is awaiting approval; the lead stays with "${lead.assignee}"`);
+    } else {
+      expect((newAssignee || '').toLowerCase().includes(target.toLowerCase()),
+        `Expected assignee "${target}" but found "${newAssignee}". Transfer toast: "${result}"`
+      ).toBeTruthy();
+      console.log(`  ✅ ASSERT: ${lead.number} reassigned "${lead.assignee}" → "${newAssignee}"`);
+    }
   });
 
   // --------------------------------------------------------------------------
@@ -595,12 +615,12 @@ test.describe('CRM Enquiry Flow — Positive Tests', () => {
 
     // 1) Create a uniquely-named item (Category "Solar") → succeeds (re-runnable)
     const name = `AutoItem ${Date.now()}`.slice(0, 40);
-    const msg1 = await items.create(name, 'Solar');
+    const msg1 = await items.create(name, T.itemCategory);
     expect(msg1, `First create should succeed, got: "${msg1}"`).toBeFalsy();
     console.log(`  ✅ ASSERT: Item "${name}" created`);
 
     // 2) Duplicate must be REJECTED (item names are unique)
-    const msg2 = await items.create(name, 'Solar');
+    const msg2 = await items.create(name, T.itemCategory);
     await screenshot(page, 'tc16_item');
     expect(/exist|already|duplicate/i.test(msg2 || ''),
       `Duplicate item should be rejected, but got: "${msg2}"`).toBeTruthy();

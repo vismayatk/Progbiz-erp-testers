@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>compositor</title>
+<!-- Frame-stepped compositor. No external resources, system fonts only.
+     Driven by scripts/video/compose/render.js:
+        await window.loadTimeline(resolvedTimeline)
+        await window.renderAt(tSeconds)      // then the driver takes a screenshot
+     See TIMELINE.md for the timeline schema. -->
+<link rel="stylesheet" href="compositor.css">
+</head>
+<body>
+<div id="frame"></div>
+<div id="measure" aria-hidden="true"></div>
+<script src="compositor.js"></script>
+</body>
+</html>

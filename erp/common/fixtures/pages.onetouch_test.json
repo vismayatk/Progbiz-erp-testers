@@ -168,7 +168,7 @@
       }
     },
     {
-      "path": "/ess/exit-interview",
+      "path": "/my-workspace/exit-interview",
       "group": "(was in menu)",
       "title": "Exit Interview",
       "heading": [
@@ -185,7 +185,7 @@
       }
     },
     {
-      "path": "/ess/exit-tasks",
+      "path": "/my-workspace/exit-tasks",
       "group": "(was in menu)",
       "title": "Exit Tasks",
       "heading": [
@@ -211,7 +211,7 @@
       }
     },
     {
-      "path": "/ess/resignation",
+      "path": "/my-workspace/resignation",
       "group": "(was in menu)",
       "title": "Resignation",
       "heading": [
@@ -320,8 +320,7 @@
           "placeholder": ""
         },
         "dateRange": false
-      },
-      "knownList": "ERP-021 — pressing Enter in the quick search box does not filter the list (the Filter panel search does); seen in two page tests and twice by hand on 14 Nov 2026"
+      }
     },
     {
       "path": "/account-groups",
@@ -3937,8 +3936,7 @@
           "placeholder": ""
         },
         "dateRange": false
-      },
-      "knownList": "ERP-021 — pressing Enter in the quick search box does not filter the list (the Filter panel search does); seen in two page tests and twice by hand on 14 Nov 2026"
+      }
     },
     {
       "path": "/arabic-names",
@@ -4264,12 +4262,17 @@
       "title": "Accounts",
       "heading": [
         "Accounts",
-        "200,008,995.",
-        "-9,020.",
-        "0."
+        "Needs Attention",
+        "Cash Forecast",
+        "Bank & Cash",
+        "Top 10 Debtors",
+        "Top 10 Creditors"
       ],
       "tabs": [],
       "columns": [
+        "Next 30 days",
+        "Next 60 days",
+        "Next 90 days",
         "Party",
         "Outstanding",
         "Overdue",
@@ -4289,7 +4292,31 @@
       "filters": {
         "search": null,
         "dateRange": true
-      }
+      },
+      "optionalColumns": [
+        "Party",
+        "Outstanding",
+        "Overdue",
+        "Oldest Due"
+      ],
+      "optionalButtons": [
+        "Send a payment reminder on WhatsApp"
+      ],
+      "pin": [
+        "heading",
+        "columns",
+        "buttons"
+      ],
+      "note": "Hand-written on 17 Nov 2026: the amounts are no longer listed as headings. The debtors and creditors tables (Party, Outstanding, Overdue, Oldest Due and the WhatsApp reminder button) draw only when a party owes money.",
+      "known": [
+        {
+          "id": "ERP-023",
+          "expect": "changes its date range without a script error",
+          "reason": "every change of the date range redraws the charts with NaN sizes (console: \"<path> attribute d: Expected number, M NaN NaN ...\", \"<svg> attribute height: Expected length, NaN\"); the first load is clean",
+          "console": "attribute (d|transform|height|width): Expected (number|length)",
+          "range": "Today"
+        }
+      ]
     },
     {
       "path": "/executive-performance",
@@ -4376,7 +4403,19 @@
       "filters": {
         "search": null,
         "dateRange": false
-      }
+      },
+      "optionalColumns": [
+        "Item",
+        "Variant",
+        "Sold",
+        "In Stock"
+      ],
+      "pin": [
+        "heading",
+        "columns",
+        "buttons"
+      ],
+      "note": "Hand-written on 17 Nov 2026: the tables of this dashboard (Top Items By Stock Value, Fast-Moving Items) draw their header only when they have rows, so their columns are optional."
     },
     {
       "path": "/lead-forecast",
@@ -4678,11 +4717,11 @@
       }
     },
     {
-      "path": "/crm-item-upload",
+      "path": "/item-import",
       "group": "Excel Upload",
-      "title": "CRM Item Upload",
+      "title": "Item Import",
       "heading": [
-        "Item Upload"
+        "Item Import"
       ],
       "tabs": [],
       "columns": [
@@ -4711,7 +4750,8 @@
       "filters": {
         "search": null,
         "dateRange": false
-      }
+      },
+      "note": "16 Nov 2026 build: the page moved from /crm-item-upload to /item-import (menu: Excel Upload > Item Import). The old address draws an empty page."
     },
     {
       "path": "/data-import",
@@ -4922,7 +4962,7 @@
       }
     },
     {
-      "path": "/ess/helpdesk/admin",
+      "path": "/my-workspace/helpdesk/admin",
       "group": "Helpdesk Admin",
       "title": "Dashboard",
       "heading": [
@@ -6547,7 +6587,8 @@
       "filters": {
         "search": null,
         "dateRange": false
-      }
+      },
+      "skip": "removed from the menu on the 16 Nov 2026 build: the address now shows Access Denied to the Super Admin (it was a working master page on 14 Nov). Reported to the product team; remove this entry if the page is gone for good."
     },
     {
       "path": "/country-state",
@@ -6587,7 +6628,8 @@
       "filters": {
         "search": null,
         "dateRange": false
-      }
+      },
+      "skip": "removed from the menu on the 16 Nov 2026 build: the address now shows Access Denied to the Super Admin (it was a working master page on 14 Nov). Reported to the product team; remove this entry if the page is gone for good."
     },
     {
       "path": "/billing",
@@ -7421,7 +7463,7 @@
       "heading": [
         "Schedule Meeting",
         "Meeting Details",
-        "Room Bookings — Sat 14 Nov",
+        "Room Bookings",
         "Participant Availability"
       ],
       "tabs": [],
@@ -7540,15 +7582,17 @@
           "placeholder": "Search host…"
         },
         "dateRange": false
-      }
+      },
+      "pin": [
+        "heading"
+      ]
     },
     {
       "path": "/hrms/meetings",
       "group": "Meetings",
       "title": "Meeting Calendar",
       "heading": [
-        "Meetings",
-        "Nov 8 – 14,"
+        "Meetings"
       ],
       "tabs": [
         "Calendar",
@@ -7557,7 +7601,6 @@
         "Employee-wise"
       ],
       "columns": [
-        "Sun 11/8Mon 11/9Tue 11/10Wed 11/11Thu 11/12Fri 11/13Sat",
         "Sun",
         "Mon",
         "Tue",
@@ -7588,7 +7631,7 @@
         "heading": [
           "Schedule Meeting",
           "Meeting Details",
-          "Room Bookings — Sat 14 Nov"
+          "Room Bookings"
         ],
         "fields": [
           {
@@ -7694,7 +7737,11 @@
             "required": false
           }
         ]
-      }
+      },
+      "pin": [
+        "columns",
+        "heading"
+      ]
     },
     {
       "path": "/broadcasts",
@@ -8451,13 +8498,11 @@
       "note": "14 Nov 2026: ERP-010 no longer happens here, New Template is a plain button (#btn-new-template)."
     },
     {
-      "path": "/ess",
+      "path": "/my-workspace",
       "group": "My Workspace",
       "title": "Workspace",
       "heading": [
         "My Dashboard",
-        "0 days",
-        "—",
         "My Leave Balances"
       ],
       "tabs": [],
@@ -8471,10 +8516,13 @@
       "filters": {
         "search": null,
         "dateRange": true
-      }
+      },
+      "pin": [
+        "heading"
+      ]
     },
     {
-      "path": "/ess/approvals",
+      "path": "/my-workspace/approvals",
       "group": "My Workspace",
       "title": "Approvals",
       "heading": [
@@ -8520,7 +8568,7 @@
       }
     },
     {
-      "path": "/ess/attendance",
+      "path": "/my-workspace/attendance",
       "group": "My Workspace",
       "title": "Attendance",
       "heading": [
@@ -8546,7 +8594,7 @@
       }
     },
     {
-      "path": "/ess/digital-id",
+      "path": "/my-workspace/digital-id",
       "group": "My Workspace",
       "title": "Digital ID",
       "heading": [
@@ -8568,7 +8616,7 @@
       }
     },
     {
-      "path": "/ess/directory",
+      "path": "/my-workspace/directory",
       "group": "My Workspace",
       "title": "Directory",
       "heading": [
@@ -8602,7 +8650,7 @@
       }
     },
     {
-      "path": "/ess/documents",
+      "path": "/my-workspace/documents",
       "group": "My Workspace",
       "title": "Documents",
       "heading": [
@@ -8638,7 +8686,7 @@
       }
     },
     {
-      "path": "/ess/helpdesk/my-tickets",
+      "path": "/my-workspace/helpdesk/my-tickets",
       "group": "My Workspace",
       "title": "Support Tickets",
       "heading": [
@@ -8691,7 +8739,7 @@
       }
     },
     {
-      "path": "/ess/leave",
+      "path": "/my-workspace/leave",
       "group": "My Workspace",
       "title": "Leave",
       "heading": [
@@ -8723,10 +8771,14 @@
       "filters": {
         "search": null,
         "dateRange": false
-      }
+      },
+      "optionalButtons": [
+        "Apply for Leave"
+      ],
+      "note": "\"Apply for Leave\" shows only when a leave policy is assigned to the user; without one the page says \"No leave policy is assigned to you yet\"."
     },
     {
-      "path": "/ess/letters",
+      "path": "/my-workspace/letters",
       "group": "My Workspace",
       "title": "Letters",
       "heading": [
@@ -8749,7 +8801,7 @@
       }
     },
     {
-      "path": "/ess/locations",
+      "path": "/my-workspace/locations",
       "group": "My Workspace",
       "title": "Locations",
       "heading": [
@@ -8772,7 +8824,7 @@
       }
     },
     {
-      "path": "/ess/my-shift",
+      "path": "/my-workspace/my-shift",
       "group": "My Workspace",
       "title": "Shift",
       "heading": [
@@ -8790,7 +8842,7 @@
       }
     },
     {
-      "path": "/ess/my-tax",
+      "path": "/my-workspace/my-tax",
       "group": "My Workspace",
       "title": "Tax",
       "heading": [
@@ -8833,7 +8885,7 @@
       }
     },
     {
-      "path": "/ess/needs-review",
+      "path": "/my-workspace/needs-review",
       "group": "My Workspace",
       "title": "Needs Review",
       "heading": [
@@ -8864,7 +8916,7 @@
       }
     },
     {
-      "path": "/ess/payslips",
+      "path": "/my-workspace/payslips",
       "group": "My Workspace",
       "title": "Pay",
       "heading": [
@@ -8893,7 +8945,7 @@
       }
     },
     {
-      "path": "/ess/policies",
+      "path": "/my-workspace/policies",
       "group": "My Workspace",
       "title": "Policies",
       "heading": [
@@ -8930,7 +8982,7 @@
       }
     },
     {
-      "path": "/ess/previous-employer",
+      "path": "/my-workspace/previous-employer",
       "group": "My Workspace",
       "title": "Previous Employer (12B)",
       "heading": [
@@ -8953,7 +9005,7 @@
       }
     },
     {
-      "path": "/ess/probation",
+      "path": "/my-workspace/probation",
       "group": "My Workspace",
       "title": "My Probation",
       "heading": [
@@ -8969,7 +9021,7 @@
       }
     },
     {
-      "path": "/ess/profile",
+      "path": "/my-workspace/profile",
       "group": "My Workspace",
       "title": "Profile",
       "heading": [
@@ -8995,7 +9047,7 @@
       }
     },
     {
-      "path": "/ess/referral",
+      "path": "/my-workspace/referral",
       "group": "My Workspace",
       "title": "Refer & Earn",
       "heading": [
@@ -9014,7 +9066,7 @@
       }
     },
     {
-      "path": "/ess/requests",
+      "path": "/my-workspace/requests",
       "group": "My Workspace",
       "title": "Requests",
       "heading": [
@@ -9052,7 +9104,7 @@
       }
     },
     {
-      "path": "/ess/team-calendar",
+      "path": "/my-workspace/team-calendar",
       "group": "My Workspace",
       "title": "Team Calendar",
       "heading": [
@@ -9072,7 +9124,7 @@
       }
     },
     {
-      "path": "/ess/wfh",
+      "path": "/my-workspace/wfh",
       "group": "My Workspace",
       "title": "Work From Home",
       "heading": [
@@ -10191,7 +10243,7 @@
           },
           {
             "id": "",
-            "label": "Start from",
+            "label": "Copy from existing policy (optional)",
             "type": "select",
             "required": false
           },
@@ -12822,7 +12874,7 @@
       "note": "14 Nov 2026: the page test no longer saw Access Denied on the Candidates tab and its ERP-019 check passed (one run, 17:30 IST, tenant under load). Markers removed as the test asked; if Access Denied comes back the PAGE test fails. Confirm on the next quiet run."
     },
     {
-      "path": "/ess/referral/admin",
+      "path": "/my-workspace/referral/admin",
       "group": "Referral Administration",
       "title": "Referral Dashboard",
       "heading": [
@@ -12863,7 +12915,7 @@
       }
     },
     {
-      "path": "/ess/referral/admin/policy",
+      "path": "/my-workspace/referral/admin/policy",
       "group": "Referral Administration",
       "title": "Reward Policy",
       "heading": [
@@ -15493,8 +15545,7 @@
       "title": "Previous Employer (12B)",
       "heading": [
         "Previous Employer (Form 12B)",
-        "1 employee(s) joined during 2026-2027 with nothing on file",
-        "Declared for 2026-"
+        "Declared for"
       ],
       "tabs": [],
       "columns": [],
@@ -15639,7 +15690,10 @@
             "required": false
           }
         ]
-      }
+      },
+      "pin": [
+        "heading"
+      ]
     },
     {
       "path": "/payroll/regime-comparison",

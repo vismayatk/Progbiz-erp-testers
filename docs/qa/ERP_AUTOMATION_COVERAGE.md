@@ -119,6 +119,24 @@ npm run test:asset           # 51 tests, 13 to 15 minutes, one worker
 - Report pictures: `node scripts/qa/asset_shots_2026-11-17.js` (read-only capture). The Word report is built with
   `scripts/qa/make_bug_report_docx.js` from a data file that is kept out of the repository, like every report (it holds tenant data).
 
+## Reruns after the 16 Nov 2026 build (17 Nov 2026)
+
+The tests that were updated on 14 Nov and never rerun (Customers, Work Flow, Client Settings effects, the extra dashboards,
+Accounts pages, Master pages, the HRMS pages inside the ERP) were run on 17 Nov: 437 tests, all as expected after these fixes.
+
+- **Pages that moved on the 16 Nov build:** the 27 My Workspace pages are under `/my-workspace/...` (the old `/ess/...`
+  addresses redirect); Item Upload is **Item Import** at `/item-import` (the old `/crm-item-upload` draws an empty page).
+- **City and State** (`/country-city`, `/country-state`) left the menu and show Access Denied to the Super Admin. Their
+  page tests are skipped with that reason until the product team says whether the pages are gone for good.
+- **ERP-021 is fixed** (quick search on Won Leads / Payment Pending Leads); its markers were removed. **ERP-023 is new**
+  (Accounts dashboard, see the table below).
+- **Data and dates are not page identity.** Amounts, counts, people cards, e-mail addresses and calendar dates that a page
+  draws as headings, columns or buttons are no longer recorded by `make_page_manifest.js`. A table that draws its header
+  only when it has rows lists its columns under `optionalColumns`.
+- **Throttling and network drops.** The tenant answers HTTP 429 ("Too many requests") more easily in office hours. The page
+  suite now waits, slows down and reloads a throttled page (up to three times), marks a test that was still throttled as
+  "throttled", pauses after it, and rides out a short network drop. Session tokens in console lines are masked.
+
 ## Run it
 
 ```bash
@@ -172,8 +190,10 @@ node scripts/qa/find_qa_leftovers.js
 | ERP-012 | Reopening an Edit modal throws `Object.values(undefined)` from Bootstrap Tooltip | `script_errors.spec.js` |
 | ERP-013 to ERP-016, ERP-018 | HRMS-side pages (leave approval, exit dashboard, exit approvals, my resignation, document search). ERP-017 (notice rules search) and ERP-019 (Job Board Candidates tab) stopped reproducing on 14 Nov 2026 and their markers were removed | `pages.onetouch_test.json` (`known` / `knownList`) |
 | ERP-020 | A sales invoice for more than the stock on hand saves although "Allow Negative Stock" is off | `inventory_purchase_sales.spec.js` PS-06 (switched off, see above) |
-| ERP-021 | Payment Pending Leads (`/payment-pending-leads`, `/won-leads`): Enter in the quick search box does not filter the list | `pages.onetouch_test.json` (`knownList`) |
+| ERP-021 | Payment Pending Leads (`/payment-pending-leads`, `/won-leads`): Enter in the quick search box did not filter the list. **Fixed on the 16 Nov 2026 build** (the LIST tests pass); marker removed on 17 Nov | — |
 | ERP-022 | Item Settings: the Need Images and Need Video switches share the id `need-image-1` | not automated (found by the settings comparison in `scripts/qa/bug_shots_2026-11-14.js`) |
+| ERP-023 | Accounts dashboard (`/accounts-dashboard`): every change of the date range redraws the charts with NaN sizes and logs script errors (`<path> attribute d: Expected number, "M NaN NaN ..."`); the first load is clean (found 17 Nov 2026) | `pages.onetouch_test.json` → `/accounts-dashboard` (`known` with `range`) |
+| AST-004, AST-006, AST-013, AST-016 | Asset Management: an assignment dated in the future, a category salvage of 101%, a PDF named .jpg as photo, a script error on Deliveries & Pick-ups | `erp/asset/tests/` |
 | QT-F1, CH-F1, ST-06, NM-05, NP-12 | Earlier findings | their own specs |
 
 When a fix lands, its test reports "expected to fail but passed": remove the `test.fail` marker (or the `known`

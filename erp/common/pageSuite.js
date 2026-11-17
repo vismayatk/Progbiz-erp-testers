@@ -17,14 +17,18 @@
  *
  * Both are read-only: the suite fails if the page sends a write request (save / create / update /
  * delete / send / upload …). It logs in once for the file and shares the session, because the tenant
- * throttles bursts ("Too many requests").
+ * throttles bursts ("Too many requests"). When a page load is answered with HTTP 429 the suite waits,
+ * slows down and loads the page again (up to three times); a test that was still throttled is marked
+ * "throttled" and is followed by a pause. A short network drop is ridden out the same way.
  *
  * A page entry may carry hand-written keys: known (a tracked defect, kept as its own expected-fail
  * test), noForm (don't open the Add form), permission (an Access Denied wall is the expected
  * screen), skip (reason), optionalButtons (buttons in `buttons` that only show for some data, e.g.
- * a "Show all" that appears once a table is long enough to be cut short), knownList (a tracked defect in the
+ * a "Show all" that appears once a table is long enough to be cut short), optionalColumns (columns in `columns` of a
+ * table that draws its header only when it has rows, e.g. "Top 10 Debtors" on a dashboard), knownList (a tracked defect in the
  * page's search, kept as an expected-fail LIST test), deniedTabs (tabs that show an Access Denied wall to this user).
- * A `known` entry may add `tab`: open that tab, then load the page again, before looking for the console error.
+ * A `known` entry may add `tab`: open that tab, then load the page again, before looking for the console error;
+ * or `range`: choose that date range first (a fault that only shows when the range is changed).
  *
  *   definePageSuite('Master pages', (e) => ['Master', 'Users'].includes(e.group));
  */
@@ -47,7 +51,10 @@ const GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 const READ_POST = /\/api\/policy\/assignments(\?|$)/i;
 const WRITE_VERB = /\/(save|add|create|insert|update|edit|delete|remove|send|submit|upload|import|approve|reject|transfer|convert|assign|post|publish|sync|reset|change-password)[\w-]*(\/|\?|$)/i;
 const ERROR_TEXT = /oops|something went wrong|error code|unhandled error|\bexception\b|nothing at this address|page not found/i;   // \bexception\b: not the "Frequency exceptions" tab
-const NETWORK_NOISE = /net::ERR_(NETWORK_CHANGED|INTERNET_DISCONNECTED|CONNECTION_|TIMED_OUT|NAME_NOT_RESOLVED|ABORTED)/;
+const NETWORK_NOISE = /net::ERR_(NETWORK_CHANGED|INTERNET_DISCONNECTED|CONNECTION_|TIMED_OUT|NAME_NOT_RESOLVED|ABORTED)|WebSocket connection to '[^']*' failed/;
+// The tenant limits requests ("Too many requests", HTTP 429). A throttled load proves nothing about the page.
+const THROTTLE = /status of 429|Status code '429'/i;
+const mask = (t) => String(t).replace(/access_token=[^&\s'"]+/g, 'access_token=***');   // never keep a session token in a report
 
 const clean = (s) => String(s ?? '').replace(/[*:]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
 const noCount = (s) => String(s ?? '').replace(/\s*[([]?\s*\d[\d,]*\s*[)\]]?\s*$/, '').trim();
@@ -109,15 +116,25 @@ function definePageSuite(title, select) {
     let page;
     let menuHrefs = [];
     let consoleErrs = [], badCalls = [], writes = [];
+    let throttled = 0;   // 429 answers since the last visit()
+    let pace = 0;        // ms to wait before each page load; grows while the tenant throttles, shrinks when it is calm
+    let hot = false;     // the running test saw a 429: cool down before the next one
 
     test.beforeAll(async ({ browser }) => {
       if (!manifest) return;
       page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
-      page.on('console', (m) => { if (m.type() === 'error') consoleErrs.push(m.text().slice(0, 200)); });
-      page.on('pageerror', (e) => consoleErrs.push(`pageerror: ${String(e.message).slice(0, 200)}`));
+      page.on('console', (m) => {
+        if (m.type() !== 'error') return;
+        const t = mask(m.text());
+        if (THROTTLE.test(t)) { throttled += 1; hot = true; return; }   // a throttle signal, not a script error of the page
+        consoleErrs.push(t.slice(0, 200));
+      });
+      page.on('pageerror', (e) => consoleErrs.push(`pageerror: ${mask(e.message).slice(0, 200)}`));
       page.on('response', (r) => {
         const u = r.url();
-        if (u.startsWith(BASE) && r.status() >= 400 && /\/api\//.test(u)) badCalls.push(`${r.status()} ${u.replace(BASE, '').slice(0, 120)}`);
+        if (!u.startsWith(BASE)) return;
+        if (r.status() === 429) { throttled += 1; hot = true; return; }
+        if (r.status() >= 400 && /\/api\//.test(u)) badCalls.push(`${r.status()} ${u.replace(BASE, '').slice(0, 120)}`);
       });
       page.on('request', (r) => {
         const u = r.url();
@@ -130,6 +147,13 @@ function definePageSuite(title, select) {
       menuHrefs = await page.evaluate(() => [...document.querySelectorAll('aside a[href], .app-sidebar a[href]')].map((a) => a.getAttribute('href') || ''));
     });
     test.afterAll(async () => { await page?.close(); });
+    // A test that was throttled says so, and the tenant gets time to recover before the next test (or the retry).
+    test.afterEach(async () => {
+      if (!hot || !page) return;
+      hot = false;
+      test.info().annotations.push({ type: 'throttled', description: 'the tenant answered "Too many requests" (HTTP 429) during this test' });
+      await page.waitForTimeout(20000);
+    });
 
     /** Replace {module} with the id the sidebar links use for this tenant's project type. */
     function resolve(route) {
@@ -141,14 +165,30 @@ function definePageSuite(title, select) {
     }
 
     /** Open a route and wait until it has drawn something (a heading, or the body is no longer empty). */
-    async function visit(url, e) {
-      consoleErrs = []; badCalls = []; writes = [];
-      await page.goto(`${BASE}${url}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-      if (await dismissRateLimit(page)) {
-        await page.waitForTimeout(15000);
-        await page.goto(`${BASE}${url}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    /** page.goto that rides through a short network drop (Wi-Fi change, DNS hiccup): the app is not at fault for those. */
+    async function go(url) {
+      for (let attempt = 1; ; attempt++) {
+        try { return await page.goto(`${BASE}${url}`, { waitUntil: 'domcontentloaded', timeout: 45000 }); }
+        catch (err) {
+          if (attempt >= 4 || !NETWORK_NOISE.test(String(err && err.message))) throw err;
+          await page.waitForTimeout(10000 * attempt);
+        }
       }
-      await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    }
+
+    async function visit(url, e) {
+      for (let attempt = 1; ; attempt++) {
+        consoleErrs = []; badCalls = []; writes = []; throttled = 0;
+        if (pace) await page.waitForTimeout(pace);
+        await go(url);
+        const dialog = await dismissRateLimit(page);
+        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+        if (!dialog && !throttled) { pace = Math.max(0, pace - 250); hot = false; break; }
+        // "Too many requests": this load proves nothing. Slow the suite down, wait, and load the page again.
+        pace = Math.min(pace + 1500, 6000);
+        if (attempt >= 4) break;                       // still throttled: the test goes on and afterEach cools down
+        await page.waitForTimeout(15000 * attempt);
+      }
       const first = e.heading && e.heading[0];
       if (first) {
         await expect.poll(async () => { const r = await page.evaluate(readPage); return clean(r.headings.join(' ') + ' ' + r.body).includes(clean(first)); },
@@ -178,12 +218,15 @@ function definePageSuite(title, select) {
       return { scope, listUrl };
     }
 
+    /** A console line that says nothing about the page: network noise, or (while throttled) Blazor failing on a 429 answer. */
+    const noise = (m) => NETWORK_NOISE.test(m) || (throttled > 0 && /Unhandled exception rendering component|WebAssemblyRenderer\[100\]/.test(m));
+
     /** Console errors and failed calls that are not tracked defects or network noise. */
     function problems(e) {
       const known = (e.known || []);
       const allowed = (text, key) => known.some((k) => k[key] && new RegExp(k[key], 'i').test(text));
       return {
-        console: consoleErrs.filter((m) => !NETWORK_NOISE.test(m) && !allowed(m, 'console')),
+        console: consoleErrs.filter((m) => !noise(m) && !allowed(m, 'console')),
         calls: badCalls.filter((m) => !allowed(m, 'call')),
       };
     }
@@ -209,7 +252,7 @@ function definePageSuite(title, select) {
         const lost = [
           ...missing('heading', e.heading || [], s.headings.concat(s.body), true),
           ...missing('tab', e.tabs || [], s.tabs),
-          ...missing('column', e.columns || [], s.columns),
+          ...missing('column', (e.columns || []).filter((c) => !(e.optionalColumns || []).includes(c)), s.columns),
           ...missing('button', (e.buttons || []).filter((b) => !(e.optionalButtons || []).includes(b)), s.buttons, true),
           ...(e.controls || []).filter((c) => (c.id ? !s.ids.includes(c.id) : !found(s.labelsInDom.concat(s.labels, s.body), c.label, true))).map((c) => `control "${c.id || c.label}"`),
         ];
@@ -231,7 +274,7 @@ function definePageSuite(title, select) {
           }
           expect.soft(ERROR_TEXT.test(t.body), `tab "${tab}" shows an error`).toBe(false);
           expect.soft(t.rows > 0 || t.body.length > 120, `tab "${tab}" is blank`).toBe(true);
-          const fresh = consoleErrs.slice(before).filter((m) => !NETWORK_NOISE.test(m));
+          const fresh = consoleErrs.slice(before).filter((m) => !noise(m));
           expect.soft(fresh, `tab "${tab}" raised script errors`).toEqual([]);
         }
 
@@ -304,7 +347,9 @@ function definePageSuite(title, select) {
             const s = await page.evaluate(readPage);
             expect.soft(ERROR_TEXT.test(s.body), `error text with range "${label}"`).toBe(false);
             expect.soft(s.tables > 0 || s.body.length > 200, `page is blank with range "${label}"`).toBe(true);
-            expect.soft(consoleErrs.slice(errBefore).filter((m) => !NETWORK_NOISE.test(m)), `script errors with range "${label}"`).toEqual([]);
+            // a tracked defect of this page (`known`) is checked by its own expected-fail test, not here
+            const tracked = (m) => (e.known || []).some((k) => k.console && new RegExp(k.console, 'i').test(m));
+            expect.soft(consoleErrs.slice(errBefore).filter((m) => !noise(m) && !tracked(m)), `script errors with range "${label}"`).toEqual([]);
           }
           expect.soft(writes, 'changing the range sent a write request').toEqual([]);
         });
@@ -371,6 +416,12 @@ function definePageSuite(title, select) {
             await page.locator('[role="tab"], .nav-tabs .nav-link, .nav-pills .nav-link').filter({ hasText: new RegExp(`^\\s*${esc(k.tab)}`, 'i') }).first().click({ timeout: 8000 });
             await page.waitForTimeout(2500);
             await visit(resolve(e.path), e);   // visit() clears the list first, so what is left is what leaving the page raised
+          }
+          if (k.range) {   // the fault shows when the date range is changed: choose that range first
+            const sel = page.locator('select').filter({ has: page.locator('option', { hasText: /^This Month$/ }) }).first();
+            await sel.selectOption({ label: k.range });
+            await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+            await page.waitForTimeout(1500);
           }
           const hits = consoleErrs.filter((m) => new RegExp(k.console, 'i').test(m));
           expect(hits, `${k.id}: ${k.reason}`).toEqual([]);

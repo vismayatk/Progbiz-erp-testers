@@ -26,7 +26,7 @@ const args = process.argv.slice(2);
 const arg = (n) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
 const COMPANY = arg('--company') || process.env.COMPANY_CODE;
 const OUT = path.join(ROOT, 'erp', 'common', 'fixtures', `pages.${COMPANY}.json`);
-const PRESERVE = ['known', 'knownList', 'deniedTabs', 'noForm', 'permission', 'skip', 'note', 'extraChecks', 'pin', 'optionalButtons'];
+const PRESERVE = ['known', 'knownList', 'deniedTabs', 'noForm', 'permission', 'skip', 'note', 'extraChecks', 'pin', 'optionalButtons', 'optionalColumns'];
 // Pages with their own deeper specs (or that must not be touched) never go in the manifest.
 const NEVER = new Set(['/client-setting', '/home', '/']);
 const GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
@@ -47,6 +47,8 @@ const ACTION = /^(add|new|create|save|clear|export|import|upload|download|print|
 // data that a page draws as buttons: figures, people cards ("A Amit — —"), e-mail addresses, the month label of a calendar
 const DATA_BTN = (b) => (/(^|\s)\d[\d,.]*(%|\s|$)/.test(b) && !/^\d+\s+(day|week|month|year)s?$/i.test(b))
   || /@| — —/.test(b) || /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*$/i.test(b);
+// text that carries a calendar date: "Sat 14 Nov", "Nov 8 – 14,", "Sun 11/8"
+const DATED = /\b(mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?,?\s+\d|\b\d{1,2}\/\d{1,2}\b|\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}\b|\b\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i;
 const PAGER = /^(\d+|next|last|first|prev|previous|«|»|‹|›|<<|>>|\.\.\.|…)$/i;
 const volatileId = (id) => !id || /\d{3,}/.test(id) || GUID.test(id) || /^switcher/i.test(id);
 
@@ -72,7 +74,9 @@ function entry(p) {
   const rowCells = norm((p.tables || []).map((t) => (t.firstRow || []).join(' ')).join(' ')).toLowerCase();
   const isRowButton = (b) => rowCells.includes(b.toLowerCase());
   const table = [...(p.tables || [])].sort((a, b) => (b.headers || []).length - (a.headers || []).length)[0];
-  const columns = [...new Set(((table && table.headers) || []).map(noCount).filter((c) => c && !PAGER.test(c)))];
+  // a calendar header carries its date ("Sun 11/8"): keep the weekday; a cell that strings several dates together is dropped
+  const columns = [...new Set(((table && table.headers) || []).map(noCount).map((c) => c.replace(/\s+\d{1,2}\/\d{1,2}$/, ''))
+    .filter((c) => c && !PAGER.test(c) && !DATED.test(c)))];
   const tabs = [...new Set((p.tabs || []).filter((x) => !DATE_TAB.test(norm(x))).map(noCount).filter(Boolean))];
   const skipBtn = new Set([...columns, ...tabs].map((x) => x.toLowerCase()));
   const hasRows = (p.tables || []).some((t) => t.rows > 0);
@@ -88,7 +92,11 @@ function entry(p) {
   const searchCtl = all.find((c) => c.tag === 'input' && ['text', 'search', ''].includes(c.type || '') && (/filter-name|search/i.test(c.id || '') || /search/i.test(`${c.label} ${c.placeholder}`)));
   const dateSel = all.find((c) => c.tag === 'select' && (c.options || []).some((o) => /^this month$/i.test(o)) && (c.options || []).some((o) => /^today$/i.test(o)));
   // a time-of-day greeting ("Good afternoon, Super Admin!") is different every few hours, so it is not page identity
-  const heading = [...new Set((p.heading || []).map(noCount).filter((h) => h && !/^good (morning|afternoon|evening|night)\b/i.test(h)))].slice(0, 4);
+  // a heading that is only a figure ("200,008,995.", "-9,020.") is a dashboard amount, not a heading
+  // a heading that carries a date keeps only the words before it ("Room Bookings — Sat 14 Nov" -> "Room Bookings");
+  // one that starts with a count ("1 employee(s) joined ...", "0 days") or is only a dash is data
+  const heading = [...new Set((p.heading || []).map(noCount).map((h) => (DATED.test(h) ? h.split(/\s+[—–-]\s+/)[0] : h))
+    .filter((h) => h && !/^good (morning|afternoon|evening|night)\b/i.test(h) && !/^[-+]?[\d,.\s%]+$/.test(h) && !DATED.test(h) && !/^\d[\d,.]*\s/.test(h) && /[a-z]/i.test(h)))].slice(0, 4);
   const moduleScoped = GUID.test(p.path);
   const e = {
     path: p.path.replace(GUID, '{module}'),

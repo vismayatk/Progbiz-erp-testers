@@ -3,7 +3,7 @@
 /**
  * Excel Upload — the five import pages  (UP-01 .. UP-08)
  *
- *   Individual Customer · Business Customer · Enquiry · Item   /…-upload     Data Import  /data-import
+ *   Individual Customer · Business Customer · Enquiry   /…-upload     Item Import  /item-import     Data Import  /data-import
  *
  * These tests never import data. A real spreadsheet would create customers, enquiries or items that
  * cannot be deleted from the UI, so what is checked is everything around the import:
@@ -32,7 +32,7 @@ const PAGES = [
   { id: 'UP-01', title: 'Individual Customer Upload', route: '/individual-customer-upload', p: 'ic' },
   { id: 'UP-02', title: 'Business Customer Upload',   route: '/business-customer-upload',   p: 'bc' },
   { id: 'UP-03', title: 'Enquiry Upload',             route: '/enquiry-upload',             p: 'eq' },
-  { id: 'UP-04', title: 'Item Upload',                route: '/crm-item-upload',            p: 'it' },
+  { id: 'UP-04', title: 'Item Import',                route: '/item-import',                p: 'it' },   // 16 Nov 2026 build: was /crm-item-upload ("Item Upload")
   { id: 'UP-05', title: 'Data Import',                route: '/data-import',                p: 'di', hasType: true },
 ];
 

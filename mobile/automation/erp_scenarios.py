@@ -37,6 +37,7 @@ from droid import Device  # noqa: E402
 from erp_smoke import Runner, write_report, QA_DIR, DRAWER_MARK  # noqa: E402
 
 TEST_TENANTS = ("lesol_test", "onetouch_test", "ncore_test")
+CURRENCY = {"onetouch_test": ("AED", "Dirham")}                        # quotation PDF currency per tenant (default INR / Rupee)
 ITEM_SEARCH = {"ncore_test": "Test", "lesol_test": "Sol"}                 # item search text per tenant (default "Bio")
 STATUS_PREF = ["Call not answering", "Contacted", "Follow-up Pending"]   # first one the tenant has is used
 DATE_TIME = re.compile(r"^\d{2}/\d{2}/\d{4} \d{2}:\d{2} [AP]M$")
@@ -251,7 +252,7 @@ class Scenarios(Runner):
         m = re.search(r"Enquiry Number\s+(ENQ-\d+)", info)
         self.enq = m.group(1) if m else "?"
         for want in (self.name, "QA_Place", "New", self.user, day.strftime("%d/%m/%Y")):
-            if want not in info:
+            if want.lower() not in info.lower():      # app writes "Super admin", the Home greeting may differ in case
                 raise Fail("Enquiry Overview is missing %r" % want)
         phone = self.d.find(re.compile(r"\+\d{1,3}" + self.phone))   # +971 on onetouch, +91 on ncore
         if not phone:
@@ -382,7 +383,7 @@ class Scenarios(Runner):
     # ---- S4 quotation --------------------------------------------------------------------
     # ---- quotation PDF -------------------------------------------------------------------
     @staticmethod
-    def rupees_in_words(n):
+    def rupees_in_words(n, unit="Rupee"):
         """1800 → 'Rupee One Thousand Eight Hundred Only' (Indian grouping, whole rupees below 10 crore)."""
         ones = ("Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen "
                 "Seventeen Eighteen Nineteen").split()
@@ -406,7 +407,7 @@ class Scenarios(Runner):
                 n %= size
         if n:
             parts.append(below1000(n))
-        return "Rupee " + " ".join(parts) + " Only"
+        return unit + " " + " ".join(parts) + " Only"
 
     def pdf_text(self, path):
         """Text of a PDF on this Mac: macOS PDFKit (osascript) first, then pdftotext."""
@@ -474,7 +475,8 @@ class Scenarios(Runner):
             return
         flat = re.sub(r"\s+", " ", text)
         money = lambda x: "{:,.2f}".format(x)
-        words = self.rupees_in_words(payable)
+        code, unit = CURRENCY.get(self.tenant, ("INR", "Rupee"))
+        words = self.rupees_in_words(payable, unit)
         checks = [
             ("quotation number", "Estimate No : %s" % quo),
             ("date", "Estimate Date : %s" % datetime.date.today().strftime("%d/%m/%Y")),
@@ -487,7 +489,7 @@ class Scenarios(Runner):
             ("quantity", "%.2f" % qty),
             ("gross total", "Gross Total " + money(gross)),
             ("discount", "Discount (%s)" % money(disc_amt)),
-            ("total", "INR %s" % money(payable)),
+            ("total", "%s %s" % (code, money(payable))),
             ("total in words", words),
             ("prepared by", self.user),
         ]
@@ -672,7 +674,7 @@ class Scenarios(Runner):
         self.quo = m.group(1) if m else "?"
         flat = info.replace("\n", " ")
         for want in (self.name, "QA_Place", valid.strftime("%d/%m/%Y"), self.user, "Sales"):
-            if want not in flat:
+            if want.lower() not in flat.lower():
                 raise Fail("Quotation Overview is missing %r (%s)" % (want, flat[:200]))
         # status follows the enquiry: "New Quotation" without a follow-up, "In Follow Up" after one
         status = next((st for st in ("In Follow Up", "New Quotation") if "Status " + st in flat), None)
@@ -1155,6 +1157,11 @@ class Scenarios(Runner):
             r["notes"].append("Step time %.0fs" % (time.time() - t0))
             self.results.append(r)
             print("  %-5s %s %-30s %s" % (r["status"], sid, title, " | ".join(r["notes"])[:160]))
+            try:
+                self.go_home()                            # one failed scenario must not leave the next on the wrong screen
+            except Exception:  # noqa: BLE001
+                pass
+            time.sleep(15)                                # the server rate-limits bursts ("Slow down — Too many requests")
 
 
 def main():

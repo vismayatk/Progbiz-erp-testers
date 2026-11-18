@@ -27,8 +27,28 @@ Info: recording length 00:16 for a 00:19 call (confirm intended); the app offers
 - WhatsApp answer, hang up, mute, speaker, recording, locked screen, iOS: need two real phones.
 - F5 (purchase invoice): onetouch_test has no suppliers.
 
-## Script problems found (not app bugs) — still to fix
-- S1: Add Lead ends with Customer Name typed and Phone Number empty (country defaults to UAE +971); no enquiry is created, so S2 and S4 fail. Cause not yet found.
-- After a failed scenario the run can be left on the wrong screen or with the drawer open (F2, F3, F4, U3, R5, smoke "To Do"); recovery needs to be stricter.
-- F2: Notes tab is off-screen in the Enquiry Overview tab bar; scroll the tab bar.
-- F6: voucher count check reads 0 → 0 although the voucher saved (R-2); fix the count.
+## Extra app findings (found while fixing the scripts)
+- The server rate-limits bursts: the app shows "Slow down — Too many requests. Please wait a moment." after many quick actions (several runs back to back).
+- While rate-limited, the Leads screen shows "Nothing here… for now!" instead of an error or retry, so it looks like there are no leads (probable bug).
+- Follow-Up History does not show the Lead Quality (Warm) chosen in a follow-up (S2, needs a look on screen).
+- Deleting a lead note asks for no confirmation (F2).
+
+## Script fixes (this commit) and how far each was checked
+| Fix | Status |
+|---|---|
+| S1 assignee check ignores letter case ("Super admin" vs "Super Admin") | S1 passes on onetouch_test (ENQ created) |
+| F2 scrolls the Enquiry tab bar to find Notes | F2 passes (note added, edited, deleted) |
+| F6 voucher count only checked when the list shows a count; the new voucher row is checked | F6 passes (receipt saved, row found) |
+| Quotation PDF currency per tenant (AED / Dirham on onetouch_test, INR / Rupee elsewhere) | words helper checked against the real PDF text; S4 not re-run to the end |
+| `go_home` cancels a form left open by a failed step; CRM suite returns Home after every scenario; 15 s pause between scenarios | not re-checked on a full run |
+| `open_drawer` waits for Home and retries the menu button 3 times | not re-checked on a full run |
+| "Slow down" (rate limit) popup: wait 30 s then continue | not seen to trigger again |
+| Option pickers skip Cancel/Save/Select/OK buttons (F3 follow-up status, S5 complaint type); F3 opens a lead from any Leads tab | F3 and S5 not re-run after this fix |
+| F4 reports "not testable" when the tenant has no WhatsApp account | seen on onetouch_test |
+
+## Still open
+- S6 needs a team called `QA_Team` on the tenant (not on onetouch_test).
+- F4 needs a tenant with a WhatsApp account (lesol_test).
+- S4 failed once on onetouch_test with the discount missing in the form totals (2000.00 / 0.00 / 2000.00); it had passed earlier (QUO-14). Check by hand.
+- S5 and F3 need one clean re-run; the emulator stopped answering during the last attempt.
+- Slow phone lookup in S1 (a full S1 took up to 24 min on a struggling emulator).

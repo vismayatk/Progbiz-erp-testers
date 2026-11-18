@@ -233,12 +233,20 @@ class Features(Release):
         self.open_path("CRM", "Leads")
         time.sleep(8)
         row = None
-        for _ in range(6):
-            row = next((n for n in self.d.nodes() if re.match(r"^(ENQ|QUO)-\d+", n.label) and n.clickable), None)
+        for tab in (None, "In Follow Up", "Won", "Lost"):        # "New" can be empty when every lead already has a follow-up
+            if tab:
+                t = self.d.find(tab, exact=True)
+                if t is None:
+                    continue
+                self.d.tap(t, allow_unsafe=True, settle=4)
+            for _ in range(5):
+                row = next((n for n in self.d.nodes() if re.match(r"^(ENQ|QUO)-\d+", n.label) and n.clickable), None)
+                if row:
+                    break
+                time.sleep(2)
             if row:
                 break
-            time.sleep(2)
-        self.ass(row is not None, "Leads list shows no lead")
+        self.ass(row is not None, "Leads list shows no lead in any tab")
         num = re.match(r"^((?:ENQ|QUO)-\d+)", row.label).group(1)
         self.d.tap(row, allow_unsafe=True, settle=5)
         return num
@@ -259,9 +267,13 @@ class Features(Release):
     def f2_notes(self, r):
         note = "QA_note_%d" % self.ts
         num = self.open_first_lead()
-        self.d.swipe(900, 330, 200, 330, 400)
-        time.sleep(1.5)
-        n = self.d.find(re.compile(r"^Notes\nTab \d of \d"))
+        n = None
+        for _ in range(4):                                           # the tab bar scrolls sideways: swipe until Notes shows
+            n = self.d.find(re.compile(r"^Notes(\nTab \d+ of \d+)?$"))
+            if n is not None:
+                break
+            self.d.swipe(900, 347, 200, 347, 400)
+            time.sleep(1.5)
         self.ass(n is not None, "Notes tab not found on the lead")
         self.d.tap(n, allow_unsafe=True, settle=3)
         for _ in range(5):                                           # clean up QA notes left by an earlier failed run
@@ -324,7 +336,7 @@ class Features(Release):
         self.d.tap(self.must("Followup", 6, "Followup menu"), allow_unsafe=True, settle=4)
         self.d.tap_xy(int(w * 0.72), 443)
         time.sleep(2.5)
-        opts = [n for n in self.d.nodes() if n.clickable and n.label and "\n" not in n.label and n.label not in ("Dismiss",)]
+        opts = [n for n in self.d.nodes() if n.clickable and n.label and "\n" not in n.label and n.label not in ("Dismiss", "Cancel", "Save", "Select", "Scrim", "OK")]
         self.ass(opts, "Followup Status list is empty")
         status = opts[0].label
         self.d.tap(opts[0], allow_unsafe=True, settle=3)
@@ -348,7 +360,8 @@ class Features(Release):
     # ---- F4 whatsapp window ---------------------------------------------------------
     def f4_whatsapp(self, r):
         self.top_menu("WhatsApp Chat", 10)
-        self.ass(self.d.exists("Chats", exact=True), "WhatsApp Chat did not open a chat list")
+        if not self.d.exists("Chats", exact=True):
+            raise NotTestable("WhatsApp Chat opened no chat list (this tenant has no WhatsApp account: 'Please add whatsapp account') — run on a tenant with WhatsApp, e.g. lesol_test")
         old = None
         for n in self.d.nodes():
             m = re.search(r"(\d\d)/(\d\d)/(\d\d)\b", n.label)
@@ -461,8 +474,8 @@ class Features(Release):
         self.go_home()
         self.open_path("Accounts", "Vouchers", "Receipts")
         time.sleep(7)
-        cnt = next((l for l in self.d.labels() if re.search(r"\d+ vouchers?", l)), "0 vouchers")
-        n_before = int(re.search(r"\d+", cnt).group(0))
+        cnt = next((l for l in self.d.labels() if re.search(r"\d+ vouchers?", l)), None)
+        n_before = int(re.search(r"\d+", cnt).group(0)) if cnt else None     # this build shows no "N vouchers" label
         self.fab()
         self.open_form(r, "New Receipt", "New Receipt")
         time.sleep(1)
@@ -525,8 +538,12 @@ class Features(Release):
         self.d.tap(self.d.find("Not now", exact=True), allow_unsafe=True, settle=3)
         row = self.wait_row(rno, 20)
         self.ass(row is not None and "100.00" in row.label, "list does not show %s with 100.00" % rno)
-        now = int(re.search(r"\d+", next((l for l in self.d.labels() if re.search(r"\d+ vouchers?", l)), "0")).group(0))
-        self.ass(now == n_before + 1, "voucher count went %d → %d (expected +1)" % (n_before, now))
+        cnt2 = next((l for l in self.d.labels() if re.search(r"\d+ vouchers?", l)), None)
+        if n_before is not None and cnt2:
+            now = int(re.search(r"\d+", cnt2).group(0))
+            self.ass(now == n_before + 1, "voucher count went %d → %d (expected +1)" % (n_before, now))
+        else:
+            r["notes"].append("List shows no voucher count; checked the new voucher row instead")
         self.d.tap(next(x for x in self.d.nodes() if x.label == "More actions"), allow_unsafe=True, settle=2)
         self.d.tap(self.d.find("View", exact=True), allow_unsafe=True, settle=4)
         view = self.flat()
@@ -575,6 +592,7 @@ class Features(Release):
                 self.go_home()
             except Exception:  # noqa: BLE001
                 pass
+            time.sleep(15)                                # the server rate-limits bursts ("Slow down — Too many requests")
 
 
 def main():

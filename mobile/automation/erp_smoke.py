@@ -80,6 +80,8 @@ class Runner(object):
                 self.relaunches += 1
                 self.d.launch()
             self.dismiss_interrupts()
+            if self.abandon_form():             # a form/sheet left open by a failed step: Cancel → Discard
+                continue
             if self.d.exists(DRAWER_MARK):      # Back doesn't close the drawer (app bug) — swipe it shut
                 self.close_drawer()
             if self.at_home():
@@ -90,6 +92,15 @@ class Runner(object):
                 self.tap_tab(0)
                 continue
             self.d.back(1.0)
+        return False
+
+    def abandon_form(self):
+        """Close a form or sheet left open by a failed scenario (Cancel, then Discard). True if something was closed."""
+        for label in ("Discard", "Cancel"):
+            n = self.d.find(label, exact=True)
+            if n:
+                self.d.tap(n, allow_unsafe=True, settle=1.5)   # abandons the form; saves nothing
+                return True
         return False
 
     def home_top(self):
@@ -107,6 +118,13 @@ class Runner(object):
         """Decline the pop-ups that can appear on (re)launch: check-in gate, location/permission prompts."""
         for _ in range(4):
             ns = self.d.nodes()
+            if any(n.label == "Slow down" for n in ns):          # server rate limit ("Too many requests"): wait it out
+                ok = next((n for n in ns if n.label == "OK"), None)
+                if ok:
+                    self.interrupts.append("Slow down: Too many requests (rate limit) — waited 30s")
+                    self.d.tap(ok, settle=1.5)
+                time.sleep(30)
+                continue
             hit = None
             for rx in INTERRUPTS:
                 hit = next((n for n in ns if n.label and rx.search(n.label)), None)
@@ -139,15 +157,18 @@ class Runner(object):
         return [tabs[0], tabs[1], fab[0], tabs[2], tabs[3]]
 
     def open_drawer(self):
-        if not self.at_home():
+        if not self.d.wait_for(HOME_MARK, timeout=10):          # Home may still be reloading after a failed step
             raise LookupError("drawer can only be opened from Home")
         # the hamburger has no accessibility label: top-left clickable icon
         w, h = self.d.size()
-        icon = [n for n in self.d.nodes() if n.clickable and n.bounds[2] < w * 0.25 and n.bounds[3] < h * 0.15]
-        if not icon:
-            raise LookupError("drawer button not found")
-        self.d.tap(icon[0], settle=1.2)
-        if not self.d.wait_for(DRAWER_MARK, timeout=4):
+        for attempt in range(3):                                 # a slow emulator can swallow the first tap
+            icon = [n for n in self.d.nodes() if n.clickable and n.bounds[2] < w * 0.25 and n.bounds[3] < h * 0.15]
+            if not icon:
+                raise LookupError("drawer button not found")
+            self.d.tap(icon[0], settle=1.2)
+            if self.d.wait_for(DRAWER_MARK, timeout=6):
+                break
+        else:
             raise LookupError("drawer did not open")
         # the drawer remembers expanded sections — collapse them so item names are unambiguous
         for n in [x for x in self.d.nodes() if x.label.endswith(", Expanded")]:

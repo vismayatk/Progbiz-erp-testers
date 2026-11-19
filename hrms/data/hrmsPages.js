@@ -43,7 +43,7 @@ module.exports = [
   // ── Onboarding & Probation ──
   P('Onboarding', 'Onboarding Templates', 'onboarding-templates', 'createOnboardingTemplate'),
   P('Onboarding', 'Onboarding Pipeline', 'onboarding-pipeline'),
-  P('Onboarding', 'Pre-boarding Approvals', 'preboarding-approvals'),
+  P('Onboarding', 'Pre-boarding Approvals', 'preboarding-approvals', 'candidateCompletesPreboardingAndOnboard'),
   // 2026-11-02: devs restructured Onboarding — '/onboarding-tasks' moved to '/my-onboarding-tasks'
   // (listed under My Workspace below) and '/onboarding-employees' was removed; two report pages added.
   P('Onboarding', 'Onboarded Employees Report', 'onboarded-employees-report'),

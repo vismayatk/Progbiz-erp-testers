@@ -28,8 +28,6 @@ Info: recording length 00:16 for a 00:19 call (confirm intended); the app offers
 - F5 (purchase invoice): onetouch_test has no suppliers.
 
 ## Extra app findings (found while fixing the scripts)
-- The server rate-limits bursts: the app shows "Slow down — Too many requests. Please wait a moment." after many quick actions (several runs back to back).
-- While rate-limited, the Leads screen shows "Nothing here… for now!" instead of an error or retry, so it looks like there are no leads (probable bug).
 - Follow-Up History does not show the Lead Quality (Warm) chosen in a follow-up (S2, needs a look on screen).
 - Deleting a lead note asks for no confirmation (F2).
 
@@ -42,7 +40,7 @@ Info: recording length 00:16 for a 00:19 call (confirm intended); the app offers
 | Quotation PDF currency per tenant (AED / Dirham on onetouch_test, INR / Rupee elsewhere) | words helper checked against the real PDF text; S4 not re-run to the end |
 | `go_home` cancels a form left open by a failed step; CRM suite returns Home after every scenario; 15 s pause between scenarios | not re-checked on a full run |
 | `open_drawer` waits for Home and retries the menu button 3 times | not re-checked on a full run |
-| "Slow down" (rate limit) popup: wait 30 s then continue | not seen to trigger again |
+| "Slow down / Too many requests" popup (the site's limit on several logins at once, not a bug): wait 30 s then continue; re-run when the tenant is quiet | not seen to trigger again |
 | Option pickers skip Cancel/Save/Select/OK buttons (F3 follow-up status, S5 complaint type); F3 opens a lead from any Leads tab | F3 and S5 not re-run after this fix |
 | F4 reports "not testable" when the tenant has no WhatsApp account | seen on onetouch_test |
 

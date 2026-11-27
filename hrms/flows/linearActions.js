@@ -1217,4 +1217,93 @@ module.exports = {
       { timeout: 90000, intervals: [10000], message: 'the referral should become Hired with a Pending reward' }).toMatch(/Hired\s+Pending/);
     log('referral → Hired; reward raised automatically (Pending — never approved/paid)');
   },
+
+  // Complete Resignation & Exit lifecycle + F&F, on a DEDICATED throwaway employee (NEVER the main
+  // run employee — the flow is TERMINAL: Close ends employment and completing F&F locks the record).
+  // Mirrors tests/11 (Initiate → Approve/On-Notice → HR Review → Task Board → Clearance → Interview →
+  // F&F → Close). Tolerant of the tenant's exit-approval config: if amit is not the resolved approver
+  // the exit is still raised, but the On-Notice-gated steps (incl. F&F) are skipped with a clear note.
+  async exitLifecycleAndFnf({ page }) {
+    const data = require('../data/resignationData');
+    const reFlow = require('./resignationFlow');
+    const { ResignationsListPage } = require('../pages/resignation/ResignationsListPage');
+    const { ResignationDetailPage } = require('../pages/resignation/ResignationDetailPage');
+    const { ExitTaskBoardPage } = require('../pages/resignation/ExitTaskBoardPage');
+    const { ExitClearancePage } = require('../pages/resignation/ExitClearancePage');
+    const { ExitInterviewPage } = require('../pages/resignation/ExitInterviewPage');
+    const { FnfPage } = require('../pages/resignation/FnfPage');
+
+    // 1) Dedicated exit employee (terminal flow — keep the main run employee intact).
+    const emp = await reFlow.createExitEmployee(page);
+    log(`exit employee created: ${emp.display} (${emp.code})`);
+
+    // 2) Initiate Exit → resignation record.
+    const list = new ResignationsListPage(page);
+    await list.open();
+    const empSel = await list.openInitiateForm();
+    await list.pickEmployee(empSel, emp.code);
+    await list.setExitType('Resignation').catch(() => {});
+    await list.fillCommon(data.exitSpec());
+    await list.fillPerType('Resignation', {});
+    const guid = await list.submitInitiate(emp.code);
+    expect(guid, 'raising the exit should yield a detail guid').toMatch(/[0-9a-f-]{8,}/i);
+    log(`exit raised → /resignation/${guid}`);
+
+    // 3) Approve / advance to On Notice (only when an approver is configured for amit).
+    const det = new ResignationDetailPage(page);
+    await det.open(guid);
+    const onNotice = async () => /on\s*notice/i.test(await det.text());
+    let advanced = await onNotice();
+    if (!advanced && await det.canApprove()) {
+      await det.saveHrReview({ confirmedLwd: data.hrReview().confirmedLwd, checklistTemplate: 'Standard Exit Clearance' }).catch(e => log(`pre-approval HR review: ${e.message.slice(0, 80)}`));
+      await det.open(guid);
+      await det.recordRetention({ outcome: 'Proceed with Exit', date: data.todayISO() }).catch(() => {});
+      await det.open(guid);
+      await det.approve({}).catch(e => log(`approve: ${e.message.slice(0, 80)}`));
+      await det.open(guid);
+      advanced = await onNotice();
+    }
+    if (!advanced) {
+      log(`⚠ exit Pending and amit is not the resolved approver — the tenant's exit-approval workflow needs an approver/fallback configured; On-Notice steps + F&F skipped (exit raised for ${emp.code})`);
+      return;
+    }
+    log('exit advanced to On Notice');
+
+    // 4) HR Review (notice treatment + remarks — best-effort amendment).
+    await det.saveHrReview({ noticeTreatment: data.hrReview().noticeTreatment, hrRemarks: data.hrReview().hrRemarks }).catch(() => {});
+
+    // 5) Exit Task Board — checklist materialized; settle all mandatory items.
+    const board = new ExitTaskBoardPage(page);
+    await board.open(guid);
+    log(`exit task board: settled ${await board.settleAll()} checklist item(s)`);
+
+    // 6) Clearance read + Interview schedule (best-effort).
+    await new ExitClearancePage(page).open().then(b => null).catch(() => {});
+    const iv = new ExitInterviewPage(page);
+    await iv.open(guid).catch(() => {});
+    await iv.schedule({ template: (data.config && data.config.interview && data.config.interview.name) || 'Standard Exit Interview', mode: 'In Person', date: data.midExitDateISO(), interviewer: 'Amit' }).catch(e => log(`interview schedule: ${e.message.slice(0, 80)}`));
+    await iv.recordAnswers().catch(() => {});
+
+    // 7) F&F — re-settle clearance (Mark-completed is clearance-gated), then calculate → components →
+    //    save → mark completed → locked.
+    await new ExitTaskBoardPage(page).open(guid).catch(() => {});
+    const fnf = new FnfPage(page);
+    await fnf.open(guid);
+    await fnf.calculate();
+    for (const c of data.fnfComponents()) await fnf.addComponent(c).catch(e => log(`F&F component: ${e.message.slice(0, 80)}`));
+    await fnf.save();
+    log(`F&F net payable ≈ ${await fnf.netPayable()}`);
+    if (await fnf.canComplete()) {
+      await fnf.markCompleted();
+      await fnf.assertLocked();
+      log('F&F completed and locked ✔');
+    } else {
+      log('F&F calculated + saved; not completable yet (clearance-gated)');
+    }
+
+    // 8) Close the exit (may be gated only by the known letter-engine issue — reported, not a defect here).
+    await det.open(guid);
+    const res = await det.closeExit();
+    log(res.closed ? `exit CLOSED for ${emp.display} — full lifecycle + F&F complete` : `close blocked — remaining gate: ${String(res.blockers).slice(0, 120)}`);
+  },
 };

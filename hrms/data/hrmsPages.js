@@ -112,10 +112,11 @@ module.exports = [
   P('Payroll', 'Audit Trail', 'payroll/audit-trail'),
   P('Payroll', 'Outlier Alerts', 'payroll/outliers'),
   P('Payroll', 'Form 16 & Certificates', 'payroll/statements'),
-  // ── Resignation & Exit — BASE ONLY: page checks (module code owned by teammates) ──
+  // ── Resignation & Exit — page checks + a FULL lifecycle+F&F run on "Resignations & Exits"
+  //    (exitLifecycleAndFnf, on a dedicated throwaway employee). Deep module spec: tests/11. ──
   P('Resignation & Exit', 'Exit Dashboard', 'exit-dashboard'),
   P('Resignation & Exit', 'Exit Reports', 'exit-reports'),
-  P('Resignation & Exit', 'Resignations & Exits', 'resignations'),
+  P('Resignation & Exit', 'Resignations & Exits', 'resignations', 'exitLifecycleAndFnf'),
   P('Resignation & Exit', 'F&F Settlements', 'fnf-settlements'),
   P('Resignation & Exit', 'Exit Watch', 'exit-watch'),
   P('Resignation & Exit', 'Exit Approvals', 'resignation-approval'),

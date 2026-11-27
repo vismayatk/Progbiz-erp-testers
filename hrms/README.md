@@ -1,55 +1,65 @@
-# HRMS Module — Automation Study & Data
+# HRMS — Playwright automation suite
 
-Study of the **HRMS ERP** (https://hrms-erp.progbiz.in, tenant `Hrms`) done as preparation for
-Playwright automation code. Every one of the module's **80 pages** was crawled live and captured.
+Positive-workflow automation for the **HRMS module** of the ProgBiz ERP, against
+`https://hrms-test.progbiz.in` (tenant `pbhrms`, admin `amit`). Creds come from env
+(`HRMS_BASE_URL`, `HRMS_COMPANY_CODE`, `HRMS_USERNAME`, `HRMS_PASSWORD`).
 
-## Start here
+## Quick start
 
-| Doc | What it covers |
-|---|---|
-| [docs/HRMS_Module_Study.docx](docs/HRMS_Module_Study.docx) | **Deliverable Word document** — all 6 docs consolidated, flowcharts as images, TOC (50 pp). PDF twin beside it. |
-| [docs/00_HRMS_OVERVIEW_AND_FLOWCHART.md](docs/00_HRMS_OVERVIEW_AND_FLOWCHART.md) | Module map, menu tree, mermaid flowcharts, ESS↔admin connections, automation notes |
-| [docs/01_CORE_HR.md](docs/01_CORE_HR.md) | Core HR deep dive (18 pages) |
-| [docs/02_RECRUITMENT.md](docs/02_RECRUITMENT.md) | Recruitment & Onboarding deep dive (15 pages) |
-| [docs/03_ATTENDANCE.md](docs/03_ATTENDANCE.md) | Attendance & Time deep dive (15 pages) |
-| [docs/04_LEAVE_MANAGEMENT.md](docs/04_LEAVE_MANAGEMENT.md) | Leave Management deep dive (21 pages) |
-| [docs/05_ESS_MY_WORKSPACE.md](docs/05_ESS_MY_WORKSPACE.md) | My Workspace / ESS deep dive (11 pages) |
+```bash
+npm run hrms:all           # full web regression (linear run + resignation + WFH + meeting)
+npm run hrms:all:mobile    # the above, then the mobile E2Es (if an Android emulator is attached)
+npm run hrms:leave         # one section only (core-hr | recruitment | onboarding | leave | ess | …)
+```
 
-## Folder contents
+**→ Full command reference: [docs/automation/COMMANDS.md](docs/automation/COMMANDS.md)** — every
+`npm run hrms:*` script and exactly what it runs.
+
+## How it works
+
+- **The linear run** (`tests/00_linear/hrms_linear_run.spec.js`) is the backbone: ONE test that walks
+  **every HRMS page** (`data/hrmsPages.js`, ~128 pages) in live sidebar order, in a single browser
+  tab. It creates **one employee** and flows that employee through the whole lifecycle (profile →
+  recruit a candidate → onboard → leave/ESS → exit + F&F). Each page is **health-checked** (loads, no
+  app-error/crash screen, finishes loading, tables render); pages whose job is to add data do it
+  **once** (`flows/linearActions.js`). Failures are soft so the walk never stops early; app-crash
+  **blockers** are flagged separately from ordinary failures, and every page's result lands in
+  `page-results.json`.
+- **Deep module specs** cover flows too complex for the linear walk: `tests/11_resignation` (full exit
+  lifecycle incl. F&F), `tests/13_wfh`, `tests/14_meeting`.
+- **Mobile E2Es** (`../mobile-app-tests/`) drive the Android app × web together — see COMMANDS.md.
+
+## Layout
 
 ```
 hrms/
-├── README.md                  ← you are here
-├── docs/                      ← module documentation + flowcharts (mermaid)
-├── data/
-│   ├── nav.json               ← full navigation capture (anchors, sidebar tree, app shell)
-│   ├── pages/*.json           ← 80 per-page captures: buttons, tabs, table columns, inputs, links
-│   ├── summary.json           ← merged per-group data
-│   └── summary.txt            ← human-readable merge
-├── screenshots/
-│   ├── 00_login.png, 01_landing.png, 02_menu_expanded.png
-│   └── <group>/<route>.png    ← one screenshot per page (core-hr / recruitment / attendance / leave / ess)
-├── exploration/               ← re-runnable crawl scripts
-│   ├── 01_login_and_nav.js    ← login + capture nav structure
-│   ├── 02_crawl_pages.js      ← crawl a group: node 02_crawl_pages.js <core-hr|recruitment|attendance|leave|ess>
-│   ├── 03_summarize.js        ← merge page JSONs into summary
-│   └── 04_recapture_ess.js    ← re-capture lazy-loading ESS pages (longer settle)
-└── pages/
-    └── HrmsLoginPage.js       ← Playwright POM login for the HRMS tenant (env-driven creds)
+├── README.md                     ← you are here
+├── playwright.config.js          ← HRMS config (global-setup admin login, storageState)
+├── scripts/run-module.js         ← the `npm run hrms:<module>` runner (+ data/modulePresets.js)
+├── tests/
+│   ├── 00_linear/                ← the linear run (every page, one tab)   ← the main suite
+│   ├── 00_smoke/                 ← page-reachability smoke
+│   └── 01_… 15_…                 ← per-module specs (resignation, wfh, meeting, leave, ess, …)
+├── flows/                        ← linearActions, runEmployee, recruitmentFlow, leaveFlow, pageCheck, …
+├── pages/                        ← page objects (core-hr, recruitment, onboarding, resignation, ess, …)
+├── data/                         ← hrmsPages.js (the page list), modulePresets.js, test data
+└── docs/
+    ├── automation/COMMANDS.md        ← command reference
+    ├── automation/TEST_INVENTORY.md  ← full page/action breakdown of the run
+    ├── testing/                      ← QA docs (test plan, strategy, cases, RTM, coverage)
+    └── 00–05 *.md                    ← earlier module STUDY (page catalog on the old tenant; reference only)
 ```
 
-## Re-running the crawl
+## Scope & caveats
 
-```bash
-node hrms/exploration/01_login_and_nav.js        # nav + login check
-node hrms/exploration/02_crawl_pages.js core-hr  # per group (5 groups)
-node hrms/exploration/03_summarize.js            # rebuild summary
-```
+- **Positive flows + page health.** It proves pages load and the main actions work; it is **not**
+  exhaustive negative/validation or business-rule-correctness testing (e.g. it won't catch a wrong
+  F&F TDS calculation — see the defect log).
+- **Attendance, Payroll, and the Exit lifecycle** are **page-level** in the linear run; their deep
+  flows live in dedicated specs / are owned separately.
+- Blazor WASM can fail to load in headless Chromium over HTTP/2 — if the app renders blank, run
+  headed or add `--disable-http2` (see COMMANDS.md).
 
-Credentials are read from env in test code (`HRMS_BASE_URL`, `HRMS_COMPANY_CODE`, `HRMS_USERNAME`, `HRMS_PASSWORD`);
-the exploration scripts currently use the shared test-tenant login.
-
-## Next step (not yet done)
-
-Test-case authoring + spec skeletons per sub-module, reusing `pages/HrmsLoginPage.js` and following
-the `erp/<module>/{pages,tests}` POM convention of this repo.
+> The `docs/00–05` module-study markdown and `data/pages/*.json` captures were the earlier research
+> phase (crawled on the old `hrms-erp.progbiz.in` tenant). They remain as reference; the live suite
+> above targets `hrms-test.progbiz.in`.

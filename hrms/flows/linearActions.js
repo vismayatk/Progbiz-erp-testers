@@ -34,6 +34,15 @@ const { buildEmployeeImportXlsx } = require('./employeeImport');
 const BASE = process.env.HRMS_BASE_URL || 'https://hrms-test.progbiz.in';
 const CV = path.join(__dirname, '..', 'fixtures', 'files', 'sample-cv.pdf');
 
+// Requisition approver — MAKER-CHECKER (segregation of duties): the person who RAISES a Job
+// Requisition (the run admin, amit) cannot approve their own request, so a SECOND HR manager signs
+// in to accept it. Defaults to the test HR-manager account "Amir" (pbhrms0304, password = its
+// employee code); override with HRMS_APPROVER_USER / HRMS_APPROVER_PASS.
+const APPROVER = {
+  username: process.env.HRMS_APPROVER_USER || 'pbhrms0304',
+  password: process.env.HRMS_APPROVER_PASS || 'pbhrms0304',
+};
+
 // ── run state shared between actions (survives a worker restart / single-page re-run) ──
 const STATE = path.join(__dirname, '..', '.auth', 'linear-run.json');
 const state = () => (fs.existsSync(STATE) ? JSON.parse(fs.readFileSync(STATE, 'utf-8')) : {});
@@ -530,7 +539,7 @@ module.exports = {
   },
 
   // ═══════════════════════════ Recruitment ═══════════════════════════
-  async raiseAndApproveRequisition({ page }) {
+  async raiseAndApproveRequisition({ page, browser, testInfo }) {
     const fk = new FormKit(page);
     const marker = tagged('Additional Software Tester for Q4 delivery');
     await R.clickLauncher(page, /New Requisition/i);
@@ -547,24 +556,29 @@ module.exports = {
     if (await waitVisible(yes, 6000)) await yes.click();   // repeat role → the app's "raise anyway" path
     await expect(form, 'the requisition form closes on submit').toBeHidden({ timeout: 20000 });
     remember({ reqMarker: marker });
-    log(`requisition raised ("${marker}")`);
-    // Approve our pending request. Some tenants auto-approve Job Requisitions (no manual approval
-    // step) or don't surface the Business Justification in the approval Details, so if the pending
-    // approval can't be matched, fall back to confirming the requisition is already Approved rather
-    // than failing the whole run.
-    let via = 'approvals';
+    log(`requisition raised as admin ("${marker}")`);
+    // Approve our pending request. MAKER-CHECKER: the admin who raised it cannot approve their own
+    // Job Requisition, so a SECOND HR manager (Amir, pbhrms0304) signs in to accept it in a separate
+    // session, then we return as the admin to verify. Some tenants auto-approve Job Requisitions (no
+    // manual step) or don't surface the Business Justification in the approval Details, so if the
+    // pending approval can't be matched, fall back to confirming the requisition is already Approved
+    // rather than failing the whole run.
+    let via = `approver ${APPROVER.username}`;
     try {
-      await R.approveRecruitmentRequest(page, fk, 'Job Requisition', marker);
+      await withUser(browser, testInfo, APPROVER, async (approverPage) => {
+        await R.approveRecruitmentRequest(approverPage, new FormKit(approverPage), 'Job Requisition', marker);
+      });
+      log(`requisition approved by second HR manager ${APPROVER.username}`);
     } catch (e) {
       via = 'auto/none';
-      log(`no matching pending Job-Requisition approval — checking the requisition status directly (${String(e.message).slice(0, 70)})`);
+      log(`could not approve as ${APPROVER.username} — checking the requisition status directly (${String(e.message).slice(0, 70)})`);
     }
     await page.goto(`${BASE}/requisition-list`, { waitUntil: 'domcontentloaded' });
     const rows = await R.readRows(page, { withHtml: true });
     const reqRow = (rows.find(r => r.html.includes(marker)) || {}).text || '';
     expect(reqRow, 'the raised requisition should be listed on the requisition list').toBeTruthy();
-    expect(reqRow, `the requisition should end up Approved (via ${via}); if still Pending, the tenant's Job-Requisition approval workflow needs an approver/fallback configured`).toMatch(/Approved/);
-    log(`requisition Approved (${via === 'approvals' ? 'in Recruitment Approvals' : 'auto — no manual approval step on this tenant'})`);
+    expect(reqRow, `the requisition should end up Approved (via ${via}); if still Pending, check that ${APPROVER.username} is an HR manager set as the Job-Requisition approver in /approval/assignment`).toMatch(/Approved/);
+    log(`requisition Approved (via ${via})`);
   },
 
   async openingAndCandidate({ page }) {

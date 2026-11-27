@@ -12,7 +12,8 @@ Every runnable `npm` script for the HRMS suite, and exactly what it executes. Al
 
 | Command | What it runs |
 |---|---|
-| `npm run hrms:all` | **Full web regression** — the linear run + the 3 standalone specs (resignation, WFH, meeting). See below. |
+| `npm run hrms:linear` | **The linear run ALONE** — one test, every HRMS page in one tab (`tests/00_linear`). Nothing else. |
+| `npm run hrms:all` | **Full web regression** = the linear run **plus** 3 standalone module specs (resignation, WFH, meeting). So it *includes* `hrms:linear` but runs more — they are **not** the same. |
 | `npm run hrms:all:mobile` | `hrms:all` **then** the mobile E2Es (only if an Android emulator is attached; else the mobile half is skipped with a note). Prints a pass/fail summary. |
 
 ## Full web suite
@@ -42,7 +43,7 @@ run employee is bootstrapped if an earlier step was skipped.
 | `npm run hrms:payroll` | Payroll (base page checks) |
 | `npm run hrms:helpdesk` | Helpdesk |
 | `npm run hrms:referral` | Referral |
-| `npm run hrms:linear` | the **whole** linear run (all sections) |
+| `npm run hrms:linear` | the **whole** linear run (all sections) — i.e. the complete `tests/00_linear` with no section filter, and **no** module specs (that is what `hrms:all` adds) |
 
 ## Standalone module specs (web)
 

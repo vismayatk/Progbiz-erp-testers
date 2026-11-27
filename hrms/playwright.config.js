@@ -26,7 +26,10 @@ module.exports = defineConfig({
 
   // Smoke specs are read-only → light parallelism is safe on the HRMS tenant.
   workers:  Number(process.env.HRMS_WORKERS || 2),
-  retries:  1,
+  // 0 by default: the linear run is ONE big test, so a single flaky page would otherwise re-walk all
+  // ~128 pages. Its own soft-assertion walk already surfaces every page's result in one pass; page
+  // checks now poll/wait rather than one-shot, so a genuine flake is rare. Override with HRMS_RETRIES.
+  retries:  Number(process.env.HRMS_RETRIES || 0),
 
   reporter: [
     ['list'],

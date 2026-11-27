@@ -78,12 +78,26 @@ async function checkPage(page, entry) {
   await expect(page.locator('#blazor-error-ui:visible'), `${entry.label}: no application error bar`).toHaveCount(0);
   await expect(page.getByText(/An unhandled error has occurred|Unhandled exception/i), `${entry.label}: no unhandled error`).toHaveCount(0);
 
-  // 4. A visible page heading in the content area.
-  const heading = await page.evaluate(() => {
-    const vis = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.left > 240; };
-    const h = [...document.querySelectorAll('h1, h2, h3, h4, h5, .page-title, .card-title, .breadcrumb')].find(e => vis(e) && (e.innerText || '').trim());
-    return h ? h.innerText.replace(/\s+/g, ' ').trim().slice(0, 80) : '';
+  // 4. A visible page heading in the content area. Heavy pages (e.g. Recruitment) render the heading
+  //    a beat late and briefly shift the content left (under the sidebar) before the layout settles,
+  //    so a one-shot read can see "" even though the page is fine. Poll until a heading appears.
+  const readHeading = () => page.evaluate(() => {
+    const txt = e => (e.innerText || '').replace(/\s+/g, ' ').trim();
+    // Exclude the sidebar/nav by ANCESTOR (robust to collapsed vs expanded width — a fixed x-threshold
+    // wrongly dropped real content headings at left≈100 when the sidebar was collapsed), plus a light
+    // left guard so a stray off-canvas element doesn't count.
+    const inNav = e => !!e.closest('nav, aside, [class*="sidebar" i], [class*="side-nav" i], [class*="side-menu" i]');
+    const ok = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.left > 60 && !inNav(e); };
+    const prefer = [...document.querySelectorAll('.page-title, h1, h2')].find(e => ok(e) && txt(e));
+    if (prefer) return txt(prefer).slice(0, 80);
+    const any = [...document.querySelectorAll('h3, h4, h5, .card-title, .breadcrumb')].find(e => ok(e) && txt(e));
+    return any ? txt(any).slice(0, 80) : '';
   });
+  let heading = await readHeading();
+  for (let waited = 0; !heading && waited < 20000; waited += 1000) {
+    await page.waitForTimeout(1000);
+    heading = await readHeading();
+  }
   expect(heading, `${entry.label}: the page should show a heading`).not.toBe('');
 
   // 5. Lists render: each visible table shows its header; rows (data or an empty-state row) get up to

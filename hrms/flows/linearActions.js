@@ -330,8 +330,10 @@ module.exports = {
     // Verify the new workflow is listed (filter the table by its name).
     await page.goto(`${BASE}/approval/config`, { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+    // Filter by the FULL unique name so the new workflow is the only match on page 1 (the list sorts
+    // oldest-first and paginates, so filtering by just "QA Leave Approval" leaves the newest on a later page).
     const nameFilter = page.locator('#filter-wf-name');
-    if (await waitVisible(nameFilter, 5000)) { await nameFilter.fill('QA Leave Approval'); await page.waitForTimeout(1200); }
+    if (await waitVisible(nameFilter, 5000)) { await nameFilter.fill(name); await page.waitForTimeout(1200); }
     await expect(page.getByText(name, { exact: false }).filter({ visible: true }).first(),
       `the new approval workflow "${name}" should be listed`).toBeVisible({ timeout: 20000 });
     log(`approval workflow created: "${name}" (Leave Request · Report Person) — not default, not assigned`);
@@ -567,7 +569,7 @@ module.exports = {
     await R.clickLauncher(page, /Add Job Opening/i);
     const form = await fk.scope({ ready: '#designation' });
     await fk.setSelect(form.locator('#designation'), R.DESIGNATION, 'Designation');
-    await fk.setSelect(form.locator('#employmentType'), 'FullTime', 'Employment Type');
+    await fk.setSelect(form.locator('#employmentType'), 'Full Time', 'Employment Type');   // option label is "Full Time" (with space), not "FullTime"
     await fk.setSelect(form.locator('#department'), R.DEPARTMENT, 'Department');
     await fk.setSelect(form.locator('#status'), 'Open', 'Status');
     await fk.setSelect(form.locator('#vacancyLocation'), 'Office', 'Work Type');
@@ -1168,7 +1170,7 @@ module.exports = {
     await fk.setInput(form.getByPlaceholder(/Former colleague/i), 'Former colleague at Infopark, Kochi', 'How do you know the candidate');
     await fk.upload(form.locator('input[type="file"]').first(), CV, 'Resume / CV');
     await form.locator('button, a.btn').filter({ hasText: /Submit Referral/i }).first().click();
-    await page.waitForURL(/\/ess\/referral\/detail\//i, { timeout: 30000 });
+    await page.waitForURL(/\/referral\/detail\//i, { timeout: 30000 });   // app uses /my-workspace/referral/detail/, not /ess/
     log(`referral submitted for ${who.full}`);
 
     // Admin: assign the newest opening → accept into the pipeline.

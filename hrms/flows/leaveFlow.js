@@ -221,9 +221,9 @@ async function findPendingRequest(page, firstName, reason) {
 async function managerApproves(page, firstName, reason) {
   const target = await findPendingRequest(page, firstName, reason);
   await page.locator('table tbody tr').nth(target).locator('button, a').filter({ hasText: /^\s*Approve\s*$/ }).first().click();
-  const dlg = page.locator('.swal2-popup').filter({ hasText: /Approve Leave Request\?/i }).first();
+  const dlg = page.locator('.modal.show, [role="dialog"], .swal2-popup').filter({ hasText: /Approve Leave Request\?/i }).first();
   await expect(dlg, '"Approve Leave Request?" confirmation').toBeVisible({ timeout: 10000 });
-  await dlg.locator('button').filter({ hasText: /^\s*Yes, Approve\s*$/i }).first().click();
+  await dlg.locator('button').filter({ hasText: /^\s*(Yes,?\s*)?Approve\s*$/i }).first().click();
   await expect(dlg, 'the approval confirmation closes').toBeHidden({ timeout: 20000 });
 }
 

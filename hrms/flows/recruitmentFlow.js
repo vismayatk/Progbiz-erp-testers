@@ -192,22 +192,24 @@ async function scheduleInterview(page, rec) {
   const fk = new FormKit(page);
   // The form loads its opening list when it opens, so a just-created opening can be missing
   // until a fresh load — reopen it (after a reload) until this run's opening is offered.
+  // Job Opening is a CUSTOM dropdown (si-dd component: button.si-dd-toggle → ul.si-dd-menu →
+  // li.si-dd-item "JOB#### …"), NOT a native <select>, so it must be opened and its item clicked —
+  // the old <option> poll could never see the opening. Reopen the form until this run's opening shows.
   let form;
   for (let attempt = 1; attempt <= 4; attempt++) {
     await fk.gotoReady(`${BASE}/interview-schedules`, { ready: /Schedule Interview/i });
     await clickLauncher(page, /Schedule Interview/i);
     form = await fk.scope({ ready: 'input[type="datetime-local"]' });   // unique to the schedule form
     await fk.pickByOption(form, DESIGNATION, 'Designation');
-    const offered = await expect.poll(async () => (await form.locator('option').allTextContents()).some(t => t.includes(rec.openingCode)),
-      { timeout: 15000 }).toBe(true).then(() => true, () => false);
-    if (offered) break;
+    await page.waitForTimeout(1200);
+    await form.locator('.si-dd-toggle').first().click().catch(() => {});   // open the Job Opening dropdown
+    const openItem = page.locator('.si-dd-menu li.si-dd-item').filter({ hasText: rec.openingCode }).first();
+    const offered = await openItem.waitFor({ state: 'visible', timeout: 15000 }).then(() => true, () => false);
+    if (offered) { await openItem.click(); break; }
     console.log(`  ℹ️ opening ${rec.openingCode} not offered yet — reloading the schedule form (attempt ${attempt})`);
+    await page.keyboard.press('Escape').catch(() => {});
     await page.waitForTimeout(10000);
   }
-
-  // Pick each step by the value it must offer: Designation → Job Opening (the one the
-  // candidate applied to) → Candidate → Round.
-  await fk.pickByOption(form, rec.openingCode, 'Job Opening');
   // Candidate: target the Candidate select itself (placeholder "Select candidate") and wait for
   // this run's full name — a loose match can hit the Interviewer list, which holds employees with
   // the same realistic names.

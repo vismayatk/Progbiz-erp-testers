@@ -330,10 +330,14 @@ module.exports = {
     // Verify the new workflow is listed (filter the table by its name).
     await page.goto(`${BASE}/approval/config`, { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
-    // Filter by the FULL unique name so the new workflow is the only match on page 1 (the list sorts
-    // oldest-first and paginates, so filtering by just "QA Leave Approval" leaves the newest on a later page).
-    const nameFilter = page.locator('#filter-wf-name');
-    if (await waitVisible(nameFilter, 5000)) { await nameFilter.fill(name); await page.waitForTimeout(1200); }
+    // The Configured Workflows list has no name filter; it paginates oldest-first, so the new (newest)
+    // workflow lands on the LAST page. Show all rows (largest page size) so it renders on one page.
+    const pageSize = page.locator('#page_size');
+    if (await waitVisible(pageSize, 5000)) {
+      const biggest = (await pageSize.locator('option').allTextContents())
+        .map(o => Number(String(o).replace(/\D/g, '')) || 0).sort((a, b) => b - a)[0];
+      if (biggest) { await pageSize.selectOption(String(biggest)).catch(() => {}); await page.waitForTimeout(1500); }
+    }
     await expect(page.getByText(name, { exact: false }).filter({ visible: true }).first(),
       `the new approval workflow "${name}" should be listed`).toBeVisible({ timeout: 20000 });
     log(`approval workflow created: "${name}" (Leave Request · Report Person) — not default, not assigned`);
@@ -711,14 +715,14 @@ module.exports = {
     await modal().getByText(/^\s*Take-home Assignment\s*$/).first().click().catch(() => {});
     await fk.setInput(modal().getByPlaceholder('e.g. React Component Build'), title, 'Title');
     await fk.setInput(modal().locator('textarea').first(), 'Write 10 test cases for the login page (positive and negative) and log any defects you find.', 'Instructions');
-    await fk.setInput(modal().getByText(/^\s*Max Score/).first().locator('xpath=following::input[1]'), '100', 'Max Score');
+    // (The old "Max Score" numeric field was replaced by a pre-set "Rating: 1–5 stars" dropdown — no action needed.)
     await fk.setInput(modal().getByPlaceholder('e.g. 5'), '3', 'Due In (days)');
     await modal().locator('button').filter({ hasText: /^\s*Save\s*$/ }).first().click();
     await expect(modal(), 'the form closes on save').toBeHidden({ timeout: 20000 });
     await page.goto(`${BASE}/assessment-list`, { waitUntil: 'domcontentloaded' });
     const row = () => page.locator('table tbody tr').filter({ hasText: title }).first();
     await expect(row(), `assignment "${title}" is listed`).toBeVisible({ timeout: 30000 });
-    log(`take-home assignment "${title}" created (max 100, due in 3 days)`);
+    log(`take-home assignment "${title}" created (rating 1–5 stars, due in 3 days)`);
 
     // 2. Send it to this run's candidate on this run's opening.
     await row().locator('[title="Send to candidates"]').click();
@@ -1185,7 +1189,7 @@ module.exports = {
       return row;
     };
     await (await adminRow()).locator('a, button').filter({ hasText: /Manage/i }).first().click();
-    await page.waitForURL(/\/ess\/referral\/admin\/detail\//, { timeout: 20000 });
+    await page.waitForURL(/\/referral\/admin\/detail\//, { timeout: 20000 });   // app uses /my-workspace/referral/admin/detail/, not /ess/
     const detailUrl = page.url();
     const job = fk.selectWithOption(page, 'Choose an open job');
     // The open-job options load after the page — wait for them before choosing.

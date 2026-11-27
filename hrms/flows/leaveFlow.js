@@ -171,18 +171,23 @@ async function employeeApplies(page, { type, reason, day }) {
   const policy = (await page.locator('body').innerText()).replace(/\s+/g, ' ').match(/Policy check.{0,200}/)?.[0] || '';
   expect(policy, 'the policy check should not block the request').not.toMatch(/not allowed|insufficient|exceed|violat|cannot/i);
   await page.locator('button').filter({ hasText: /^\s*Apply\s*$/ }).first().click();
-  let said = '';
+  // Success = the app's confirmation toast OR the request landing in "My Leave Requests". The toast
+  // can flash too fast to catch, but the applied row is a durable signal — accept either.
+  const [y, mo, d] = String(day).split('-');
+  const shownDate = (y && mo && d) ? `${d}/${mo}/${y}` : '';
+  const landed = async () => (shownDate ? await page.locator('table tbody tr').filter({ hasText: shownDate }).count().catch(() => 0) : 0) > 0;
+  let said = '', done = false;
   const deadline = Date.now() + 25000;
   while (Date.now() < deadline) {
     said = (await page.locator('.swal2-popup, .toast, [role="alert"]').allInnerTexts().catch(() => [])).join(' | ').replace(/\s+/g, ' ');
     if (/conflict|overlap|insufficient|exceed|not allowed|failed|error/i.test(said)) throw new Error(`the leave request was refused: "${said}"`);
-    if (/success|submitted|applied|sent for approval/i.test(said)) break;
+    if (/success|submitted|applied|sent for approval/i.test(said) || await landed()) { done = true; break; }
     const ok = page.locator('.swal2-confirm');
     if (await ok.isVisible().catch(() => false)) await ok.click().catch(() => {});
     await page.waitForTimeout(500);
   }
-  expect(said, 'the app should confirm the leave request').toMatch(/success|submitted|applied|sent for approval/i);
-  return said;
+  expect(done, 'the app should confirm the leave request (toast, or the request appearing in My Leave Requests)').toBe(true);
+  return said || 'request listed';
 }
 
 /**

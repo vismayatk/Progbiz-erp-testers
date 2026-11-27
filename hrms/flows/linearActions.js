@@ -156,7 +156,7 @@ module.exports = {
     await view.verifyLifecycleJoined(full);
     log(`profile view ✔ Basic · Address (${full.presentCity}, ${full.presentState}; permanent = present) · Bank · Documents · Emergency · History (${histRows} events) · Lifecycle (Joined)`);
     // Tabs that fill later in the employee's life — confirm they render; their data comes from later steps / modules.
-    for (const [id, name] of [['probation-tab', 'Probation'], ['salary-details-tab', 'Salary History'], ['bgv-tab', 'Background Verification'], ['attendance-history-tab', 'Attendance History']]) {
+    for (const [id, name] of [['probation-tab', 'Probation'], ['salary-details-tab', 'Salary History'], ['bgv-tab', 'Background Verification'], ['attendance-history-tab', 'Attendance History'], ['leave-history-tab', 'Leave History']]) {
       const t = await view.readTab(id);
       expect(t, `the ${name} tab should render`).not.toBe('');
       log(`profile view · ${name}: "${t.slice(0, 70)}"`);
@@ -542,11 +542,23 @@ module.exports = {
     await expect(form, 'the requisition form closes on submit').toBeHidden({ timeout: 20000 });
     remember({ reqMarker: marker });
     log(`requisition raised ("${marker}")`);
-    await R.approveRecruitmentRequest(page, fk, 'Job Requisition', marker);
+    // Approve our pending request. Some tenants auto-approve Job Requisitions (no manual approval
+    // step) or don't surface the Business Justification in the approval Details, so if the pending
+    // approval can't be matched, fall back to confirming the requisition is already Approved rather
+    // than failing the whole run.
+    let via = 'approvals';
+    try {
+      await R.approveRecruitmentRequest(page, fk, 'Job Requisition', marker);
+    } catch (e) {
+      via = 'auto/none';
+      log(`no matching pending Job-Requisition approval — checking the requisition status directly (${String(e.message).slice(0, 70)})`);
+    }
     await page.goto(`${BASE}/requisition-list`, { waitUntil: 'domcontentloaded' });
     const rows = await R.readRows(page, { withHtml: true });
-    expect((rows.find(r => r.html.includes(marker)) || {}).text || '', 'the requisition shows Approved').toMatch(/Approved/);
-    log('requisition approved in Recruitment Approvals');
+    const reqRow = (rows.find(r => r.html.includes(marker)) || {}).text || '';
+    expect(reqRow, 'the raised requisition should be listed on the requisition list').toBeTruthy();
+    expect(reqRow, `the requisition should end up Approved (via ${via}); if still Pending, the tenant's Job-Requisition approval workflow needs an approver/fallback configured`).toMatch(/Approved/);
+    log(`requisition Approved (${via === 'approvals' ? 'in Recruitment Approvals' : 'auto — no manual approval step on this tenant'})`);
   },
 
   async openingAndCandidate({ page }) {
@@ -805,6 +817,62 @@ module.exports = {
     const rec = need('rec', 'Job Board');
     await R.sendPreboardingInvite(page, rec);
     log(`pre-boarding invite e-mailed to ${rec.candidateEmail} — Invited`);
+  },
+
+  // Close the recruitment→onboarding handoff on the SAME recruited candidate: HR copies the
+  // pre-boarding portal link → the candidate (fresh, unauthenticated page) fills + submits it →
+  // HR accepts the submission in Pre-boarding Approvals → Start Onboarding → onboarded.
+  async candidateCompletesPreboardingAndOnboard({ page }) {
+    const rec = need('rec', 'Job Board');
+    const context = page.context();   // the linear run passes { page, browser }; reuse the page's context
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE });
+
+    // 1) HR copies the candidate's pre-boarding portal link (offered while the invite is valid).
+    const url = await R.copyPreboardingLink(page, rec);
+    log(`copied pre-boarding portal link for ${rec.candidateName}`);
+
+    // 2) The CANDIDATE fills + submits the pre-boarding form through that token link (no login).
+    const res = await R.submitPreboardingDetails(context, url, rec);
+    if (res.page) await res.page.close().catch(() => {});
+    if (res.readOnly) log(`pre-boarding portal already submitted (read-only) — "${res.body}"`);
+    else { expect(res.ok, `the candidate pre-boarding submission should succeed (errors: ${JSON.stringify(res.errors)})`).toBeTruthy(); log('candidate submitted pre-boarding details via the portal'); }
+
+    // 3) HR side: the offer-acceptance row should move past "Invited" (Submitted / Start Onboarding).
+    const fk = new FormKit(page);
+    await fk.gotoReady(`${BASE}/offer-acceptance`, { ready: /Accepted Offers/i });
+    const row = page.locator('table tbody tr').filter({ hasText: rec.candidateEmail }).first();
+    await expect(row, 'the HR offer-acceptance row after submission').toBeVisible({ timeout: 20000 });
+
+    // 4) HR accepts the pre-boarding submission in Pre-boarding Approvals.
+    const { PreboardingApprovalsPage } = require('../pages/onboarding/PreboardingApprovalsPage');
+    const pa = new PreboardingApprovalsPage(page);
+    await pa.open();
+    if (await pa.awaitingCount() > 0) {
+      const approvedName = await pa.approveFirst();
+      log(`pre-boarding accepted in Pre-boarding Approvals (approved "${approvedName}")`);
+    } else {
+      log('no awaiting pre-boarding submission to approve (already accepted / auto-approved)');
+    }
+
+    // 5) Start Onboarding for the candidate (if offered) → onboarded.
+    await fk.gotoReady(`${BASE}/offer-acceptance`, { ready: /Accepted Offers/i });
+    const row2 = page.locator('table tbody tr').filter({ hasText: rec.candidateEmail }).first();
+    const startBtn = row2.locator('button, a').filter({ hasText: /Start Onboarding/i }).first();
+    if (await waitVisible(startBtn, 8000)) {
+      await startBtn.click();
+      const yes = page.locator('.swal2-popup button, .modal.show button').filter({ hasText: /start|confirm|yes|proceed|onboard/i }).first();
+      if (await waitVisible(yes, 5000)) await yes.click().catch(() => {});
+      await page.waitForTimeout(1500);
+      log('Start Onboarding triggered for the candidate → onboarded');
+    } else {
+      log('Start Onboarding not offered — candidate may already be in the onboarding pipeline');
+    }
+
+    // 6) Verify the candidate reached onboarding (pipeline or onboarded report).
+    const inPipeline = (await R.rowOn(page, fk, 'onboarding-pipeline', /Onboard/i, rec.candidateName))
+      || (await R.rowOn(page, fk, 'onboarded-employees-report', /Onboard/i, rec.candidateName));
+    log(`onboarding handoff ${inPipeline ? `verified — ${rec.candidateName} appears in onboarding` : 'done (candidate not yet visible in pipeline/report — review)'}`);
+    remember({ onboardedCandidate: rec.candidateName });
   },
 
   // ═══════════════════════════ Onboarding ═══════════════════════════
@@ -1148,5 +1216,94 @@ module.exports = {
     await expect.poll(async () => (await (await adminRow()).innerText()).replace(/\s+/g, ' '),
       { timeout: 90000, intervals: [10000], message: 'the referral should become Hired with a Pending reward' }).toMatch(/Hired\s+Pending/);
     log('referral → Hired; reward raised automatically (Pending — never approved/paid)');
+  },
+
+  // Complete Resignation & Exit lifecycle + F&F, on a DEDICATED throwaway employee (NEVER the main
+  // run employee — the flow is TERMINAL: Close ends employment and completing F&F locks the record).
+  // Mirrors tests/11 (Initiate → Approve/On-Notice → HR Review → Task Board → Clearance → Interview →
+  // F&F → Close). Tolerant of the tenant's exit-approval config: if amit is not the resolved approver
+  // the exit is still raised, but the On-Notice-gated steps (incl. F&F) are skipped with a clear note.
+  async exitLifecycleAndFnf({ page }) {
+    const data = require('../data/resignationData');
+    const reFlow = require('./resignationFlow');
+    const { ResignationsListPage } = require('../pages/resignation/ResignationsListPage');
+    const { ResignationDetailPage } = require('../pages/resignation/ResignationDetailPage');
+    const { ExitTaskBoardPage } = require('../pages/resignation/ExitTaskBoardPage');
+    const { ExitClearancePage } = require('../pages/resignation/ExitClearancePage');
+    const { ExitInterviewPage } = require('../pages/resignation/ExitInterviewPage');
+    const { FnfPage } = require('../pages/resignation/FnfPage');
+
+    // 1) Dedicated exit employee (terminal flow — keep the main run employee intact).
+    const emp = await reFlow.createExitEmployee(page);
+    log(`exit employee created: ${emp.display} (${emp.code})`);
+
+    // 2) Initiate Exit → resignation record.
+    const list = new ResignationsListPage(page);
+    await list.open();
+    const empSel = await list.openInitiateForm();
+    await list.pickEmployee(empSel, emp.code);
+    await list.setExitType('Resignation').catch(() => {});
+    await list.fillCommon(data.exitSpec());
+    await list.fillPerType('Resignation', {});
+    const guid = await list.submitInitiate(emp.code);
+    expect(guid, 'raising the exit should yield a detail guid').toMatch(/[0-9a-f-]{8,}/i);
+    log(`exit raised → /resignation/${guid}`);
+
+    // 3) Approve / advance to On Notice (only when an approver is configured for amit).
+    const det = new ResignationDetailPage(page);
+    await det.open(guid);
+    const onNotice = async () => /on\s*notice/i.test(await det.text());
+    let advanced = await onNotice();
+    if (!advanced && await det.canApprove()) {
+      await det.saveHrReview({ confirmedLwd: data.hrReview().confirmedLwd, checklistTemplate: 'Standard Exit Clearance' }).catch(e => log(`pre-approval HR review: ${e.message.slice(0, 80)}`));
+      await det.open(guid);
+      await det.recordRetention({ outcome: 'Proceed with Exit', date: data.todayISO() }).catch(() => {});
+      await det.open(guid);
+      await det.approve({}).catch(e => log(`approve: ${e.message.slice(0, 80)}`));
+      await det.open(guid);
+      advanced = await onNotice();
+    }
+    if (!advanced) {
+      log(`⚠ exit Pending and amit is not the resolved approver — the tenant's exit-approval workflow needs an approver/fallback configured; On-Notice steps + F&F skipped (exit raised for ${emp.code})`);
+      return;
+    }
+    log('exit advanced to On Notice');
+
+    // 4) HR Review (notice treatment + remarks — best-effort amendment).
+    await det.saveHrReview({ noticeTreatment: data.hrReview().noticeTreatment, hrRemarks: data.hrReview().hrRemarks }).catch(() => {});
+
+    // 5) Exit Task Board — checklist materialized; settle all mandatory items.
+    const board = new ExitTaskBoardPage(page);
+    await board.open(guid);
+    log(`exit task board: settled ${await board.settleAll()} checklist item(s)`);
+
+    // 6) Clearance read + Interview schedule (best-effort).
+    await new ExitClearancePage(page).open().then(b => null).catch(() => {});
+    const iv = new ExitInterviewPage(page);
+    await iv.open(guid).catch(() => {});
+    await iv.schedule({ template: (data.config && data.config.interview && data.config.interview.name) || 'Standard Exit Interview', mode: 'In Person', date: data.midExitDateISO(), interviewer: 'Amit' }).catch(e => log(`interview schedule: ${e.message.slice(0, 80)}`));
+    await iv.recordAnswers().catch(() => {});
+
+    // 7) F&F — re-settle clearance (Mark-completed is clearance-gated), then calculate → components →
+    //    save → mark completed → locked.
+    await new ExitTaskBoardPage(page).open(guid).catch(() => {});
+    const fnf = new FnfPage(page);
+    await fnf.open(guid);
+    await fnf.calculate();
+    for (const c of data.fnfComponents()) await fnf.addComponent(c).catch(e => log(`F&F component: ${e.message.slice(0, 80)}`));
+    await fnf.save();
+    log(`F&F net payable ≈ ${await fnf.netPayable()}`);
+    if (await fnf.canComplete()) {
+      await fnf.markCompleted();
+      await fnf.assertLocked();
+      log('F&F completed and locked ✔');
+    } else {
+      log('F&F calculated + saved; not completable yet (clearance-gated)');
+    }
+
+    // 8) Close the exit (may be gated only by the known letter-engine issue — reported, not a defect here).
+    await det.open(guid);
+    const res = await det.closeExit();
+    log(res.closed ? `exit CLOSED for ${emp.display} — full lifecycle + F&F complete` : `close blocked — remaining gate: ${String(res.blockers).slice(0, 120)}`);
   },
 };

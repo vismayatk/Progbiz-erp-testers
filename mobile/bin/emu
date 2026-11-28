@@ -1,0 +1,456 @@
+#!/bin/bash
+# emu — Mobile QA emulator helper: one Android emulator per Android version + iPhone Simulator.
+# Installed by Claude Code on 2026-10-07. Run `emu help` for usage, or just `emu` for the menu.
+
+export JAVA_HOME="${JAVA_HOME:-$HOME/.local/jdk-17/Contents/Home}"
+export ANDROID_HOME="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+
+QA_DIR="${QA_DIR:-$HOME/Progbiz/mobile-qa}"
+SHOT_DIR="$QA_DIR/screenshots"
+LOG_DIR="$QA_DIR/.logs"
+AVD_PREFIX="QA_Android_"
+DEVICE_PROFILE="pixel_7"
+ALL_VERSIONS="10 11 12 13 14 15 16 17"
+
+die() { echo "✗ $*" >&2; exit 1; }
+
+api_for() {
+  case "$1" in
+    10) echo 29 ;; 11) echo 30 ;; 12) echo 31 ;; 13) echo 33 ;;
+    14) echo 34 ;; 15) echo 35 ;; 16) echo 36 ;; 17) echo 37 ;;
+  esac
+}
+
+# SDK folder name of the system image (Google added a minor version from Android 17)
+img_for() {
+  case "$1" in
+    17) echo "android-37.0" ;;
+    *)  echo "android-$(api_for "$1")" ;;
+  esac
+}
+
+# Accepts "13", "android13", "Android 13" or an API level like "33" → prints "13"
+norm_version() {
+  local n; n=$(echo "$1" | tr -cd '0-9')
+  case "$n" in
+    29) n=10 ;; 30) n=11 ;; 31|32) n=12 ;; 33) n=13 ;; 34) n=14 ;; 35) n=15 ;; 36) n=16 ;; 37|370) n=17 ;;
+  esac
+  echo "$n"
+}
+
+# ---------------- Android ----------------
+
+installed_versions() {
+  emulator -list-avds 2>/dev/null | sed -n "s/^${AVD_PREFIX}//p" | sort -n
+}
+
+# Prints "serial avd_name" for every booted emulator
+running_android() {
+  adb devices 2>/dev/null | awk '/^emulator-/ && $2=="device" {print $1}' | while read -r s; do
+    echo "$s $(adb -s "$s" emu avd name </dev/null 2>/dev/null | head -1 | tr -d '\r')"
+  done
+}
+
+serial_for_version() {
+  running_android | awk -v n="${AVD_PREFIX}$1" '$2==n {print $1; exit}'
+}
+
+version_of_serial() {
+  adb -s "$1" emu avd name </dev/null 2>/dev/null | head -1 | tr -d '\r' | sed "s/^${AVD_PREFIX}//"
+}
+
+# Version given → that emulator; none → first running one
+# Test commands start the requested Android version first if it isn't running yet
+ensure_running() {
+  [ -n "$1" ] || return 0
+  [ -n "$(serial_for_version "$(norm_version "$1")")" ] && return 0
+  start_android "$1" || exit 1
+}
+
+pick_serial() {
+  local s
+  if [ -n "$1" ]; then
+    s=$(serial_for_version "$(norm_version "$1")")
+    [ -n "$s" ] || die "Android $1 is not running (start it: emu start $1)"
+  else
+    s=$(running_android | head -1 | awk '{print $1}')
+    [ -n "$s" ] || die "No Android emulator running — start one first, e.g. emu start 15"
+  fi
+  echo "$s"
+}
+
+create_avd() {
+  local v; v=$(norm_version "$1")
+  local api; api=$(api_for "$v")
+  [ -n "$api" ] || die "Unknown Android version '$1'. Supported: $ALL_VERSIONS"
+  local img="system-images;$(img_for "$v");google_apis;arm64-v8a"
+  if [ ! -d "$ANDROID_HOME/system-images/$(img_for "$v")/google_apis/arm64-v8a" ]; then
+    echo "→ Downloading Android $v system image (~1.5 GB)…"
+    sdkmanager --install "$img" >/dev/null || die "Image download failed"
+  fi
+  echo "no" | avdmanager create avd -n "${AVD_PREFIX}${v}" -k "$img" -d "$DEVICE_PROFILE" --force >/dev/null \
+    || die "Could not create the Android $v emulator"
+  local cfg="$HOME/.android/avd/${AVD_PREFIX}${v}.avd/config.ini" ram=2048
+  [ "$api" -ge 33 ] && ram=3072
+  # Typing from the Mac keyboard, enough RAM, Mac GPU acceleration, phone frame
+  sed -i '' -e '/^hw.keyboard=/d' -e '/^hw.ramSize=/d' -e '/^hw.gpu.enabled=/d' \
+    -e '/^hw.gpu.mode=/d' -e '/^showDeviceFrame=/d' "$cfg"
+  printf 'hw.keyboard=yes\nhw.ramSize=%s\nhw.gpu.enabled=yes\nhw.gpu.mode=host\nshowDeviceFrame=yes\n' "$ram" >> "$cfg"
+  echo "✓ Android $v (API $api) emulator created"
+}
+
+start_android() {
+  local v; v=$(norm_version "$1")
+  [ -n "$v" ] || die "Which Android version? e.g. emu start 15   (available: $ALL_VERSIONS)"
+  [ -n "$(api_for "$v")" ] || die "Unknown Android version '$1'. Supported: $ALL_VERSIONS"
+  installed_versions | grep -qx "$v" || create_avd "$v"
+
+  local s; s=$(serial_for_version "$v")
+  if [ -n "$s" ]; then echo "✓ Android $v is already running ($s)"; return 0; fi
+
+  local port=5554
+  while [ $port -le 5584 ]; do
+    adb devices | grep -q "emulator-$port" || lsof -nP -iTCP:$port -sTCP:LISTEN >/dev/null 2>&1 || break
+    port=$((port + 2))
+  done
+  mkdir -p "$LOG_DIR"
+  # Public DNS inside the emulator: with some home/office routers the emulator's DNS forwarder cannot resolve
+  # names (the app then sits on "Connecting…"). Set EMU_DNS=none to use the Mac's DNS instead.
+  local flags="-port $port -netdelay none -netspeed full"
+  [ "${EMU_DNS:-8.8.8.8,1.1.1.1}" != "none" ] && flags="$flags -dns-server ${EMU_DNS:-8.8.8.8,1.1.1.1}"
+  [ "$2" = "cold" ] && flags="$flags -no-snapshot-load"
+
+  echo "→ Starting Android $v (API $(api_for "$v")) — a phone window will open…"
+  # shellcheck disable=SC2086
+  nohup emulator -avd "${AVD_PREFIX}${v}" $flags >"$LOG_DIR/android-$v.log" 2>&1 &
+  disown
+  s="emulator-$port"
+  local t=0
+  until [ "$(adb -s "$s" shell getprop sys.boot_completed </dev/null 2>/dev/null | tr -d '\r')" = "1" ]; do
+    sleep 2; t=$((t + 2))
+    pgrep -f "avd ${AVD_PREFIX}${v}( |$)" >/dev/null || die "Emulator closed during startup — see $LOG_DIR/android-$v.log"
+    [ $t -ge 300 ] && die "Android $v did not finish booting in 5 min — see $LOG_DIR/android-$v.log"
+  done
+  # Wake + unlock, then wait for the home screen to actually be drawn
+  adb -s "$s" shell input keyevent 224 </dev/null >/dev/null 2>&1
+  adb -s "$s" shell wm dismiss-keyguard </dev/null >/dev/null 2>&1
+  local w=0
+  until adb -s "$s" shell dumpsys window </dev/null 2>/dev/null | grep -q "mCurrentFocus=.*[Ll]auncher" || [ $w -ge 30 ]; do
+    sleep 1; w=$((w + 1))
+  done
+  sleep 2
+  echo "✓ Android $v ready ($s, booted in $((t + w + 2))s)"
+}
+
+stop_android() {
+  local want="$1"; [ "$want" = "all" ] || want=$(norm_version "$want")
+  local stopped=""
+  while read -r s name; do
+    [ -n "$s" ] || continue
+    if [ -z "$want" ] || [ "$want" = "all" ] || [ "$name" = "${AVD_PREFIX}${want}" ]; then
+      adb -s "$s" emu kill </dev/null >/dev/null 2>&1
+      echo "■ Stopped Android ${name#"$AVD_PREFIX"} ($s)"
+      stopped="$stopped $s"
+    fi
+  done <<EOF
+$(running_android)
+EOF
+  # Wait for them to actually exit so RAM is free before the next one starts
+  local t=0
+  for s in $stopped; do
+    while adb devices | grep -q "^$s" && [ $t -lt 30 ]; do sleep 1; t=$((t + 1)); done
+  done
+}
+
+switch_android() {
+  local v; v=$(norm_version "$1")
+  [ -n "$(api_for "$v")" ] || die "Unknown Android version '$1'. Supported: $ALL_VERSIONS"
+  if [ -n "$(serial_for_version "$v")" ] && [ "$(running_android | wc -l | tr -d ' ')" = "1" ]; then
+    echo "✓ Android $v is already the running version"; return 0
+  fi
+  stop_android all
+  start_android "$v"
+}
+
+install_apk() {
+  local f="$1" target="$2" serials out pkg
+  if [ -n "$target" ]; then serials=$(pick_serial "$target") || exit 1
+  else
+    serials=$(running_android | awk '{print $1}')
+    [ -n "$serials" ] || die "No Android emulator running — start one first, e.g. emu start 15"
+  fi
+  pkg=$(apkanalyzer manifest application-id "$f" 2>/dev/null | tail -1)
+  for s in $serials; do
+    echo "→ Installing $(basename "$f") on Android $(version_of_serial "$s") ($s)…"
+    out=$(adb -s "$s" install -r -d -t "$f" </dev/null 2>&1)
+    if echo "$out" | grep -q "^Success"; then
+      echo "✓ Installed${pkg:+ ($pkg)}"
+      [ -n "$pkg" ] && adb -s "$s" shell monkey -p "$pkg" -c android.intent.category.LAUNCHER 1 </dev/null >/dev/null 2>&1 \
+        && echo "▶ Launched"
+    else
+      echo "$out" | tail -3
+      case "$out" in
+        *NO_MATCHING_ABIS*) echo "  Hint: this APK has no ARM64 build. Ask the developer for an arm64-v8a or universal APK." ;;
+        *UPDATE_INCOMPATIBLE*) echo "  Hint: an older copy signed with a different key is installed. Run: emu uninstall ${pkg:-<package>}" ;;
+        *OLDER_SDK*|*MIN_SDK*) echo "  Hint: the app does not support this Android version (minSdk is higher)." ;;
+      esac
+    fi
+  done
+}
+
+install_app() {
+  local f="$1"
+  [ -n "$f" ] || die "Usage: emu install <file.apk | file.app | file.zip> [android-version]"
+  [ -e "$f" ] || die "File not found: $f"
+  case "$f" in
+    *.apk|*.APK) install_apk "$f" "$2" ;;
+    *.aab|*.AAB) die "An .aab bundle can't be installed directly — ask the developer for an APK (universal APK)." ;;
+    *.apks|*.xapk) die "Split-APK bundles aren't supported — ask the developer for a single universal APK." ;;
+    *.ipa|*.IPA) die "An .ipa is built for real iPhones and won't run on the iPhone Simulator — ask the developer for a Simulator build (.app, usually zipped)." ;;
+    *.app|*.zip) ios_install "$f" ;;
+    *) die "Unsupported file type: $f" ;;
+  esac
+}
+
+screenshot() {
+  mkdir -p "$SHOT_DIR"
+  local ts label n=0; ts=$(date +%Y%m%d-%H%M%S); label="${1:+_$1}"
+  while read -r s name; do
+    [ -n "$s" ] || continue
+    local out="$SHOT_DIR/Android${name#"$AVD_PREFIX"}${label}_$ts.png"
+    adb -s "$s" exec-out screencap -p </dev/null >"$out" && echo "📸 $out" && n=$((n + 1))
+  done <<EOF
+$(running_android)
+EOF
+  if have_xcode && xcrun simctl list devices booted 2>/dev/null | grep -q Booted; then
+    local out="$SHOT_DIR/iPhone${label}_$ts.png"
+    xcrun simctl io booted screenshot "$out" >/dev/null 2>&1 && echo "📸 $out" && n=$((n + 1))
+  fi
+  [ $n -gt 0 ] || die "Nothing is running to screenshot"
+}
+
+record() {
+  local secs="${1:-30}" s v out
+  s=$(pick_serial "$2") || exit 1
+  v=$(version_of_serial "$s"); mkdir -p "$SHOT_DIR"
+  out="$SHOT_DIR/Android${v}_$(date +%Y%m%d-%H%M%S).mp4"
+  echo "● Recording Android $v for ${secs}s (max 180)…"
+  adb -s "$s" shell screenrecord --time-limit "$secs" /sdcard/emu_rec.mp4 </dev/null
+  adb -s "$s" pull /sdcard/emu_rec.mp4 "$out" >/dev/null && adb -s "$s" shell rm /sdcard/emu_rec.mp4 </dev/null
+  echo "🎬 $out"
+}
+
+# ---------------- iPhone (needs Xcode) ----------------
+
+have_xcode() { xcrun --find simctl >/dev/null 2>&1; }
+
+need_xcode() {
+  have_xcode || die "The iPhone Simulator needs Xcode. Install Xcode from the Mac App Store, open it once, then run: sudo xcode-select -s /Applications/Xcode.app"
+}
+
+ios_list() {
+  need_xcode
+  xcrun simctl list devices available | awk '
+    /^-- iOS/ {rt=$3; print "  iOS " rt ":"; next}
+    /^-- /    {rt=""; next}
+    rt && /iPhone|iPad/ {sub(/^ +/, ""); print "     " $0}'
+}
+
+# emu ios start [ios-version] [device name, e.g. "iPhone 16 Pro"]
+ios_start() {
+  need_xcode
+  local ver="$1" dev="${2:-iPhone}" line udid
+  line=$(xcrun simctl list devices available | awk -v want="$ver" -v dev="$dev" '
+    /^-- / {ok = ($2 == "iOS" && (want == "" || $3 == want || index($3, want ".") == 1)); next}
+    ok && index($0, dev) {last = $0; if (want != "") {print; found = 1; exit}}
+    END {if (!found && last != "") print last}')
+  [ -n "$line" ] || die "No ${dev} simulator for iOS ${ver:-any}. See installed ones: emu ios list   (add a version: emu ios add <version>)"
+  udid=$(echo "$line" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
+  xcrun simctl boot "$udid" 2>/dev/null
+  open -a Simulator --args -CurrentDeviceUDID "$udid"
+  xcrun simctl bootstatus "$udid" >/dev/null 2>&1
+  echo "✓ $(echo "$line" | sed -E 's/ \(.*//; s/^ +//') on iOS ${ver:-latest} is ready"
+}
+
+ios_stop() { need_xcode; xcrun simctl shutdown all 2>/dev/null; echo "■ Stopped all iPhone simulators"; }
+
+ios_add() {
+  need_xcode
+  [ -n "$1" ] || die "Usage: emu ios add <iOS version>, e.g. emu ios add 17.5"
+  echo "→ Downloading iOS $1 simulator runtime (several GB)…"
+  xcodebuild -downloadPlatform iOS -buildVersion "$1"
+}
+
+ios_install() {
+  need_xcode
+  local f="$1" app tmp id
+  xcrun simctl list devices booted | grep -q Booted || die "No iPhone simulator running — start one first: emu ios start"
+  if [ "${f%.zip}" != "$f" ]; then
+    tmp=$(mktemp -d); unzip -q "$f" -d "$tmp"
+    app=$(find "$tmp" -maxdepth 3 -name "*.app" -type d | head -1)
+    [ -n "$app" ] || die "No .app found inside $(basename "$f")"
+  else app="$f"; fi
+  if /usr/libexec/PlistBuddy -c 'Print CFBundleSupportedPlatforms' "$app/Info.plist" 2>/dev/null | grep -q iPhoneOS; then
+    die "This .app is built for real iPhones, not the Simulator — ask the developer for a Simulator build."
+  fi
+  id=$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist" 2>/dev/null)
+  xcrun simctl install booted "$app" && echo "✓ Installed ${id}" \
+    && [ -n "$id" ] && xcrun simctl launch booted "$id" >/dev/null && echo "▶ Launched"
+}
+
+# ---------------- Status & menu ----------------
+
+status() {
+  local running; running=$(running_android)
+  echo " Android (Pixel 7 emulator):"
+  local v s any=""
+  for v in $(installed_versions); do
+    any=1
+    s=$(echo "$running" | awk -v n="${AVD_PREFIX}$v" '$2==n {print $1}')
+    if [ -n "$s" ]; then printf "   ● Android %-3s (API %s)   running  %s\n" "$v" "$(api_for "$v")" "$s"
+    else printf "   ○ Android %-3s (API %s)\n" "$v" "$(api_for "$v")"; fi
+  done
+  [ -n "$any" ] || echo "   (none set up yet — emu start 15)"
+  echo
+  if have_xcode; then
+    echo " iPhone Simulator:"
+    local booted; booted=$(xcrun simctl list devices booted 2>/dev/null | grep Booted | sed -E 's/ \(.*//; s/^ +//')
+    if [ -n "$booted" ]; then echo "$booted" | sed 's/^/   ● /;s/$/   running/'; else echo "   ○ none running  (emu ios list)"; fi
+  else
+    echo " iPhone Simulator:  needs Xcode (not installed yet)"
+  fi
+}
+
+menu() {
+  local c f
+  while true; do
+    clear
+    echo "📱  Mobile QA Emulator"
+    echo "──────────────────────────────────────────────"
+    status
+    echo "──────────────────────────────────────────────"
+    echo "  13        Switch to Android 13 (any of: $ALL_VERSIONS)"
+    echo "  +16       Open Android 16 alongside the current one"
+    echo "  i         Install an APK (drag the file into this window)"
+    echo "  s         Screenshot all running devices"
+    have_xcode && echo "  ios 18    Start iPhone simulator on iOS 18"
+    echo "  x         Stop everything"
+    echo "  q         Quit menu (emulators keep running)"
+    echo
+    read -r -p "> " c
+    case "$c" in
+      q|Q|"") exit 0 ;;
+      x|X) ( stop_android all; have_xcode && ios_stop ) ;;
+      s|S) ( screenshot ) ;;
+      i|I)
+        read -r -p "APK file (drag & drop here, then Enter): " f
+        f="${f//\\ / }"; f="${f%"${f##*[![:space:]]}"}"; f="${f#\'}"; f="${f%\'}"
+        ( install_app "$f" ) ;;
+      +*) ( start_android "${c#+}" ) ;;
+      ios*) ( ios_start $(echo "${c#ios}" | xargs) ) ;;
+      *[0-9]*) ( switch_android "$c" ) ;;
+      *) echo "Unknown choice: $c" ;;
+    esac
+    echo; read -r -p "Press Enter to continue…" _
+  done
+}
+
+usage() {
+  cat <<EOF
+emu — Mobile QA emulator helper
+
+  emu                          Interactive menu
+  emu list                     Show Android versions / iPhone simulators and what's running
+  emu switch <version>         Stop running emulators and start that Android version (e.g. emu switch 13)
+  emu start <version> [cold]   Start an Android version alongside others ("cold" = fresh boot)
+  emu stop [version|all]       Stop one Android emulator, or all
+  emu install <file> [version] Install .apk on running Android emulator(s) and launch it
+                               (.app/.zip Simulator builds go to the running iPhone simulator)
+  emu uninstall <package> [v]  Remove an app (e.g. com.progbiz.app)
+  emu apps [version]           List installed (non-system) apps
+  emu shot [label]             Screenshot every running device → $SHOT_DIR
+  emu rec [seconds] [version]  Record Android screen to mp4 (default 30 s, max 180)
+  emu log [package] [version]  Live log for an app (errors only if no package)
+  emu crash [version]          Show recent app crashes (for bug reports)
+  emu test [version] [modules] Run the Progbiz ERP read-only smoke test (app must be logged in),
+                               e.g. emu test 13   ·   emu test 13 crm,projects   → HTML report
+  emu scenarios <ver> <tenant> Run the CRM flow: enquiry → follow-up → search → quotation + PDF → complaint (TEST tenant only; makes QA_MOB_ data)
+  emu release <ver> <tenant>   Run the release-note checks U1–U8 (Oct 2026 notes) → HTML report
+  emu all <ver> <tenant> [apk|-] [suites]
+                               Run EVERYTHING: release checks, CRM flow, old-issue re-check, every screen
+                               → one combined report. Optional APK to install first; suites e.g. release,crm
+                               e.g. emu all 13 ncore_test   ·   emu all 13 ncore_test ~/Downloads/erp.apk
+  emu ios list                 List iPhone/iPad simulators by iOS version
+  emu ios start [ver] [device] Start iPhone simulator, e.g. emu ios start 18 "iPhone 16 Pro"
+  emu ios add <ver>            Download another iOS version, e.g. emu ios add 17.5
+  emu ios stop                 Stop iPhone simulators
+
+Android versions: $ALL_VERSIONS (Android 12 = API 31 … Android 17 = API 37)
+EOF
+}
+
+# ---------------- Main ----------------
+
+adb start-server >/dev/null 2>&1
+
+case "$1" in
+  ""|menu)        menu ;;
+  list|status)    status ;;
+  start)          start_android "$2" "$3" ;;
+  switch)         switch_android "$2" ;;
+  stop)           stop_android "${2:-all}" ;;
+  create)         create_avd "$2" ;;
+  install)        install_app "$2" "$3" ;;
+  uninstall)      [ -n "$2" ] || die "Usage: emu uninstall <package>"; s=$(pick_serial "$3") || exit 1; adb -s "$s" uninstall "$2" ;;
+  apps)           s=$(pick_serial "$2") || exit 1; adb -s "$s" shell pm list packages -3 | sed 's/^package:/  /' | sort ;;
+  shot|screenshot) screenshot "$2" ;;
+  rec|record)     record "$2" "$3" ;;
+  log|logs)
+    s=$(pick_serial "$3") || exit 1
+    if [ -n "$2" ]; then
+      pid=$(adb -s "$s" shell pidof -s "$2" | tr -d '\r')
+      [ -n "$pid" ] || die "$2 is not running on $s"
+      adb -s "$s" logcat --pid="$pid"
+    else adb -s "$s" logcat '*:E'; fi ;;
+  crash)          s=$(pick_serial "$2") || exit 1; adb -s "$s" logcat -b crash -d ;;
+  test)
+    ensure_running "$2"
+    s=$(pick_serial "$2") || exit 1
+    SERIAL="$s" python3 "$QA_DIR/automation/erp_smoke.py" --serial "$s" ${3:+--only "$3"}
+    rc=$?; r=$(ls -td "$QA_DIR"/reports/erp-smoke_* 2>/dev/null | head -1)
+    [ -n "$r" ] && open "$r/report.html"; exit $rc ;;
+  release)
+    ensure_running "$2"
+    s=$(pick_serial "$2") || exit 1
+    [ -n "$3" ] || die "Usage: emu release <version> <tenant, e.g. ncore_test>"
+    python3 "$QA_DIR/automation/erp_release.py" --serial "$s" --tenant "$3"
+    rc=$?; r=$(ls -td "$QA_DIR"/reports/erp-release_* 2>/dev/null | head -1)
+    [ -n "$r" ] && open "$r/report.html"; exit $rc ;;
+  all)
+    ensure_running "$2"
+    s=$(pick_serial "$2") || exit 1
+    [ -n "$3" ] || die "Usage: emu all <version> <test tenant> [apk|-] [suites]   e.g. emu all 13 ncore_test"
+    apk="$4"; [ "$apk" = "-" ] && apk=""
+    python3 "$QA_DIR/automation/run_all.py" --serial "$s" --tenant "$3" ${apk:+--apk "$apk"} ${5:+--suites "$5"}
+    rc=$?; r=$(ls -td "$QA_DIR"/reports/erp-all_* 2>/dev/null | head -1)
+    [ -n "$r" ] && [ -f "$r/index.html" ] && open "$r/index.html"; exit $rc ;;
+  scenarios)
+    ensure_running "$2"
+    s=$(pick_serial "$2") || exit 1
+    [ -n "$3" ] || die "Usage: emu scenarios <version> <test tenant, e.g. onetouch_test>"
+    python3 "$QA_DIR/automation/erp_scenarios.py" --serial "$s" --tenant "$3"
+    rc=$?; r=$(ls -td "$QA_DIR"/reports/erp-scenarios_* 2>/dev/null | head -1)
+    [ -n "$r" ] && open "$r/report.html"; exit $rc ;;
+  ios)
+    case "$2" in
+      list|"") ios_list ;;
+      start)   ios_start "$3" "$4" ;;
+      stop)    ios_stop ;;
+      add)     ios_add "$3" ;;
+      *)       usage; exit 1 ;;
+    esac ;;
+  help|-h|--help) usage ;;
+  *)              usage; exit 1 ;;
+esac

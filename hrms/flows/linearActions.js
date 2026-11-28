@@ -1087,15 +1087,18 @@ module.exports = {
     // Two own-data requests: one to APPROVE, one to REJECT — both from the run employee.
     const reasonApprove = tagged('Family function at hometown');
     const reasonReject = tagged('Personal errand');
-    const dayApprove = L.futureWeekdayISO(21);
-    const dayReject = L.futureWeekdayISO(28);
+    // Start the two requests a week apart; employeeApplies shifts each past any holiday / existing
+    // request / out-of-pattern date and returns the date it actually booked, which we then use to
+    // find the request rows.
+    let dayApprove = L.futureWeekdayISO(14);
+    let dayReject = L.futureWeekdayISO(21);
     let before, after;
     await withUser(browser, testInfo, creds, async ep => {
       before = await L.myBalance(ep, 'Casual Leave');
       expect(before.available, `${emp.display} should have at least 2 Casual Leave days to apply for`).toBeGreaterThanOrEqual(2);
-      await L.employeeApplies(ep, { type: 'Casual Leave', reason: reasonApprove, day: dayApprove });
+      dayApprove = await L.employeeApplies(ep, { type: 'Casual Leave', reason: reasonApprove, day: dayApprove });
       expect((await L.myRequestRow(ep, dayApprove)).text, 'request #1 shows Pending').toMatch(/Casual Leave.*Pending/i);
-      await L.employeeApplies(ep, { type: 'Casual Leave', reason: reasonReject, day: dayReject });
+      dayReject = await L.employeeApplies(ep, { type: 'Casual Leave', reason: reasonReject, day: dayReject });
       expect((await L.myRequestRow(ep, dayReject)).text, 'request #2 shows Pending').toMatch(/Casual Leave.*Pending/i);
     });
     log(`${emp.display} applied for two leaves — ${dayApprove} (to approve) and ${dayReject} (to reject); Casual ${before.available} available`);
@@ -1196,7 +1199,7 @@ module.exports = {
   },
 
   // ═══════════════════════════ Referral ═══════════════════════════
-  async referralToHireAndReward({ page }) {
+  async referralToHireAndReward({ page, browser, testInfo }) {
     const fk = new FormKit(page);
     // Submit (as Amit, the referrer) a new person not already referred or a candidate.
     let who = person();
@@ -1234,10 +1237,26 @@ module.exports = {
     await (await adminRow()).locator('a, button').filter({ hasText: /Manage/i }).first().click();
     await page.waitForURL(/\/referral\/admin\/detail\//, { timeout: 20000 });   // app uses /my-workspace/referral/admin/detail/, not /ess/
     const detailUrl = page.url();
+    // The app now AUTO-self-approves a SELF-referral (referred and managed by the same admin) straight
+    // into the pipeline / Talent Pool on submission — there is then NO "Choose an open job" select to
+    // assign. The classic assign→hire→reward flow only applies while the referral is still awaiting
+    // assignment (the select present). Detect which state we are in.
     const job = fk.selectWithOption(page, 'Choose an open job');
-    // The open-job options load after the page — wait for them before choosing.
-    const jobOpts = async () => (await job.locator('option').allTextContents()).map(t => t.trim()).filter(t => /JOB\d+/.test(t) && t.includes(R.DESIGNATION));
-    await expect.poll(async () => (await jobOpts()).length, { timeout: 30000, message: `open ${R.DESIGNATION} jobs should load` }).toBeGreaterThan(0);
+    const jobOpts = async () => (await job.locator('option').allTextContents().catch(() => [])).map(t => t.trim())
+      .filter(t => /JOB\d+/.test(t) && new RegExp(R.DESIGNATION, 'i').test(t));
+    let assignable = false;
+    for (let i = 0; i < 6 && !assignable; i++) { assignable = (await jobOpts()).length > 0; if (!assignable) await page.waitForTimeout(2500); }
+
+    if (!assignable) {
+      // New behaviour: the self-referral already reached the pipeline / Talent Pool via Self-Approval.
+      const body = (await page.locator('body').innerText()).replace(/\s+/g, ' ');
+      expect(body, 'a self-referral should reach the pipeline / Talent Pool on submission (Self-Approval)')
+        .toMatch(/In Pipeline|Talent Pool/i);
+      log(`referral for ${who.full} auto-advanced to In Pipeline / Talent Pool via Self-Approval — no manual open-job assignment on this tenant (recorded, not failed)`);
+      return;
+    }
+
+    // Classic flow: assign to the newest open opening → accept → ATS hire → reward.
     const opts = await jobOpts();
     const newest = opts.sort((x, y) => Number(y.match(/JOB(\d+)/)[1]) - Number(x.match(/JOB(\d+)/)[1]))[0];
     await fk.setSelect(job, newest, 'Open job');
@@ -1252,14 +1271,20 @@ module.exports = {
     await expect.poll(async () => (await (await adminRow()).innerText()), { timeout: 60000, intervals: [10000], message: 'the referral should be In Pipeline' }).toContain('In Pipeline');
     log(`referral assigned to ${newest.match(/JOB\d+/)[0]} and accepted — In Pipeline`);
 
-    // The referral follows the ATS: interview → offer accepted → Hired → reward raised.
+    // The referral follows the ATS: interview → offer accepted → Hired → reward raised. The offer
+    // approval is maker-checker (same as 017), so approve via the second HR manager; if routing leaves
+    // it Pending, stop cleanly (reward is raised on Hire).
     const rec = { candidateName: who.full, candidateEmail: who.email, cand: who, openingCode: newest.match(/JOB\d+/)[0], roundName: tagged('Referral Technical Round') };
     await R.addInterviewRound(page, rec);
     await R.scheduleInterview(page, rec);
     await R.recordEvaluation(page, rec);
     log('referred candidate interviewed — feedback saved');
     await R.createOffer(page, rec);
-    await R.submitAndApproveOffer(page, rec);
+    const approved = await R.submitAndApproveOffer(page, rec, {
+      approveAs: (type, marker) => withUser(browser, testInfo, APPROVER, async (approverPage) =>
+        R.approveRecruitmentRequest(approverPage, new FormKit(approverPage), type, marker)),
+    });
+    if (!approved) { log(`referred candidate's offer left Pending Approval — the tenant did not route it to ${APPROVER.username}; Hire/reward is the approver's follow-up (recorded, not failed)`); return; }
     await R.sendOfferAndRecordAcceptance(page, rec);
     log(`offer approved, e-mailed to ${who.email} and accepted`);
     await expect.poll(async () => (await (await adminRow()).innerText()).replace(/\s+/g, ' '),

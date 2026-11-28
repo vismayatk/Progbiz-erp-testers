@@ -339,8 +339,15 @@ async function createOffer(page, rec) {
     .toMatch(/600000\.00.*Draft/);
 }
 
-/** More actions → Submit for Approval → Confirm (Pending Approval) → approve → Approved. */
-async function submitAndApproveOffer(page, rec) {
+/**
+ * More actions → Submit for Approval → Confirm (Pending Approval) → approve → Approved.
+ *
+ * MAKER-CHECKER: whoever SUBMITS the offer (the admin) cannot approve it — like a Job Requisition,
+ * it routes to a second HR manager. Pass `opts.approveAs(type, marker)` to approve in that second
+ * manager's own session (the caller owns the login). Without it, the approval runs in THIS session
+ * (only valid on a tenant that lets the submitter self-approve).
+ */
+async function submitAndApproveOffer(page, rec, opts = {}) {
   const fk = new FormKit(page);
   expect(await rowOn(page, fk, 'offer-list', /New Offer/i, rec.candidateName), 'the offer should be Draft first').toMatch(/Draft/);
   await rowMenuAction(page, page.locator('table tbody tr').filter({ hasText: rec.candidateName }).first(), /Submit for Approval/i);
@@ -352,8 +359,10 @@ async function submitAndApproveOffer(page, rec) {
     .toMatch(/Pending Approval/);
   console.log('  ✅ offer submitted → Pending Approval');
 
-  // Approve it in Recruitment Approvals (our row is identified by the candidate in Details).
-  await approveRecruitmentRequest(page, fk, 'Offer', rec.candidateName);
+  // Approve it (our row is identified by the candidate in Details). Prefer the caller's second-HR
+  // -manager session (maker-checker); fall back to approving in this session.
+  if (opts.approveAs) await opts.approveAs('Offer', rec.candidateName);
+  else await approveRecruitmentRequest(page, fk, 'Offer', rec.candidateName);
   await expect.poll(async () => rowOn(page, fk, 'offer-list', /New Offer/i, rec.candidateName),
     { timeout: 60000, intervals: [10000], message: 'the offer should become Approved' })
     .toMatch(/Approved/);

@@ -78,13 +78,18 @@ async function openSubmission(page, title, candidateName) {
 async function evaluateAssessment(page, title, candidateName) {
   const fk = new FormKit(page);
   const sub = await openSubmission(page, title, candidateName);
-  await fk.setInput(sub.locator('input[type="number"]').first(), '85', 'Assessment score');
+  // SCORE is a 1–5 STAR rating, NOT a number field: the SCORE cell is a `div.star-rating` of five
+  // `button.star-rating-star` (role=radio, aria-label "N out of 5") — the old `input[type=number]`
+  // never existed, so it could never be filled. Click the 4-star, like the interview rating does.
+  const star = sub.getByRole('radio', { name: '4 out of 5' }).first();
+  await expect(star, 'the SCORE cell should offer a 1–5 star rating').toBeVisible({ timeout: 20000 });
+  await star.click();
+  await expect(star, 'rating 4/5 should be selected').toHaveAttribute('aria-checked', 'true');
   await fk.setInput(sub.getByPlaceholder('Your feedback').first(), 'Clear, well-structured test cases with good negative coverage.', 'Assessment feedback');
   await sub.locator('button').filter({ hasText: /^\s*Evaluate\s*$/ }).first().click();
   const ok = page.locator('.swal2-popup button').filter({ hasText: /^\s*(Yes.*|Evaluate|Confirm|OK)\s*$/i }).first();
   if (await waitVisible(ok, 4000)) await ok.click();
   await expect(sub, 'the candidate shows Evaluated').toContainText(/Evaluated/, { timeout: 30000 });
-  await expect(sub, 'the score 85 is recorded').toContainText(/85/);
   await page.keyboard.press('Escape').catch(() => {});
 }
 
@@ -814,7 +819,7 @@ module.exports = {
       await evaluateAssessment(page, assessment, rec.candidateName);
       rec.assessmentEvaluated = true;
       remember({ rec });
-      log(`take-home assessment "${assessment}" evaluated by the interview panel — 85 / 100`);
+      log(`take-home assessment "${assessment}" evaluated by the interview panel — 4/5 stars`);
     }
     rec.interviewAt = new Date(rec.interviewAt);
     await R.recordEvaluation(page, rec);

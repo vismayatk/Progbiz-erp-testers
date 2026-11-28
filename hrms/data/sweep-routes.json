@@ -1,0 +1,818 @@
+[
+  {
+    "label": "Access Roles",
+    "route": "/access-roles"
+  },
+  {
+    "label": "Workflow Assignment",
+    "route": "/approval/assignment"
+  },
+  {
+    "label": "Approval Config",
+    "route": "/approval/config"
+  },
+  {
+    "label": "Arabic Names",
+    "route": "/arabic-names"
+  },
+  {
+    "label": "Assessments",
+    "route": "/assessment-list"
+  },
+  {
+    "label": "Attendance Finalization",
+    "route": "/attendance-finalization"
+  },
+  {
+    "label": "Attendance Report Pack",
+    "route": "/attendance-report-pack"
+  },
+  {
+    "label": "Reprocess Attendance",
+    "route": "/attendance-reprocess"
+  },
+  {
+    "label": "Test Data Generator",
+    "route": "/attendance-test-data"
+  },
+  {
+    "label": "Automation History",
+    "route": "/automation-history"
+  },
+  {
+    "label": "Automations",
+    "route": "/automation-master"
+  },
+  {
+    "label": "Blacklisted Employees",
+    "route": "/blacklisted-employees"
+  },
+  {
+    "label": "Branches",
+    "route": "/branches"
+  },
+  {
+    "label": "Business Customer",
+    "route": "/business-customer-upload"
+  },
+  {
+    "label": "Calendar",
+    "route": "/calendar"
+  },
+  {
+    "label": "Candidate Status",
+    "route": "/candidate-status"
+  },
+  {
+    "label": "Candidates",
+    "route": "/candidates"
+  },
+  {
+    "label": "Reset Password",
+    "route": "/change-user-password"
+  },
+  {
+    "label": "Tenant Settings",
+    "route": "/client-setting"
+  },
+  {
+    "label": "Comp-Off Approval",
+    "route": "/comp-off-approval"
+  },
+  {
+    "label": "Credentials",
+    "route": "/credential"
+  },
+  {
+    "label": "Credential Sources",
+    "route": "/credential-sources"
+  },
+  {
+    "label": "Customers",
+    "route": "/customers"
+  },
+  {
+    "label": "Daily Activity Report",
+    "route": "/daily-activity-report"
+  },
+  {
+    "label": "Delegated Tasks",
+    "route": "/delegated-tasks"
+  },
+  {
+    "label": "Departments",
+    "route": "/department"
+  },
+  {
+    "label": "Designations",
+    "route": "/designations"
+  },
+  {
+    "label": "Document Authorities",
+    "route": "/document-authorities"
+  },
+  {
+    "label": "Document Compliance",
+    "route": "/document-compliance"
+  },
+  {
+    "label": "Document Types",
+    "route": "/document-types"
+  },
+  {
+    "label": "Custom Dashboards",
+    "route": "/dynamic-dashboards"
+  },
+  {
+    "label": "Custom Fields",
+    "route": "/dynamic-fields"
+  },
+  {
+    "label": "Custom Reports",
+    "route": "/dynamic-list"
+  },
+  {
+    "label": "Email Templates",
+    "route": "/email-templates"
+  },
+  {
+    "label": "Duty Handover",
+    "route": "/employee-handover"
+  },
+  {
+    "label": "Employee",
+    "route": "/employees"
+  },
+  {
+    "label": "Workspace",
+    "route": "/ess"
+  },
+  {
+    "label": "Approvals",
+    "route": "/ess/approvals"
+  },
+  {
+    "label": "Attendance",
+    "route": "/ess/attendance"
+  },
+  {
+    "label": "Digital ID",
+    "route": "/ess/digital-id"
+  },
+  {
+    "label": "Directory",
+    "route": "/ess/directory"
+  },
+  {
+    "label": "Documents",
+    "route": "/ess/documents"
+  },
+  {
+    "label": "Dashboard",
+    "route": "/ess/helpdesk/admin"
+  },
+  {
+    "label": "Support Tickets",
+    "route": "/ess/helpdesk/my-tickets"
+  },
+  {
+    "label": "Leave",
+    "route": "/ess/leave"
+  },
+  {
+    "label": "Letters",
+    "route": "/ess/letters"
+  },
+  {
+    "label": "Locations",
+    "route": "/ess/locations"
+  },
+  {
+    "label": "Shift",
+    "route": "/ess/my-shift"
+  },
+  {
+    "label": "Tax",
+    "route": "/ess/my-tax"
+  },
+  {
+    "label": "Needs Review",
+    "route": "/ess/needs-review"
+  },
+  {
+    "label": "Pay",
+    "route": "/ess/payslips"
+  },
+  {
+    "label": "Policies",
+    "route": "/ess/policies"
+  },
+  {
+    "label": "Previous Employer (12B)",
+    "route": "/ess/previous-employer"
+  },
+  {
+    "label": "Probation",
+    "route": "/ess/probation"
+  },
+  {
+    "label": "Profile",
+    "route": "/ess/profile"
+  },
+  {
+    "label": "Refer & Earn",
+    "route": "/ess/referral"
+  },
+  {
+    "label": "Referral Dashboard",
+    "route": "/ess/referral/admin"
+  },
+  {
+    "label": "Reward Policy",
+    "route": "/ess/referral/admin/policy"
+  },
+  {
+    "label": "Requests",
+    "route": "/ess/requests"
+  },
+  {
+    "label": "Team Calendar",
+    "route": "/ess/team-calendar"
+  },
+  {
+    "label": "Work From Home",
+    "route": "/ess/wfh"
+  },
+  {
+    "label": "Exit Checklist Templates",
+    "route": "/exit-checklist-templates"
+  },
+  {
+    "label": "Exit Clearance",
+    "route": "/exit-clearance"
+  },
+  {
+    "label": "Exit Dashboard",
+    "route": "/exit-dashboard"
+  },
+  {
+    "label": "Exit Interview Templates",
+    "route": "/exit-interview-templates"
+  },
+  {
+    "label": "Exit Reports",
+    "route": "/exit-reports"
+  },
+  {
+    "label": "Exit Type Settings",
+    "route": "/exit-type-settings"
+  },
+  {
+    "label": "Exit Watch",
+    "route": "/exit-watch"
+  },
+  {
+    "label": "Field Mapping",
+    "route": "/field-map-tags"
+  },
+  {
+    "label": "F&F Settlements",
+    "route": "/fnf-settlements"
+  },
+  {
+    "label": "Geofences",
+    "route": "/geofences"
+  },
+  {
+    "label": "Holiday Assignment",
+    "route": "/holiday-assignment-list"
+  },
+  {
+    "label": "Holidays",
+    "route": "/holiday-list"
+  },
+  {
+    "label": "Home",
+    "route": "/home"
+  },
+  {
+    "label": "Appointment Letters",
+    "route": "/hrms/appointment-letters"
+  },
+  {
+    "label": "Confirmation Letters",
+    "route": "/hrms/confirmation-letters"
+  },
+  {
+    "label": "Extension Letters",
+    "route": "/hrms/extension-letters"
+  },
+  {
+    "label": "Meeting Facilities",
+    "route": "/hrms/meeting-facilities"
+  },
+  {
+    "label": "Meeting Rooms",
+    "route": "/hrms/meeting-rooms"
+  },
+  {
+    "label": "Meeting Settings",
+    "route": "/hrms/meeting-settings"
+  },
+  {
+    "label": "Schedule Meeting",
+    "route": "/hrms/meeting/new"
+  },
+  {
+    "label": "Meeting Calendar",
+    "route": "/hrms/meetings"
+  },
+  {
+    "label": "Probation Dashboard",
+    "route": "/hrms/probation"
+  },
+  {
+    "label": "Probation Report",
+    "route": "/hrms/probation-report"
+  },
+  {
+    "label": "Probation Templates",
+    "route": "/hrms/probation-templates"
+  },
+  {
+    "label": "HR Reminders",
+    "route": "/hrms/reminder-rules"
+  },
+  {
+    "label": "Individual Customer",
+    "route": "/individual-customer-upload"
+  },
+  {
+    "label": "Interview Rounds",
+    "route": "/interview-rounds"
+  },
+  {
+    "label": "Interview Schedules",
+    "route": "/interview-schedules"
+  },
+  {
+    "label": "Job Applications",
+    "route": "/job-applications-list"
+  },
+  {
+    "label": "Late In / Early Out Requests",
+    "route": "/late-early-requests"
+  },
+  {
+    "label": "Leave Approval",
+    "route": "/leave-approval"
+  },
+  {
+    "label": "Leave Assignment",
+    "route": "/leave-assignment-list"
+  },
+  {
+    "label": "Attendance Sync",
+    "route": "/leave-attendance-sync"
+  },
+  {
+    "label": "Leave Calendar",
+    "route": "/leave-calendar"
+  },
+  {
+    "label": "Leave Ledger",
+    "route": "/leave-ledger"
+  },
+  {
+    "label": "Apply Leave for Employee",
+    "route": "/leave-on-behalf-list"
+  },
+  {
+    "label": "Opening Balance",
+    "route": "/leave-opening-balance"
+  },
+  {
+    "label": "Opening Balance Upload",
+    "route": "/leave-opening-upload"
+  },
+  {
+    "label": "Leave Patterns",
+    "route": "/leave-patterns"
+  },
+  {
+    "label": "Leave Policy",
+    "route": "/leave-policy"
+  },
+  {
+    "label": "Leave Reports",
+    "route": "/leave-reports"
+  },
+  {
+    "label": "Leave Types",
+    "route": "/leave-types"
+  },
+  {
+    "label": "Merge Fields",
+    "route": "/letters/fields"
+  },
+  {
+    "label": "Generate Letter",
+    "route": "/letters/generate"
+  },
+  {
+    "label": "Letterheads",
+    "route": "/letters/letterheads"
+  },
+  {
+    "label": "Letter Templates",
+    "route": "/letters/templates"
+  },
+  {
+    "label": "My Exit Actions",
+    "route": "/my-exit-actions"
+  },
+  {
+    "label": "Handover",
+    "route": "/my-handover"
+  },
+  {
+    "label": "Onboarding Tasks",
+    "route": "/my-onboarding-tasks"
+  },
+  {
+    "label": "Probation Reviews",
+    "route": "/my-probation-reviews"
+  },
+  {
+    "label": "My Tasks",
+    "route": "/my-tasks"
+  },
+  {
+    "label": "Trainings",
+    "route": "/my-trainings"
+  },
+  {
+    "label": "Notice Period Rules",
+    "route": "/notice-period-rules"
+  },
+  {
+    "label": "Offer Acceptance",
+    "route": "/offer-acceptance"
+  },
+  {
+    "label": "Offers",
+    "route": "/offer-list"
+  },
+  {
+    "label": "Onboarded Employees Report",
+    "route": "/onboarded-employees-report"
+  },
+  {
+    "label": "Hold & Dropped Report",
+    "route": "/onboarding-hold-dropped"
+  },
+  {
+    "label": "Onboarding Pipeline",
+    "route": "/onboarding-pipeline"
+  },
+  {
+    "label": "Onboarding Task Report",
+    "route": "/onboarding-task-report"
+  },
+  {
+    "label": "Onboarding Templates",
+    "route": "/onboarding-templates"
+  },
+  {
+    "label": "Overtime Approval",
+    "route": "/overtime-approval"
+  },
+  {
+    "label": "Reimbursements",
+    "route": "/payroll/adhoc"
+  },
+  {
+    "label": "Audit Trail",
+    "route": "/payroll/audit-trail"
+  },
+  {
+    "label": "Bank Transfers",
+    "route": "/payroll/bank-files"
+  },
+  {
+    "label": "Bank Reconciliation",
+    "route": "/payroll/bank-recon"
+  },
+  {
+    "label": "Bonuses",
+    "route": "/payroll/bonuses"
+  },
+  {
+    "label": "Payroll Checklist",
+    "route": "/payroll/checklist"
+  },
+  {
+    "label": "Salary Components",
+    "route": "/payroll/components"
+  },
+  {
+    "label": "Consultant Invoices",
+    "route": "/payroll/consultant-invoices"
+  },
+  {
+    "label": "Consultant Payout Advice",
+    "route": "/payroll/consultant-payout-advice"
+  },
+  {
+    "label": "Dashboard",
+    "route": "/payroll/dashboard"
+  },
+  {
+    "label": "Employee Salary",
+    "route": "/payroll/employee-salary"
+  },
+  {
+    "label": "Held Salary Payments",
+    "route": "/payroll/held-salary"
+  },
+  {
+    "label": "Monthly Salary Allocation",
+    "route": "/payroll/month-allocation"
+  },
+  {
+    "label": "Off-Cycle Payments",
+    "route": "/payroll/off-cycle"
+  },
+  {
+    "label": "Opening Balances",
+    "route": "/payroll/opening-balances"
+  },
+  {
+    "label": "Outlier Alerts",
+    "route": "/payroll/outliers"
+  },
+  {
+    "label": "Payslip Fields",
+    "route": "/payroll/payslip-fields"
+  },
+  {
+    "label": "Payslips",
+    "route": "/payroll/payslips"
+  },
+  {
+    "label": "Employee PF Overrides",
+    "route": "/payroll/pf-override"
+  },
+  {
+    "label": "Payroll Policies",
+    "route": "/payroll/policies"
+  },
+  {
+    "label": "Payroll Policy Roster",
+    "route": "/payroll/policy-roster"
+  },
+  {
+    "label": "Previous Employer (12B)",
+    "route": "/payroll/previous-employer"
+  },
+  {
+    "label": "Regime Comparison",
+    "route": "/payroll/regime-comparison"
+  },
+  {
+    "label": "Payroll Report Pack",
+    "route": "/payroll/reports"
+  },
+  {
+    "label": "Payroll Runs",
+    "route": "/payroll/runs"
+  },
+  {
+    "label": "Salary Advances",
+    "route": "/payroll/salary-advance"
+  },
+  {
+    "label": "Salary Revisions",
+    "route": "/payroll/salary-revisions"
+  },
+  {
+    "label": "Settlement Recoveries",
+    "route": "/payroll/settlement-recoveries"
+  },
+  {
+    "label": "Form 16 & Certificates",
+    "route": "/payroll/statements"
+  },
+  {
+    "label": "Statutory Configuration",
+    "route": "/payroll/statutory-config"
+  },
+  {
+    "label": "Statutory Month Close",
+    "route": "/payroll/statutory-month-close"
+  },
+  {
+    "label": "Statutory Returns",
+    "route": "/payroll/statutory-returns"
+  },
+  {
+    "label": "Salary Structures",
+    "route": "/payroll/structures"
+  },
+  {
+    "label": "Tax Declarations",
+    "route": "/payroll/tax-declarations"
+  },
+  {
+    "label": "TDS Challans",
+    "route": "/payroll/tds-challans"
+  },
+  {
+    "label": "TDS Sections",
+    "route": "/payroll/tds-sections"
+  },
+  {
+    "label": "Policies",
+    "route": "/policies"
+  },
+  {
+    "label": "Policy Analytics",
+    "route": "/policy-analytics"
+  },
+  {
+    "label": "Policy Audit Trail",
+    "route": "/policy-audit"
+  },
+  {
+    "label": "Policy Categories",
+    "route": "/policy-categories"
+  },
+  {
+    "label": "Policy Compliance",
+    "route": "/policy-compliance"
+  },
+  {
+    "label": "Policy Expiry",
+    "route": "/policy-expiry"
+  },
+  {
+    "label": "Feedback & Revisions",
+    "route": "/policy-feedback"
+  },
+  {
+    "label": "Regulations & Gaps",
+    "route": "/policy-regulations"
+  },
+  {
+    "label": "Policy Reports",
+    "route": "/policy-reports"
+  },
+  {
+    "label": "Policy Settings",
+    "route": "/policy-settings"
+  },
+  {
+    "label": "Policy Templates",
+    "route": "/policy-templates"
+  },
+  {
+    "label": "Pre-boarding Approvals",
+    "route": "/preboarding-approvals"
+  },
+  {
+    "label": "Assign Predefined Task",
+    "route": "/predefined-task-add"
+  },
+  {
+    "label": "Predefined Tasks",
+    "route": "/predefined-tasks"
+  },
+  {
+    "label": "Recruitment Dashboard",
+    "route": "/recruitment-dashboard"
+  },
+  {
+    "label": "Pipeline Board",
+    "route": "/recruitment-pipeline"
+  },
+  {
+    "label": "My Approvals",
+    "route": "/recruitment/approvals"
+  },
+  {
+    "label": "Task Timeline",
+    "route": "/redirect/task-timeline"
+  },
+  {
+    "label": "Regularization",
+    "route": "/regularization"
+  },
+  {
+    "label": "Reports",
+    "route": "/reports"
+  },
+  {
+    "label": "Job Requisitions",
+    "route": "/requisition-list"
+  },
+  {
+    "label": "Exit Approvals",
+    "route": "/resignation-approval"
+  },
+  {
+    "label": "Exit Reasons",
+    "route": "/resignation-reasons"
+  },
+  {
+    "label": "Resignations & Exits",
+    "route": "/resignations"
+  },
+  {
+    "label": "Screen Tracker",
+    "route": "/screen-tracker"
+  },
+  {
+    "label": "Shift Roster",
+    "route": "/shift-roster"
+  },
+  {
+    "label": "Shifts & Rules",
+    "route": "/shifts"
+  },
+  {
+    "label": "Talent Pool",
+    "route": "/talent-pool"
+  },
+  {
+    "label": "Task",
+    "route": "/task-dashboard"
+  },
+  {
+    "label": "Teams",
+    "route": "/teams"
+  },
+  {
+    "label": "Timesheet",
+    "route": "/timesheet"
+  },
+  {
+    "label": "To Do List",
+    "route": "/todo-list"
+  },
+  {
+    "label": "AI Tokens",
+    "route": "/token-wallet"
+  },
+  {
+    "label": "Training Assessment Report",
+    "route": "/training-assessment-report"
+  },
+  {
+    "label": "Training Courses",
+    "route": "/training-courses"
+  },
+  {
+    "label": "Employee Excel Import",
+    "route": "/upload-employee"
+  },
+  {
+    "label": "User Levels",
+    "route": "/user-levels"
+  },
+  {
+    "label": "Users",
+    "route": "/users"
+  },
+  {
+    "label": "User Hierarchy",
+    "route": "/users?view=hierarchy"
+  },
+  {
+    "label": "Job Board",
+    "route": "/vacancy-list"
+  },
+  {
+    "label": "Apply Work From Home for Employee",
+    "route": "/wfh-apply-for-employee"
+  },
+  {
+    "label": "Work From Home Assignment",
+    "route": "/wfh-assignments"
+  },
+  {
+    "label": "Work From Home Policies",
+    "route": "/wfh-policies"
+  },
+  {
+    "label": "Work From Home Report",
+    "route": "/wfh-report"
+  },
+  {
+    "label": "Work From Home Approval",
+    "route": "/wfh-requests"
+  },
+  {
+    "label": "Worker Directory",
+    "route": "/worker-directory"
+  }
+]

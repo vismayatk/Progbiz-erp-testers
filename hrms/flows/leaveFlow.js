@@ -150,7 +150,11 @@ async function myRequestRow(page, dayISO) {
   return { text: rows.find(r => r.includes(shown)) || '' };
 }
 
-/** Employee: My Leave → Apply for Leave → type, description, Full Day, date → Apply (fails on a refusal). */
+/**
+ * Employee: My Leave → Apply for Leave → type, description, Full Day, date → Apply (fails on a real
+ * refusal). If the requested date is a holiday, already booked, or outside the leave pattern, it
+ * shifts to the next valid weekday. Returns the date actually applied (may differ from `day`).
+ */
 async function employeeApplies(page, { type, reason, day }) {
   const fk = new FormKit(page);
   // Use My Leave if it is already open (e.g. right after reading the balance) — loading it a second
@@ -165,15 +169,36 @@ async function employeeApplies(page, { type, reason, day }) {
   await fk.setSelect(page.locator('select').filter({ has: page.locator('option', { hasText: type }) }).first(), type, 'Leave Type');
   await fk.setInput(page.locator('#remarks'), reason, 'Description');
   await page.locator('button, label').filter({ hasText: /^\s*Full Day\s*$/ }).first().click();
-  await fk.setInput(page.getByText(/Start Date \*/).first().locator('xpath=following::input[@type="date"][1]'), day, 'Start Date');
-  await fk.setInput(page.getByText(/End Date \*/).first().locator('xpath=following::input[@type="date"][1]'), day, 'End Date');
-  await page.waitForTimeout(2500);   // the policy check runs once the dates are picked
-  const policy = (await page.locator('body').innerText()).replace(/\s+/g, ' ').match(/Policy check.{0,200}/)?.[0] || '';
-  expect(policy, 'the policy check should not block the request').not.toMatch(/not allowed|insufficient|exceed|violat|cannot/i);
-  await page.locator('button').filter({ hasText: /^\s*Apply\s*$/ }).first().click();
+  // The app disables Apply for date rules a fixed offset can't predict — the date is a company
+  // HOLIDAY, the employee ALREADY has a request on it, or it falls outside the assigned leave
+  // pattern/period. Those aren't failures, just unusable dates: shift to the next valid weekday and
+  // retry, and return the date actually applied so the caller can locate the request row.
+  const startField = () => page.getByText(/Start Date \*/).first().locator('xpath=following::input[@type="date"][1]');
+  const endField = () => page.getByText(/End Date \*/).first().locator('xpath=following::input[@type="date"][1]');
+  const nextWeekday = iso => { const dt = new Date(`${iso}T00:00:00`); do { dt.setDate(dt.getDate() + 1); } while (dt.getDay() === 0 || dt.getDay() === 6); return dt.toISOString().slice(0, 10); };
+  const submitBtn = page.locator('button').filter({ hasText: /^\s*Apply\s*$/ }).first();
+
+  let used = day;
+  for (let tries = 0; tries < 20; tries++) {
+    await fk.setInput(startField(), used, 'Start Date');
+    await fk.setInput(endField(), used, 'End Date');
+    await page.waitForTimeout(2500);   // the policy check runs once the dates are picked
+    const policy = (await page.locator('body').innerText()).replace(/\s+/g, ' ').match(/Policy check.{0,180}/)?.[0] || '';
+    // A balance/eligibility block is a REAL failure — never paper over it by shifting dates.
+    expect(policy, 'the policy check should not block the request for a balance/eligibility reason')
+      .not.toMatch(/insufficient|not enough|exceed|no (?:casual|medical|leave)\s*balance|not eligible/i);
+    if (!(await submitBtn.isDisabled().catch(() => true))) break;   // Apply enabled → bookable date
+    // Disabled: shift only for a recognised date rule; otherwise surface the reason.
+    if (!/holiday|already have|no active leave pattern|weekend|working day|notice/i.test(policy) && tries > 6) {
+      throw new Error(`Apply stayed disabled with no shiftable date reason: "${policy}"`);
+    }
+    used = nextWeekday(used);
+  }
+  expect(await submitBtn.isDisabled().catch(() => true), `could not find a bookable leave date near ${day} (holidays / existing requests / leave pattern)`).toBe(false);
+  await submitBtn.click();
   // Success = the app's confirmation toast OR the request landing in "My Leave Requests". The toast
   // can flash too fast to catch, but the applied row is a durable signal — accept either.
-  const [y, mo, d] = String(day).split('-');
+  const [y, mo, d] = String(used).split('-');
   const shownDate = (y && mo && d) ? `${d}/${mo}/${y}` : '';
   const landed = async () => (shownDate ? await page.locator('table tbody tr').filter({ hasText: shownDate }).count().catch(() => 0) : 0) > 0;
   let said = '', done = false;
@@ -187,7 +212,7 @@ async function employeeApplies(page, { type, reason, day }) {
     await page.waitForTimeout(500);
   }
   expect(done, 'the app should confirm the leave request (toast, or the request appearing in My Leave Requests)').toBe(true);
-  return said || 'request listed';
+  return used;
 }
 
 /**

@@ -293,7 +293,9 @@ async function recordEvaluation(page, rec) {
       const star = crit.nth(i).getByRole('radio', { name: '4 out of 5', exact: true }).first();
       await star.click();
       await expect(star, `rating 4/5 for "${name}"`).toHaveAttribute('aria-checked', 'true');
-      await fk.setInput(crit.nth(i).locator('textarea, input[type="text"]').first(), 'Solid, met expectations.', `Note — ${name}`);
+      // The Note is a bare <input class="form-control"> (no type attribute, so input[type=text] misses
+      // it); the rating controls are <button>s, so the row's only editable field is the Note.
+      await fk.setInput(crit.nth(i).locator('input:not([type="hidden"]), textarea').first(), 'Solid, met expectations.', `Note — ${name}`);
     }
     // Overall (weighted) rating — best-effort: every criterion is 4/5, so it should read 4, but the
     // display format varies, so note it rather than failing the run on wording.

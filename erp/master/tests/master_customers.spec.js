@@ -115,7 +115,11 @@ test.describe('Master — Customers and Custom Reports', () => {
       if (t[k].count === 0) { expect(shown.length, `${k} tile says 0 but rows are listed`).toBe(0); continue; }
       expect(shown.length, `${k} tile says ${t[k].count} but no row is listed`).toBeGreaterThan(0);
       expect([...new Set(shown.map((r) => r.level))], `rows under the ${k} tile`).toEqual([k]);
-      expect(await listTotal(), `"of N entries" under the ${k} tile`).toBe(t[k].count);
+      // a list that fits on one page draws no "Showing … of N entries" line (seen 24 Nov on a 1-customer tile):
+      // then the rows themselves must add up to the tile; a longer list must still show the line with the right N
+      const total = await listTotal();
+      if (total === null) expect(shown.length, `${k} tile says ${t[k].count}; no "of N entries" line, ${shown.length} row(s) listed`).toBe(t[k].count);
+      else expect(total, `"of N entries" under the ${k} tile`).toBe(t[k].count);
     }
     await page.locator(`#${t.All.id}`).click();
   });

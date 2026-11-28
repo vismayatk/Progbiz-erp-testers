@@ -140,14 +140,19 @@ class MasterListPage {
   async save(scope) {
     this.writes.length = 0;
     await scope.locator('button:has-text("Save"), button:has-text("Update"), button:has-text("Create")').filter({ visible: true }).first().click();
-    const toast = await this.toast();
+    const toast = await this.toast(this.cfg.saved);
     if (await this.page.locator('.modal.show').count()) await this.page.keyboard.press('Escape');
     return toast;
   }
 
-  async toast() {
+  /**
+   * The message after a save or delete. When the master has a known message (`expected`), wait up to 20 s
+   * for that text: a slow save (Designation spins for 5 to 10 s) shows it late, and reading after 8 s found nothing.
+   */
+  async toast(expected) {
     const t = this.page.locator('.swal2-popup, .swal2-toast, .toast').filter({ hasText: /\w/ });
-    await t.first().waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    const want = expected ? t.filter({ hasText: expected }) : t;
+    await want.first().waitFor({ state: 'visible', timeout: expected ? 20000 : 8000 }).catch(() => {});
     // not the confirmation dialog itself ("Are you sure you want to delete?")
     return (await t.allInnerTexts()).map((s) => s.replace(/\s+/g, ' ').trim()).filter((s) => !/^Super admin Home/.test(s) && !/are you sure/i.test(s)).join(' | ');
   }
@@ -195,7 +200,7 @@ class MasterListPage {
     this.writes.length = 0;
     await this.page.locator(CONFIRM).first().click();
     await this.page.locator('.swal2-popup:visible').filter({ hasText: /are you sure/i }).first().waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
-    return this.toast();
+    return this.toast(this.cfg.deleted);
   }
 
   /** Best-effort removal of everything a test created. Never throws. */

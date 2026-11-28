@@ -146,13 +146,16 @@ test.describe('Master — simple masters: create, edit, delete', () => {
     for (const key of ['packing', 'department', 'designation', 'costtype', 'userlevel', 'payterm', 'emailtpl', 'customfield']) {
       const m = new MasterListPage(page, key);
       const prefix = m.cfg.lower ? `qa_${key}` : `QA_${key}`;
-      const n = await (await m.rows(prefix)).count();
+      // count only the names this suite makes: QA_<key>_<13-digit time>, or QA_<key>_E_<time> after the rename.
+      // A plain text filter ignores case, so QA data made by hand (QA_CostType_20261124) matched the bare prefix.
+      const own = new RegExp(`${prefix}_(?:E_|e_)?\\d{13}`);
+      const n = await (await m.rows(prefix)).filter({ hasText: own }).count();
       if (n) left.push(`${m.cfg.title} (${n})`);
     }
     await page.goto(`${BASE}/teams`, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.locator('.card').first().waitFor({ state: 'visible', timeout: 20000 });
     await page.waitForTimeout(1500);
-    const teams = await page.locator('.card').filter({ hasText: 'QA_team_' }).filter({ hasNot: page.locator('.card') }).count();
+    const teams = await page.locator('.card').filter({ hasText: /QA_team_\d{13}/ }).filter({ hasNot: page.locator('.card') }).count();
     if (teams) left.push(`Team (${teams})`);
     expect(left, 'records the tests created and did not delete').toEqual([]);
   });

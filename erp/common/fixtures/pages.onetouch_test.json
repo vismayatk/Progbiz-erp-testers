@@ -270,16 +270,7 @@
       "filters": {
         "search": null,
         "dateRange": false
-      },
-      "known": [
-        {
-          "id": "ERP-016",
-          "console": "status of 400",
-          "call": "/api/ess/my-resignation",
-          "expect": "loads without a failed API call",
-          "reason": "GET /api/ess/my-resignation returns 400 (\"Oops something went wrong\") on every load"
-        }
-      ]
+      }
     },
     {
       "path": "/won-leads",
@@ -16514,7 +16505,7 @@
       ],
       "controls": [
         {
-          "id": "uoc-search",
+          "id": "us-search-input",
           "label": "",
           "type": "search",
           "required": false
@@ -16552,8 +16543,8 @@
       ],
       "filters": {
         "search": {
-          "id": "uoc-search",
-          "placeholder": "Search a person…"
+          "id": "us-search-input",
+          "placeholder": "Search user name"
         },
         "dateRange": false
       },

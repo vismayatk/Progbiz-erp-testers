@@ -828,12 +828,17 @@ module.exports = {
       : 'feedback 4/5 Proceed saved — interview Completed');
   },
 
-  async offerApprovedSentAccepted({ page }) {
+  async offerApprovedSentAccepted({ page, browser, testInfo }) {
     const rec = need('rec', 'Job Board');
     await R.createOffer(page, rec);
     log(`offer for ${rec.candidateName} saved as Draft`);
-    await R.submitAndApproveOffer(page, rec);
-    log('offer approved');
+    // MAKER-CHECKER: the admin submits the offer but cannot approve their own — the second HR manager
+    // (Amir) approves it in their own session, same as the Job Requisition.
+    await R.submitAndApproveOffer(page, rec, {
+      approveAs: (type, marker) => withUser(browser, testInfo, APPROVER, async (approverPage) =>
+        R.approveRecruitmentRequest(approverPage, new FormKit(approverPage), type, marker)),
+    });
+    log(`offer approved by second HR manager ${APPROVER.username}`);
     await R.sendOfferAndRecordAcceptance(page, rec);
     log(`offer e-mailed to ${rec.candidateEmail} and accepted`);
   },
